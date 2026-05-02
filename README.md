@@ -1,16 +1,38 @@
-# React + Vite
+# PlayStop - Frontend 🎮
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+PlayStop es un ecosistema digital robusto y escalable diseñado para digitalizar el ciclo completo de búsqueda, comparación y reserva de infraestructuras deportivas. Nuestro objetivo es erradicar las barreras de informalidad y garantizar una experiencia de usuario optimizada, transparente y de alto valor tecnológico tanto para jugadores como para administradores de clubes.
 
-Currently, two official plugins are available:
+## 🚀 Características Principales
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+*   **Búsqueda Inteligente:** Selector interactivo de deportes, ciudades y distritos (con lógica dependiente).
+*   **Diseño Moderno (SaaS):** Landing page responsiva con animaciones suaves, glassmorphism y transiciones de imágenes infinitas (efecto Ken Burns).
+*   **Múltiples Vistas:** Secciones dedicadas para Jugadores, Clubes (Dashboards simulados) y Planes de Precios.
+*   **Autenticación:** Ventanas modales (Pop-ups) integradas para el inicio de sesión y registro de usuarios.
 
-## React Compiler
+## 🛠️ Tecnologías Utilizadas
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+*   **Librería Principal:** React 19
+*   **Empaquetador/Servidor:** Vite
+*   **Estilos:** CSS3 + Tailwind CSS (Configurado)
+*   **Lenguaje:** JavaScript (ES6+)
 
-## Expanding the ESLint configuration
+## ⚙️ Instalación y Ejecución Local
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Sigue estos pasos para correr el proyecto en tu entorno local:
+
+1. **Clonar el repositorio** (si aplica) o navegar a la carpeta del proyecto:
+   ```bash
+   cd PlayStop-Frontend
+   ```
+
+2. **Instalar las dependencias:**
+   ```bash
+   npm install
+   ```
+
+3. **Iniciar el servidor de desarrollo:**
+   ```bash
+   npm run dev
+   ```
+
+4. Abre tu navegador y visita `http://localhost:5173/` para ver la aplicación en vivo.
