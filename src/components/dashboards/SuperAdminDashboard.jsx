@@ -31,7 +31,7 @@ const SuperAdminDashboard = ({ user, onLogout }) => {
           </div>
           
           <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-            <div style={{ flex: '2 1 400px', backgroundColor: '#ffffff', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column' }}>
+            <div className="dashboard-card" style={{ flex: '2 1 400px', display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
             <h3 style={{ margin: '0', color: '#0f172a', fontSize: '1.2rem', fontWeight: '800' }}>Crecimiento de Ingresos</h3>
             <button onClick={() => openModal('DESCARGAR_REPORTE')} className="action-btn" style={{ backgroundColor: '#0f172a', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '8px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 6px rgba(15,23,42,0.2)' }}>Descargar Reporte</button>
@@ -53,7 +53,8 @@ const SuperAdminDashboard = ({ user, onLogout }) => {
             </div>
             
             {/* Terminal de Logs */}
-            <div style={{ flex: '1 1 300px', backgroundColor: '#0f172a', borderRadius: '20px', padding: '24px', border: '1px solid #1e293b', boxShadow: 'inset 0 4px 6px rgba(0,0,0,0.5)' }}>
+            <div style={{ flex: '1 1 300px', backgroundColor: '#020617', borderRadius: '24px', padding: '28px', border: '1px solid #1e293b', boxShadow: 'inset 0 4px 20px rgba(0,0,0,0.5)', position: 'relative', overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '4px', background: 'linear-gradient(90deg, #3b82f6, #00d084)' }}></div>
               <h3 style={{ margin: '0 0 20px 0', color: '#f8fafc', fontSize: '1.2rem', fontWeight: '800' }}>System Logs</h3>
               <div style={{ fontFamily: 'monospace', color: '#34d399', fontSize: '0.85rem', lineHeight: '1.6' }}>
                 <p style={{ margin: '0 0 8px 0' }}>[10:45:21] <span style={{ color: '#60a5fa' }}>INFO:</span> Database backup completed.</p>
