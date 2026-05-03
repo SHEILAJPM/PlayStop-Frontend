@@ -9,7 +9,10 @@ import Testimonios from './components/Testimonios.jsx';
 import Precios from './components/Precios.jsx';
 import CallToAction from './components/CallToAction.jsx';
 import Footer from "./components/Footer.jsx";
-import { JugadorDashboard, PropietarioDashboard, AdminDashboard, SuperAdminDashboard } from './components/Dashboards.jsx';
+import JugadorDashboard from './components/dashboards/JugadorDashboard.jsx';
+import PropietarioDashboard from './components/dashboards/PropietarioDashboard.jsx';
+import AdminDashboard from './components/dashboards/AdminDashboard.jsx';
+import SuperAdminDashboard from './components/dashboards/SuperAdminDashboard.jsx';
 
 function App() {
   const [user, setUser] = useState(null); // null = No logueado
