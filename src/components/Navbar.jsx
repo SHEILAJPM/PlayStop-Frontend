@@ -168,7 +168,6 @@ const Navbar = ({ onLogin }) => {
                     </p>
                   </div>
                 )}
-            )}
             
             {/* Social Logins */}
             {!selectedRole && modalType !== 'forgot' && (
