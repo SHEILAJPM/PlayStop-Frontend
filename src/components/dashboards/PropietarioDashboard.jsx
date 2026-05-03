@@ -75,7 +75,7 @@ const PropietarioDashboard = ({ user, onLogout }) => {
             <MetricCard title="Ocupación Horaria" value="85%" subtitle="Pico a las 8:00 PM" color="#3b82f6" trend="up" />
           </div>
           
-          <div style={{ backgroundColor: '#ffffff', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0' }}>
+          <div className="dashboard-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <h3 style={{ margin: 0, color: '#0f172a', fontSize: '1.2rem', fontWeight: '800' }}>Últimas Reservas</h3>
               <div style={{ display: 'flex', gap: '10px' }}>
@@ -85,27 +85,27 @@ const PropietarioDashboard = ({ user, onLogout }) => {
             </div>
             
             {/* Simulación de Tabla de Reservas */}
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', whiteSpace: 'nowrap' }}>
+            <div style={{ overflowX: 'auto', padding: '10px 0' }}>
+              <table className="premium-table">
                 <thead>
-                  <tr style={{ borderBottom: '2px solid #e2e8f0', color: '#64748b', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                    <th style={{ padding: '12px 16px', fontWeight: '700' }}>Hora</th>
-                    <th style={{ padding: '12px 16px', fontWeight: '700' }}>Cancha</th>
-                    <th style={{ padding: '12px 16px', fontWeight: '700' }}>Cliente</th>
-                    <th style={{ padding: '12px 16px', fontWeight: '700' }}>Monto</th>
-                    <th style={{ padding: '12px 16px', fontWeight: '700' }}>Estado</th>
-                    <th style={{ padding: '12px 16px', fontWeight: '700' }}>Acción</th>
+                  <tr>
+                    <th>Hora</th>
+                    <th>Cancha</th>
+                    <th>Cliente</th>
+                    <th>Monto</th>
+                    <th>Estado</th>
+                    <th>Acción</th>
                   </tr>
                 </thead>
                 <tbody>
                   {reservas.map((row) => (
-                    <tr key={row.id} className="table-row" style={{ borderBottom: '1px solid #f1f5f9', transition: 'background-color 0.2s' }}>
-                      <td style={{ padding: '16px', fontWeight: '600', color: '#0f172a' }}>{row.time}</td>
-                      <td style={{ padding: '16px', color: '#475569' }}>{row.court}</td>
-                      <td style={{ padding: '16px', color: '#475569', fontWeight: '500' }}>{row.client}</td>
-                      <td style={{ padding: '16px', color: '#0f172a', fontWeight: '700' }}>{row.amount}</td>
-                      <td style={{ padding: '16px', cursor: 'pointer' }} onClick={() => handleToggleEstadoReserva(row.id)} title="Clic para cambiar estado"><span style={{ color: row.color, backgroundColor: row.bg, padding: '4px 10px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: '800' }}>{row.status}</span></td>
-                      <td style={{ padding: '16px', display: 'flex', gap: '8px' }}>
+                    <tr key={row.id} className="table-row">
+                      <td style={{ fontWeight: '600', color: '#0f172a' }}>{row.time}</td>
+                      <td style={{ color: '#475569' }}>{row.court}</td>
+                      <td style={{ color: '#475569', fontWeight: '500' }}>{row.client}</td>
+                      <td style={{ color: '#0f172a', fontWeight: '700' }}>{row.amount}</td>
+                      <td style={{ cursor: 'pointer' }} onClick={() => handleToggleEstadoReserva(row.id)} title="Clic para cambiar estado"><span className="status-badge" style={{ color: row.color, backgroundColor: row.bg }}>{row.status}</span></td>
+                      <td style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                         <button onClick={() => openModal('EDITAR_RESERVA', row)} className="action-btn" style={{ backgroundColor: '#eff6ff', color: '#3b82f6', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }}>Editar</button>
                         <button onClick={() => openModal('ELIMINAR_RESERVA', row)} className="action-btn" style={{ backgroundColor: '#fee2e2', color: '#ef4444', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }}>Cancelar</button>
                       </td>
@@ -119,7 +119,7 @@ const PropietarioDashboard = ({ user, onLogout }) => {
       )}
       
       {activeTab === 'Calendario de Reservas' && (
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0' }}>
+        <div className="dashboard-card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '15px' }}>
             <h3 style={{ margin: '0', color: '#0f172a', fontSize: '1.3rem', fontWeight: '800' }}>Horarios de Hoy</h3>
             <div style={{ display: 'flex', gap: '10px' }}>
@@ -210,21 +210,21 @@ const PropietarioDashboard = ({ user, onLogout }) => {
             <MetricCard title="Comisiones PlayStop" value="S/ 0.00" subtitle="Plan Pro Activo" color="#f59e0b" />
           </div>
 
-          <div style={{ backgroundColor: '#ffffff', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0' }}>
+          <div className="dashboard-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <h3 style={{ margin: '0', color: '#0f172a', fontSize: '1.2rem', fontWeight: '800' }}>Historial de Retiros</h3>
               <button className="action-btn" style={{ backgroundColor: '#00d084', color: '#0f172a', border: 'none', padding: '8px 16px', borderRadius: '8px', fontWeight: '800', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 6px rgba(0,208,132,0.2)' }}>Retirar Fondos</button>
             </div>
             
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', whiteSpace: 'nowrap' }}>
+            <div style={{ overflowX: 'auto', padding: '10px 0' }}>
+              <table className="premium-table">
                 <thead>
-                  <tr style={{ borderBottom: '2px solid #e2e8f0', color: '#64748b', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                    <th style={{ padding: '12px 16px', fontWeight: '700' }}>ID Transacción</th>
-                    <th style={{ padding: '12px 16px', fontWeight: '700' }}>Fecha</th>
-                    <th style={{ padding: '12px 16px', fontWeight: '700' }}>Cuenta Destino</th>
-                    <th style={{ padding: '12px 16px', fontWeight: '700' }}>Monto</th>
-                    <th style={{ padding: '12px 16px', fontWeight: '700' }}>Estado</th>
+                  <tr>
+                    <th>ID Transacción</th>
+                    <th>Fecha</th>
+                    <th>Cuenta Destino</th>
+                    <th>Monto</th>
+                    <th>Estado</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -233,12 +233,12 @@ const PropietarioDashboard = ({ user, onLogout }) => {
                     { id: 'TRX-8741', date: '15 Oct 2023', account: 'BCP ****4567', amount: 'S/ 3,100.00', status: 'Completado', color: '#00d084', bg: '#d1fae5' },
                     { id: 'TRX-7102', date: '08 Oct 2023', account: 'BCP ****4567', amount: 'S/ 2,850.00', status: 'Completado', color: '#00d084', bg: '#d1fae5' },
                   ].map((row, i) => (
-                    <tr key={i} className="table-row" style={{ borderBottom: '1px solid #f1f5f9', transition: 'background-color 0.2s' }}>
-                      <td style={{ padding: '16px', fontWeight: '600', color: '#64748b', fontSize: '0.9rem' }}>{row.id}</td>
-                      <td style={{ padding: '16px', color: '#0f172a', fontWeight: '500' }}>{row.date}</td>
-                      <td style={{ padding: '16px', color: '#475569' }}>{row.account}</td>
-                      <td style={{ padding: '16px', color: '#0f172a', fontWeight: '800' }}>{row.amount}</td>
-                      <td style={{ padding: '16px' }}><span style={{ color: row.color, backgroundColor: row.bg, padding: '4px 10px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: '800' }}>{row.status}</span></td>
+                    <tr key={i} className="table-row">
+                      <td style={{ fontWeight: '600', color: '#64748b', fontSize: '0.9rem' }}>{row.id}</td>
+                      <td style={{ color: '#0f172a', fontWeight: '500' }}>{row.date}</td>
+                      <td style={{ color: '#475569' }}>{row.account}</td>
+                      <td style={{ color: '#0f172a', fontWeight: '800' }}>{row.amount}</td>
+                      <td><span className="status-badge" style={{ color: row.color, backgroundColor: row.bg }}>{row.status}</span></td>
                     </tr>
                   ))}
                 </tbody>
