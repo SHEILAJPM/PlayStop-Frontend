@@ -3,30 +3,43 @@ import { testCredentials } from './data/credentials.js';
 
 const Navbar = ({ onLogin }) => {
   const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState('login'); // 'login' o 'register'
+  const [modalType, setModalType] = useState('login'); // 'login', 'register' o 'forgot'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [selectedRole, setSelectedRole] = useState(null);
 
   const openModal = (type) => {
     setModalType(type);
     setShowModal(true);
     setEmail('');
     setPassword('');
+    setSelectedRole(null);
   };
 
-  const fillCredentials = (testEmail, testPassword) => {
-    setEmail(testEmail);
-    setPassword(testPassword);
+  const handleRoleSelect = (cred) => {
+    setSelectedRole(cred);
+    setEmail(''); // Aseguramos que los campos estén en blanco
+    setPassword('');
   };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
     
-    // Determinar el rol según el email (usando las credenciales de prueba)
-    const cred = testCredentials.find((c) => c.email === email);
-    const role = cred ? cred.role : 'Jugador'; // Jugador por defecto
+    if (modalType === 'forgot') {
+      alert(`Se ha enviado un enlace seguro de recuperación a:\n${email}`);
+      setModalType('login');
+      return;
+    }
+
+    let roleToLogin = 'Jugador';
+    if (selectedRole) {
+      roleToLogin = selectedRole.role;
+    } else {
+      const cred = testCredentials.find((c) => c.email === email);
+      if (cred) roleToLogin = cred.role;
+    }
     
-    if (onLogin) onLogin({ email, role, name: email.split('@')[0] });
+    if (onLogin) onLogin({ email, role: roleToLogin, name: email.split('@')[0] });
     setShowModal(false);
   };
 
@@ -55,39 +68,72 @@ const Navbar = ({ onLogin }) => {
 
       {/* Ventana Emergente (Modal) */}
       {showModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100vh', backgroundColor: 'rgba(15, 23, 42, 0.75)', zIndex: 100, display: 'flex', justifyContent: 'center', alignItems: 'center', backdropFilter: 'blur(10px)', transition: 'all 0.3s ease' }}>
-          <div style={{ backgroundColor: '#ffffff', padding: '40px', borderRadius: '24px', width: '90%', maxWidth: '420px', position: 'relative', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1)', overflow: 'hidden' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100vh', backgroundColor: 'rgba(15, 23, 42, 0.85)', zIndex: 100, display: 'flex', justifyContent: 'center', alignItems: 'center', backdropFilter: 'blur(12px)', animation: 'fadeIn 0.3s ease' }}>
+          <style>
+            {`
+              @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+              @keyframes slideUp { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+              .auth-input { width: 100%; padding: 14px 18px; border-radius: 12px; border: 2px solid #e2e8f0; background-color: #f8fafc; font-size: 1.05rem; transition: all 0.3s; box-sizing: border-box; }
+              .auth-input:focus { border-color: #00d084 !important; box-shadow: 0 0 0 4px rgba(0, 208, 132, 0.15) !important; outline: none; background-color: #ffffff !important; }
+              .auth-btn-submit { background-color: #0f172a; color: white; padding: 16px; border-radius: 14px; border: none; font-weight: 800; font-size: 1.05rem; cursor: pointer; margin-top: 8px; transition: all 0.2s; }
+              .auth-btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.3); background-color: #1e293b; }
+            `}
+          </style>
+          <div style={{ backgroundColor: '#ffffff', padding: '40px', borderRadius: '28px', width: '90%', maxWidth: '440px', position: 'relative', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1)', overflow: 'hidden', animation: 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)' }}>
             
             {/* Elemento decorativo */}
             <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '6px', background: 'linear-gradient(90deg, #00d084, #3b82f6)' }}></div>
 
+            {/* Botón de retroceso al seleccionar un rol */}
+            {selectedRole && (
+              <button onClick={() => setSelectedRole(null)} style={{ position: 'absolute', top: '20px', left: '20px', background: 'none', border: 'none', fontSize: '0.9rem', cursor: 'pointer', color: '#64748b', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                ← Volver
+              </button>
+            )}
+
             <button onClick={() => setShowModal(false)} style={{ position: 'absolute', top: '20px', right: '20px', background: '#f3f4f6', border: 'none', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '1rem', cursor: 'pointer', color: '#64748b', transition: 'all 0.2s ease' }} onMouseOver={(e) => {e.currentTarget.style.backgroundColor = '#e5e7eb'; e.currentTarget.style.color = '#111827'}} onMouseOut={(e) => {e.currentTarget.style.backgroundColor = '#f3f4f6'; e.currentTarget.style.color = '#64748b'}}>✖</button>
             
-            <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-              <img src="/favicon.svg" alt="PlayStop" style={{ width: '48px', height: '48px', margin: '0 auto 20px auto', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0, 208, 132, 0.3)' }} />
-              <h2 style={{ margin: '0 0 8px 0', color: '#0f172a', fontSize: '1.8rem', fontWeight: '800', letterSpacing: '-0.5px' }}>
-                {modalType === 'login' ? 'Bienvenido de nuevo' : 'Crea tu cuenta'}
-              </h2>
-              <p style={{ margin: 0, color: '#64748b', fontSize: '0.95rem' }}>
-                {modalType === 'login' ? 'Ingresa tus datos para continuar' : 'Comienza a gestionar tus partidos hoy mismo'}
-              </p>
-            </div>
+            {selectedRole ? (
+              <div style={{ textAlign: 'center', marginBottom: '30px', marginTop: '10px' }}>
+                <div style={{ fontSize: '48px', marginBottom: '10px' }}>{selectedRole.icon}</div>
+                <h2 style={{ margin: '0 0 8px 0', color: '#0f172a', fontSize: '1.6rem', fontWeight: '800', letterSpacing: '-0.5px' }}>
+                  Acceso {selectedRole.role}
+                </h2>
+                <p style={{ margin: 0, color: '#64748b', fontSize: '0.95rem' }}>
+                  Estás iniciando sesión como {selectedRole.role.toLowerCase()}
+                </p>
+              </div>
+            ) : (
+              <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+                <img src="/favicon.svg" alt="PlayStop" style={{ width: '48px', height: '48px', margin: '0 auto 20px auto', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0, 208, 132, 0.3)' }} />
+                <h2 style={{ margin: '0 0 8px 0', color: '#0f172a', fontSize: '1.8rem', fontWeight: '800', letterSpacing: '-0.5px' }}>
+                  {modalType === 'login' ? 'Bienvenido de nuevo' : modalType === 'register' ? 'Crea tu cuenta' : 'Recuperar contraseña'}
+                </h2>
+                <p style={{ margin: 0, color: '#64748b', fontSize: '0.95rem' }}>
+                  {modalType === 'login' ? 'Ingresa tus datos para continuar' : modalType === 'register' ? 'Comienza a gestionar tus partidos hoy mismo' : 'Ingresa tu correo y te enviaremos un enlace seguro'}
+                </p>
+              </div>
+            )}
             
             {/* Social Logins */}
-            <div style={{ display: 'flex', gap: '15px', marginBottom: '25px' }}>
-               <button style={{ flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0', backgroundColor: '#ffffff', color: '#0f172a', fontWeight: '600', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', cursor: 'pointer', transition: 'all 0.2s ease', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}>
-                 <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" alt="Google" style={{ width: '18px', height: '18px' }} /> Google
-               </button>
-               <button style={{ flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0', backgroundColor: '#ffffff', color: '#0f172a', fontWeight: '600', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', cursor: 'pointer', transition: 'all 0.2s ease', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}>
-                 <img src="https://cdn-icons-png.flaticon.com/512/0/747.png" alt="Apple" style={{ width: '18px', height: '18px' }} /> Apple
-               </button>
-            </div>
+            {!selectedRole && modalType !== 'forgot' && (
+              <>
+                <div style={{ display: 'flex', gap: '15px', marginBottom: '25px' }}>
+                   <button style={{ flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0', backgroundColor: '#ffffff', color: '#0f172a', fontWeight: '600', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', cursor: 'pointer', transition: 'all 0.2s ease', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}>
+                     <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" alt="Google" style={{ width: '18px', height: '18px' }} /> Google
+                   </button>
+                   <button style={{ flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0', backgroundColor: '#ffffff', color: '#0f172a', fontWeight: '600', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', cursor: 'pointer', transition: 'all 0.2s ease', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}>
+                     <img src="https://cdn-icons-png.flaticon.com/512/0/747.png" alt="Apple" style={{ width: '18px', height: '18px' }} /> Apple
+                   </button>
+                </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', margin: '20px 0', color: '#94a3b8', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px' }}>
-               <div style={{ flex: 1, height: '1px', backgroundColor: '#e2e8f0' }}></div>
-               <span style={{ padding: '0 10px', fontWeight: '600' }}>O con email</span>
-               <div style={{ flex: 1, height: '1px', backgroundColor: '#e2e8f0' }}></div>
-            </div>
+                <div style={{ display: 'flex', alignItems: 'center', margin: '20px 0', color: '#94a3b8', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                   <div style={{ flex: 1, height: '1px', backgroundColor: '#e2e8f0' }}></div>
+                   <span style={{ padding: '0 10px', fontWeight: '600' }}>O con email</span>
+                   <div style={{ flex: 1, height: '1px', backgroundColor: '#e2e8f0' }}></div>
+                </div>
+              </>
+            )}
 
             <form style={{ display: 'flex', flexDirection: 'column', gap: '16px' }} onSubmit={handleFormSubmit}>
               {modalType === 'register' && (
@@ -100,26 +146,29 @@ const Navbar = ({ onLogin }) => {
                 <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '6px' }}>Correo electrónico</label>
                 <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@correo.com" style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid #cbd5e1', fontSize: '1rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box' }} onFocus={(e) => e.currentTarget.style.borderColor = '#00d084'} onBlur={(e) => e.currentTarget.style.borderColor = '#cbd5e1'} />
               </div>
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                  <label style={{ fontSize: '0.85rem', fontWeight: '600', color: '#475569' }}>Contraseña</label>
-                  {modalType === 'login' && <span style={{ fontSize: '0.8rem', color: '#00d084', fontWeight: '600', cursor: 'pointer' }}>¿Olvidaste tu contraseña?</span>}
+              
+              {modalType !== 'forgot' && (
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                    <label style={{ fontSize: '0.85rem', fontWeight: '600', color: '#475569' }}>Contraseña</label>
+                    {modalType === 'login' && <span onClick={() => setModalType('forgot')} style={{ fontSize: '0.8rem', color: '#00d084', fontWeight: '600', cursor: 'pointer', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = '#059669'} onMouseOut={(e) => e.currentTarget.style.color = '#00d084'}>¿Olvidaste tu contraseña?</span>}
+                  </div>
+                  <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid #cbd5e1', fontSize: '1rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box' }} onFocus={(e) => e.currentTarget.style.borderColor = '#00d084'} onBlur={(e) => e.currentTarget.style.borderColor = '#cbd5e1'} />
                 </div>
-                <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid #cbd5e1', fontSize: '1rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box' }} onFocus={(e) => e.currentTarget.style.borderColor = '#00d084'} onBlur={(e) => e.currentTarget.style.borderColor = '#cbd5e1'} />
-              </div>
+              )}
               
               <button type="submit" style={{ backgroundColor: '#0f172a', color: 'white', padding: '14px', borderRadius: '12px', border: 'none', fontWeight: '700', fontSize: '1rem', cursor: 'pointer', marginTop: '8px', transition: 'background-color 0.2s', boxShadow: '0 4px 6px -1px rgba(15, 23, 42, 0.2)' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#1e293b'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0f172a'}>
-                {modalType === 'login' ? 'Iniciar Sesión' : 'Crear Cuenta'}
+                {modalType === 'login' ? 'Iniciar Sesión' : modalType === 'register' ? 'Crear Cuenta' : 'Enviar Enlace'}
               </button>
             </form>
 
             {/* Credenciales de Prueba (Demo Roles) */}
-            {modalType === 'login' && (
+            {!selectedRole && modalType === 'login' && (
               <div style={{ marginTop: '20px', padding: '16px', backgroundColor: '#f8fafc', borderRadius: '12px', border: '1px dashed #cbd5e1' }}>
-                <p style={{ margin: '0 0 12px 0', fontSize: '0.75rem', color: '#64748b', fontWeight: '700', textAlign: 'center', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Credenciales de Prueba</p>
+                <p style={{ margin: '0 0 12px 0', fontSize: '0.75rem', color: '#64748b', fontWeight: '700', textAlign: 'center', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Acceso Rápido (Demo)</p>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                   {testCredentials.map((cred) => (
-                    <button key={cred.id} type="button" onClick={() => fillCredentials(cred.email, cred.password)} style={{ fontSize: '0.8rem', padding: '8px', borderRadius: '8px', border: '1px solid #e2e8f0', backgroundColor: '#ffffff', cursor: 'pointer', fontWeight: '600', color: '#475569', transition: 'all 0.2s' }} onMouseOver={(e) => {e.currentTarget.style.borderColor='#00d084'; e.currentTarget.style.color='#0f172a'}} onMouseOut={(e) => {e.currentTarget.style.borderColor='#e2e8f0'; e.currentTarget.style.color='#475569'}}>
+                    <button key={cred.id} type="button" onClick={() => handleRoleSelect(cred)} style={{ fontSize: '0.8rem', padding: '8px', borderRadius: '8px', border: '1px solid #e2e8f0', backgroundColor: '#ffffff', cursor: 'pointer', fontWeight: '600', color: '#475569', transition: 'all 0.2s' }} onMouseOver={(e) => {e.currentTarget.style.borderColor='#00d084'; e.currentTarget.style.color='#0f172a'}} onMouseOut={(e) => {e.currentTarget.style.borderColor='#e2e8f0'; e.currentTarget.style.color='#475569'}}>
                       {cred.icon} {cred.role}
                     </button>
                   ))}
@@ -127,10 +176,18 @@ const Navbar = ({ onLogin }) => {
               </div>
             )}
             
-            <p style={{ textAlign: 'center', marginTop: '25px', color: '#64748b', fontSize: '0.95rem' }}>
-              {modalType === 'login' ? '¿No tienes una cuenta? ' : '¿Ya tienes una cuenta? '}
-              <span onClick={() => setModalType(modalType === 'login' ? 'register' : 'login')} style={{ color: '#00d084', fontWeight: '700', cursor: 'pointer', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = '#059669'} onMouseOut={(e) => e.currentTarget.style.color = '#00d084'}>{modalType === 'login' ? 'Regístrate gratis' : 'Inicia sesión'}</span>
-            </p>
+            {!selectedRole && (
+              <p style={{ textAlign: 'center', marginTop: '25px', color: '#64748b', fontSize: '0.95rem' }}>
+                {modalType === 'forgot' ? (
+                  <span onClick={() => setModalType('login')} style={{ color: '#00d084', fontWeight: '700', cursor: 'pointer', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = '#059669'} onMouseOut={(e) => e.currentTarget.style.color = '#00d084'}>Volver a Iniciar Sesión</span>
+                ) : (
+                  <>
+                    {modalType === 'login' ? '¿No tienes una cuenta? ' : '¿Ya tienes una cuenta? '}
+                    <span onClick={() => setModalType(modalType === 'login' ? 'register' : 'login')} style={{ color: '#00d084', fontWeight: '700', cursor: 'pointer', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = '#059669'} onMouseOut={(e) => e.currentTarget.style.color = '#00d084'}>{modalType === 'login' ? 'Regístrate gratis' : 'Inicia sesión'}</span>
+                  </>
+                )}
+              </p>
+            )}
           </div>
         </div>
       )}
