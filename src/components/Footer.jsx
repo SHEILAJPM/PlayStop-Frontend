@@ -1,8 +1,7 @@
-
 const Footer = () => (
   <footer style={{ padding: '80px 5% 30px 5%', backgroundColor: '#0a0f1c', color: '#94a3b8', borderTop: '1px solid #1e293b' }}>
     <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', maxWidth: '1200px', margin: '0 auto', gap: '50px' }}>
-      
+
       {/* Columna 1: Logo, Descripción y Newsletter */}
       <div style={{ flex: '2 1 350px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
@@ -12,7 +11,7 @@ const Footer = () => (
         <p style={{ lineHeight: '1.7', marginBottom: '20px', maxWidth: '380px', fontSize: '0.95rem', color: '#94a3b8' }}>
           Digitalizando el ecosistema deportivo. Encuentra tu cancha ideal o gestiona tu complejo con la mejor tecnología del mercado.
         </p>
-        
+
         {/* Mini formulario de Newsletter (Estilo Píldora) */}
         <div style={{ display: 'flex', alignItems: 'center', backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '100px', padding: '6px', marginBottom: '30px', maxWidth: '380px', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.1)' }}>
           <input type="email" placeholder="Tu correo electrónico" style={{ flex: 1, padding: '10px 16px', backgroundColor: 'transparent', border: 'none', color: 'white', outline: 'none', fontSize: '0.9rem' }} />
@@ -65,7 +64,7 @@ const Footer = () => (
       </div>
 
     </div>
-    
+
     {/* Barra Inferior */}
     <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '20px', maxWidth: '1200px', margin: '60px auto 0 auto', paddingTop: '30px', borderTop: '1px solid #1e293b', fontSize: '0.9rem' }}>
       <p style={{ margin: 0, color: '#64748b' }}>© {new Date().getFullYear()} PlayStop. Todos los derechos reservados.</p>

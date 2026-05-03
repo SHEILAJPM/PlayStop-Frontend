@@ -7,7 +7,7 @@ import ParaClubes from './components/ParaClubes.jsx';
 import Testimonios from './components/Testimonios.jsx';
 import Precios from './components/Precios.jsx';
 import CallToAction from './components/CallToAction.jsx';
-import Footer from './components/Footer.jsx';
+import Footer from "./components/Footer.jsx";
 
 function App() {
   return (
