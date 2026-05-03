@@ -142,11 +142,11 @@ export const DashboardLayout = ({ user, onLogout, title, menuItems, activeTab, o
         <div style={{ padding: '24px', borderTop: '1px solid #1e293b', backgroundColor: '#0b1120' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
             <div style={{ width: '44px', height: '44px', borderRadius: '12px', backgroundColor: '#e2e8f0', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#0f172a', fontWeight: '900', fontSize: '1.2rem' }}>
-              {user.name.charAt(0).toUpperCase()}
+              {user?.name?.charAt(0)?.toUpperCase() || 'U'}
             </div>
             <div style={{ overflow: 'hidden' }}>
-              <p style={{ margin: 0, color: '#f8fafc', fontWeight: '700', fontSize: '0.9rem', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{user.name}</p>
-              <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.8rem', fontWeight: '500' }}>{user.role}</p>
+              <p style={{ margin: 0, color: '#f8fafc', fontWeight: '700', fontSize: '0.9rem', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{user?.name || 'Usuario'}</p>
+              <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.8rem', fontWeight: '500' }}>{user?.role || ''}</p>
             </div>
           </div>
           <button onClick={onLogout} className="action-btn" style={{ width: '100%', padding: '12px', borderRadius: '12px', backgroundColor: '#1e293b', color: '#f8fafc', border: 'none', fontWeight: '600', cursor: 'pointer' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#ef4444'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#1e293b'}>
