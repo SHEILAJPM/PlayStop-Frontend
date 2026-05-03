@@ -138,29 +138,29 @@ const JugadorDashboard = ({ user, onLogout }) => {
       )}
 
       {activeTab === 'Mis Reservas' && (
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0' }}>
+        <div className="dashboard-card">
           <h3 style={{ margin: '0 0 20px 0', color: '#0f172a', fontSize: '1.3rem', fontWeight: '800' }}>Mis Próximos Partidos</h3>
           
           {reservas.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>No tienes reservas activas en este momento.</div>
           ) : (
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', whiteSpace: 'nowrap' }}>
+            <div style={{ overflowX: 'auto', padding: '10px 0' }}>
+              <table className="premium-table">
                 <thead>
-                  <tr style={{ borderBottom: '2px solid #e2e8f0', color: '#64748b', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                    <th style={{ padding: '12px 16px', fontWeight: '700' }}>Fecha y Hora</th>
-                    <th style={{ padding: '12px 16px', fontWeight: '700' }}>Cancha</th>
-                    <th style={{ padding: '12px 16px', fontWeight: '700' }}>Estado</th>
-                    <th style={{ padding: '12px 16px', fontWeight: '700' }}>Acción</th>
+                  <tr>
+                    <th>Fecha y Hora</th>
+                    <th>Cancha</th>
+                    <th>Estado</th>
+                    <th>Acción</th>
                   </tr>
                 </thead>
                 <tbody>
                   {reservas.map((row) => (
-                    <tr key={row.id} className="table-row" style={{ borderBottom: '1px solid #f1f5f9', transition: 'background-color 0.2s' }}>
-                      <td style={{ padding: '16px', fontWeight: '700', color: '#0f172a' }}>{row.date}</td>
-                      <td style={{ padding: '16px', color: '#475569' }}>{row.court}</td>
-                      <td style={{ padding: '16px' }}><span style={{ color: row.color, backgroundColor: row.bg, padding: '4px 10px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: '800' }}>{row.status}</span></td>
-                      <td style={{ padding: '16px', display: 'flex', gap: '8px' }}>
+                    <tr key={row.id} className="table-row">
+                      <td style={{ fontWeight: '700', color: '#0f172a' }}>{row.date}</td>
+                      <td style={{ color: '#475569' }}>{row.court}</td>
+                      <td><span className="status-badge" style={{ color: row.color, backgroundColor: row.bg }}>{row.status}</span></td>
+                      <td style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                         <button onClick={() => openModal('EDITAR_RESERVA', row)} className="action-btn" style={{ backgroundColor: '#eff6ff', color: '#3b82f6', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }}>Editar</button>
                         <button onClick={() => openModal('CANCELAR_RESERVA', row)} className="action-btn" style={{ backgroundColor: '#fee2e2', color: '#ef4444', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }}>Cancelar</button>
                       </td>
@@ -174,7 +174,7 @@ const JugadorDashboard = ({ user, onLogout }) => {
       )}
 
       {activeTab === 'Mis Amigos' && (
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0' }}>
+        <div className="dashboard-card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
             <h3 style={{ margin: 0, color: '#0f172a', fontSize: '1.3rem', fontWeight: '800' }}>Lista de Jugadores</h3>
             <button onClick={() => openModal('AÑADIR_AMIGO')} className="action-btn" style={{ backgroundColor: '#0f172a', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '10px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }}>+ Añadir Amigo</button>
