@@ -1,7 +1,7 @@
 import  { useState } from 'react';
 import { testCredentials } from './data/credentials.js';
 
-const Navbar = () => {
+const Navbar = ({ onLogin }) => {
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState('login'); // 'login' o 'register'
   const [email, setEmail] = useState('');
@@ -21,7 +21,12 @@ const Navbar = () => {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    alert(`¡Simulación exitosa!\n\nIniciando sesión en PlayStop con el usuario:\n${email}`);
+    
+    // Determinar el rol según el email (usando las credenciales de prueba)
+    const cred = testCredentials.find((c) => c.email === email);
+    const role = cred ? cred.role : 'Jugador'; // Jugador por defecto
+    
+    if (onLogin) onLogin({ email, role, name: email.split('@')[0] });
     setShowModal(false);
   };
 
