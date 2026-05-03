@@ -49,30 +49,30 @@ const AdminDashboard = ({ user, onLogout }) => {
             <MetricCard title="Tickets Abiertos" value="5" subtitle="3 de prioridad alta" color="#ef4444" trend="down" />
           </div>
           
-          <div style={{ backgroundColor: '#ffffff', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0' }}>
+          <div className="dashboard-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <h3 style={{ margin: 0, color: '#0f172a', fontSize: '1.2rem', fontWeight: '800' }}>Solicitudes de Clubes</h3>
               <button onClick={() => openModal('AGREGAR_CLUB')} className="action-btn" style={{ backgroundColor: '#0f172a', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '8px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 6px rgba(15,23,42,0.2)' }}>+ Registrar Club</button>
             </div>
             
             {/* Simulación de Tabla Admin */}
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', whiteSpace: 'nowrap' }}>
+            <div style={{ overflowX: 'auto', padding: '10px 0' }}>
+              <table className="premium-table">
                 <thead>
-                  <tr style={{ borderBottom: '2px solid #e2e8f0', color: '#64748b', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                    <th style={{ padding: '12px 16px', fontWeight: '700' }}>Complejo Deportivo</th>
-                    <th style={{ padding: '12px 16px', fontWeight: '700' }}>Ubicación</th>
-                    <th style={{ padding: '12px 16px', fontWeight: '700' }}>Plan Solicitado</th>
-                    <th style={{ padding: '12px 16px', fontWeight: '700' }}>Acción</th>
+                  <tr>
+                    <th>Complejo Deportivo</th>
+                    <th>Ubicación</th>
+                    <th>Plan Solicitado</th>
+                    <th>Acción</th>
                   </tr>
                 </thead>
                 <tbody>
                   {clubes.map((row) => (
-                    <tr key={row.id} className="table-row" style={{ borderBottom: '1px solid #f1f5f9', transition: 'background-color 0.2s' }}>
-                      <td style={{ padding: '16px', fontWeight: '700', color: '#0f172a' }}>{row.name}</td>
-                      <td style={{ padding: '16px', color: '#475569' }}>{row.location}</td>
-                      <td style={{ padding: '16px' }}><span style={{ color: '#3b82f6', backgroundColor: '#eff6ff', padding: '4px 10px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: '800' }}>{row.plan}</span></td>
-                      <td style={{ padding: '16px', display: 'flex', gap: '8px' }}>
+                    <tr key={row.id} className="table-row">
+                      <td style={{ fontWeight: '700', color: '#0f172a' }}>{row.name}</td>
+                      <td style={{ color: '#475569' }}>{row.location}</td>
+                      <td><span className="status-badge" style={{ color: '#3b82f6', backgroundColor: '#eff6ff' }}>{row.plan}</span></td>
+                      <td style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                         <button onClick={() => openModal('EDITAR_CLUB', row)} className="action-btn" style={{ backgroundColor: '#eff6ff', color: '#3b82f6', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }}>Editar</button>
                         <button onClick={() => openModal('ELIMINAR_CLUB', row)} className="action-btn" style={{ backgroundColor: '#fee2e2', color: '#ef4444', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }}>Eliminar</button>
                       </td>
