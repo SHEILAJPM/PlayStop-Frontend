@@ -112,10 +112,10 @@ const AdminDashboard = ({ user, onLogout }) => {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '28px' }}>
             <div>
               <h2 style={{ margin: '0 0 8px 0', color: '#0f172a', fontSize: '1.75rem', fontWeight: '900', letterSpacing: '-0.5px' }}>
-                {modal.action.includes('AGREGAR') ? 'Registrar Nuevo Club' : modal.action.includes('EDITAR') ? 'Editar Información' : 'Confirmar Acción'}
+                {modal.action?.includes('AGREGAR') ? 'Registrar Nuevo Club' : modal.action?.includes('EDITAR') ? 'Editar Información' : 'Confirmar Acción'}
               </h2>
               <p style={{ margin: 0, color: '#64748b', fontSize: '0.95rem' }}>
-                {modal.action.includes('AGREGAR') ? 'Ingresa los datos del nuevo complejo deportivo.' : modal.action.includes('EDITAR') ? 'Actualiza los datos del club seleccionado.' : 'Por favor, confirma si deseas proceder con esta acción.'}
+                {modal.action?.includes('AGREGAR') ? 'Ingresa los datos del nuevo complejo deportivo.' : modal.action?.includes('EDITAR') ? 'Actualiza los datos del club seleccionado.' : 'Por favor, confirma si deseas proceder con esta acción.'}
               </p>
             </div>
             <button onClick={closeModal} className="modal-close" style={{ background: 'transparent', border: 'none', fontSize: '1.75rem', cursor: 'pointer', color: '#94a3b8', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s', marginTop: '-4px' }}>&times;</button>
@@ -146,7 +146,7 @@ const AdminDashboard = ({ user, onLogout }) => {
             {modal.action === 'EDITAR_CLUB' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <label style={{ fontSize: '0.9rem', fontWeight: '800', color: '#334155', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Actualizar Plan</label>
-                <select name="plan" className="modal-input" required defaultValue={modal.payload.plan} style={{ width: '100%', padding: '14px 18px', borderRadius: '12px', border: '2px solid #e2e8f0', backgroundColor: '#f8fafc', fontSize: '1.05rem', transition: 'all 0.3s', cursor: 'pointer' }}>
+                <select name="plan" className="modal-input" required defaultValue={modal.payload?.plan} style={{ width: '100%', padding: '14px 18px', borderRadius: '12px', border: '2px solid #e2e8f0', backgroundColor: '#f8fafc', fontSize: '1.05rem', transition: 'all 0.3s', cursor: 'pointer' }}>
                   <option value="Básico">Plan Básico</option>
                   <option value="PRO">Plan PRO</option>
                 </select>
@@ -156,7 +156,7 @@ const AdminDashboard = ({ user, onLogout }) => {
             {modal.action === 'ELIMINAR_CLUB' && (
               <div style={{ padding: '20px', backgroundColor: '#fef2f2', borderRadius: '16px', border: '1px solid #fecaca' }}>
                 <p style={{ margin: 0, color: '#991b1b', fontSize: '1.05rem', lineHeight: '1.6' }}>
-                  ¿Estás seguro de eliminar el club <strong style={{ color: '#7f1d1d' }}>{modal.payload.name}</strong> de forma permanente?<br/><br/>
+                  ¿Estás seguro de eliminar el club <strong style={{ color: '#7f1d1d' }}>{modal.payload?.name}</strong> de forma permanente?<br/><br/>
                   Esta acción eliminará todos sus datos y <span style={{ textDecoration: 'underline' }}>no se puede deshacer</span>.
                 </p>
               </div>
@@ -166,8 +166,8 @@ const AdminDashboard = ({ user, onLogout }) => {
               <button type="button" onClick={closeModal} className="modal-btn-cancel" style={{ flex: 1, padding: '16px', borderRadius: '14px', border: '2px solid #e2e8f0', backgroundColor: '#f8fafc', color: '#64748b', fontWeight: '800', fontSize: '1.05rem', cursor: 'pointer', transition: 'all 0.2s' }}>
                 Cancelar
               </button>
-              <button type="submit" className={modal.action.includes('ELIMINAR') ? 'modal-btn-delete' : 'modal-btn-submit'} style={{ flex: 1, padding: '16px', borderRadius: '14px', border: 'none', backgroundColor: modal.action.includes('ELIMINAR') ? '#ef4444' : '#00d084', color: '#fff', fontWeight: '800', fontSize: '1.05rem', cursor: 'pointer', transition: 'all 0.2s' }}>
-                {modal.action.includes('ELIMINAR') ? 'Sí, eliminar club' : 'Guardar Cambios'}
+              <button type="submit" className={modal.action?.includes('ELIMINAR') ? 'modal-btn-delete' : 'modal-btn-submit'} style={{ flex: 1, padding: '16px', borderRadius: '14px', border: 'none', backgroundColor: modal.action?.includes('ELIMINAR') ? '#ef4444' : '#00d084', color: '#fff', fontWeight: '800', fontSize: '1.05rem', cursor: 'pointer', transition: 'all 0.2s' }}>
+                {modal.action?.includes('ELIMINAR') ? 'Sí, eliminar club' : 'Guardar Cambios'}
               </button>
             </div>
           </form>
