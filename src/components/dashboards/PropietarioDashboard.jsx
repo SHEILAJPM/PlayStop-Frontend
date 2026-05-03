@@ -33,9 +33,12 @@ const PropietarioDashboard = ({ user, onLogout }) => {
     e.preventDefault();
     const fd = new FormData(e.target);
     switch(modal.action) {
-      case 'AGREGAR_CANCHA':
-        setCanchas([...canchas, { id: Date.now(), img: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=500&q=80', name: fd.get('name'), type: 'Nueva Cancha', price: fd.get('price') || 'S/ 80', status: 'Operativa', color: '#00d084' }]);
+      case 'AGREGAR_CANCHA': {
+        const file = fd.get('image');
+        const imageUrl = file && file.size > 0 ? URL.createObjectURL(file) : 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=500&q=80';
+        setCanchas([...canchas, { id: Date.now(), img: imageUrl, name: fd.get('name'), type: 'Nueva Cancha', price: fd.get('price') || 'S/ 80', status: 'Operativa', color: '#00d084' }]);
         break;
+      }
       case 'EDITAR_CANCHA':
         setCanchas(canchas.map(c => c.id === modal.payload.id ? { ...c, price: fd.get('price') } : c));
         break;
@@ -266,6 +269,22 @@ const PropietarioDashboard = ({ user, onLogout }) => {
             .modal-btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 208, 132, 0.3); background-color: #00b875 !important; }
             .modal-btn-delete:hover { background-color: #dc2626 !important; transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.3); }
             .modal-close:hover { background-color: #f1f5f9; color: #ef4444 !important; }
+            
+            /* Estilos profesionales para el input de tipo archivo */
+            .modal-input[type="file"] { padding: 8px 12px !important; color: #64748b; font-weight: 500; }
+            .modal-input[type="file"]::file-selector-button {
+              margin-right: 12px;
+              padding: 6px 14px;
+              font-size: 0.85rem;
+              border: none;
+              background-color: #0f172a;
+              color: #ffffff;
+              border-radius: 6px;
+              font-weight: 700;
+              cursor: pointer;
+              transition: all 0.2s;
+            }
+            .modal-input[type="file"]::file-selector-button:hover { background-color: #1e293b; transform: translateY(-1px); box-shadow: 0 4px 6px rgba(15, 23, 42, 0.2); }
           `}
         </style>
         <div style={{ backgroundColor: '#ffffff', padding: '40px', borderRadius: '28px', width: '90%', maxWidth: '500px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1)', animation: 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)' }}>
@@ -273,10 +292,10 @@ const PropietarioDashboard = ({ user, onLogout }) => {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '28px' }}>
             <div>
               <h2 style={{ margin: '0 0 8px 0', color: '#0f172a', fontSize: '1.75rem', fontWeight: '900', letterSpacing: '-0.5px' }}>
-                {modal.action.includes('AGREGAR') ? 'Registrar Nuevo' : modal.action.includes('EDITAR') ? 'Editar Información' : 'Confirmar Acción'}
+                {modal.action?.includes('AGREGAR') ? 'Registrar Nuevo' : modal.action?.includes('EDITAR') ? 'Editar Información' : 'Confirmar Acción'}
               </h2>
               <p style={{ margin: 0, color: '#64748b', fontSize: '0.95rem' }}>
-                {modal.action.includes('AGREGAR') ? 'Ingresa los datos para realizar un nuevo registro.' : modal.action.includes('EDITAR') ? 'Actualiza los datos del registro seleccionado.' : 'Por favor, confirma si deseas proceder con esta acción.'}
+                {modal.action?.includes('AGREGAR') ? 'Ingresa los datos para realizar un nuevo registro.' : modal.action?.includes('EDITAR') ? 'Actualiza los datos del registro seleccionado.' : 'Por favor, confirma si deseas proceder con esta acción.'}
               </p>
             </div>
             <button onClick={closeModal} className="modal-close" style={{ background: 'transparent', border: 'none', fontSize: '1.75rem', cursor: 'pointer', color: '#94a3b8', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s', marginTop: '-4px' }}>&times;</button>
@@ -294,13 +313,17 @@ const PropietarioDashboard = ({ user, onLogout }) => {
                   <label style={{ fontSize: '0.9rem', fontWeight: '800', color: '#334155', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Precio por hora</label>
                   <input name="price" className="modal-input" required placeholder="Ej. S/ 80" style={{ width: '100%', padding: '14px 18px', borderRadius: '12px', border: '2px solid #e2e8f0', backgroundColor: '#f8fafc', fontSize: '1.05rem', transition: 'all 0.3s' }} />
                 </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label style={{ fontSize: '0.9rem', fontWeight: '800', color: '#334155', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Foto de la Cancha</label>
+                <input name="image" type="file" accept="image/*" className="modal-input" style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '2px solid #e2e8f0', backgroundColor: '#f8fafc', fontSize: '1rem', transition: 'all 0.3s', cursor: 'pointer' }} />
+              </div>
               </>
             )}
 
             {modal.action === 'EDITAR_CANCHA' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <label style={{ fontSize: '0.9rem', fontWeight: '800', color: '#334155', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Actualizar Precio</label>
-                <input name="price" className="modal-input" required defaultValue={modal.payload.price} placeholder="Ej. S/ 80" style={{ width: '100%', padding: '14px 18px', borderRadius: '12px', border: '2px solid #e2e8f0', backgroundColor: '#f8fafc', fontSize: '1.05rem', transition: 'all 0.3s' }} />
+                <input name="price" className="modal-input" required defaultValue={modal.payload?.price} placeholder="Ej. S/ 80" style={{ width: '100%', padding: '14px 18px', borderRadius: '12px', border: '2px solid #e2e8f0', backgroundColor: '#f8fafc', fontSize: '1.05rem', transition: 'all 0.3s' }} />
               </div>
             )}
 
@@ -324,14 +347,14 @@ const PropietarioDashboard = ({ user, onLogout }) => {
             {modal.action === 'EDITAR_RESERVA' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <label style={{ fontSize: '0.9rem', fontWeight: '800', color: '#334155', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Actualizar Horario</label>
-                <input name="time" className="modal-input" required defaultValue={modal.payload.time} placeholder="Ej. 18:00 - 19:00" style={{ width: '100%', padding: '14px 18px', borderRadius: '12px', border: '2px solid #e2e8f0', backgroundColor: '#f8fafc', fontSize: '1.05rem', transition: 'all 0.3s' }} />
+                <input name="time" className="modal-input" required defaultValue={modal.payload?.time} placeholder="Ej. 18:00 - 19:00" style={{ width: '100%', padding: '14px 18px', borderRadius: '12px', border: '2px solid #e2e8f0', backgroundColor: '#f8fafc', fontSize: '1.05rem', transition: 'all 0.3s' }} />
               </div>
             )}
 
-            {modal.action.includes('ELIMINAR') && (
+            {modal.action?.includes('ELIMINAR') && (
               <div style={{ padding: '20px', backgroundColor: '#fef2f2', borderRadius: '16px', border: '1px solid #fecaca' }}>
                 <p style={{ margin: 0, color: '#991b1b', fontSize: '1.05rem', lineHeight: '1.6' }}>
-                  ¿Estás seguro de eliminar de forma permanente <strong style={{ color: '#7f1d1d' }}>{modal.payload.name || modal.payload.client}</strong>?<br/><br/>
+                  ¿Estás seguro de eliminar de forma permanente <strong style={{ color: '#7f1d1d' }}>{modal.payload?.name || modal.payload?.client}</strong>?<br/><br/>
                   Esta acción <span style={{ textDecoration: 'underline' }}>no se puede deshacer</span>.
                 </p>
               </div>
@@ -341,8 +364,8 @@ const PropietarioDashboard = ({ user, onLogout }) => {
               <button type="button" onClick={closeModal} className="modal-btn-cancel" style={{ flex: 1, padding: '16px', borderRadius: '14px', border: '2px solid #e2e8f0', backgroundColor: '#f8fafc', color: '#64748b', fontWeight: '800', fontSize: '1.05rem', cursor: 'pointer', transition: 'all 0.2s' }}>
                 Cancelar
               </button>
-              <button type="submit" className={modal.action.includes('ELIMINAR') ? 'modal-btn-delete' : 'modal-btn-submit'} style={{ flex: 1, padding: '16px', borderRadius: '14px', border: 'none', backgroundColor: modal.action.includes('ELIMINAR') ? '#ef4444' : '#00d084', color: '#fff', fontWeight: '800', fontSize: '1.05rem', cursor: 'pointer', transition: 'all 0.2s' }}>
-                {modal.action.includes('ELIMINAR') ? 'Sí, eliminar' : 'Guardar Cambios'}
+              <button type="submit" className={modal.action?.includes('ELIMINAR') ? 'modal-btn-delete' : 'modal-btn-submit'} style={{ flex: 1, padding: '16px', borderRadius: '14px', border: 'none', backgroundColor: modal.action?.includes('ELIMINAR') ? '#ef4444' : '#00d084', color: '#fff', fontWeight: '800', fontSize: '1.05rem', cursor: 'pointer', transition: 'all 0.2s' }}>
+                {modal.action?.includes('ELIMINAR') ? 'Sí, eliminar' : 'Guardar Cambios'}
               </button>
             </div>
           </form>
