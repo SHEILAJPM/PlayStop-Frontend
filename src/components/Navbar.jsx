@@ -8,6 +8,28 @@ const Navbar = ({ onLogin }) => {
   const [password, setPassword] = useState('');
   const [selectedRole, setSelectedRole] = useState(null);
 
+  // Contenido de la sección "Cómo Funciona"
+  const steps = [
+    {
+      id: 1,
+      icon: "🔍",
+      title: "Encuentra tu cancha",
+      description: "Filtra por deporte, ubicación y fecha. Explora y compara cientos de complejos deportivos."
+    },
+    {
+      id: 2,
+      icon: "💳",
+      title: "Reserva y divide",
+      description: "Olvídate de cobrar. Reserva la cancha y comparte un enlace para el pago dividido automático."
+    },
+    {
+      id: 3,
+      icon: "🏆",
+      title: "¡A jugar!",
+      description: "Preséntate con tu reserva digital. Disfruta del partido, suma puntos y sube en el ranking."
+    }
+  ];
+
   const openModal = (type) => {
     setModalType(type);
     setShowModal(true);
@@ -53,6 +75,7 @@ const Navbar = ({ onLogin }) => {
         
         <nav style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
           <a href="#" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem' }}>Inicio</a>
+          <a href="#" onClick={(e) => { e.preventDefault(); openModal('como-funciona'); }} style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem' }}>Cómo Funciona</a>
           <a href="#soluciones" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem' }}>Soluciones</a>
           <a href="#clubes" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem' }}>Para Clubes</a>
           <a href="#jugadores" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem' }}>Para Jugadores</a>
@@ -79,13 +102,13 @@ const Navbar = ({ onLogin }) => {
               .auth-btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.3); background-color: #1e293b; }
             `}
           </style>
-          <div style={{ backgroundColor: '#ffffff', padding: '40px', borderRadius: '28px', width: '90%', maxWidth: '440px', position: 'relative', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1)', overflow: 'hidden', animation: 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)' }}>
+          <div style={{ backgroundColor: '#ffffff', padding: '40px', borderRadius: '28px', width: '90%', maxWidth: modalType === 'como-funciona' ? '960px' : '440px', position: 'relative', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1)', overflow: 'hidden', animation: 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)', transition: 'max-width 0.3s ease' }}>
             
             {/* Elemento decorativo */}
             <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '6px', background: 'linear-gradient(90deg, #00d084, #3b82f6)' }}></div>
 
             {/* Botón de retroceso al seleccionar un rol */}
-            {selectedRole && (
+            {selectedRole && modalType !== 'como-funciona' && (
               <button onClick={() => setSelectedRole(null)} style={{ position: 'absolute', top: '20px', left: '20px', background: 'none', border: 'none', fontSize: '0.9rem', cursor: 'pointer', color: '#64748b', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' }}>
                 ← Volver
               </button>
@@ -93,26 +116,58 @@ const Navbar = ({ onLogin }) => {
 
             <button onClick={() => setShowModal(false)} style={{ position: 'absolute', top: '20px', right: '20px', background: '#f3f4f6', border: 'none', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '1rem', cursor: 'pointer', color: '#64748b', transition: 'all 0.2s ease' }} onMouseOver={(e) => {e.currentTarget.style.backgroundColor = '#e5e7eb'; e.currentTarget.style.color = '#111827'}} onMouseOut={(e) => {e.currentTarget.style.backgroundColor = '#f3f4f6'; e.currentTarget.style.color = '#64748b'}}>✖</button>
             
-            {selectedRole ? (
-              <div style={{ textAlign: 'center', marginBottom: '30px', marginTop: '10px' }}>
-                <div style={{ fontSize: '48px', marginBottom: '10px' }}>{selectedRole.icon}</div>
-                <h2 style={{ margin: '0 0 8px 0', color: '#0f172a', fontSize: '1.6rem', fontWeight: '800', letterSpacing: '-0.5px' }}>
-                  Acceso {selectedRole.role}
-                </h2>
-                <p style={{ margin: 0, color: '#64748b', fontSize: '0.95rem' }}>
-                  Estás iniciando sesión como {selectedRole.role.toLowerCase()}
-                </p>
+            {modalType === 'como-funciona' ? (
+              <div style={{ padding: '10px 0' }}>
+                <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+                  <div style={{ display: 'inline-block', padding: '6px 16px', background: 'rgba(0, 208, 132, 0.1)', border: '1px solid rgba(0, 208, 132, 0.3)', color: '#00d084', borderRadius: '20px', fontWeight: '800', fontSize: '0.85rem', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '1px' }}>Simple y Rápido</div>
+                  <h2 style={{ margin: '0 0 16px 0', color: '#0f172a', fontSize: '2.5rem', fontWeight: '900', letterSpacing: '-1px' }}>
+                    Reserva en <span style={{ color: '#00d084' }}>3 simples pasos</span>
+                  </h2>
+                  <p style={{ margin: '0 auto', color: '#64748b', fontSize: '1.1rem', maxWidth: '600px', lineHeight: '1.6' }}>
+                    Diseñamos PlayStop para que no pierdas tiempo organizando. En menos de 2 minutos estarás listo para entrar a la cancha con tu equipo.
+                  </p>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '24px' }}>
+                  {steps.map((step) => (
+                    <div key={step.id} style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '20px', padding: '32px 24px', textAlign: 'center', transition: 'all 0.3s ease', position: 'relative', overflow: 'hidden' }} onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.borderColor = '#00d084'; e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(0, 208, 132, 0.15)'; }} onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.boxShadow = 'none'; }}>
+                      <div style={{ position: 'absolute', top: '-15px', right: '-10px', fontSize: '8rem', fontWeight: '900', color: '#f1f5f9', zIndex: 0, lineHeight: 1, pointerEvents: 'none' }}>{step.id}</div>
+                      <div style={{ position: 'relative', zIndex: 1 }}>
+                        <div style={{ width: '70px', height: '70px', borderRadius: '18px', background: 'linear-gradient(135deg, rgba(0, 208, 132, 0.15), rgba(59, 130, 246, 0.05))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.2rem', margin: '0 auto 20px auto', border: '1px solid rgba(0, 208, 132, 0.2)' }}>{step.icon}</div>
+                        <h3 style={{ fontSize: '1.25rem', color: '#0f172a', fontWeight: '800', marginBottom: '12px', letterSpacing: '-0.5px' }}>{step.id}. {step.title}</h3>
+                        <p style={{ color: '#475569', fontSize: '1rem', lineHeight: '1.6', margin: 0, fontWeight: '500' }}>{step.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ textAlign: 'center', marginTop: '40px' }}>
+                  <button onClick={() => setModalType('register')} style={{ backgroundColor: '#0f172a', color: 'white', padding: '16px 36px', borderRadius: '14px', border: 'none', fontWeight: '800', fontSize: '1.1rem', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 10px 15px -3px rgba(15, 23, 42, 0.2)' }} onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
+                    Comenzar Gratis
+                  </button>
+                </div>
               </div>
             ) : (
-              <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-                <img src="/favicon.svg" alt="PlayStop" style={{ width: '48px', height: '48px', margin: '0 auto 20px auto', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0, 208, 132, 0.3)' }} />
-                <h2 style={{ margin: '0 0 8px 0', color: '#0f172a', fontSize: '1.8rem', fontWeight: '800', letterSpacing: '-0.5px' }}>
-                  {modalType === 'login' ? 'Bienvenido de nuevo' : modalType === 'register' ? 'Crea tu cuenta' : 'Recuperar contraseña'}
-                </h2>
-                <p style={{ margin: 0, color: '#64748b', fontSize: '0.95rem' }}>
-                  {modalType === 'login' ? 'Ingresa tus datos para continuar' : modalType === 'register' ? 'Comienza a gestionar tus partidos hoy mismo' : 'Ingresa tu correo y te enviaremos un enlace seguro'}
-                </p>
-              </div>
+              <>
+                {selectedRole ? (
+                  <div style={{ textAlign: 'center', marginBottom: '30px', marginTop: '10px' }}>
+                    <div style={{ fontSize: '48px', marginBottom: '10px' }}>{selectedRole.icon}</div>
+                    <h2 style={{ margin: '0 0 8px 0', color: '#0f172a', fontSize: '1.6rem', fontWeight: '800', letterSpacing: '-0.5px' }}>
+                      Acceso {selectedRole.role}
+                    </h2>
+                    <p style={{ margin: 0, color: '#64748b', fontSize: '0.95rem' }}>
+                      Estás iniciando sesión como {selectedRole.role.toLowerCase()}
+                    </p>
+                  </div>
+                ) : (
+                  <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+                    <img src="/favicon.svg" alt="PlayStop" style={{ width: '48px', height: '48px', margin: '0 auto 20px auto', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0, 208, 132, 0.3)' }} />
+                    <h2 style={{ margin: '0 0 8px 0', color: '#0f172a', fontSize: '1.8rem', fontWeight: '800', letterSpacing: '-0.5px' }}>
+                      {modalType === 'login' ? 'Bienvenido de nuevo' : modalType === 'register' ? 'Crea tu cuenta' : 'Recuperar contraseña'}
+                    </h2>
+                    <p style={{ margin: 0, color: '#64748b', fontSize: '0.95rem' }}>
+                      {modalType === 'login' ? 'Ingresa tus datos para continuar' : modalType === 'register' ? 'Comienza a gestionar tus partidos hoy mismo' : 'Ingresa tu correo y te enviaremos un enlace seguro'}
+                    </p>
+                  </div>
+                )}
             )}
             
             {/* Social Logins */}
@@ -187,6 +242,8 @@ const Navbar = ({ onLogin }) => {
                   </>
                 )}
               </p>
+            )}
+              </>
             )}
           </div>
         </div>
