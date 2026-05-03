@@ -1,12 +1,28 @@
 import  { useState } from 'react';
+import { testCredentials } from './data/credentials.js';
 
 const Navbar = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState('login'); // 'login' o 'register'
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const openModal = (type) => {
     setModalType(type);
     setShowModal(true);
+    setEmail('');
+    setPassword('');
+  };
+
+  const fillCredentials = (testEmail, testPassword) => {
+    setEmail(testEmail);
+    setPassword(testPassword);
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    alert(`¡Simulación exitosa!\n\nIniciando sesión en PlayStop con el usuario:\n${email}`);
+    setShowModal(false);
   };
 
   return (
@@ -68,7 +84,7 @@ const Navbar = () => {
                <div style={{ flex: 1, height: '1px', backgroundColor: '#e2e8f0' }}></div>
             </div>
 
-            <form style={{ display: 'flex', flexDirection: 'column', gap: '16px' }} onSubmit={(e) => e.preventDefault()}>
+            <form style={{ display: 'flex', flexDirection: 'column', gap: '16px' }} onSubmit={handleFormSubmit}>
               {modalType === 'register' && (
                 <div>
                   <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '6px' }}>Nombre completo</label>
@@ -77,20 +93,34 @@ const Navbar = () => {
               )}
               <div>
                 <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '6px' }}>Correo electrónico</label>
-                <input type="email" placeholder="tu@correo.com" style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid #cbd5e1', fontSize: '1rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box' }} onFocus={(e) => e.currentTarget.style.borderColor = '#00d084'} onBlur={(e) => e.currentTarget.style.borderColor = '#cbd5e1'} />
+                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@correo.com" style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid #cbd5e1', fontSize: '1rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box' }} onFocus={(e) => e.currentTarget.style.borderColor = '#00d084'} onBlur={(e) => e.currentTarget.style.borderColor = '#cbd5e1'} />
               </div>
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
                   <label style={{ fontSize: '0.85rem', fontWeight: '600', color: '#475569' }}>Contraseña</label>
                   {modalType === 'login' && <span style={{ fontSize: '0.8rem', color: '#00d084', fontWeight: '600', cursor: 'pointer' }}>¿Olvidaste tu contraseña?</span>}
                 </div>
-                <input type="password" placeholder="••••••••" style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid #cbd5e1', fontSize: '1rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box' }} onFocus={(e) => e.currentTarget.style.borderColor = '#00d084'} onBlur={(e) => e.currentTarget.style.borderColor = '#cbd5e1'} />
+                <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid #cbd5e1', fontSize: '1rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box' }} onFocus={(e) => e.currentTarget.style.borderColor = '#00d084'} onBlur={(e) => e.currentTarget.style.borderColor = '#cbd5e1'} />
               </div>
               
               <button type="submit" style={{ backgroundColor: '#0f172a', color: 'white', padding: '14px', borderRadius: '12px', border: 'none', fontWeight: '700', fontSize: '1rem', cursor: 'pointer', marginTop: '8px', transition: 'background-color 0.2s', boxShadow: '0 4px 6px -1px rgba(15, 23, 42, 0.2)' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#1e293b'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0f172a'}>
                 {modalType === 'login' ? 'Iniciar Sesión' : 'Crear Cuenta'}
               </button>
             </form>
+
+            {/* Credenciales de Prueba (Demo Roles) */}
+            {modalType === 'login' && (
+              <div style={{ marginTop: '20px', padding: '16px', backgroundColor: '#f8fafc', borderRadius: '12px', border: '1px dashed #cbd5e1' }}>
+                <p style={{ margin: '0 0 12px 0', fontSize: '0.75rem', color: '#64748b', fontWeight: '700', textAlign: 'center', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Credenciales de Prueba</p>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                  {testCredentials.map((cred) => (
+                    <button key={cred.id} type="button" onClick={() => fillCredentials(cred.email, cred.password)} style={{ fontSize: '0.8rem', padding: '8px', borderRadius: '8px', border: '1px solid #e2e8f0', backgroundColor: '#ffffff', cursor: 'pointer', fontWeight: '600', color: '#475569', transition: 'all 0.2s' }} onMouseOver={(e) => {e.currentTarget.style.borderColor='#00d084'; e.currentTarget.style.color='#0f172a'}} onMouseOut={(e) => {e.currentTarget.style.borderColor='#e2e8f0'; e.currentTarget.style.color='#475569'}}>
+                      {cred.icon} {cred.role}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
             
             <p style={{ textAlign: 'center', marginTop: '25px', color: '#64748b', fontSize: '0.95rem' }}>
               {modalType === 'login' ? '¿No tienes una cuenta? ' : '¿Ya tienes una cuenta? '}
