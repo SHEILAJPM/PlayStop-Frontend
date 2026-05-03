@@ -1,4 +1,3 @@
-import React from 'react';
 
 const CallToAction = () => (
   <section style={{ padding: '80px 5%', backgroundColor: '#111827', textAlign: 'center', position: 'relative' }}>

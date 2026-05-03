@@ -1,4 +1,3 @@
-import React from 'react';
 
 const Marcas = () => (
   <div style={{ padding: '50px 5%', textAlign: 'center', backgroundColor: '#ffffff', borderBottom: '1px solid #f3f4f6' }}>

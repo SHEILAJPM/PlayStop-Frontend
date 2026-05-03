@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 const Hero = () => {
   const backgroundImages = [
@@ -74,7 +74,7 @@ const Hero = () => {
   }, []);
 
   return (
-    <main id="jugadores" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '80px 5%', minHeight: '85vh', position: 'relative', overflow: 'hidden' }}>
+    <main style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '80px 5%', minHeight: '85vh', position: 'relative', overflow: 'hidden' }}>
       {/* Estilos CSS integrados para animaciones */}
       <style>
         {`
