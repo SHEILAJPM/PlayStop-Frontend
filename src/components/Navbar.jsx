@@ -84,6 +84,7 @@ const Navbar = ({ onLogin }) => {
           <a href="#jugadores" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem' }}>Para Jugadores</a>
           <a href="#testimonios" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem' }}>Testimonios</a>
           <a href="#precios" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem' }}>Precios</a>
+          <a href="#faq" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem' }}>FAQ</a>
         </nav>
         
         <div style={{ display: 'flex', gap: '15px' }}>
