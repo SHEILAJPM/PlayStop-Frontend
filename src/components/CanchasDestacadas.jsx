@@ -108,7 +108,7 @@ const CanchasDestacadas = () => {
         
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '40px', flexWrap: 'wrap', gap: '20px' }}>
           <div>
-            <div style={{ display: 'inline-block', padding: '6px 16px', background: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.3)', color: '#3b82f6', borderRadius: '20px', fontWeight: '800', fontSize: '0.85rem', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '1px' }}>Top Valoradas</div>
+            <div className="section-badge" style={{ display: 'inline-block', padding: '6px 16px', background: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.3)', color: '#3b82f6', borderRadius: '20px', fontWeight: '800', fontSize: '0.85rem', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '1px' }}>Top Valoradas</div>
             <h2 style={{ fontSize: '3rem', color: '#0f172a', fontWeight: '900', margin: 0, letterSpacing: '-1px' }}>
               Canchas <span style={{ color: '#3b82f6' }}>Destacadas</span>
             </h2>
@@ -122,8 +122,8 @@ const CanchasDestacadas = () => {
       <div style={{ position: 'relative', width: '100%', display: 'flex', overflow: 'hidden' }}>
         
         {/* Máscaras de desvanecimiento lateral (Glass edges) */}
-        <div style={{ position: 'absolute', top: 0, left: 0, width: '150px', height: '100%', background: 'linear-gradient(to right, #ffffff 0%, transparent 100%)', zIndex: 10, pointerEvents: 'none' }}></div>
-        <div style={{ position: 'absolute', top: 0, right: 0, width: '150px', height: '100%', background: 'linear-gradient(to left, #ffffff 0%, transparent 100%)', zIndex: 10, pointerEvents: 'none' }}></div>
+        <div className="fade-left" style={{ position: 'absolute', top: 0, left: 0, width: '150px', height: '100%', background: 'linear-gradient(to right, #ffffff 0%, transparent 100%)', zIndex: 10, pointerEvents: 'none' }}></div>
+        <div className="fade-right" style={{ position: 'absolute', top: 0, right: 0, width: '150px', height: '100%', background: 'linear-gradient(to left, #ffffff 0%, transparent 100%)', zIndex: 10, pointerEvents: 'none' }}></div>
 
         <div className="canchas-track">
           {/* Duplicamos el array para crear el loop infinito sin cortes */}

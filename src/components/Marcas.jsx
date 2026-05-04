@@ -48,8 +48,8 @@ const Marcas = () => {
 
       <div style={{ position: 'relative', width: '100%', maxWidth: '1200px', display: 'flex', overflow: 'hidden' }}>
         {/* Máscaras difuminadas a los lados para un fundido elegante */}
-        <div style={{ position: 'absolute', top: 0, left: 0, width: '120px', height: '100%', background: 'linear-gradient(to right, #ffffff 0%, transparent 100%)', zIndex: 10, pointerEvents: 'none' }}></div>
-        <div style={{ position: 'absolute', top: 0, right: 0, width: '120px', height: '100%', background: 'linear-gradient(to left, #ffffff 0%, transparent 100%)', zIndex: 10, pointerEvents: 'none' }}></div>
+        <div className="fade-left" style={{ position: 'absolute', top: 0, left: 0, width: '120px', height: '100%', background: 'linear-gradient(to right, #ffffff 0%, transparent 100%)', zIndex: 10, pointerEvents: 'none' }}></div>
+        <div className="fade-right" style={{ position: 'absolute', top: 0, right: 0, width: '120px', height: '100%', background: 'linear-gradient(to left, #ffffff 0%, transparent 100%)', zIndex: 10, pointerEvents: 'none' }}></div>
         
         <div className="trust-track">
           {/* Duplicamos el array para que el scroll sea infinito sin cortes bruscos */}
