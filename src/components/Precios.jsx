@@ -1,6 +1,16 @@
 
 const Precios = () => (
-  <section id="precios" style={{ scrollMarginTop: '80px', padding: '100px 5%', backgroundColor: '#ffffff', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+  <section className="precios-section" id="precios" style={{ scrollMarginTop: '80px', padding: '100px 5%', backgroundColor: '#ffffff', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <style>
+      {`
+        @media (max-width: 768px) {
+          .precios-section { padding: 60px 5% !important; }
+          .precios-title { font-size: 2.5rem !important; }
+          .precio-card { padding: 32px 20px !important; }
+          .precio-valor { font-size: 2.8rem !important; }
+        }
+      `}
+    </style>
     
     {/* Decoraciones de fondo (Luces suaves) */}
     <div style={{ position: 'absolute', top: '-10%', left: '30%', transform: 'translateX(-50%)', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(0,208,132,0.05) 0%, rgba(255,255,255,0) 70%)', zIndex: 0, pointerEvents: 'none' }}></div>
@@ -8,7 +18,7 @@ const Precios = () => (
 
     <div style={{ textAlign: 'center', width: '100%', maxWidth: '750px', margin: '0 auto 80px auto', position: 'relative', zIndex: 10 }}>
       <div style={{ display: 'inline-block', padding: '6px 18px', background: 'linear-gradient(90deg, rgba(37,99,235,0.1), rgba(0,208,132,0.1))', color: '#0f172a', borderRadius: '20px', fontWeight: '800', fontSize: '0.85rem', marginBottom: '24px', letterSpacing: '1px', textTransform: 'uppercase' }}>Planes a tu medida</div>
-      <h2 style={{ fontSize: '3.5rem', color: '#0f172a', fontWeight: '900', marginBottom: '24px', letterSpacing: '-1.5px', lineHeight: '1.1' }}>Precios <span style={{ background: 'linear-gradient(90deg, #3b82f6, #00d084)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>transparentes</span></h2>
+      <h2 className="precios-title" style={{ fontSize: '3.5rem', color: '#0f172a', fontWeight: '900', marginBottom: '24px', letterSpacing: '-1.5px', lineHeight: '1.1' }}>Precios <span style={{ background: 'linear-gradient(90deg, #3b82f6, #00d084)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>transparentes</span></h2>
       <p style={{ color: '#64748b', fontSize: '1.15rem', lineHeight: '1.7' }}>Empieza gratis y escala a medida que tu complejo deportivo crece. Sin comisiones ocultas ni sorpresas.</p>
     </div>
     
@@ -16,13 +26,13 @@ const Precios = () => (
       
       {/* Plan Básico */}
       <div 
-        style={{ flex: '1 1 320px', maxWidth: '380px', padding: '40px', backgroundColor: '#ffffff', borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)', transition: 'all 0.3s ease', cursor: 'default', display: 'flex', flexDirection: 'column', textAlign: 'center' }}
+        className="precio-card" style={{ flex: '1 1 320px', maxWidth: '380px', padding: '40px', backgroundColor: '#ffffff', borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)', transition: 'all 0.3s ease', cursor: 'default', display: 'flex', flexDirection: 'column', textAlign: 'center' }}
         onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-8px)'; e.currentTarget.style.boxShadow = '0 20px 40px -10px rgba(0,0,0,0.1)'; e.currentTarget.style.borderColor = '#cbd5e1'; }}
         onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 10px 25px -5px rgba(0, 0, 0, 0.05)'; e.currentTarget.style.borderColor = '#e2e8f0'; }}
       >
         <h3 style={{ fontSize: '1.4rem', color: '#0f172a', fontWeight: '800', margin: '0 0 10px 0' }}>Plan Básico</h3>
         <p style={{ color: '#64748b', fontSize: '0.95rem', margin: '0 0 20px 0', lineHeight: '1.5' }}>Ideal para complejos que recién empiezan.</p>
-        <div style={{ fontSize: '3.5rem', fontWeight: '900', color: '#0f172a', margin: '0 0 30px 0', letterSpacing: '-2px' }}>$0<span style={{ fontSize: '1.1rem', color: '#94a3b8', fontWeight: '600', letterSpacing: '0' }}>/siempre</span></div>
+        <div className="precio-valor" style={{ fontSize: '3.5rem', fontWeight: '900', color: '#0f172a', margin: '0 0 30px 0', letterSpacing: '-2px' }}>$0<span style={{ fontSize: '1.1rem', color: '#94a3b8', fontWeight: '600', letterSpacing: '0' }}>/siempre</span></div>
         
         <ul style={{ listStyle: 'none', padding: 0, margin: '0 auto 40px auto', display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left', width: 'fit-content' }}>
           <li style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#334155', fontWeight: '600' }}>
@@ -48,11 +58,11 @@ const Precios = () => (
       </div>
       
       {/* Plan Pro */}
-      <div style={{ flex: '1 1 320px', maxWidth: '380px', padding: '40px', background: 'linear-gradient(145deg, #0f172a 0%, #1e293b 100%)', borderRadius: '24px', border: '2px solid #00d084', position: 'relative', boxShadow: '0 25px 50px -12px rgba(0, 208, 132, 0.25)', transition: 'all 0.3s ease', cursor: 'default', transform: 'scale(1.05)', display: 'flex', flexDirection: 'column', textAlign: 'center' }}>
+      <div className="precio-card" style={{ flex: '1 1 320px', maxWidth: '380px', padding: '40px', background: 'linear-gradient(145deg, #0f172a 0%, #1e293b 100%)', borderRadius: '24px', border: '2px solid #00d084', position: 'relative', boxShadow: '0 25px 50px -12px rgba(0, 208, 132, 0.25)', transition: 'all 0.3s ease', cursor: 'default', display: 'flex', flexDirection: 'column', textAlign: 'center' }}>
         <div style={{ position: 'absolute', top: '-16px', left: '50%', transform: 'translateX(-50%)', background: 'linear-gradient(90deg, #00d084, #059669)', color: '#ffffff', padding: '6px 20px', borderRadius: '20px', fontWeight: '800', fontSize: '0.85rem', letterSpacing: '1px', textTransform: 'uppercase', boxShadow: '0 4px 10px rgba(0,208,132,0.4)' }}>Recomendado</div>
         <h3 style={{ fontSize: '1.4rem', color: '#ffffff', fontWeight: '800', margin: '0 0 10px 0' }}>Plan Pro</h3>
         <p style={{ color: '#94a3b8', fontSize: '0.95rem', margin: '0 0 20px 0', lineHeight: '1.5' }}>Todo lo que necesitas para automatizar tu negocio.</p>
-        <div style={{ fontSize: '3.5rem', fontWeight: '900', color: '#ffffff', margin: '0 0 30px 0', letterSpacing: '-2px' }}>S/ 99<span style={{ fontSize: '1.1rem', color: '#64748b', fontWeight: '600', letterSpacing: '0' }}>/mes</span></div>
+        <div className="precio-valor" style={{ fontSize: '3.5rem', fontWeight: '900', color: '#ffffff', margin: '0 0 30px 0', letterSpacing: '-2px' }}>S/ 99<span style={{ fontSize: '1.1rem', color: '#64748b', fontWeight: '600', letterSpacing: '0' }}>/mes</span></div>
         
         <ul style={{ listStyle: 'none', padding: 0, margin: '0 auto 40px auto', display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left', width: 'fit-content' }}>
           <li style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#f8fafc', fontWeight: '600' }}>
@@ -79,13 +89,13 @@ const Precios = () => (
 
       {/* Plan Enterprise */}
       <div 
-        style={{ flex: '1 1 320px', maxWidth: '380px', padding: '40px', backgroundColor: '#ffffff', borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)', transition: 'all 0.3s ease', cursor: 'default', display: 'flex', flexDirection: 'column', textAlign: 'center' }}
+        className="precio-card" style={{ flex: '1 1 320px', maxWidth: '380px', padding: '40px', backgroundColor: '#ffffff', borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)', transition: 'all 0.3s ease', cursor: 'default', display: 'flex', flexDirection: 'column', textAlign: 'center' }}
         onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-8px)'; e.currentTarget.style.boxShadow = '0 20px 40px -10px rgba(0,0,0,0.1)'; e.currentTarget.style.borderColor = '#cbd5e1'; }}
         onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 10px 25px -5px rgba(0, 0, 0, 0.05)'; e.currentTarget.style.borderColor = '#e2e8f0'; }}
       >
         <h3 style={{ fontSize: '1.4rem', color: '#0f172a', fontWeight: '800', margin: '0 0 10px 0' }}>Plan Enterprise</h3>
         <p style={{ color: '#64748b', fontSize: '0.95rem', margin: '0 0 20px 0', lineHeight: '1.5' }}>Para cadenas deportivas y clubes de alto rendimiento.</p>
-        <div style={{ fontSize: '3.5rem', fontWeight: '900', color: '#0f172a', margin: '0 0 30px 0', letterSpacing: '-2px' }}>S/ 199<span style={{ fontSize: '1.1rem', color: '#94a3b8', fontWeight: '600', letterSpacing: '0' }}>/mes</span></div>
+        <div className="precio-valor" style={{ fontSize: '3.5rem', fontWeight: '900', color: '#0f172a', margin: '0 0 30px 0', letterSpacing: '-2px' }}>S/ 199<span style={{ fontSize: '1.1rem', color: '#94a3b8', fontWeight: '600', letterSpacing: '0' }}>/mes</span></div>
         
         <ul style={{ listStyle: 'none', padding: 0, margin: '0 auto 40px auto', display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left', width: 'fit-content' }}>
           <li style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#334155', fontWeight: '600' }}>

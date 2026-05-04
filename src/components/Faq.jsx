@@ -46,13 +46,21 @@ const Faq = () => {
   };
 
   return (
-    <section id="faq" style={{ scrollMarginTop: '80px', padding: '100px 5%', backgroundColor: '#f8fafc', position: 'relative' }}>
-      <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+    <section className="faq-section" id="faq" style={{ scrollMarginTop: '80px', padding: '100px 5%', backgroundColor: '#f8fafc', position: 'relative' }}>
+      <style>
+        {`
+          @media (max-width: 768px) {
+            .faq-section { padding: 60px 5% !important; }
+            .faq-title { font-size: 2.2rem !important; }
+          }
+        `}
+      </style>
+      <div style={{ maxWidth: '800px', margin: '0 auto', width: '100%' }}>
         <div style={{ textAlign: 'center', marginBottom: '60px' }}>
           <div style={{ display: 'inline-block', padding: '6px 16px', background: 'rgba(15, 23, 42, 0.1)', border: '1px solid rgba(15, 23, 42, 0.2)', color: '#0f172a', borderRadius: '20px', fontWeight: '800', fontSize: '0.85rem', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '1px' }}>
             Preguntas Frecuentes
           </div>
-          <h2 style={{ fontSize: '3rem', color: '#0f172a', fontWeight: '900', margin: '0 0 16px 0', letterSpacing: '-1px' }}>
+          <h2 className="faq-title" style={{ fontSize: '3rem', color: '#0f172a', fontWeight: '900', margin: '0 0 16px 0', letterSpacing: '-1px' }}>
             Resolvemos tus <span style={{ color: '#00d084' }}>dudas</span>
           </h2>
           <p style={{ color: '#64748b', fontSize: '1.15rem', lineHeight: '1.6' }}>
