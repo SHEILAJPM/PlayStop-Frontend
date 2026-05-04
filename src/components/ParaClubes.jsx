@@ -120,10 +120,10 @@ const ParaClubes = () => (
                <span style={{ color: '#fff', fontWeight: '900', fontSize: '1rem', letterSpacing: '-0.5px' }}>PlayStop</span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-               <div style={{ backgroundColor: '#00d084', color: '#0f172a', padding: '8px 12px', borderRadius: '8px', fontSize: '0.7rem', fontWeight: '700' }}>📊 Dashboard</div>
-               <div style={{ color: '#94a3b8', padding: '8px 12px', fontSize: '0.7rem', fontWeight: '600' }}>📅 Calendario</div>
-               <div style={{ color: '#94a3b8', padding: '8px 12px', fontSize: '0.7rem', fontWeight: '600' }}>🏟️ Mis Canchas</div>
-               <div style={{ color: '#94a3b8', padding: '8px 12px', fontSize: '0.7rem', fontWeight: '600' }}>💰 Finanzas</div>
+               <div style={{ backgroundColor: '#00d084', color: '#0f172a', padding: '8px 12px', borderRadius: '8px', fontSize: '0.7rem', fontWeight: '700' }}>Dashboard</div>
+               <div style={{ color: '#94a3b8', padding: '8px 12px', fontSize: '0.7rem', fontWeight: '600' }}>Calendario</div>
+               <div style={{ color: '#94a3b8', padding: '8px 12px', fontSize: '0.7rem', fontWeight: '600' }}>Mis Canchas</div>
+               <div style={{ color: '#94a3b8', padding: '8px 12px', fontSize: '0.7rem', fontWeight: '600' }}>Finanzas</div>
             </div>
           </div>
 
