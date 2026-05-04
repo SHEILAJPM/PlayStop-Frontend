@@ -67,6 +67,9 @@ const Navbar = ({ onLogin }) => {
 
   return (
     <>
+      <style>
+        {`html { scroll-behavior: smooth; }`}
+      </style>
       <header style={{ position: 'sticky', top: 0, zIndex: 50, display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 5%', backgroundColor: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(8px)', borderBottom: '1px solid #f3f4f6' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <img src="/favicon.svg" alt="PlayStop" style={{ width: '32px', height: '32px' }} />
