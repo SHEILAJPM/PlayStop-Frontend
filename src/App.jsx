@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Navbar from './components/Navbar.jsx';
 import Hero from './components/Hero.jsx';
+import Marcas from './components/Marcas.jsx';
 import CanchasDestacadas from './components/CanchasDestacadas.jsx';
 import Soluciones from './components/Soluciones.jsx';
 import ParaClubes from './components/ParaClubes.jsx';
@@ -29,6 +30,7 @@ function App() {
     <div style={{ fontFamily: '"Inter", system-ui, -apple-system, sans-serif', color: '#111827', margin: 0, padding: 0, backgroundColor: '#ffffff' }}>
       <Navbar onLogin={setUser} />
       <Hero />
+      <Marcas />
       <CanchasDestacadas />
       <Soluciones />
       <ParaJugadores />
