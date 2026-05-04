@@ -4,6 +4,7 @@ import Soluciones from './Soluciones';
 import ParaClubes from './ParaClubes';
 import ParaJugadores from './ParaJugadores';
 import Precios from './Precios';
+import Faq from './Faq';
 
 const Hero = () => {
   const backgroundImages = [
@@ -244,6 +245,7 @@ const Hero = () => {
       <ParaClubes />
       <ParaJugadores />
       <Precios />
+      <Faq />
     </>
   );
 };
