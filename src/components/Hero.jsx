@@ -18,6 +18,7 @@ const Hero = () => {
   const [selectedLocation, setSelectedLocation] = useState({ icon: '📍', text: '¿En qué ciudad?' });
   const [selectedDistrict, setSelectedDistrict] = useState({ icon: '🏘️', text: '¿En qué distrito?' });
   const [selectedDate, setSelectedDate] = useState({ icon: '📅', text: 'Fecha y hora' });
+  const [locatingStatus, setLocatingStatus] = useState('');
 
   // Opciones de sugerencia para cada menú
   const sports = [
@@ -73,6 +74,55 @@ const Hero = () => {
     return () => clearInterval(interval);
   }, [backgroundImages.length]);
 
+  // Función para detectar la ubicación real del usuario
+  const handleDetectLocation = () => {
+    setLocatingStatus('ciudad');
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          try {
+            const { latitude, longitude } = position.coords;
+            // Usamos la API gratuita de OpenStreetMap para convertir coordenadas a ciudad
+            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+            const data = await response.json();
+            
+            const city = data.address?.city || data.address?.town || data.address?.state || data.address?.region || 'Lima';
+            const district = data.address?.suburb || data.address?.neighbourhood || data.address?.city_district || data.address?.county || '';
+            
+            // 1. Mostrar ciudad y cambiar estado a buscando distrito
+            setTimeout(() => {
+              setSelectedLocation({ icon: '📍', text: city });
+              setLocatingStatus('distrito');
+              
+              // 2. Mostrar distrito y cerrar dropdown
+              setTimeout(() => {
+                if (district) {
+                  setSelectedDistrict({ icon: '🏘️', text: district });
+                } else {
+                  setSelectedDistrict({ icon: '🏘️', text: '¿En qué distrito?' });
+                }
+                setLocatingStatus('');
+                setOpenDropdown(null);
+              }, 1200); // Pequeña pausa para que el usuario vea el cambio
+            }, 500);
+          } catch (error) {
+            console.error("Error obteniendo ubicación", error);
+            alert("Hubo un problema al detectar tu ciudad exacta.");
+            setLocatingStatus('');
+          }
+        },
+        (error) => {
+          console.error("Error de geolocalización", error);
+          setLocatingStatus('');
+          alert("No pudimos detectar tu ubicación. Por favor, asegúrate de dar los permisos en tu navegador o selecciona una ciudad manualmente.");
+        }
+      );
+    } else {
+      setLocatingStatus('');
+      alert("Tu navegador no soporta geolocalización.");
+    }
+  };
+
   return (
     <main style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '80px 5%', minHeight: '85vh', position: 'relative', overflow: 'hidden' }}>
       {/* Estilos CSS integrados para animaciones */}
@@ -82,6 +132,11 @@ const Hero = () => {
             0% { transform: translateY(0px); }
             50% { transform: translateY(-15px); }
             100% { transform: translateY(0px); }
+          }
+          @keyframes pulseLocation {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
           }
         `}
       </style>
@@ -166,6 +221,9 @@ const Hero = () => {
               </div>
               {openDropdown === 'location' && (
                 <div style={{ position: 'absolute', top: '100%', left: 0, width: '100%', marginTop: '5px', backgroundColor: 'rgba(15, 23, 42, 0.95)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', zIndex: 50, overflow: 'hidden' }}>
+                  <div onClick={(e) => { e.stopPropagation(); handleDetectLocation(); }} style={{ padding: '12px 18px', color: '#00d084', display: 'flex', gap: '12px', cursor: 'pointer', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', backgroundColor: 'rgba(0, 208, 132, 0.1)', fontWeight: '700', transition: 'background-color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(0, 208, 132, 0.2)'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'rgba(0, 208, 132, 0.1)'}>
+                    <span style={{ animation: locatingStatus !== '' ? 'pulseLocation 1s infinite' : 'none', display: 'inline-block' }}>{locatingStatus !== '' ? '⏳' : '🎯'}</span> <span>{locatingStatus === 'ciudad' ? 'Detectando ciudad...' : locatingStatus === 'distrito' ? 'Detectando distrito...' : 'Usar mi ubicación actual'}</span>
+                  </div>
                   {locations.map((item, i) => (
                     <div key={i} onClick={() => { setSelectedLocation(item); setSelectedDistrict({ icon: '🏘️', text: '¿En qué distrito?' }); setOpenDropdown(null); }} style={{ padding: '12px 18px', color: 'white', display: 'flex', gap: '12px', cursor: 'pointer', borderBottom: i < locations.length - 1 ? '1px solid rgba(255, 255, 255, 0.05)' : 'none' }}>
                       <span>{item.icon}</span> <span>{item.text}</span>
