@@ -5,6 +5,7 @@ import ParaClubes from './ParaClubes';
 import ParaJugadores from './ParaJugadores';
 import Precios from './Precios';
 import Faq from './Faq';
+import Footer from './Footer';
 
 const Hero = () => {
   const backgroundImages = [
@@ -246,6 +247,7 @@ const Hero = () => {
       <ParaJugadores />
       <Precios />
       <Faq />
+      <Footer />
     </>
   );
 };
