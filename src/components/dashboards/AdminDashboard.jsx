@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { DashboardLayout, MetricCard } from './DashboardLayout.jsx';
 
-const AdminDashboard = ({ user, onLogout }) => {
+const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
   const [activeTab, setActiveTab] = useState('Resumen');
   const [ticketFilter, setTicketFilter] = useState('Todos los estados');
   const [userSearch, setUserSearch] = useState('');
@@ -68,11 +68,12 @@ const AdminDashboard = ({ user, onLogout }) => {
 
   return (
     <>
-    <DashboardLayout user={user} onLogout={onLogout} title={activeTab === 'Resumen' ? 'Administración Central' : activeTab} activeTab={activeTab} onTabChange={setActiveTab} menuItems={[
+    <DashboardLayout user={user} onLogout={onLogout} darkMode={darkMode} toggleTheme={toggleTheme} title={activeTab === 'Resumen' ? 'Administración Central' : activeTab} activeTab={activeTab} onTabChange={setActiveTab} menuItems={[
       { icon: '⚡', label: 'Resumen' },
       { icon: '🏢', label: 'Clubes Afiliados' },
       { icon: '🧑', label: 'Usuarios' },
       { icon: '🎧', label: 'Soporte y Tickets' },
+      { icon: '👤', label: 'Mi Perfil' },
     ]}>
       {activeTab === 'Resumen' && (
         <>
@@ -85,7 +86,7 @@ const AdminDashboard = ({ user, onLogout }) => {
           <div className="dashboard-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <h3 style={{ margin: 0, color: '#0f172a', fontSize: '1.2rem', fontWeight: '800' }}>Solicitudes de Clubes</h3>
-              <button onClick={() => openModal('AGREGAR_CLUB')} className="action-btn" style={{ backgroundColor: '#0f172a', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '8px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 6px rgba(15,23,42,0.2)' }}>+ Registrar Club</button>
+              <button onClick={() => openModal('AGREGAR_CLUB')} className="action-btn btn-primary-dark" style={{ backgroundColor: '#0f172a', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '8px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 6px rgba(15,23,42,0.2)' }}>+ Registrar Club</button>
             </div>
             
             {/* Simulación de Tabla Admin */}
@@ -106,8 +107,8 @@ const AdminDashboard = ({ user, onLogout }) => {
                       <td style={{ color: '#475569' }}>{row.location}</td>
                       <td><span className="status-badge" style={{ color: '#3b82f6', backgroundColor: '#eff6ff' }}>{row.plan}</span></td>
                       <td style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                        <button onClick={() => openModal('EDITAR_CLUB', row)} className="action-btn" style={{ backgroundColor: '#eff6ff', color: '#3b82f6', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }}>Editar</button>
-                        <button onClick={() => openModal('ELIMINAR_CLUB', row)} className="action-btn" style={{ backgroundColor: '#fee2e2', color: '#ef4444', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }}>Eliminar</button>
+                        <button onClick={() => openModal('EDITAR_CLUB', row)} className="action-btn btn-edit" style={{ backgroundColor: '#eff6ff', color: '#3b82f6', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }}>Editar</button>
+                        <button onClick={() => openModal('ELIMINAR_CLUB', row)} className="action-btn btn-delete" style={{ backgroundColor: '#fee2e2', color: '#ef4444', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }}>Eliminar</button>
                       </td>
                     </tr>
                   ))}
@@ -124,7 +125,7 @@ const AdminDashboard = ({ user, onLogout }) => {
             <h3 style={{ margin: 0, color: '#0f172a', fontSize: '1.3rem', fontWeight: '800' }}>Directorio de Clubes</h3>
             <div style={{ display: 'flex', gap: '12px' }}>
                <input type="text" value={clubSearch} onChange={(e) => setClubSearch(e.target.value)} placeholder="Buscar club..." className="modal-input" style={{ padding: '10px 16px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} />
-               <button onClick={() => openModal('AGREGAR_CLUB')} className="action-btn" style={{ backgroundColor: '#0f172a', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '10px', fontWeight: '700', cursor: 'pointer' }}>+ Añadir Club</button>
+               <button onClick={() => openModal('AGREGAR_CLUB')} className="action-btn btn-primary-dark" style={{ backgroundColor: '#0f172a', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '10px', fontWeight: '700', cursor: 'pointer' }}>+ Añadir Club</button>
             </div>
           </div>
           <div style={{ overflowX: 'auto', padding: '10px 0' }}>
@@ -144,8 +145,8 @@ const AdminDashboard = ({ user, onLogout }) => {
                     <td style={{ color: '#475569' }}>{row.location}</td>
                     <td><span className="status-badge" style={{ color: row.plan === 'PRO' ? '#047857' : '#3b82f6', backgroundColor: row.plan === 'PRO' ? '#d1fae5' : '#eff6ff' }}>{row.plan}</span></td>
                     <td style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                      <button onClick={() => openModal('EDITAR_CLUB', row)} className="action-btn" style={{ backgroundColor: '#eff6ff', color: '#3b82f6', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }}>Editar</button>
-                      <button onClick={() => openModal('ELIMINAR_CLUB', row)} className="action-btn" style={{ backgroundColor: '#fee2e2', color: '#ef4444', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }}>Eliminar</button>
+                      <button onClick={() => openModal('EDITAR_CLUB', row)} className="action-btn btn-edit" style={{ backgroundColor: '#eff6ff', color: '#3b82f6', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }}>Editar</button>
+                      <button onClick={() => openModal('ELIMINAR_CLUB', row)} className="action-btn btn-delete" style={{ backgroundColor: '#fee2e2', color: '#ef4444', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }}>Eliminar</button>
                     </td>
                   </tr>
                 ))}
@@ -180,7 +181,7 @@ const AdminDashboard = ({ user, onLogout }) => {
                     <td><span style={{ padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '700', backgroundColor: u.role==='Propietario'?'#e0e7ff':'#f1f5f9', color: u.role==='Propietario'?'#1d4ed8':'#475569' }}>{u.role}</span></td>
                     <td><span style={{ padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '700', backgroundColor: u.status==='Activo'?'#d1fae5':'#fee2e2', color: u.status==='Activo'?'#047857':'#ef4444' }}>{u.status}</span></td>
                     <td>
-                      <button onClick={() => alert('Función de suspensión en desarrollo')} className="action-btn" style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', padding: '6px 12px', borderRadius: '6px', fontWeight: '600', cursor: 'pointer', color: '#475569' }}>Suspender</button>
+                      <button onClick={() => alert('Función de suspensión en desarrollo')} className="action-btn btn-secondary" style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', padding: '6px 12px', borderRadius: '6px', fontWeight: '600', cursor: 'pointer', color: '#475569' }}>Suspender</button>
                     </td>
                   </tr>
                 ))}
@@ -222,7 +223,7 @@ const AdminDashboard = ({ user, onLogout }) => {
                     <td><span style={{ color: t.priority==='Alta'?'#ef4444':t.priority==='Media'?'#f59e0b':'#10b981', fontWeight: '800', fontSize: '0.85rem' }}>{t.priority}</span></td>
                     <td><span style={{ padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '700', backgroundColor: t.status==='Abierto'?'#fee2e2':t.status==='En Progreso'?'#fef3c7':'#f1f5f9', color: t.status==='Abierto'?'#ef4444':t.status==='En Progreso'?'#b45309':'#64748b' }}>{t.status}</span></td>
                     <td>
-                      <button onClick={() => alert('Chat de soporte en desarrollo')} className="action-btn" style={{ backgroundColor: '#eff6ff', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: '700', cursor: 'pointer', color: '#3b82f6' }}>Responder</button>
+                      <button onClick={() => alert('Chat de soporte en desarrollo')} className="action-btn btn-edit" style={{ backgroundColor: '#eff6ff', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: '700', cursor: 'pointer', color: '#3b82f6' }}>Responder</button>
                     </td>
                   </tr>
                 ))}
@@ -230,6 +231,86 @@ const AdminDashboard = ({ user, onLogout }) => {
             </table>
           </div>
          </div>
+      )}
+
+      {activeTab === 'Mi Perfil' && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '24px', alignItems: 'start' }}>
+          <div className="dashboard-card" style={{ padding: 0, overflow: 'hidden' }}>
+            <div style={{ height: '120px', background: 'linear-gradient(135deg, rgba(0, 208, 132, 0.8) 0%, rgba(59, 130, 246, 0.8) 100%)' }}></div>
+            <div style={{ padding: '0 32px 32px 32px', marginTop: '-40px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
+                <div style={{ width: '100px', height: '100px', borderRadius: '50%', backgroundColor: '#e2e8f0', backgroundImage: `url(https://ui-avatars.com/api/?name=${user?.name || 'User'}&background=0f172a&color=fff&size=150)`, backgroundSize: 'cover', backgroundPosition: 'center', boxShadow: '0 4px 10px rgba(0,0,0,0.2)' }}></div>
+                <div>
+                  <label htmlFor="profile-pic" className="action-btn btn-secondary" style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid #e2e8f0', backgroundColor: '#f8fafc', color: '#0f172a', fontWeight: '700', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                    Cambiar Foto
+                  </label>
+                  <input type="file" id="profile-pic" accept="image/*" style={{ display: 'none' }} onChange={() => alert('Foto seleccionada exitosamente.')} />
+                </div>
+              </div>
+              <h3 style={{ margin: '0 0 4px 0', color: '#0f172a', fontSize: '1.4rem', fontWeight: '800' }}>Información Personal</h3>
+              <p style={{ margin: '0 0 24px 0', color: '#64748b', fontSize: '0.95rem' }}>Actualiza tus datos y cómo te ven los demás.</p>
+
+              <form onSubmit={(e) => { e.preventDefault(); alert('Perfil actualizado con éxito'); }} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                  <div style={{ flex: 1, minWidth: '150px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <label style={{ fontSize: '0.9rem', fontWeight: '800', color: '#334155' }}>Nombre Completo</label>
+                    <input type="text" defaultValue={user?.name} className="modal-input" required style={{ padding: '12px 16px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: '150px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <label style={{ fontSize: '0.9rem', fontWeight: '800', color: '#334155' }}>Teléfono</label>
+                    <input type="tel" defaultValue="+51 987 654 321" className="modal-input" style={{ padding: '12px 16px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} />
+                  </div>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <label style={{ fontSize: '0.9rem', fontWeight: '800', color: '#334155' }}>Correo Electrónico</label>
+                  <input type="email" defaultValue={user?.email} className="modal-input" required style={{ padding: '12px 16px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
+                  <button type="submit" className="action-btn btn-primary-dark" style={{ backgroundColor: '#00d084', color: '#0f172a', border: 'none', padding: '12px 24px', borderRadius: '10px', fontWeight: '800', cursor: 'pointer' }}>Guardar Cambios</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div className="dashboard-card" style={{ padding: 0, overflow: 'hidden' }}>
+            <div style={{ padding: '32px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: 'rgba(59, 130, 246, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#3b82f6' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                </div>
+                <h3 style={{ margin: 0, color: '#0f172a', fontSize: '1.4rem', fontWeight: '800' }}>Seguridad</h3>
+              </div>
+              <p style={{ margin: '0 0 24px 0', color: '#64748b', fontSize: '0.95rem' }}>Protege tu cuenta con una contraseña segura.</p>
+              
+              <form onSubmit={(e) => { e.preventDefault(); alert('Contraseña actualizada con éxito'); e.target.reset(); }} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <label style={{ fontSize: '0.9rem', fontWeight: '800', color: '#334155' }}>Contraseña Actual</label>
+                  <input type="password" required className="modal-input" placeholder="••••••••" style={{ padding: '12px 16px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} />
+                </div>
+                <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                  <div style={{ flex: 1, minWidth: '150px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <label style={{ fontSize: '0.9rem', fontWeight: '800', color: '#334155' }}>Nueva Contraseña</label>
+                    <input type="password" required minLength="6" className="modal-input" placeholder="••••••••" style={{ padding: '12px 16px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: '150px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <label style={{ fontSize: '0.9rem', fontWeight: '800', color: '#334155' }}>Confirmar Nueva</label>
+                    <input type="password" required minLength="6" className="modal-input" placeholder="••••••••" style={{ padding: '12px 16px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} />
+                  </div>
+                </div>
+                
+                <div className="modal-info-box" style={{ display: 'flex', flexDirection: 'column', gap: '8px', backgroundColor: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px dashed #cbd5e1' }}>
+                  <span style={{ fontSize: '0.85rem', color: '#475569', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600' }}><span style={{ color: '#00d084', fontSize: '1.2rem' }}>✓</span> Mínimo 8 caracteres</span>
+                  <span style={{ fontSize: '0.85rem', color: '#475569', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600' }}><span style={{ color: '#00d084', fontSize: '1.2rem' }}>✓</span> Al menos un número y un símbolo especial</span>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
+                  <button type="submit" className="action-btn btn-primary-dark" style={{ backgroundColor: '#0f172a', color: '#fff', border: 'none', padding: '12px 24px', borderRadius: '10px', fontWeight: '800', cursor: 'pointer' }}>Actualizar Contraseña</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
       )}
     </DashboardLayout>
 
@@ -247,7 +328,7 @@ const AdminDashboard = ({ user, onLogout }) => {
             .modal-close:hover { background-color: #f1f5f9; color: #ef4444 !important; }
           `}
         </style>
-        <div style={{ backgroundColor: '#ffffff', padding: '40px', borderRadius: '28px', width: '90%', maxWidth: '500px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1)', animation: 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)' }}>
+        <div className="dashboard-modal" style={{ backgroundColor: '#ffffff', padding: '40px', borderRadius: '28px', width: '90%', maxWidth: '500px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1)', animation: 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)' }}>
           
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '28px' }}>
             <div>
@@ -294,7 +375,7 @@ const AdminDashboard = ({ user, onLogout }) => {
             )}
 
             {modal.action === 'ELIMINAR_CLUB' && (
-              <div style={{ padding: '20px', backgroundColor: '#fef2f2', borderRadius: '16px', border: '1px solid #fecaca' }}>
+              <div className="modal-warning" style={{ padding: '20px', backgroundColor: '#fef2f2', borderRadius: '16px', border: '1px solid #fecaca' }}>
                 <p style={{ margin: 0, color: '#991b1b', fontSize: '1.05rem', lineHeight: '1.6' }}>
                   ¿Estás seguro de eliminar el club <strong style={{ color: '#7f1d1d' }}>{modal.payload?.name}</strong> de forma permanente?<br/><br/>
                   Esta acción eliminará todos sus datos y <span style={{ textDecoration: 'underline' }}>no se puede deshacer</span>.
