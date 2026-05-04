@@ -46,7 +46,7 @@ const testimonios = [
 
 const Testimonios = () => {
   return (
-    <section id="testimonios" style={{ padding: '120px 0', backgroundImage: 'linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), url("https://images.unsplash.com/photo-1554068865-24cecd4e34b8?q=80&w=1920&auto=format&fit=crop")', backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed', overflow: 'hidden', position: 'relative' }}>
+    <section id="testimonios" style={{ scrollMarginTop: '80px', padding: '120px 0', backgroundImage: 'linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), url("https://images.unsplash.com/photo-1554068865-24cecd4e34b8?q=80&w=1920&auto=format&fit=crop")', backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed', overflow: 'hidden', position: 'relative' }}>
       
       {/* Animación infinita calculada matemáticamente para coincidir con los espacios */}
       <style>
