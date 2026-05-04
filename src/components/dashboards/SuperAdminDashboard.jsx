@@ -64,6 +64,19 @@ const SuperAdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
 
   return (
     <>
+    <style>
+      {`
+        @keyframes blinkCursor { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        .cursor-blink { animation: blinkCursor 1s step-end infinite; }
+        
+        @keyframes pulseDot {
+          0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+          70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+        .dot-connected { animation: pulseDot 2s infinite; }
+      `}
+    </style>
     <DashboardLayout user={user} onLogout={onLogout} darkMode={darkMode} toggleTheme={toggleTheme} title={activeTab === 'Global' ? 'Centro de Control (Root)' : activeTab} activeTab={activeTab} onTabChange={setActiveTab} menuItems={[
       { icon: '👑', label: 'Global' },
       { icon: '📈', label: 'Métricas Financieras' },
@@ -93,6 +106,12 @@ const SuperAdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
               
               {/* Simulación de Gráfico Vectorial (Area Chart) */}
               <div style={{ flex: 1, minHeight: '250px', position: 'relative', borderBottom: '1px dashed #e2e8f0', borderLeft: '1px dashed #e2e8f0' }}>
+                {/* Custom Tooltip simulado */}
+                <div style={{ position: 'absolute', top: '15px', right: '30px', backgroundColor: '#0f172a', color: '#fff', padding: '8px 12px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', zIndex: 10 }}>
+                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#00d084' }}></span>
+                  Octubre: $ 45,200
+                </div>
+                
                 <svg viewBox="0 0 500 150" style={{ width: '100%', height: '100%', position: 'absolute', bottom: 0, left: 0 }} preserveAspectRatio="none">
                     <defs>
                       <linearGradient id="mrrGrad" x1="0" y1="0" x2="0" y2="1">
@@ -100,8 +119,18 @@ const SuperAdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
                         <stop offset="100%" stopColor="rgba(0, 208, 132, 0)"/>
                       </linearGradient>
                     </defs>
+                    {/* Líneas de cuadrícula (Grid) */}
+                    <line x1="0" y1="30" x2="500" y2="30" stroke="currentColor" strokeOpacity="0.1" strokeWidth="1" strokeDasharray="4 4" />
+                    <line x1="0" y1="70" x2="500" y2="70" stroke="currentColor" strokeOpacity="0.1" strokeWidth="1" strokeDasharray="4 4" />
+                    <line x1="0" y1="110" x2="500" y2="110" stroke="currentColor" strokeOpacity="0.1" strokeWidth="1" strokeDasharray="4 4" />
+                    
                     <path d="M0,150 L0,110 C50,120 100,70 150,90 C200,110 250,50 300,60 C350,70 400,30 500,20 L500,150 Z" fill="url(#mrrGrad)" />
                     <path d="M0,110 C50,120 100,70 150,90 C200,110 250,50 300,60 C350,70 400,30 500,20" fill="none" stroke="#00d084" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+                    
+                    {/* Puntos de datos */}
+                    <circle cx="150" cy="90" r="4" fill="#ffffff" stroke="#00d084" strokeWidth="3" />
+                    <circle cx="300" cy="60" r="4" fill="#ffffff" stroke="#00d084" strokeWidth="3" />
+                    <circle cx="500" cy="20" r="6" fill="#00d084" stroke="#ffffff" strokeWidth="2" style={{ filter: 'drop-shadow(0 0 4px rgba(0,208,132,0.8))' }} />
                 </svg>
               </div>
             </div>
@@ -115,7 +144,7 @@ const SuperAdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
                 <p style={{ margin: '0 0 8px 0', color: '#94a3b8' }}>[10:48:02] <span style={{ color: '#f87171' }}>ERR:</span> Payment gateway timeout.</p>
                 <p style={{ margin: '0 0 8px 0' }}>[10:50:11] <span style={{ color: '#60a5fa' }}>INFO:</span> New deployment v2.4.1 OK.</p>
                 <p style={{ margin: '0 0 8px 0', color: '#94a3b8' }}>[10:55:09] <span style={{ color: '#facc15' }}>WARN:</span> High memory usage node-3.</p>
-                <p style={{ margin: 0 }}>[11:01:23] <span style={{ color: '#60a5fa' }}>INFO:</span> 45 new users registered.</p>
+                <p style={{ margin: 0 }}>[11:01:23] <span style={{ color: '#60a5fa' }}>INFO:</span> 45 new users registered.<span className="cursor-blink" style={{ display: 'inline-block', width: '8px', height: '14px', backgroundColor: '#00d084', marginLeft: '6px', verticalAlign: 'middle' }}></span></p>
               </div>
             </div>
           </div>
@@ -287,7 +316,10 @@ const SuperAdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
                     <h4 style={{ margin: '0 0 4px 0', color: '#0f172a', fontSize: '1.1rem', fontWeight: '800' }}>{api.provider}</h4>
                     <p style={{ margin: 0, color: '#64748b', fontSize: '0.85rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{api.category}</p>
                   </div>
-                  <span style={{ fontSize: '0.8rem', fontWeight: '700', padding: '4px 8px', borderRadius: '8px', backgroundColor: api.status === 'Conectado' ? '#d1fae5' : '#fee2e2', color: api.status === 'Conectado' ? '#047857' : '#991b1b' }}>{api.status}</span>
+                  <span style={{ fontSize: '0.8rem', fontWeight: '700', padding: '4px 10px', borderRadius: '8px', backgroundColor: api.status === 'Conectado' ? '#d1fae5' : '#fee2e2', color: api.status === 'Conectado' ? '#047857' : '#991b1b', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span className={api.status === 'Conectado' ? 'dot-connected' : ''} style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: api.status === 'Conectado' ? '#10b981' : '#ef4444' }}></span>
+                    {api.status}
+                  </span>
                 </div>
                 <p style={{ margin: '0 0 16px 0', color: '#94a3b8', fontSize: '0.85rem' }}>Última sincronización: {api.lastSync}</p>
                 <div style={{ display: 'flex', gap: '10px' }}>

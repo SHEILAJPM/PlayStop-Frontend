@@ -217,7 +217,7 @@ export const DashboardLayout = ({ user, onLogout, title, menuItems, activeTab, o
 
 // --- COMPONENTES DE TARJETA (Reutilizables) ---
 export const MetricCard = ({ title, value, subtitle, color, trend }) => (
-  <div className="dashboard-card" style={{ display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
+  <div className="dashboard-card card-hover" style={{ display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
       <div style={{ width: '56px', height: '56px', borderRadius: '16px', backgroundColor: `${color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: color }}>
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
