@@ -1,11 +1,4 @@
 import { useState, useEffect } from 'react';
-import CanchasDestacadas from './CanchasDestacadas';
-import Soluciones from './Soluciones';
-import ParaClubes from './ParaClubes';
-import ParaJugadores from './ParaJugadores';
-import Precios from './Precios';
-import Faq from './Faq';
-import Footer from './Footer';
 
 const Hero = () => {
   const backgroundImages = [
@@ -81,7 +74,6 @@ const Hero = () => {
   }, [backgroundImages.length]);
 
   return (
-    <>
     <main style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '80px 5%', minHeight: '85vh', position: 'relative', overflow: 'hidden' }}>
       {/* Estilos CSS integrados para animaciones */}
       <style>
@@ -241,14 +233,6 @@ const Hero = () => {
         </div>
       </div>
     </main>
-      <CanchasDestacadas />
-      <Soluciones />
-      <ParaClubes />
-      <ParaJugadores />
-      <Precios />
-      <Faq />
-      <Footer />
-    </>
   );
 };
 

@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import Navbar from './components/Navbar.jsx';
 import Hero from './components/Hero.jsx';
-import Marcas from './components/Marcas.jsx';
-import Caracteristicas from './components/Caracteristicas.jsx';
-import ParaJugadores from './components/ParaJugadores.jsx';
+import CanchasDestacadas from './components/CanchasDestacadas.jsx';
+import Soluciones from './components/Soluciones.jsx';
 import ParaClubes from './components/ParaClubes.jsx';
+import ParaJugadores from './components/ParaJugadores.jsx';
 import Testimonios from './components/Testimonios.jsx';
 import Precios from './components/Precios.jsx';
-import CallToAction from './components/CallToAction.jsx';
+import Faq from './components/Faq.jsx';
 import Footer from "./components/Footer.jsx";
 import JugadorDashboard from './components/dashboards/JugadorDashboard.jsx';
 import PropietarioDashboard from './components/dashboards/PropietarioDashboard.jsx';
@@ -29,13 +29,13 @@ function App() {
     <div style={{ fontFamily: '"Inter", system-ui, -apple-system, sans-serif', color: '#111827', margin: 0, padding: 0, backgroundColor: '#ffffff' }}>
       <Navbar onLogin={setUser} />
       <Hero />
-      <Marcas />
-      <Caracteristicas />
-      <ParaJugadores />
+      <CanchasDestacadas />
+      <Soluciones />
       <ParaClubes />
+      <ParaJugadores />
       <Testimonios />
       <Precios />
-      <CallToAction />
+      <Faq />
       <Footer />
     </div>
   );
