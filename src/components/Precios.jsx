@@ -1,6 +1,6 @@
 
 const Precios = () => (
-  <section className="precios-section" id="precios" style={{ scrollMarginTop: '80px', padding: '100px 5%', backgroundColor: '#ffffff', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+  <section className="precios-section reveal" id="precios" style={{ scrollMarginTop: '80px', padding: '100px 5%', backgroundColor: '#ffffff', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
     <style>
       {`
         @media (max-width: 768px) {

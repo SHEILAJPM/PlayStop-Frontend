@@ -88,7 +88,7 @@ const ParaClubes = () => (
       `}
     </style>
 
-    <div className="clubes-section" style={{ padding: '120px 5%', backgroundColor: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '60px', position: 'relative', overflow: 'hidden', width: '100%', boxSizing: 'border-box' }}>
+    <div className="clubes-section reveal" style={{ padding: '120px 5%', backgroundColor: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '60px', position: 'relative', overflow: 'hidden', width: '100%', boxSizing: 'border-box' }}>
     
     <div style={{ flex: '1 1 400px', maxWidth: '600px', zIndex: 10 }} className="clubes-text">
       <div style={{ display: 'inline-block', padding: '6px 18px', background: 'linear-gradient(90deg, rgba(0,208,132,0.15), rgba(0,208,132,0.05))', border: '1px solid rgba(0,208,132,0.3)', color: '#34d399', borderRadius: '20px', fontWeight: '800', fontSize: '0.85rem', marginBottom: '24px', letterSpacing: '1px', textTransform: 'uppercase' }}>Para Clubes</div>

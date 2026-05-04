@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from './components/Navbar.jsx';
 import Hero from './components/Hero.jsx';
 import Marcas from './components/Marcas.jsx';
@@ -18,6 +18,25 @@ import SuperAdminDashboard from './components/dashboards/SuperAdminDashboard.jsx
 function App() {
   const [user, setUser] = useState(null); // null = No logueado
 
+  // Intersection Observer para Animaciones de Scroll (Scroll Reveal)
+  useEffect(() => {
+    if (user) return; // Solo ejecutar en la landing page
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target); // Animar solo la primera vez
+        }
+      });
+    }, { threshold: 0.15, rootMargin: "0px 0px -50px 0px" });
+
+    const revealElements = document.querySelectorAll('.reveal');
+    revealElements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, [user]);
+
   // Renderizado Condicional: Si hay usuario, mostrar su panel respectivo
   if (user) {
     if (user.role === 'Jugador') return <JugadorDashboard user={user} onLogout={() => setUser(null)} />;
@@ -28,6 +47,19 @@ function App() {
 
   return (
     <div style={{ fontFamily: '"Inter", system-ui, -apple-system, sans-serif', color: '#111827', margin: 0, padding: 0, backgroundColor: '#ffffff' }}>
+      <style>
+        {`
+          .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+          }
+          .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        `}
+      </style>
       <Navbar onLogin={setUser} />
       <Hero />
       <Marcas />

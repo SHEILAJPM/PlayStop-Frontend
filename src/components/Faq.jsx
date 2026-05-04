@@ -46,7 +46,7 @@ const Faq = () => {
   };
 
   return (
-    <section className="faq-section" id="faq" style={{ scrollMarginTop: '80px', padding: '100px 5%', backgroundColor: '#f8fafc', position: 'relative' }}>
+    <section className="faq-section reveal" id="faq" style={{ scrollMarginTop: '80px', padding: '100px 5%', backgroundColor: '#f8fafc', position: 'relative' }}>
       <style>
         {`
           @media (max-width: 768px) {

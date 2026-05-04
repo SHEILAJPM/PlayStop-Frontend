@@ -108,7 +108,7 @@ const ParaJugadores = () => (
       `}
     </style>
     
-    <div className="jugadores-section" style={{ padding: '120px 5%', backgroundColor: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap-reverse', gap: '80px', overflow: 'hidden', position: 'relative', width: '100%', boxSizing: 'border-box' }}>
+    <div className="jugadores-section reveal" style={{ padding: '120px 5%', backgroundColor: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap-reverse', gap: '80px', overflow: 'hidden', position: 'relative', width: '100%', boxSizing: 'border-box' }}>
 
     <div className="mockup-phone-wrapper" style={{ flex: '1 1 350px', display: 'flex', justifyContent: 'center', position: 'relative' }}>
        

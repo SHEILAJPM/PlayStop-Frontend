@@ -67,7 +67,7 @@ const CanchasDestacadas = () => {
   ];
 
   return (
-    <section id="canchas-destacadas" style={{ padding: '100px 0', backgroundColor: '#ffffff', position: 'relative', overflow: 'hidden' }}>
+    <section id="canchas-destacadas" className="reveal" style={{ padding: '100px 0', backgroundColor: '#ffffff', position: 'relative', overflow: 'hidden' }}>
       
       <style>
         {`

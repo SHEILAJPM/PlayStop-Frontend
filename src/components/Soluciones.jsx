@@ -1,6 +1,6 @@
 const Soluciones = () => {
   return (
-    <section className="soluciones-section" id="soluciones" style={{ scrollMarginTop: '80px', padding: '100px 5%', backgroundColor: '#f8fafc', position: 'relative' }}>
+    <section className="soluciones-section reveal" id="soluciones" style={{ scrollMarginTop: '80px', padding: '100px 5%', backgroundColor: '#f8fafc', position: 'relative' }}>
       <style>
         {`
           @media (max-width: 768px) {

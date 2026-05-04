@@ -1,6 +1,6 @@
 const Footer = () => {
   return (
-    <footer className="footer-section" style={{ backgroundColor: '#0b1120', paddingTop: '80px', paddingBottom: '30px', borderTop: '1px solid #1e293b', color: '#94a3b8' }}>
+    <footer className="footer-section reveal" style={{ backgroundColor: '#0b1120', paddingTop: '80px', paddingBottom: '30px', borderTop: '1px solid #1e293b', color: '#94a3b8' }}>
       <style>
         {`
           @media (max-width: 768px) {
