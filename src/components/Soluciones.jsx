@@ -1,6 +1,6 @@
 const Soluciones = () => {
   return (
-    <section id="soluciones" style={{ padding: '100px 5%', backgroundColor: '#f8fafc', position: 'relative' }}>
+    <section id="soluciones" style={{ scrollMarginTop: '80px', padding: '100px 5%', backgroundColor: '#f8fafc', position: 'relative' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         
         <div style={{ textAlign: 'center', marginBottom: '60px' }}>
@@ -18,7 +18,7 @@ const Soluciones = () => {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '30px' }}>
           
           {/* Tarjeta para Jugadores */}
-          <div id="jugadores" style={{ backgroundColor: '#ffffff', borderRadius: '32px', padding: '48px 40px', border: '1px solid #e2e8f0', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.05)', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+          <div id="solucion-jugadores" style={{ scrollMarginTop: '100px', backgroundColor: '#ffffff', borderRadius: '32px', padding: '48px 40px', border: '1px solid #e2e8f0', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.05)', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
             <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '6px', background: 'linear-gradient(90deg, #00d084, #3b82f6)' }}></div>
             
             <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'rgba(0, 208, 132, 0.1)', color: '#00d084', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', marginBottom: '24px' }}>
@@ -52,7 +52,7 @@ const Soluciones = () => {
           </div>
 
           {/* Tarjeta para Clubes */}
-          <div id="clubes" style={{ backgroundColor: '#0f172a', borderRadius: '32px', padding: '48px 40px', border: '1px solid #1e293b', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+          <div id="solucion-clubes" style={{ scrollMarginTop: '100px', backgroundColor: '#0f172a', borderRadius: '32px', padding: '48px 40px', border: '1px solid #1e293b', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
             {/* Elemento decorativo de luz de fondo */}
             <div style={{ position: 'absolute', top: '-100px', right: '-100px', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%)', borderRadius: '50%', pointerEvents: 'none' }}></div>
             
