@@ -9,9 +9,72 @@ const ParaClubes = () => (
     <style>
       {`
         @keyframes floatDashboard {
-          0% { transform: translateY(0px) rotateX(0deg); }
-          50% { transform: translateY(-15px) rotateX(2deg); }
-          100% { transform: translateY(0px) rotateX(0deg); }
+          0% { transform: translateY(0px) rotateX(1deg) rotateY(-1deg); boxShadow: 0 30px 60px -12px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.2); }
+          50% { transform: translateY(-15px) rotateX(3deg) rotateY(1deg); boxShadow: 0 45px 70px -10px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.3); }
+          100% { transform: translateY(0px) rotateX(1deg) rotateY(-1deg); boxShadow: 0 30px 60px -12px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.2); }
+        }
+        @keyframes cursorMoveReal {
+          0%, 5% { transform: translate(200px, 320px); opacity: 0; }
+          10% { opacity: 1; }
+          25%, 28% { transform: translate(520px, 160px); } /* Hover + Nueva Reserva */
+          30% { transform: translate(520px, 160px) scale(0.85); } /* Clic */
+          33% { transform: translate(520px, 160px) scale(1); }
+          45%, 48% { transform: translate(410px, 235px); } /* Hover Guardar */
+          50% { transform: translate(410px, 235px) scale(0.85); } /* Clic */
+          53% { transform: translate(410px, 235px) scale(1); }
+          65%, 100% { transform: translate(200px, 320px); opacity: 0; }
+        }
+        @keyframes rippleAction {
+          0%, 28% { transform: scale(0); opacity: 0; }
+          30% { transform: scale(1); opacity: 0.8; }
+          35%, 100% { transform: scale(2.5); opacity: 0; }
+        }
+        @keyframes rippleAction2 {
+          0%, 48% { transform: scale(0); opacity: 0; }
+          50% { transform: scale(1); opacity: 0.8; }
+          55%, 100% { transform: scale(2.5); opacity: 0; }
+        }
+        @keyframes modalBackdrop {
+          0%, 29% { opacity: 0; visibility: hidden; }
+          32%, 53% { opacity: 1; visibility: visible; }
+          56%, 100% { opacity: 0; visibility: hidden; }
+        }
+        @keyframes modalShow {
+          0%, 29% { opacity: 0; transform: translate(-50%, -40%) scale(0.9); visibility: hidden; }
+          32%, 53% { opacity: 1; transform: translate(-50%, -50%) scale(1); visibility: visible; }
+          56%, 100% { opacity: 0; transform: translate(-50%, -60%) scale(0.95); visibility: hidden; }
+        }
+        @keyframes rowInsert {
+          0%, 54% { opacity: 0; transform: translateX(-20px); background-color: #d1fae5; }
+          58%, 70% { opacity: 1; transform: translateX(0); background-color: #d1fae5; }
+          75%, 100% { opacity: 1; transform: translateX(0); background-color: #ffffff; }
+        }
+        @keyframes pushRowsDown {
+          0%, 54% { transform: translateY(0); }
+          58%, 100% { transform: translateY(42px); } /* Altura de la fila nueva */
+        }
+        @keyframes toastShow {
+          0%, 55% { opacity: 0; transform: translateX(30px) scale(0.9); visibility: hidden; }
+          60%, 85% { opacity: 1; transform: translateX(0) scale(1); visibility: visible; }
+          90%, 100% { opacity: 0; transform: translateY(-20px) scale(0.9); visibility: hidden; }
+        }
+        @keyframes pulseMetric {
+          0%, 57% { background-color: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.05); box-shadow: none; }
+          60% { background-color: rgba(0,208,132,0.15); border-color: #00d084; transform: scale(1.05); box-shadow: 0 10px 25px -5px rgba(0,208,132,0.3); }
+          75%, 100% { background-color: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.05); transform: scale(1); box-shadow: none; }
+        }
+        @keyframes updateBar {
+          0%, 58% { opacity: 1; }
+          59%, 100% { opacity: 0; }
+        }
+        @keyframes updateBarNew {
+          0%, 58% { opacity: 0; transform: translateY(10px); }
+          60%, 100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes btnClickStyle {
+          0%, 26% { background-color: #0f172a; transform: scale(1); }
+          30%, 33% { background-color: #1e293b; transform: scale(0.95); }
+          35%, 100% { background-color: #0f172a; transform: scale(1); }
         }
       `}
     </style>
@@ -47,80 +110,113 @@ const ParaClubes = () => (
     </div>
     
     <div style={{ flex: '1 1 450px', display: 'flex', justifyContent: 'center', zIndex: 10 }}>
-       {/* Simulación de Dashboard Glassmorphism */}
-       <div style={{ width: '100%', maxWidth: '650px', background: 'linear-gradient(145deg, rgba(30,41,59,0.85) 0%, rgba(15,23,42,0.95) 100%)', borderRadius: '24px', boxShadow: '0 30px 60px -12px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.1)', overflow: 'hidden', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', animation: 'floatDashboard 8s ease-in-out infinite', transformStyle: 'preserve-3d', perspective: '1000px' }}>
-          
-          {/* Barra de Ventana estilo macOS */}
-          <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.02)' }}>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#ef4444', opacity: 0.8 }}></div>
-              <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#eab308', opacity: 0.8 }}></div>
-              <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#22c55e', opacity: 0.8 }}></div>
+       {/* RÉPLICA EXACTA DEL PROPIETARIO DASHBOARD */}
+       <div style={{ width: '100%', maxWidth: '700px', background: '#f1f5f9', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.2)', boxShadow: '0 30px 60px -12px rgba(0,0,0,0.4)', overflow: 'hidden', animation: 'floatDashboard 8s ease-in-out infinite', transformStyle: 'preserve-3d', perspective: '1000px', display: 'flex', height: '420px', position: 'relative' }}>
+
+          {/* Sidebar Realista */}
+          <div style={{ width: '160px', backgroundColor: '#0f172a', padding: '20px 12px', display: 'flex', flexDirection: 'column', zIndex: 10 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px', paddingLeft: '8px' }}>
+               <div style={{ width: '18px', height: '18px', backgroundColor: '#00d084', borderRadius: '4px' }}></div>
+               <span style={{ color: '#fff', fontWeight: '900', fontSize: '1rem', letterSpacing: '-0.5px' }}>PlayStop</span>
             </div>
-            <div style={{ width: '140px', height: '8px', borderRadius: '4px', backgroundColor: 'rgba(255,255,255,0.1)' }}></div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+               <div style={{ backgroundColor: '#00d084', color: '#0f172a', padding: '8px 12px', borderRadius: '8px', fontSize: '0.7rem', fontWeight: '700' }}>📊 Dashboard</div>
+               <div style={{ color: '#94a3b8', padding: '8px 12px', fontSize: '0.7rem', fontWeight: '600' }}>📅 Calendario</div>
+               <div style={{ color: '#94a3b8', padding: '8px 12px', fontSize: '0.7rem', fontWeight: '600' }}>🏟️ Mis Canchas</div>
+               <div style={{ color: '#94a3b8', padding: '8px 12px', fontSize: '0.7rem', fontWeight: '600' }}>💰 Finanzas</div>
+            </div>
           </div>
 
-          <div style={{ display: 'flex', height: '320px' }}>
-            {/* Sidebar Mockup */}
-            <div style={{ width: '80px', borderRight: '1px solid rgba(255,255,255,0.05)', padding: '20px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px', backgroundColor: 'rgba(0,0,0,0.2)' }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '10px', backgroundColor: '#00d084', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#fff', fontWeight: 'bold' }}>P</div>
-              <div style={{ width: '36px', height: '36px', borderRadius: '10px', backgroundColor: 'rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg></div>
-              <div style={{ width: '36px', height: '36px', borderRadius: '10px', backgroundColor: 'transparent', display: 'flex', justifyContent: 'center', alignItems: 'center' }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div>
-              <div style={{ width: '36px', height: '36px', borderRadius: '10px', backgroundColor: 'transparent', display: 'flex', justifyContent: 'center', alignItems: 'center' }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></div>
-            </div>
+          {/* Contenedor Derecho */}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}>
             
-            {/* Contenido Principal */}
-            <div style={{ flex: 1, padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            {/* Cursor SVG */}
+            <div style={{ position: 'absolute', top: 0, left: 0, zIndex: 100, animation: 'cursorMoveReal 9s infinite cubic-bezier(0.25, 1, 0.5, 1)', pointerEvents: 'none' }}>
+               <div style={{ position: 'absolute', top: '-10px', left: '-10px', width: '20px', height: '20px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.2)', animation: 'rippleAction 9s infinite ease-out' }}></div>
+               <div style={{ position: 'absolute', top: '-10px', left: '-10px', width: '20px', height: '20px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.2)', animation: 'rippleAction2 9s infinite ease-out' }}></div>
+               <svg width="28" height="28" viewBox="0 0 24 24" fill="#0f172a" stroke="#ffffff" strokeWidth="2"><path d="M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 0 1 .35-.15h6.42c.45 0 .67-.54.35-.85L6.35 3.21a.5.5 0 0 0-.85 0z"></path></svg>
+            </div>
+
+            {/* Header Realista */}
+            <div style={{ backgroundColor: '#ffffff', padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #e2e8f0', zIndex: 10 }}>
+               <h3 style={{ margin: 0, color: '#0f172a', fontSize: '0.9rem', fontWeight: '800' }}>Panel del Complejo</h3>
+               <div style={{ display: 'flex', gap: '10px' }}>
+                 <div style={{ width: '28px', height: '28px', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', justifyContent: 'center', alignItems: 'center' }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></div>
+               </div>
+            </div>
+
+            {/* Vista Principal */}
+            <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
               
-              {/* Tarjetas KPI */}
-              <div style={{ display: 'flex', gap: '15px' }}>
-                <div style={{ flex: 1, height: '80px', backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.05)', padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ width: '60px', height: '6px', backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: '3px' }}></div>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00d084" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
-                  </div>
-                  <div style={{ width: '80%', height: '20px', backgroundColor: '#f8fafc', borderRadius: '4px' }}></div>
-                </div>
-                <div style={{ flex: 1, height: '80px', backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.05)', padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ width: '50px', height: '6px', backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: '3px' }}></div>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                  </div>
-                  <div style={{ width: '70%', height: '20px', backgroundColor: '#f8fafc', borderRadius: '4px' }}></div>
-                </div>
-                <div style={{ flex: 1, height: '80px', backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.05)', padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ width: '70px', height: '6px', backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: '3px' }}></div>
-                  </div>
-                  <div style={{ width: '90%', height: '20px', backgroundColor: '#f8fafc', borderRadius: '4px' }}></div>
-                </div>
+              {/* Toast Confirmación */}
+              <div style={{ position: 'absolute', top: '16px', right: '16px', backgroundColor: '#ffffff', padding: '10px 16px', borderRadius: '10px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '10px', zIndex: 60, animation: 'toastShow 9s infinite ease-in-out' }}>
+                 <div style={{ width: '18px', height: '18px', borderRadius: '50%', backgroundColor: '#00d084', color: '#fff', display: 'flex', justifyContent: 'center', alignItems: 'center' }}><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                 <span style={{ fontSize: '0.75rem', fontWeight: '700', color: '#0f172a' }}>Reserva guardada</span>
               </div>
 
-              {/* Gráfico Simulado Avanzado */}
-              <div style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.05)', position: 'relative', overflow: 'hidden' }}>
-                 
-                 <div style={{ padding: '16px', display: 'flex', justifyContent: 'space-between', zIndex: 10, position: 'relative' }}>
-                    <div style={{ width: '100px', height: '10px', backgroundColor: 'rgba(255,255,255,0.3)', borderRadius: '5px' }}></div>
-                    <div style={{ width: '60px', height: '16px', borderRadius: '8px', background: 'linear-gradient(90deg, rgba(0,208,132,0.2), rgba(0,208,132,0.1))', border: '1px solid rgba(0,208,132,0.4)' }}></div>
+              {/* Métricas Reales */}
+              <div style={{ display: 'flex', gap: '12px' }}>
+                 <div style={{ flex: 1, backgroundColor: '#ffffff', borderRadius: '12px', padding: '16px', border: '1px solid #e2e8f0', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', animation: 'pulseMetric 9s infinite ease-in-out' }}>
+                    <div style={{ fontSize: '0.65rem', color: '#64748b', fontWeight: '800', textTransform: 'uppercase', marginBottom: '6px' }}>Ingresos de Hoy</div>
+                    <div style={{ position: 'relative', height: '28px' }}>
+                       <div style={{ position: 'absolute', fontSize: '1.25rem', fontWeight: '900', color: '#0f172a', animation: 'updateBar 9s infinite ease-in-out' }}>S/ 1,450</div>
+                       <div style={{ position: 'absolute', fontSize: '1.25rem', fontWeight: '900', color: '#0f172a', animation: 'updateBarNew 9s infinite ease-in-out' }}>S/ 1,530</div>
+                    </div>
                  </div>
-
-                 {/* Simulación de gráfico curvo SVG */}
-                 <svg viewBox="0 0 500 120" preserveAspectRatio="none" style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '85%' }}>
-                    <defs>
-                      <linearGradient id="chartGlow" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stopColor="#00d084" stopOpacity="0.4" />
-                        <stop offset="100%" stopColor="#00d084" stopOpacity="0.0" />
-                      </linearGradient>
-                    </defs>
-                    <path d="M0,120 L0,80 C50,90 100,30 150,50 C200,70 250,20 300,40 C350,60 400,10 450,30 C480,40 500,20 500,10 L500,120 Z" fill="url(#chartGlow)" />
-                    <path d="M0,80 C50,90 100,30 150,50 C200,70 250,20 300,40 C350,60 400,10 450,30 C480,40 500,20 500,10" fill="none" stroke="#00d084" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                    
-                    {/* Puntos de datos */}
-                    <circle cx="150" cy="50" r="4" fill="#0f172a" stroke="#00d084" strokeWidth="2" />
-                    <circle cx="300" cy="40" r="4" fill="#0f172a" stroke="#00d084" strokeWidth="2" />
-                    <circle cx="450" cy="30" r="4" fill="#ffffff" stroke="#00d084" strokeWidth="2" style={{ filter: 'drop-shadow(0 0 6px rgba(0,208,132,0.8))' }} />
-                 </svg>
+                 <div style={{ flex: 1, backgroundColor: '#ffffff', borderRadius: '12px', padding: '16px', border: '1px solid #e2e8f0', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+                    <div style={{ fontSize: '0.65rem', color: '#64748b', fontWeight: '800', textTransform: 'uppercase', marginBottom: '6px' }}>Reservas Activas</div>
+                    <div style={{ fontSize: '1.25rem', fontWeight: '900', color: '#0f172a' }}>18</div>
+                 </div>
               </div>
+
+              {/* Tabla de Reservas Realista */}
+              <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', padding: '16px', flex: 1, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
+                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                    <h4 style={{ margin: 0, fontSize: '0.85rem', fontWeight: '800', color: '#0f172a' }}>Últimas Reservas</h4>
+                    <div style={{ backgroundColor: '#0f172a', color: '#ffffff', padding: '6px 12px', borderRadius: '6px', fontSize: '0.7rem', fontWeight: '700', animation: 'btnClickStyle 9s infinite ease-in-out' }}>+ Nueva Reserva</div>
+                 </div>
+                 
+                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', position: 'relative', overflow: 'hidden' }}>
+                    {/* Fila animada insertada desde arriba */}
+                    <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', display: 'grid', gridTemplateColumns: '1fr 2fr 1fr 1fr', gap: '10px', fontSize: '0.7rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '8px', alignItems: 'center', zIndex: 10, animation: 'rowInsert 9s infinite cubic-bezier(0.25, 1, 0.5, 1)' }}>
+                       <div style={{ fontWeight: '700', color: '#0f172a' }}>20:00</div>
+                       <div style={{ color: '#475569' }}>Cancha 1 (F7)</div>
+                       <div style={{ fontWeight: '800', color: '#0f172a' }}>S/ 80.00</div>
+                       <div><span style={{ backgroundColor: '#d1fae5', color: '#047857', padding: '4px 8px', borderRadius: '6px', fontWeight: '800', fontSize: '0.6rem' }}>Pagado</span></div>
+                    </div>
+
+                    {/* Filas existentes que son empujadas hacia abajo */}
+                    <div style={{ width: '100%', animation: 'pushRowsDown 9s infinite cubic-bezier(0.25, 1, 0.5, 1)' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr 1fr 1fr', gap: '10px', fontSize: '0.7rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '8px', marginBottom: '8px', alignItems: 'center' }}>
+                         <div style={{ fontWeight: '700', color: '#0f172a' }}>18:00</div>
+                         <div style={{ color: '#475569' }}>Cancha Padel A</div>
+                         <div style={{ fontWeight: '800', color: '#0f172a' }}>S/ 60.00</div>
+                         <div><span style={{ backgroundColor: '#d1fae5', color: '#047857', padding: '4px 8px', borderRadius: '6px', fontWeight: '800', fontSize: '0.6rem' }}>Pagado</span></div>
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr 1fr 1fr', gap: '10px', fontSize: '0.7rem', alignItems: 'center' }}>
+                         <div style={{ fontWeight: '700', color: '#0f172a' }}>19:00</div>
+                         <div style={{ color: '#475569' }}>Cancha 2 (F7)</div>
+                         <div style={{ fontWeight: '800', color: '#0f172a' }}>S/ 100.00</div>
+                         <div><span style={{ backgroundColor: '#fef3c7', color: '#b45309', padding: '4px 8px', borderRadius: '6px', fontWeight: '800', fontSize: '0.6rem' }}>Pendiente</span></div>
+                      </div>
+                    </div>
+                 </div>
+              </div>
+
+              {/* Capa borrosa del Modal interactivo */}
+              <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(15, 23, 42, 0.75)', backdropFilter: 'blur(4px)', zIndex: 40, borderRadius: '16px', animation: 'modalBackdrop 9s infinite ease-in-out' }}></div>
+              
+              {/* Modal Realista Centro */}
+              <div style={{ position: 'absolute', top: '50%', left: '50%', width: '280px', backgroundColor: '#ffffff', borderRadius: '20px', padding: '24px', zIndex: 50, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)', animation: 'modalShow 9s infinite cubic-bezier(0.16, 1, 0.3, 1)' }}>
+                 <h4 style={{ margin: '0 0 16px 0', fontSize: '0.95rem', fontWeight: '900', color: '#0f172a' }}>Registrar Nueva</h4>
+                 <div style={{ width: '100%', height: '32px', border: '2px solid #e2e8f0', borderRadius: '8px', backgroundColor: '#f8fafc', marginBottom: '12px' }}></div>
+                 <div style={{ width: '100%', height: '32px', border: '2px solid #e2e8f0', borderRadius: '8px', backgroundColor: '#f8fafc', marginBottom: '20px' }}></div>
+                 <div style={{ display: 'flex', gap: '10px' }}>
+                   <div style={{ flex: 1, height: '32px', backgroundColor: '#f8fafc', border: '2px solid #e2e8f0', borderRadius: '8px' }}></div>
+                   <div style={{ flex: 1, height: '32px', backgroundColor: '#00d084', color: '#ffffff', display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '8px', fontSize: '0.75rem', fontWeight: '800', animation: 'btnClickStyle 9s infinite ease-in-out' }}>Guardar</div>
+                 </div>
+              </div>
+
             </div>
           </div>
        </div>
