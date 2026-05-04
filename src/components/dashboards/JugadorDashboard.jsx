@@ -3,6 +3,8 @@ import { DashboardLayout, MetricCard } from './DashboardLayout.jsx';
 
 const JugadorDashboard = ({ user, onLogout }) => {
   const [activeTab, setActiveTab] = useState('Inicio');
+  const [canchaSearch, setCanchaSearch] = useState('');
+  const [canchaSportFilter, setCanchaSportFilter] = useState('Todos los deportes');
 
   // Estado simulado para Mis Reservas
   const [reservas, setReservas] = useState([
@@ -17,6 +19,21 @@ const JugadorDashboard = ({ user, onLogout }) => {
     { id: 3, name: 'Carlos Ramírez', img: 'https://randomuser.me/api/portraits/men/32.jpg', level: 'Principiante', lastMatch: 'Hace 1 semana' },
     { id: 4, name: 'Valeria Castro', img: 'https://randomuser.me/api/portraits/women/44.jpg', level: 'Intermedio', lastMatch: 'Hace 2 semanas' },
   ]);
+
+  // Catálogo base de canchas para el buscador
+  const todasLasCanchas = [
+    { img: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=500&q=80', name: 'Cancha El Clásico', type: 'Fútbol 7 • Sintética', price: 'S/ 80', rating: '4.9' },
+    { img: 'https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=500&q=80', name: 'Pádel Center Surco', type: 'Pádel • Cristal', price: 'S/ 60', rating: '4.7' },
+    { img: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=500&q=80', name: 'Tenis Club San Isidro', type: 'Tenis • Arcilla', price: 'S/ 100', rating: '5.0' },
+    { img: 'https://images.unsplash.com/photo-1459865264687-595d652de67e?w=500&q=80', name: 'DeporPlaza Norte', type: 'Fútbol 5 • Sintética', price: 'S/ 70', rating: '4.5' },
+    { img: 'https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=500&q=80', name: 'Vóley Playa Costa Verde', type: 'Vóley • Arena', price: 'S/ 50', rating: '4.8' },
+  ];
+
+  const filteredCanchas = todasLasCanchas.filter(c => {
+    const matchSearch = c.name.toLowerCase().includes(canchaSearch.toLowerCase()) || c.type.toLowerCase().includes(canchaSearch.toLowerCase());
+    const matchSport = canchaSportFilter === 'Todos los deportes' || c.type.toLowerCase().includes(canchaSportFilter.toLowerCase());
+    return matchSearch && matchSport;
+  });
 
   const [modal, setModal] = useState({ show: false, action: null, payload: null });
   const [acceptedTerms, setAcceptedTerms] = useState(false);
@@ -101,23 +118,18 @@ const JugadorDashboard = ({ user, onLogout }) => {
       {activeTab === 'Buscar Canchas' && (
         <div>
           <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', flexWrap: 'wrap' }}>
-            <input type="text" placeholder="Buscar por nombre o distrito..." style={{ flex: 1, minWidth: '200px', padding: '14px 18px', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '1rem', outline: 'none' }} />
-            <select style={{ padding: '14px 18px', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '1rem', outline: 'none', backgroundColor: '#fff', cursor: 'pointer' }}>
-              <option>Todos los deportes</option>
-              <option>Fútbol 7</option>
-              <option>Pádel</option>
-              <option>Tenis</option>
+            <input type="text" value={canchaSearch} onChange={(e) => setCanchaSearch(e.target.value)} placeholder="Buscar por nombre o distrito..." style={{ flex: 1, minWidth: '200px', padding: '14px 18px', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '1rem', outline: 'none' }} />
+            <select value={canchaSportFilter} onChange={(e) => setCanchaSportFilter(e.target.value)} style={{ padding: '14px 18px', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '1rem', outline: 'none', backgroundColor: '#fff', cursor: 'pointer' }}>
+              <option value="Todos los deportes">Todos los deportes</option>
+              <option value="Fútbol">Fútbol</option>
+              <option value="Pádel">Pádel</option>
+              <option value="Tenis">Tenis</option>
+              <option value="Vóley">Vóley</option>
             </select>
-            <button className="action-btn" style={{ backgroundColor: '#00d084', color: '#fff', border: 'none', padding: '14px 24px', borderRadius: '12px', fontWeight: '800', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 6px rgba(0,208,132,0.2)' }}>Buscar</button>
+            <button onClick={() => {}} className="action-btn" style={{ backgroundColor: '#00d084', color: '#fff', border: 'none', padding: '14px 24px', borderRadius: '12px', fontWeight: '800', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 6px rgba(0,208,132,0.2)' }}>Buscar</button>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
-            {[
-              { img: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=500&q=80', name: 'Cancha El Clásico', type: 'Fútbol 7 • Sintética', price: 'S/ 80', rating: '4.9' },
-              { img: 'https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=500&q=80', name: 'Pádel Center Surco', type: 'Pádel • Cristal', price: 'S/ 60', rating: '4.7' },
-              { img: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=500&q=80', name: 'Tenis Club San Isidro', type: 'Tenis • Arcilla', price: 'S/ 100', rating: '5.0' },
-              { img: 'https://images.unsplash.com/photo-1459865264687-595d652de67e?w=500&q=80', name: 'DeporPlaza Norte', type: 'Fútbol 5 • Sintética', price: 'S/ 70', rating: '4.5' },
-              { img: 'https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=500&q=80', name: 'Vóley Playa Costa Verde', type: 'Vóley • Arena', price: 'S/ 50', rating: '4.8' },
-            ].map((cancha, i) => (
+            {filteredCanchas.length > 0 ? filteredCanchas.map((cancha, i) => (
               <div key={i} className="card-hover" style={{ backgroundColor: '#fff', borderRadius: '20px', border: '1px solid #e2e8f0', overflow: 'hidden', cursor: 'pointer', transition: 'all 0.3s ease' }}>
                 <div style={{ height: '160px', backgroundImage: `url(${cancha.img})`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
                 <div style={{ padding: '20px' }}>
@@ -132,7 +144,9 @@ const JugadorDashboard = ({ user, onLogout }) => {
                   </div>
                 </div>
               </div>
-            ))}
+            )) : (
+              <div style={{ color: '#64748b', padding: '40px', textAlign: 'center', width: '100%', gridColumn: '1 / -1' }}>No se encontraron canchas que coincidan con tu búsqueda.</div>
+            )}
           </div>
         </div>
       )}

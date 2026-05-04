@@ -3,6 +3,9 @@ import { DashboardLayout, MetricCard } from './DashboardLayout.jsx';
 
 const AdminDashboard = ({ user, onLogout }) => {
   const [activeTab, setActiveTab] = useState('Resumen');
+  const [ticketFilter, setTicketFilter] = useState('Todos los estados');
+  const [userSearch, setUserSearch] = useState('');
+  const [clubSearch, setClubSearch] = useState('');
 
   // Estado para manejar el CRUD de los Clubes
   const [clubes, setClubes] = useState([
@@ -10,10 +13,40 @@ const AdminDashboard = ({ user, onLogout }) => {
     { id: 2, name: 'Canchas del Norte', location: 'Trujillo, Perú', plan: 'Básico' },
   ]);
 
+  // Estado simulado para Usuarios
+  const [usuarios] = useState([
+    { id: 1, name: 'Martín Fernández', email: 'martin@example.com', role: 'Jugador', status: 'Activo' },
+    { id: 2, name: 'Lucía Gómez', email: 'lucia@playstop.com', role: 'Propietario', status: 'Activo' },
+    { id: 3, name: 'Carlos Ramírez', email: 'carlos@demo.com', role: 'Jugador', status: 'Suspendido' },
+    { id: 4, name: 'Valeria Castro', email: 'valeria@test.com', role: 'Jugador', status: 'Activo' },
+  ]);
+
+  // Estado simulado para Tickets de Soporte
+  const [tickets] = useState([
+    { id: 'TCK-001', user: 'Lucía Gómez', subject: 'Problema con pago de reserva', status: 'Abierto', priority: 'Alta', date: 'Hoy, 10:30' },
+    { id: 'TCK-002', user: 'Martín Fernández', subject: 'Error al añadir amigos', status: 'En Progreso', priority: 'Media', date: 'Ayer, 15:45' },
+    { id: 'TCK-003', user: 'DeporPlaza Miraflores', subject: 'Actualización de cuenta bancaria', status: 'Cerrado', priority: 'Baja', date: '24 Oct, 09:15' },
+  ]);
+
   // Estado del Modal
   const [modal, setModal] = useState({ show: false, action: null, payload: null });
   const openModal = (action, payload = null) => setModal({ show: true, action, payload });
   const closeModal = () => setModal({ show: false, action: null, payload: null });
+
+  const filteredTickets = tickets.filter(t => {
+    if (ticketFilter === 'Todos los estados') return true;
+    return t.status === ticketFilter;
+  });
+
+  const filteredUsuarios = usuarios.filter(u => 
+    u.name.toLowerCase().includes(userSearch.toLowerCase()) || 
+    u.email.toLowerCase().includes(userSearch.toLowerCase())
+  );
+
+  const filteredClubes = clubes.filter(c => 
+    c.name.toLowerCase().includes(clubSearch.toLowerCase()) || 
+    c.location.toLowerCase().includes(clubSearch.toLowerCase())
+  );
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -84,12 +117,119 @@ const AdminDashboard = ({ user, onLogout }) => {
           </div>
         </>
       )}
-      {activeTab !== 'Resumen' && (
-        <div style={{ backgroundColor: '#fff', padding: '40px', borderRadius: '20px', textAlign: 'center', border: '1px solid #e2e8f0', marginTop: '20px' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '10px' }}>🚧</div>
-          <h2 style={{ color: '#0f172a', margin: '0 0 10px 0' }}>Módulo en Construcción</h2>
-          <p style={{ color: '#64748b', margin: 0 }}>La vista de "{activeTab}" estará disponible en la próxima actualización.</p>
+      
+      {activeTab === 'Clubes Afiliados' && (
+        <div className="dashboard-card">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
+            <h3 style={{ margin: 0, color: '#0f172a', fontSize: '1.3rem', fontWeight: '800' }}>Directorio de Clubes</h3>
+            <div style={{ display: 'flex', gap: '12px' }}>
+               <input type="text" value={clubSearch} onChange={(e) => setClubSearch(e.target.value)} placeholder="Buscar club..." className="modal-input" style={{ padding: '10px 16px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} />
+               <button onClick={() => openModal('AGREGAR_CLUB')} className="action-btn" style={{ backgroundColor: '#0f172a', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '10px', fontWeight: '700', cursor: 'pointer' }}>+ Añadir Club</button>
+            </div>
+          </div>
+          <div style={{ overflowX: 'auto', padding: '10px 0' }}>
+            <table className="premium-table">
+              <thead>
+                <tr>
+                  <th>Complejo Deportivo</th>
+                  <th>Ubicación</th>
+                  <th>Plan Actual</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredClubes.map((row) => (
+                  <tr key={row.id} className="table-row">
+                    <td style={{ fontWeight: '700', color: '#0f172a' }}>{row.name}</td>
+                    <td style={{ color: '#475569' }}>{row.location}</td>
+                    <td><span className="status-badge" style={{ color: row.plan === 'PRO' ? '#047857' : '#3b82f6', backgroundColor: row.plan === 'PRO' ? '#d1fae5' : '#eff6ff' }}>{row.plan}</span></td>
+                    <td style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      <button onClick={() => openModal('EDITAR_CLUB', row)} className="action-btn" style={{ backgroundColor: '#eff6ff', color: '#3b82f6', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }}>Editar</button>
+                      <button onClick={() => openModal('ELIMINAR_CLUB', row)} className="action-btn" style={{ backgroundColor: '#fee2e2', color: '#ef4444', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }}>Eliminar</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
+      )}
+
+      {activeTab === 'Usuarios' && (
+        <div className="dashboard-card">
+           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
+            <h3 style={{ margin: 0, color: '#0f172a', fontSize: '1.3rem', fontWeight: '800' }}>Gestión de Usuarios</h3>
+            <input type="text" value={userSearch} onChange={(e) => setUserSearch(e.target.value)} placeholder="Buscar por nombre o correo..." className="modal-input" style={{ padding: '10px 16px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none', minWidth: '250px' }} />
+          </div>
+          <div style={{ overflowX: 'auto', padding: '10px 0' }}>
+            <table className="premium-table">
+              <thead>
+                <tr>
+                  <th>Usuario</th>
+                  <th>Email</th>
+                  <th>Rol</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredUsuarios.map(u => (
+                  <tr key={u.id} className="table-row">
+                    <td style={{ fontWeight: '700', color: '#0f172a' }}>{u.name}</td>
+                    <td style={{ color: '#475569' }}>{u.email}</td>
+                    <td><span style={{ padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '700', backgroundColor: u.role==='Propietario'?'#e0e7ff':'#f1f5f9', color: u.role==='Propietario'?'#1d4ed8':'#475569' }}>{u.role}</span></td>
+                    <td><span style={{ padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '700', backgroundColor: u.status==='Activo'?'#d1fae5':'#fee2e2', color: u.status==='Activo'?'#047857':'#ef4444' }}>{u.status}</span></td>
+                    <td>
+                      <button onClick={() => alert('Función de suspensión en desarrollo')} className="action-btn" style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', padding: '6px 12px', borderRadius: '6px', fontWeight: '600', cursor: 'pointer', color: '#475569' }}>Suspender</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'Soporte y Tickets' && (
+         <div className="dashboard-card">
+           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
+            <h3 style={{ margin: 0, color: '#0f172a', fontSize: '1.3rem', fontWeight: '800' }}>Bandeja de Soporte</h3>
+            <select value={ticketFilter} onChange={(e) => setTicketFilter(e.target.value)} className="modal-input" style={{ padding: '10px 16px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none', cursor: 'pointer' }}>
+              <option value="Todos los estados">Todos los estados</option>
+              <option value="Abierto">Abiertos</option>
+              <option value="En Progreso">En Progreso</option>
+              <option value="Cerrado">Cerrados</option>
+            </select>
+          </div>
+          <div style={{ overflowX: 'auto', padding: '10px 0' }}>
+            <table className="premium-table">
+              <thead>
+                <tr>
+                  <th>ID Ticket</th>
+                  <th>Asunto</th>
+                  <th>Usuario / Club</th>
+                  <th>Prioridad</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                 {filteredTickets.map(t => (
+                  <tr key={t.id} className="table-row">
+                    <td style={{ fontWeight: '700', color: '#64748b' }}>{t.id}</td>
+                    <td style={{ fontWeight: '700', color: '#0f172a' }}>{t.subject}</td>
+                    <td style={{ color: '#475569' }}>{t.user}</td>
+                    <td><span style={{ color: t.priority==='Alta'?'#ef4444':t.priority==='Media'?'#f59e0b':'#10b981', fontWeight: '800', fontSize: '0.85rem' }}>{t.priority}</span></td>
+                    <td><span style={{ padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '700', backgroundColor: t.status==='Abierto'?'#fee2e2':t.status==='En Progreso'?'#fef3c7':'#f1f5f9', color: t.status==='Abierto'?'#ef4444':t.status==='En Progreso'?'#b45309':'#64748b' }}>{t.status}</span></td>
+                    <td>
+                      <button onClick={() => alert('Chat de soporte en desarrollo')} className="action-btn" style={{ backgroundColor: '#eff6ff', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: '700', cursor: 'pointer', color: '#3b82f6' }}>Responder</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+         </div>
       )}
     </DashboardLayout>
 
