@@ -17,9 +17,15 @@ import JugadorDashboard from './components/dashboards/JugadorDashboard.jsx';
 import PropietarioDashboard from './components/dashboards/PropietarioDashboard.jsx';
 import AdminDashboard from './components/dashboards/AdminDashboard.jsx';
 import SuperAdminDashboard from './components/dashboards/SuperAdminDashboard.jsx';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 
-function App() {
-  const [user, setUser] = useState(null); // null = No logueado
+function AppContent() {
+  // Leer el usuario del localStorage al iniciar la app
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('playstop-user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+  const navigate = useNavigate();
   
   // Inicializar el estado de Modo Oscuro leyendo directamente el localStorage
   const [darkMode, setDarkMode] = useState(() => {
@@ -50,17 +56,17 @@ function App() {
     return () => observer.disconnect();
   }, [user]);
 
-  // Renderizado Condicional: Si hay usuario, mostrar su panel respectivo
-  if (user) {
-    return (
-      <div className={darkMode ? 'dark-mode' : ''} style={{ fontFamily: '"Inter", system-ui, -apple-system, sans-serif', color: '#111827', margin: 0, padding: 0, backgroundColor: '#ffffff', minHeight: '100vh' }}>
-        {user.role === 'Jugador' && <JugadorDashboard user={user} onLogout={() => setUser(null)} darkMode={darkMode} toggleTheme={handleThemeToggle} />}
-        {user.role === 'Propietario' && <PropietarioDashboard user={user} onLogout={() => setUser(null)} darkMode={darkMode} toggleTheme={handleThemeToggle} />}
-        {user.role === 'Administrador' && <AdminDashboard user={user} onLogout={() => setUser(null)} darkMode={darkMode} toggleTheme={handleThemeToggle} />}
-        {user.role === 'Super Admin' && <SuperAdminDashboard user={user} onLogout={() => setUser(null)} darkMode={darkMode} toggleTheme={handleThemeToggle} />}
-      </div>
-    );
-  }
+  const handleLogin = (loggedInUser) => {
+    setUser(loggedInUser);
+    localStorage.setItem('playstop-user', JSON.stringify(loggedInUser));
+    navigate('/dashboard');
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem('playstop-user');
+    navigate('/');
+  };
 
   return (
     <div className={darkMode ? 'dark-mode' : ''} style={{ fontFamily: '"Inter", system-ui, -apple-system, sans-serif', color: '#111827', margin: 0, padding: 0, backgroundColor: '#ffffff', minHeight: '100vh' }}>
@@ -135,21 +141,53 @@ function App() {
           .dark-mode .section-badge { color: #f8fafc !important; border-color: rgba(255,255,255,0.2) !important; background: rgba(255,255,255,0.05) !important; }
         `}
       </style>
-      <Navbar onLogin={setUser} darkMode={darkMode} toggleTheme={handleThemeToggle} />
-      <Hero />
-      <Marcas />
-      <CanchasDestacadas />
-      <Soluciones />
-      <ParaJugadores />
-      <ParaClubes />
-      <Testimonios />
-      <Precios />
-      <Faq />
-      <Blog />
-      <Contacto />
-      <Legal />
-      <Footer />
+      <Routes>
+        {/* RUTA PUBLICA: Landing Page */}
+        <Route path="/" element={
+          !user ? (
+            <>
+              <Navbar onLogin={handleLogin} darkMode={darkMode} toggleTheme={handleThemeToggle} />
+              <Hero />
+              <Marcas />
+              <CanchasDestacadas />
+              <Soluciones />
+              <ParaJugadores />
+              <ParaClubes />
+              <Testimonios />
+              <Precios />
+              <Faq />
+              <Blog />
+              <Contacto />
+              <Legal />
+              <Footer />
+            </>
+          ) : <Navigate to="/dashboard" replace />
+        } />
+        
+        {/* RUTA PRIVADA: Dashboards (Solo accesible si hay usuario) */}
+        <Route path="/dashboard" element={
+          user ? (
+            <>
+              {user.role === 'Jugador' && <JugadorDashboard user={user} onLogout={handleLogout} darkMode={darkMode} toggleTheme={handleThemeToggle} />}
+              {user.role === 'Propietario' && <PropietarioDashboard user={user} onLogout={handleLogout} darkMode={darkMode} toggleTheme={handleThemeToggle} />}
+              {user.role === 'Administrador' && <AdminDashboard user={user} onLogout={handleLogout} darkMode={darkMode} toggleTheme={handleThemeToggle} />}
+              {user.role === 'Super Admin' && <SuperAdminDashboard user={user} onLogout={handleLogout} darkMode={darkMode} toggleTheme={handleThemeToggle} />}
+            </>
+          ) : <Navigate to="/" replace />
+        } />
+        
+        {/* RUTA COMODÍN: Redirigir a inicio si la URL no existe */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
   );
 }
 
