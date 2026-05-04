@@ -1,6 +1,6 @@
 
 const ParaClubes = () => (
-  <section id="clubes" style={{ padding: '120px 5%', backgroundColor: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '60px', position: 'relative', overflow: 'hidden' }}>
+  <section id="clubes" style={{ scrollMarginTop: '80px', padding: '120px 5%', backgroundColor: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '60px', position: 'relative', overflow: 'hidden' }}>
     
     {/* Background Glows */}
     <div style={{ position: 'absolute', top: '10%', right: '5%', width: '500px', height: '500px', backgroundColor: '#00d084', borderRadius: '50%', filter: 'blur(180px)', opacity: 0.15, zIndex: 0 }}></div>
