@@ -1,7 +1,7 @@
 import  { useState } from 'react';
 import { testCredentials } from './data/credentials.js';
 
-const Navbar = ({ onLogin }) => {
+const Navbar = ({ onLogin, darkMode, toggleTheme }) => {
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState('login'); // 'login', 'register' o 'forgot'
   const [email, setEmail] = useState('');
@@ -97,7 +97,10 @@ const Navbar = ({ onLogin }) => {
         </nav>
         
         <div className="desktop-nav" style={{ display: 'flex', gap: '15px' }}>
-          <button onClick={() => openModal('login')} style={{ backgroundColor: 'transparent', color: '#111827', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>Iniciar Sesión</button>
+          <button onClick={toggleTheme} style={{ background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '8px' }}>
+            {darkMode ? '☀️' : '🌙'}
+          </button>
+          <button className="nav-login-btn" onClick={() => openModal('login')} style={{ backgroundColor: 'transparent', color: '#111827', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>Iniciar Sesión</button>
           <button onClick={() => openModal('register')} style={{ backgroundColor: '#00d084', color: '#ffffff', border: 'none', padding: '10px 24px', borderRadius: '8px', fontWeight: '700', cursor: 'pointer', boxShadow: '0 4px 14px rgba(0, 208, 132, 0.3)' }}>Comenzar Gratis</button>
         </div>
 
@@ -115,7 +118,10 @@ const Navbar = ({ onLogin }) => {
           <a href="#clubes" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#0f172a', textDecoration: 'none', fontWeight: '700', fontSize: '1.1rem' }}>Para Clubes</a>
           <a href="#precios" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#0f172a', textDecoration: 'none', fontWeight: '700', fontSize: '1.1rem' }}>Precios</a>
           <hr style={{ border: 'none', borderTop: '1px solid #e2e8f0', margin: '10px 0' }} />
-          <button onClick={() => { setIsMobileMenuOpen(false); openModal('login'); }} style={{ width: '100%', backgroundColor: '#f1f5f9', color: '#0f172a', border: 'none', padding: '14px', borderRadius: '12px', fontWeight: '700', fontSize: '1rem' }}>Iniciar Sesión</button>
+          <button onClick={() => { setIsMobileMenuOpen(false); toggleTheme(); }} style={{ width: '100%', backgroundColor: 'transparent', color: '#0f172a', border: '1px solid #e2e8f0', padding: '14px', borderRadius: '12px', fontWeight: '700', fontSize: '1rem', display: 'flex', justifyContent: 'center', gap: '8px' }}>
+            {darkMode ? '☀️ Cambiar a Modo Claro' : '🌙 Cambiar a Modo Oscuro'}
+          </button>
+          <button onClick={() => { setIsMobileMenuOpen(false); openModal('login'); }} className="modal-demo-btn" style={{ width: '100%', backgroundColor: '#f1f5f9', color: '#0f172a', border: 'none', padding: '14px', borderRadius: '12px', fontWeight: '700', fontSize: '1rem' }}>Iniciar Sesión</button>
           <button onClick={() => { setIsMobileMenuOpen(false); openModal('register'); }} style={{ width: '100%', backgroundColor: '#00d084', color: '#ffffff', border: 'none', padding: '14px', borderRadius: '12px', fontWeight: '800', fontSize: '1rem', boxShadow: '0 4px 10px rgba(0,208,132,0.3)' }}>Comenzar Gratis</button>
         </div>
       )}
@@ -133,7 +139,7 @@ const Navbar = ({ onLogin }) => {
               .auth-btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.3); background-color: #1e293b; }
             `}
           </style>
-          <div style={{ backgroundColor: '#ffffff', padding: '40px', borderRadius: '28px', width: '90%', maxWidth: modalType === 'como-funciona' ? '960px' : '440px', position: 'relative', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1)', overflow: 'hidden', animation: 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)', transition: 'max-width 0.3s ease' }}>
+          <div className="modal-container" style={{ backgroundColor: '#ffffff', padding: '40px', borderRadius: '28px', width: '90%', maxWidth: modalType === 'como-funciona' ? '960px' : '440px', position: 'relative', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1)', overflow: 'hidden', animation: 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)', transition: 'max-width 0.3s ease' }}>
             
             {/* Elemento decorativo */}
             <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '6px', background: 'linear-gradient(90deg, #00d084, #3b82f6)' }}></div>
@@ -145,7 +151,7 @@ const Navbar = ({ onLogin }) => {
               </button>
             )}
 
-            <button onClick={() => setShowModal(false)} style={{ position: 'absolute', top: '20px', right: '20px', background: '#f3f4f6', border: 'none', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '1rem', cursor: 'pointer', color: '#64748b', transition: 'all 0.2s ease' }} onMouseOver={(e) => {e.currentTarget.style.backgroundColor = '#e5e7eb'; e.currentTarget.style.color = '#111827'}} onMouseOut={(e) => {e.currentTarget.style.backgroundColor = '#f3f4f6'; e.currentTarget.style.color = '#64748b'}}>✖</button>
+            <button onClick={() => setShowModal(false)} className="modal-close-btn" style={{ position: 'absolute', top: '20px', right: '20px', background: '#f3f4f6', border: 'none', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '1rem', cursor: 'pointer', color: '#64748b', transition: 'all 0.2s ease' }} onMouseOver={(e) => {e.currentTarget.style.backgroundColor = '#e5e7eb'; e.currentTarget.style.color = '#111827'}} onMouseOut={(e) => {e.currentTarget.style.backgroundColor = '#f3f4f6'; e.currentTarget.style.color = '#64748b'}}>✖</button>
             
             {modalType === 'como-funciona' ? (
               <div style={{ padding: '10px 0' }}>
@@ -224,12 +230,12 @@ const Navbar = ({ onLogin }) => {
               {modalType === 'register' && (
                 <div>
                   <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '6px' }}>Nombre completo</label>
-                  <input type="text" placeholder="Ej. Juan Pérez" style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid #cbd5e1', fontSize: '1rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box' }} onFocus={(e) => e.currentTarget.style.borderColor = '#00d084'} onBlur={(e) => e.currentTarget.style.borderColor = '#cbd5e1'} />
+                  <input className="modal-input" type="text" placeholder="Ej. Juan Pérez" style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid #cbd5e1', fontSize: '1rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box' }} onFocus={(e) => e.currentTarget.style.borderColor = '#00d084'} onBlur={(e) => e.currentTarget.style.borderColor = '#cbd5e1'} />
                 </div>
               )}
               <div>
                 <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '6px' }}>Correo electrónico</label>
-                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@correo.com" style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid #cbd5e1', fontSize: '1rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box' }} onFocus={(e) => e.currentTarget.style.borderColor = '#00d084'} onBlur={(e) => e.currentTarget.style.borderColor = '#cbd5e1'} />
+                <input className="modal-input" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@correo.com" style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid #cbd5e1', fontSize: '1rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box' }} onFocus={(e) => e.currentTarget.style.borderColor = '#00d084'} onBlur={(e) => e.currentTarget.style.borderColor = '#cbd5e1'} />
               </div>
               
               {modalType !== 'forgot' && (
@@ -238,7 +244,7 @@ const Navbar = ({ onLogin }) => {
                     <label style={{ fontSize: '0.85rem', fontWeight: '600', color: '#475569' }}>Contraseña</label>
                     {modalType === 'login' && <span onClick={() => setModalType('forgot')} style={{ fontSize: '0.8rem', color: '#00d084', fontWeight: '600', cursor: 'pointer', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = '#059669'} onMouseOut={(e) => e.currentTarget.style.color = '#00d084'}>¿Olvidaste tu contraseña?</span>}
                   </div>
-                  <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid #cbd5e1', fontSize: '1rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box' }} onFocus={(e) => e.currentTarget.style.borderColor = '#00d084'} onBlur={(e) => e.currentTarget.style.borderColor = '#cbd5e1'} />
+                  <input className="modal-input" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid #cbd5e1', fontSize: '1rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box' }} onFocus={(e) => e.currentTarget.style.borderColor = '#00d084'} onBlur={(e) => e.currentTarget.style.borderColor = '#cbd5e1'} />
                 </div>
               )}
               
@@ -253,7 +259,7 @@ const Navbar = ({ onLogin }) => {
                 <p style={{ margin: '0 0 12px 0', fontSize: '0.75rem', color: '#64748b', fontWeight: '700', textAlign: 'center', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Acceso Rápido (Demo)</p>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                   {testCredentials.map((cred) => (
-                    <button key={cred.id} type="button" onClick={() => handleRoleSelect(cred)} style={{ fontSize: '0.8rem', padding: '8px', borderRadius: '8px', border: '1px solid #e2e8f0', backgroundColor: '#ffffff', cursor: 'pointer', fontWeight: '600', color: '#475569', transition: 'all 0.2s' }} onMouseOver={(e) => {e.currentTarget.style.borderColor='#00d084'; e.currentTarget.style.color='#0f172a'}} onMouseOut={(e) => {e.currentTarget.style.borderColor='#e2e8f0'; e.currentTarget.style.color='#475569'}}>
+                    <button className="modal-demo-btn" key={cred.id} type="button" onClick={() => handleRoleSelect(cred)} style={{ fontSize: '0.8rem', padding: '8px', borderRadius: '8px', border: '1px solid #e2e8f0', backgroundColor: '#ffffff', cursor: 'pointer', fontWeight: '600', color: '#475569', transition: 'all 0.2s' }} onMouseOver={(e) => {e.currentTarget.style.borderColor='#00d084'; e.currentTarget.style.color='#0f172a'}} onMouseOut={(e) => {e.currentTarget.style.borderColor='#e2e8f0'; e.currentTarget.style.color='#475569'}}>
                       {cred.icon} {cred.role}
                     </button>
                   ))}
