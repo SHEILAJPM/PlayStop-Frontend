@@ -7,6 +7,7 @@ const Navbar = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [selectedRole, setSelectedRole] = useState(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Contenido de la sección "Cómo Funciona"
   const steps = [
@@ -68,30 +69,56 @@ const Navbar = ({ onLogin }) => {
   return (
     <>
       <style>
-        {`html { scroll-behavior: smooth; }`}
+        {`
+          html { scroll-behavior: smooth; }
+          @media (max-width: 768px) {
+            .desktop-nav { display: none !important; }
+            .mobile-toggle { display: block !important; }
+            .navbar-header { padding: 15px 20px !important; }
+          }
+          @media (min-width: 769px) {
+            .mobile-toggle, .mobile-menu { display: none !important; }
+          }
+        `}
       </style>
-      <header style={{ position: 'sticky', top: 0, zIndex: 50, display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 5%', backgroundColor: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(8px)', borderBottom: '1px solid #f3f4f6' }}>
+      <header className="navbar-header" style={{ position: 'sticky', top: 0, zIndex: 50, display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 5%', backgroundColor: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(8px)', borderBottom: '1px solid #f3f4f6' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <img src="/favicon.svg" alt="PlayStop" style={{ width: '32px', height: '32px' }} />
           <h1 style={{ margin: 0, fontSize: '24px', color: '#111827', fontWeight: '800', letterSpacing: '-0.5px' }}>PlayStop</h1>
         </div>
         
-        <nav style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
-          <a href="#" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem' }}>Inicio</a>
-          <a href="#" onClick={(e) => { e.preventDefault(); openModal('como-funciona'); }} style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem' }}>Cómo Funciona</a>
-          <a href="#soluciones" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem' }}>Soluciones</a>
-          <a href="#jugadores" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem' }}>Para Jugadores</a>
-          <a href="#clubes" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem' }}>Para Clubes</a>
-          <a href="#testimonios" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem' }}>Testimonios</a>
-          <a href="#precios" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem' }}>Precios</a>
-          <a href="#faq" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem' }}>FAQ</a>
+        <nav className="desktop-nav" style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
+          <a href="#" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#4b5563'}>Inicio</a>
+          <a href="#" onClick={(e) => { e.preventDefault(); openModal('como-funciona'); }} style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#4b5563'}>Cómo Funciona</a>
+          <a href="#soluciones" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#4b5563'}>Soluciones</a>
+          <a href="#jugadores" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#4b5563'}>Para Jugadores</a>
+          <a href="#clubes" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#4b5563'}>Para Clubes</a>
+          <a href="#precios" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#4b5563'}>Precios</a>
         </nav>
         
-        <div style={{ display: 'flex', gap: '15px' }}>
+        <div className="desktop-nav" style={{ display: 'flex', gap: '15px' }}>
           <button onClick={() => openModal('login')} style={{ backgroundColor: 'transparent', color: '#111827', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>Iniciar Sesión</button>
           <button onClick={() => openModal('register')} style={{ backgroundColor: '#00d084', color: '#ffffff', border: 'none', padding: '10px 24px', borderRadius: '8px', fontWeight: '700', cursor: 'pointer', boxShadow: '0 4px 14px rgba(0, 208, 132, 0.3)' }}>Comenzar Gratis</button>
         </div>
+
+        {/* Botón Hamburguesa Móvil */}
+        <button className="mobile-toggle" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#0f172a' }}>
+          {isMobileMenuOpen ? '✖' : '☰'}
+        </button>
       </header>
+
+      {/* Menú Desplegable Móvil */}
+      {isMobileMenuOpen && (
+        <div className="mobile-menu" style={{ position: 'fixed', top: '65px', left: 0, width: '100%', backgroundColor: '#ffffff', borderBottom: '1px solid #e2e8f0', zIndex: 49, padding: '20px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <a href="#soluciones" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#0f172a', textDecoration: 'none', fontWeight: '700', fontSize: '1.1rem' }}>Soluciones</a>
+          <a href="#jugadores" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#0f172a', textDecoration: 'none', fontWeight: '700', fontSize: '1.1rem' }}>Para Jugadores</a>
+          <a href="#clubes" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#0f172a', textDecoration: 'none', fontWeight: '700', fontSize: '1.1rem' }}>Para Clubes</a>
+          <a href="#precios" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#0f172a', textDecoration: 'none', fontWeight: '700', fontSize: '1.1rem' }}>Precios</a>
+          <hr style={{ border: 'none', borderTop: '1px solid #e2e8f0', margin: '10px 0' }} />
+          <button onClick={() => { setIsMobileMenuOpen(false); openModal('login'); }} style={{ width: '100%', backgroundColor: '#f1f5f9', color: '#0f172a', border: 'none', padding: '14px', borderRadius: '12px', fontWeight: '700', fontSize: '1rem' }}>Iniciar Sesión</button>
+          <button onClick={() => { setIsMobileMenuOpen(false); openModal('register'); }} style={{ width: '100%', backgroundColor: '#00d084', color: '#ffffff', border: 'none', padding: '14px', borderRadius: '12px', fontWeight: '800', fontSize: '1rem', boxShadow: '0 4px 10px rgba(0,208,132,0.3)' }}>Comenzar Gratis</button>
+        </div>
+      )}
 
       {/* Ventana Emergente (Modal) */}
       {showModal && (
