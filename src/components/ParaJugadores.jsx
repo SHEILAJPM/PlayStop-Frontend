@@ -14,6 +14,57 @@ const ParaJugadores = () => (
           50% { transform: translateY(-15px); }
           100% { transform: translateY(0px); }
         }
+        @keyframes touchMove {
+          0%, 10% { transform: translate(160px, 600px); opacity: 0; }
+          15% { opacity: 1; }
+          25%, 28% { transform: translate(160px, 495px); } /* Va al botón Reservar */
+          30% { transform: translate(160px, 495px) scale(0.8); } /* Tap Reservar */
+          33% { transform: translate(160px, 495px) scale(1); }
+          42%, 45% { transform: translate(160px, 545px); } /* Va al botón Pagar en el modal */
+          47% { transform: translate(160px, 545px) scale(0.8); } /* Tap Pagar */
+          50% { transform: translate(160px, 545px) scale(1); }
+          60%, 100% { transform: translate(160px, 600px); opacity: 0; }
+        }
+        @keyframes tapRipple1 {
+          0%, 28% { transform: scale(0); opacity: 0; }
+          30% { transform: scale(1); opacity: 0.6; }
+          35%, 100% { transform: scale(2.5); opacity: 0; }
+        }
+        @keyframes tapRipple2 {
+          0%, 45% { transform: scale(0); opacity: 0; }
+          47% { transform: scale(1); opacity: 0.6; }
+          52%, 100% { transform: scale(2.5); opacity: 0; }
+        }
+        @keyframes bottomSheetShow {
+          0%, 29% { transform: translateY(100%); }
+          33%, 50% { transform: translateY(0); }
+          54%, 100% { transform: translateY(100%); }
+        }
+        @keyframes sheetBackdrop {
+          0%, 29% { opacity: 0; visibility: hidden; }
+          33%, 50% { opacity: 1; visibility: visible; }
+          54%, 100% { opacity: 0; visibility: hidden; }
+        }
+        @keyframes toastMobile {
+          0%, 53% { transform: translateY(-50px) translateX(-50%); opacity: 0; visibility: hidden; }
+          57%, 85% { transform: translateY(35px) translateX(-50%); opacity: 1; visibility: visible; }
+          90%, 100% { transform: translateY(-50px) translateX(-50%); opacity: 0; visibility: hidden; }
+        }
+        @keyframes floatingCardShow {
+          0%, 65% { opacity: 0; transform: translateX(20px) scale(0.9); visibility: hidden; }
+          70%, 90% { opacity: 1; transform: translateX(0) scale(1); visibility: visible; }
+          95%, 100% { opacity: 0; transform: translateX(20px) scale(0.9); visibility: hidden; }
+        }
+        @keyframes btnPressMobile {
+          0%, 28% { background-color: #2563eb; transform: scale(1); }
+          30%, 33% { background-color: #1d4ed8; transform: scale(0.95); }
+          35%, 100% { background-color: #2563eb; transform: scale(1); }
+        }
+        @keyframes btnPressPay {
+          0%, 45% { background-color: #00d084; transform: scale(1); }
+          47%, 50% { background-color: #059669; transform: scale(0.95); }
+          52%, 100% { background-color: #00d084; transform: scale(1); }
+        }
       `}
     </style>
     
@@ -29,6 +80,12 @@ const ParaJugadores = () => (
           {/* Notch / Cámara */}
           <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '110px', height: '28px', backgroundColor: '#0f172a', borderBottomLeftRadius: '18px', borderBottomRightRadius: '18px', zIndex: 20 }}></div>
           
+          {/* Toast de Confirmación (Dinámico) */}
+          <div style={{ position: 'absolute', top: 0, left: '50%', backgroundColor: '#ffffff', borderRadius: '20px', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: '8px', zIndex: 30, boxShadow: '0 10px 25px -5px rgba(0,0,0,0.2)', border: '1px solid #e2e8f0', animation: 'toastMobile 9s infinite cubic-bezier(0.16, 1, 0.3, 1)', whiteSpace: 'nowrap' }}>
+            <div style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: '#00d084', color: '#fff', display: 'flex', justifyContent: 'center', alignItems: 'center' }}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+            <span style={{ fontSize: '0.8rem', fontWeight: '800', color: '#0f172a' }}>Reserva confirmada</span>
+          </div>
+
           {/* Contenido Simulado de la App */}
           <div style={{ paddingTop: '40px', display: 'flex', flexDirection: 'column', gap: '20px', height: '100%', backgroundColor: '#f8fafc' }}>
             
@@ -69,9 +126,36 @@ const ParaJugadores = () => (
                   </span>
                 </div>
                 <p style={{ margin: '0 0 16px 0', fontSize: '0.85rem', color: '#64748b', fontWeight: '500' }}>Sintética • 7 vs 7 • Luces LED</p>
-                <button style={{ width: '100%', backgroundColor: '#2563eb', color: '#ffffff', border: 'none', padding: '12px', borderRadius: '10px', fontWeight: '700', fontSize: '0.95rem' }}>Reservar S/ 80</button>
+                <button style={{ width: '100%', backgroundColor: '#2563eb', color: '#ffffff', border: 'none', padding: '12px', borderRadius: '10px', fontWeight: '700', fontSize: '0.95rem', animation: 'btnPressMobile 9s infinite ease-in-out' }}>Reservar S/ 80</button>
               </div>
             </div>
+          </div>
+
+          {/* Capa borrosa del Bottom Sheet */}
+          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(4px)', zIndex: 40, animation: 'sheetBackdrop 9s infinite ease-in-out' }}></div>
+
+          {/* Bottom Sheet (Modal Móvil) */}
+          <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', backgroundColor: '#ffffff', borderRadius: '24px 24px 0 0', padding: '24px 20px', zIndex: 50, boxShadow: '0 -10px 25px rgba(0,0,0,0.1)', animation: 'bottomSheetShow 9s infinite cubic-bezier(0.16, 1, 0.3, 1)' }}>
+            <div style={{ width: '40px', height: '5px', backgroundColor: '#e2e8f0', borderRadius: '3px', margin: '0 auto 20px auto' }}></div>
+            <h4 style={{ margin: '0 0 16px 0', fontSize: '1.1rem', fontWeight: '900', color: '#0f172a', textAlign: 'center' }}>Detalle de Reserva</h4>
+            <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '12px', marginBottom: '20px' }}>
+              <p style={{ margin: '0 0 4px 0', fontSize: '0.8rem', color: '#64748b', fontWeight: '600' }}>Cancha El Clásico</p>
+              <p style={{ margin: 0, fontSize: '0.95rem', color: '#0f172a', fontWeight: '800' }}>Hoy, 20:00 - 21:00</p>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <span style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: '600' }}>Total a pagar:</span>
+              <span style={{ fontSize: '1.2rem', color: '#0f172a', fontWeight: '900' }}>S/ 80.00</span>
+            </div>
+            <button style={{ width: '100%', backgroundColor: '#00d084', color: '#ffffff', border: 'none', padding: '14px', borderRadius: '12px', fontWeight: '800', fontSize: '1.05rem', animation: 'btnPressPay 9s infinite ease-in-out' }}>Pagar con Culqi</button>
+          </div>
+
+          {/* Indicador Táctil (Dedo) */}
+          <div style={{ position: 'absolute', top: 0, left: 0, zIndex: 100, animation: 'touchMove 9s infinite cubic-bezier(0.25, 1, 0.5, 1)', pointerEvents: 'none', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            {/* Ondas expansivas de Clic */}
+            <div style={{ position: 'absolute', width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'rgba(0, 0, 0, 0.15)', animation: 'tapRipple1 9s infinite ease-out' }}></div>
+            <div style={{ position: 'absolute', width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'rgba(0, 0, 0, 0.15)', animation: 'tapRipple2 9s infinite ease-out' }}></div>
+            {/* "Huella" Táctil */}
+            <div style={{ position: 'absolute', width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.7)', border: '2px solid rgba(0,0,0,0.1)', boxShadow: '0 4px 10px rgba(0,0,0,0.15)', backdropFilter: 'blur(2px)' }}></div>
           </div>
 
           {/* Barra de Navegación Inferior de la App */}
@@ -84,7 +168,7 @@ const ParaJugadores = () => (
        </div>
        
        {/* Tarjeta Flotante superpuesta */}
-       <div style={{ position: 'absolute', top: '150px', right: '-40px', backgroundColor: '#ffffff', padding: '14px 20px', borderRadius: '16px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,208,132,0.2)', display: 'flex', alignItems: 'center', gap: '14px', zIndex: 30 }}>
+       <div style={{ position: 'absolute', top: '150px', right: '-40px', backgroundColor: '#ffffff', padding: '14px 20px', borderRadius: '16px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,208,132,0.2)', display: 'flex', alignItems: 'center', gap: '14px', zIndex: 30, animation: 'floatingCardShow 9s infinite ease-in-out' }}>
          <div style={{ width: '36px', height: '36px', backgroundColor: '#d1fae5', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00d084" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
          </div>
