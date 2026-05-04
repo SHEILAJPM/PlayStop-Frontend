@@ -187,10 +187,10 @@ const Hero = () => {
         </p>
         
         <div className="hero-buttons" style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-          <button style={{ backgroundColor: '#00d084', color: '#ffffff', border: 'none', padding: '16px 36px', fontSize: '1.1rem', borderRadius: '8px', cursor: 'pointer', fontWeight: '700', boxShadow: '0 8px 20px -4px rgba(0, 208, 132, 0.4)' }}>
+          <button onClick={() => document.getElementById('canchas-destacadas').scrollIntoView()} style={{ backgroundColor: '#00d084', color: '#ffffff', border: 'none', padding: '16px 36px', fontSize: '1.1rem', borderRadius: '8px', cursor: 'pointer', fontWeight: '700', boxShadow: '0 8px 20px -4px rgba(0, 208, 132, 0.4)' }}>
             Reservar una cancha
           </button>
-          <button style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.2)', padding: '16px 36px', fontSize: '1.1rem', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', backdropFilter: 'blur(4px)' }}>
+          <button onClick={() => document.getElementById('clubes').scrollIntoView()} style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.2)', padding: '16px 36px', fontSize: '1.1rem', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', backdropFilter: 'blur(4px)' }}>
             Gestionar mi Club
           </button>
         </div>
@@ -283,7 +283,7 @@ const Hero = () => {
             </div>
             
             {/* Botón Buscar */}
-            <button style={{ marginTop: '10px', backgroundColor: '#00d084', color: '#ffffff', border: 'none', padding: '16px', borderRadius: '12px', fontWeight: '800', fontSize: '1.1rem', cursor: 'pointer', boxShadow: '0 8px 20px -4px rgba(0, 208, 132, 0.4)' }}>
+            <button onClick={() => document.getElementById('canchas-destacadas').scrollIntoView()} style={{ marginTop: '10px', backgroundColor: '#00d084', color: '#ffffff', border: 'none', padding: '16px', borderRadius: '12px', fontWeight: '800', fontSize: '1.1rem', cursor: 'pointer', boxShadow: '0 8px 20px -4px rgba(0, 208, 132, 0.4)' }}>
               Buscar Canchas
             </button>
           </div>

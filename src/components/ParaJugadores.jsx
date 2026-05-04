@@ -281,7 +281,7 @@ const ParaJugadores = () => (
         </div>
       </div>
 
-      <button style={{ marginTop: '40px', backgroundColor: '#0f172a', color: 'white', border: 'none', padding: '16px 36px', borderRadius: '12px', fontSize: '1.1rem', fontWeight: '700', cursor: 'pointer', boxShadow: '0 10px 20px -5px rgba(15,23,42,0.3)', transition: 'background-color 0.3s' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#1e293b'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0f172a'}>
+      <button onClick={() => document.getElementById('canchas-destacadas').scrollIntoView()} style={{ marginTop: '40px', backgroundColor: '#0f172a', color: 'white', border: 'none', padding: '16px 36px', borderRadius: '12px', fontSize: '1.1rem', fontWeight: '700', cursor: 'pointer', boxShadow: '0 10px 20px -5px rgba(15,23,42,0.3)', transition: 'background-color 0.3s' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#1e293b'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0f172a'}>
         Explorar canchas
       </button>
     </div>

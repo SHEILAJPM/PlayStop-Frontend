@@ -55,7 +55,7 @@ const Soluciones = () => {
               ))}
             </ul>
 
-            <button style={{ width: '100%', padding: '16px', backgroundColor: '#0f172a', color: '#ffffff', borderRadius: '16px', fontWeight: '800', fontSize: '1.05rem', cursor: 'pointer', transition: 'all 0.2s', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }} onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(15, 23, 42, 0.2)'; }} onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}>
+            <button onClick={() => document.getElementById('jugadores').scrollIntoView()} style={{ width: '100%', padding: '16px', backgroundColor: '#0f172a', color: '#ffffff', borderRadius: '16px', fontWeight: '800', fontSize: '1.05rem', cursor: 'pointer', transition: 'all 0.2s', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }} onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(15, 23, 42, 0.2)'; }} onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}>
               Comenzar a jugar <span style={{ fontSize: '1.2rem' }}>→</span>
             </button>
           </div>
@@ -91,10 +91,10 @@ const Soluciones = () => {
             </ul>
 
             <div style={{ display: 'flex', gap: '12px' }}>
-              <button style={{ flex: 2, padding: '16px', backgroundColor: '#3b82f6', color: '#ffffff', borderRadius: '16px', fontWeight: '800', fontSize: '1.05rem', cursor: 'pointer', transition: 'all 0.2s', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }} onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(59, 130, 246, 0.3)'; }} onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}>
+              <button onClick={() => document.getElementById('precios').scrollIntoView()} style={{ flex: 2, padding: '16px', backgroundColor: '#3b82f6', color: '#ffffff', borderRadius: '16px', fontWeight: '800', fontSize: '1.05rem', cursor: 'pointer', transition: 'all 0.2s', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }} onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(59, 130, 246, 0.3)'; }} onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}>
                 Afiliar mi Club
               </button>
-              <button style={{ flex: 1, padding: '16px', backgroundColor: 'rgba(255, 255, 255, 0.05)', color: '#ffffff', borderRadius: '16px', fontWeight: '700', fontSize: '1.05rem', cursor: 'pointer', transition: 'all 0.2s', border: '1px solid rgba(255, 255, 255, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onMouseOver={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'; }} onMouseOut={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)'; }}>
+              <button onClick={() => document.getElementById('precios').scrollIntoView()} style={{ flex: 1, padding: '16px', backgroundColor: 'rgba(255, 255, 255, 0.05)', color: '#ffffff', borderRadius: '16px', fontWeight: '700', fontSize: '1.05rem', cursor: 'pointer', transition: 'all 0.2s', border: '1px solid rgba(255, 255, 255, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onMouseOver={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'; }} onMouseOut={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)'; }}>
                 Planes
               </button>
             </div>

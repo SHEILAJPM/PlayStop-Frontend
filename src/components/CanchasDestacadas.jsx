@@ -113,7 +113,7 @@ const CanchasDestacadas = () => {
               Canchas <span style={{ color: '#3b82f6' }}>Destacadas</span>
             </h2>
           </div>
-          <button style={{ padding: '12px 24px', backgroundColor: '#f1f5f9', color: '#0f172a', borderRadius: '12px', border: '1px solid #e2e8f0', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={(e) => { e.currentTarget.style.backgroundColor = '#e2e8f0'; }} onMouseOut={(e) => { e.currentTarget.style.backgroundColor = '#f1f5f9'; }}>
+          <button onClick={() => document.getElementById('jugadores').scrollIntoView()} style={{ padding: '12px 24px', backgroundColor: '#f1f5f9', color: '#0f172a', borderRadius: '12px', border: '1px solid #e2e8f0', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={(e) => { e.currentTarget.style.backgroundColor = '#e2e8f0'; }} onMouseOut={(e) => { e.currentTarget.style.backgroundColor = '#f1f5f9'; }}>
             Ver todas las canchas →
           </button>
         </div>
@@ -143,7 +143,7 @@ const CanchasDestacadas = () => {
                     <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Precio</span>
                     <span style={{ fontSize: '1.25rem', fontWeight: '900', color: '#0f172a' }}>{cancha.price}<span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: '500' }}>/hr</span></span>
                   </div>
-                  <button style={{ backgroundColor: '#0f172a', color: '#ffffff', border: 'none', padding: '12px 24px', borderRadius: '12px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={(e) => { e.currentTarget.style.backgroundColor = '#3b82f6'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(59, 130, 246, 0.4)'; }} onMouseOut={(e) => { e.currentTarget.style.backgroundColor = '#0f172a'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}>
+                  <button onClick={() => document.getElementById('jugadores').scrollIntoView()} style={{ backgroundColor: '#0f172a', color: '#ffffff', border: 'none', padding: '12px 24px', borderRadius: '12px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={(e) => { e.currentTarget.style.backgroundColor = '#3b82f6'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(59, 130, 246, 0.4)'; }} onMouseOut={(e) => { e.currentTarget.style.backgroundColor = '#0f172a'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}>
                     Reservar
                   </button>
                 </div>

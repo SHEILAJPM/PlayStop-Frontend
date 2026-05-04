@@ -88,7 +88,7 @@ const Navbar = ({ onLogin, darkMode, toggleTheme }) => {
         </div>
         
         <nav className="desktop-nav" style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
-          <a href="#" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#4b5563'}>Inicio</a>
+          <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo(0,0); }} style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#4b5563'}>Inicio</a>
           <a href="#" onClick={(e) => { e.preventDefault(); openModal('como-funciona'); }} style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#4b5563'}>Cómo Funciona</a>
           <a href="#soluciones" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#4b5563'}>Soluciones</a>
           <a href="#jugadores" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#4b5563'}>Para Jugadores</a>

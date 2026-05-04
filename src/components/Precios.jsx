@@ -52,7 +52,7 @@ const Precios = () => (
             <span>Estadísticas avanzadas</span>
           </li>
         </ul>
-        <button style={{ width: '100%', backgroundColor: '#f1f5f9', color: '#0f172a', border: '1px solid #e2e8f0', padding: '16px', borderRadius: '12px', fontWeight: '800', fontSize: '1rem', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e2e8f0'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f1f5f9'}>
+        <button onClick={() => document.getElementById('contacto').scrollIntoView()} style={{ width: '100%', backgroundColor: '#f1f5f9', color: '#0f172a', border: '1px solid #e2e8f0', padding: '16px', borderRadius: '12px', fontWeight: '800', fontSize: '1rem', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e2e8f0'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f1f5f9'}>
           Comenzar gratis
         </button>
       </div>
@@ -82,7 +82,7 @@ const Precios = () => (
             <span>Estadísticas y reportes financieros</span>
           </li>
         </ul>
-        <button style={{ width: '100%', backgroundColor: '#00d084', color: '#0f172a', border: 'none', padding: '16px', borderRadius: '12px', fontWeight: '800', fontSize: '1.05rem', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 10px 15px -3px rgba(0,208,132,0.3)' }} onMouseOver={(e) => { e.currentTarget.style.backgroundColor = '#34d399'; e.currentTarget.style.transform = 'translateY(-2px)'; }} onMouseOut={(e) => { e.currentTarget.style.backgroundColor = '#00d084'; e.currentTarget.style.transform = 'translateY(0)'; }}>
+        <button onClick={() => document.getElementById('contacto').scrollIntoView()} style={{ width: '100%', backgroundColor: '#00d084', color: '#0f172a', border: 'none', padding: '16px', borderRadius: '12px', fontWeight: '800', fontSize: '1.05rem', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 10px 15px -3px rgba(0,208,132,0.3)' }} onMouseOver={(e) => { e.currentTarget.style.backgroundColor = '#34d399'; e.currentTarget.style.transform = 'translateY(-2px)'; }} onMouseOut={(e) => { e.currentTarget.style.backgroundColor = '#00d084'; e.currentTarget.style.transform = 'translateY(0)'; }}>
           Probar 14 días gratis
         </button>
       </div>
@@ -111,7 +111,7 @@ const Precios = () => (
             <span>Soporte prioritario 24/7</span>
           </li>
         </ul>
-        <button style={{ width: '100%', backgroundColor: '#f1f5f9', color: '#0f172a', border: '1px solid #e2e8f0', padding: '16px', borderRadius: '12px', fontWeight: '800', fontSize: '1rem', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e2e8f0'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f1f5f9'}>
+        <button onClick={() => document.getElementById('contacto').scrollIntoView()} style={{ width: '100%', backgroundColor: '#f1f5f9', color: '#0f172a', border: '1px solid #e2e8f0', padding: '16px', borderRadius: '12px', fontWeight: '800', fontSize: '1rem', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e2e8f0'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f1f5f9'}>
           Contactar ventas
         </button>
       </div>

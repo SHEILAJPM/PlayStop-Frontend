@@ -9,6 +9,9 @@ import ParaJugadores from './components/ParaJugadores.jsx';
 import Testimonios from './components/Testimonios.jsx';
 import Precios from './components/Precios.jsx';
 import Faq from './components/Faq.jsx';
+import Blog from './components/Blog.jsx';
+import Contacto from './components/Contacto.jsx';
+import Legal from './components/Legal.jsx';
 import Footer from "./components/Footer.jsx";
 import JugadorDashboard from './components/dashboards/JugadorDashboard.jsx';
 import PropietarioDashboard from './components/dashboards/PropietarioDashboard.jsx';
@@ -138,6 +141,9 @@ function App() {
       <Testimonios />
       <Precios />
       <Faq />
+      <Blog />
+      <Contacto />
+      <Legal />
       <Footer />
     </div>
   );
