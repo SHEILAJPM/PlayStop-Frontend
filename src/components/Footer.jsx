@@ -1,9 +1,18 @@
 const Footer = () => {
   return (
-    <footer style={{ backgroundColor: '#0b1120', paddingTop: '80px', paddingBottom: '30px', borderTop: '1px solid #1e293b', color: '#94a3b8' }}>
+    <footer className="footer-section" style={{ backgroundColor: '#0b1120', paddingTop: '80px', paddingBottom: '30px', borderTop: '1px solid #1e293b', color: '#94a3b8' }}>
+      <style>
+        {`
+          @media (max-width: 768px) {
+            .footer-links-container { flex-direction: column; gap: 40px !important; }
+            .footer-bottom-bar { flex-direction: column; text-align: center; gap: 15px !important; }
+            .footer-section { paddingTop: 60px !important; }
+          }
+        `}
+      </style>
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 5%' }}>
         
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '40px', justifyContent: 'space-between', marginBottom: '60px' }}>
+        <div className="footer-links-container" style={{ display: 'flex', flexWrap: 'wrap', gap: '40px', justifyContent: 'space-between', marginBottom: '60px' }}>
           
           {/* Marca y Descripción */}
           <div style={{ flex: '1 1 300px', maxWidth: '400px' }}>
@@ -61,7 +70,7 @@ const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div style={{ paddingTop: '30px', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '20px' }}>
+        <div className="footer-bottom-bar" style={{ paddingTop: '30px', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '20px' }}>
           <p style={{ margin: 0, fontSize: '0.85rem' }}>&copy; {new Date().getFullYear()} PlayStop Inc. Todos los derechos reservados.</p>
           <div style={{ display: 'flex', gap: '20px', fontSize: '0.85rem' }}>
              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
