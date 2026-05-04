@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import CanchasDestacadas from './CanchasDestacadas';
 import Soluciones from './Soluciones';
+import ParaClubes from './ParaClubes';
+import ParaJugadores from './ParaJugadores';
+import Precios from './Precios';
 
 const Hero = () => {
   const backgroundImages = [
@@ -238,6 +241,9 @@ const Hero = () => {
     </main>
       <CanchasDestacadas />
       <Soluciones />
+      <ParaClubes />
+      <ParaJugadores />
+      <Precios />
     </>
   );
 };
