@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import CanchasDestacadas from './CanchasDestacadas';
+import Soluciones from './Soluciones';
 
 const Hero = () => {
   const backgroundImages = [
@@ -236,6 +237,7 @@ const Hero = () => {
       </div>
     </main>
       <CanchasDestacadas />
+      <Soluciones />
     </>
   );
 };
