@@ -52,10 +52,14 @@ function App() {
 
   // Renderizado Condicional: Si hay usuario, mostrar su panel respectivo
   if (user) {
-    if (user.role === 'Jugador') return <JugadorDashboard user={user} onLogout={() => setUser(null)} />;
-    if (user.role === 'Propietario') return <PropietarioDashboard user={user} onLogout={() => setUser(null)} />;
-    if (user.role === 'Administrador') return <AdminDashboard user={user} onLogout={() => setUser(null)} />;
-    if (user.role === 'Super Admin') return <SuperAdminDashboard user={user} onLogout={() => setUser(null)} />;
+    return (
+      <div className={darkMode ? 'dark-mode' : ''} style={{ fontFamily: '"Inter", system-ui, -apple-system, sans-serif', color: '#111827', margin: 0, padding: 0, backgroundColor: '#ffffff', minHeight: '100vh' }}>
+        {user.role === 'Jugador' && <JugadorDashboard user={user} onLogout={() => setUser(null)} darkMode={darkMode} toggleTheme={handleThemeToggle} />}
+        {user.role === 'Propietario' && <PropietarioDashboard user={user} onLogout={() => setUser(null)} darkMode={darkMode} toggleTheme={handleThemeToggle} />}
+        {user.role === 'Administrador' && <AdminDashboard user={user} onLogout={() => setUser(null)} darkMode={darkMode} toggleTheme={handleThemeToggle} />}
+        {user.role === 'Super Admin' && <SuperAdminDashboard user={user} onLogout={() => setUser(null)} darkMode={darkMode} toggleTheme={handleThemeToggle} />}
+      </div>
+    );
   }
 
   return (

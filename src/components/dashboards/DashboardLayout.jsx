@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 // --- PLANTILLA PRINCIPAL (Layout) ---
-export const DashboardLayout = ({ user, onLogout, title, menuItems, activeTab, onTabChange, children }) => {
+export const DashboardLayout = ({ user, onLogout, title, menuItems, activeTab, onTabChange, children, darkMode, toggleTheme }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
@@ -118,6 +118,41 @@ export const DashboardLayout = ({ user, onLogout, title, menuItems, activeTab, o
             .menu-btn { display: block; }
             .overlay { display: ${isSidebarOpen ? 'block' : 'none'}; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 30; backdrop-filter: blur(4px); }
           }
+
+          /* DASHBOARD DARK MODE STYLES */
+          .dark-mode .layout-container { background-color: #020617 !important; background-image: radial-gradient(#1e293b 1px, transparent 0) !important; }
+          .dark-mode .sidebar { background-color: #0b1120 !important; border-right: 1px solid #1e293b !important; box-shadow: none !important; }
+          .dark-mode .sidebar h2 { color: #f8fafc !important; }
+          .dark-mode .header-bar { background-color: #0f172a !important; border-bottom: 1px solid #1e293b !important; box-shadow: none !important; }
+          .dark-mode .header-bar h1 { color: #f8fafc !important; }
+          .dark-mode .menu-btn { color: #f8fafc !important; }
+          .dark-mode .dashboard-card { background-color: #0f172a !important; border-color: #1e293b !important; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.4) !important; }
+          .dark-mode .dashboard-card h3, .dark-mode .dashboard-card h4 { color: #f8fafc !important; }
+          .dark-mode .dashboard-card p { color: #94a3b8 !important; }
+          .dark-mode .metric-title { color: #94a3b8 !important; }
+          .dark-mode .metric-value { color: #f8fafc !important; }
+          .dark-mode .premium-table th { color: #cbd5e1 !important; border-bottom-color: #1e293b !important; }
+          .dark-mode .premium-table td { background-color: #0f172a !important; border-bottom-color: #1e293b !important; color: #f8fafc !important; }
+          .dark-mode .table-row:hover td { background-color: #1e293b !important; }
+          .dark-mode .modal-input { background-color: #020617 !important; border-color: #1e293b !important; color: #f8fafc !important; }
+          .dark-mode .modal-input:focus { background-color: #0b1120 !important; border-color: #00d084 !important; }
+          .dark-mode .card-hover { background-color: #0f172a !important; border-color: #1e293b !important; }
+          .dark-mode .card-hover:hover { background-color: #1e293b !important; border-color: #334155 !important; }
+          .dark-mode .dashboard-modal { background-color: #0f172a !important; border: 1px solid #1e293b !important; }
+          .dark-mode .dashboard-modal h2 { color: #f8fafc !important; }
+          .dark-mode .dashboard-modal p { color: #94a3b8 !important; }
+          .dark-mode .dashboard-modal label { color: #cbd5e1 !important; }
+          .dark-mode .modal-close { color: #cbd5e1 !important; }
+          .dark-mode .modal-close:hover { background-color: #1e293b !important; color: #ef4444 !important; }
+          .dark-mode .modal-btn-cancel { background-color: #1e293b !important; border-color: #334155 !important; color: #f8fafc !important; }
+          .dark-mode .modal-btn-cancel:hover { background-color: #334155 !important; }
+          .dark-mode .overlay { background: rgba(2, 6, 23, 0.8) !important; }
+          .dark-mode .btn-edit { background-color: rgba(59, 130, 246, 0.15) !important; color: #60a5fa !important; }
+          .dark-mode .btn-delete { background-color: rgba(239, 68, 68, 0.15) !important; color: #f87171 !important; }
+          .dark-mode .btn-secondary { background-color: rgba(255, 255, 255, 0.05) !important; color: #f8fafc !important; border-color: #334155 !important; }
+          .dark-mode .btn-primary-dark { background-color: #f8fafc !important; color: #0f172a !important; }
+          .dark-mode .modal-warning { background-color: rgba(239, 68, 68, 0.1) !important; border-color: rgba(239, 68, 68, 0.2) !important; }
+          .dark-mode .modal-info-box { background-color: #1e293b !important; border-color: #334155 !important; }
         `}
       </style>
 
@@ -163,7 +198,10 @@ export const DashboardLayout = ({ user, onLogout, title, menuItems, activeTab, o
             <h1 style={{ margin: 0, color: '#0f172a', fontSize: '1.4rem', fontWeight: '800', letterSpacing: '-0.5px' }}>{title}</h1>
           </div>
           <div style={{ display: 'flex', gap: '16px' }}>
-            <button className="action-btn" style={{ width: '40px', height: '40px', borderRadius: '12px', border: '1px solid #e2e8f0', backgroundColor: '#f8fafc', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <button onClick={toggleTheme} style={{ background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '8px' }}>
+              {darkMode ? '☀️' : '🌙'}
+            </button>
+            <button className="action-btn btn-secondary" style={{ width: '40px', height: '40px', borderRadius: '12px', border: '1px solid #e2e8f0', backgroundColor: '#f8fafc', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
             </button>
           </div>
@@ -191,8 +229,8 @@ export const MetricCard = ({ title, value, subtitle, color, trend }) => (
       )}
     </div>
     <div>
-      <h3 style={{ margin: '0 0 8px 0', fontSize: '1rem', color: '#64748b', fontWeight: '600' }}>{title}</h3>
-      <p style={{ margin: '0', fontSize: '2.4rem', fontWeight: '900', color: '#0f172a', letterSpacing: '-1px' }}>{value}</p>
+          <h3 className="metric-title" style={{ margin: '0 0 8px 0', fontSize: '1rem', color: '#64748b', fontWeight: '600' }}>{title}</h3>
+          <p className="metric-value" style={{ margin: '0', fontSize: '2.4rem', fontWeight: '900', color: '#0f172a', letterSpacing: '-1px' }}>{value}</p>
     </div>
     {subtitle && (
       <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid #f1f5f9', fontSize: '0.9rem', color: '#64748b', fontWeight: '500', display: 'flex', alignItems: 'center', gap: '8px' }}>
