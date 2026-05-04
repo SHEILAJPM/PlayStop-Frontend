@@ -57,7 +57,7 @@ const Faq = () => {
       </style>
       <div style={{ maxWidth: '800px', margin: '0 auto', width: '100%' }}>
         <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-          <div style={{ display: 'inline-block', padding: '6px 16px', background: 'rgba(15, 23, 42, 0.1)', border: '1px solid rgba(15, 23, 42, 0.2)', color: '#0f172a', borderRadius: '20px', fontWeight: '800', fontSize: '0.85rem', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+          <div className="section-badge" style={{ display: 'inline-block', padding: '6px 16px', background: 'rgba(15, 23, 42, 0.1)', border: '1px solid rgba(15, 23, 42, 0.2)', color: '#0f172a', borderRadius: '20px', fontWeight: '800', fontSize: '0.85rem', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '1px' }}>
             Preguntas Frecuentes
           </div>
           <h2 className="faq-title" style={{ fontSize: '3rem', color: '#0f172a', fontWeight: '900', margin: '0 0 16px 0', letterSpacing: '-1px' }}>
@@ -72,21 +72,21 @@ const Faq = () => {
           {faqs.map((faq, index) => {
             const isOpen = openIndex === index;
             return (
-              <div key={index} style={{ backgroundColor: '#ffffff', border: '1px solid', borderColor: isOpen ? faq.color : '#e2e8f0', borderRadius: '16px', overflow: 'hidden', transition: 'all 0.3s ease', boxShadow: isOpen ? `0 10px 25px -5px ${faq.color}20` : '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
-                <div onClick={() => toggleFaq(index)} style={{ padding: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', backgroundColor: isOpen ? faq.bg : '#ffffff', transition: 'background-color 0.3s ease' }}>
+              <div key={index} className="faq-item" style={{ backgroundColor: '#ffffff', border: '1px solid', borderColor: isOpen ? faq.color : '#e2e8f0', borderRadius: '16px', overflow: 'hidden', transition: 'all 0.3s ease', boxShadow: isOpen ? `0 10px 25px -5px ${faq.color}20` : '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
+                <div onClick={() => toggleFaq(index)} className={`faq-header ${isOpen ? 'open' : ''}`} style={{ padding: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', backgroundColor: isOpen ? faq.bg : '#ffffff', transition: 'background-color 0.3s ease' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                     <span style={{ fontSize: '0.75rem', fontWeight: '800', color: faq.color, border: `1px solid ${faq.color}50`, padding: '4px 10px', borderRadius: '12px', textTransform: 'uppercase', backgroundColor: '#ffffff', display: window.innerWidth > 600 ? 'block' : 'none' }}>
                       {faq.target}
                     </span>
                     <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '700', color: '#0f172a', paddingRight: '20px' }}>{faq.question}</h3>
                   </div>
-                  <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#ffffff', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#0f172a', fontWeight: 'bold', fontSize: '1.5rem', transition: 'transform 0.3s ease', transform: isOpen ? 'rotate(45deg)' : 'rotate(0deg)', border: '1px solid #e2e8f0', flexShrink: 0, lineHeight: 0 }}>
+                  <div className="faq-icon" style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#ffffff', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#0f172a', fontWeight: 'bold', fontSize: '1.5rem', transition: 'transform 0.3s ease', transform: isOpen ? 'rotate(45deg)' : 'rotate(0deg)', border: '1px solid #e2e8f0', flexShrink: 0, lineHeight: 0 }}>
                     +
                   </div>
                 </div>
                 <div style={{ maxHeight: isOpen ? '500px' : '0', opacity: isOpen ? 1 : 0, transition: 'all 0.3s ease-in-out', overflow: 'hidden' }}>
                   <div style={{ padding: '0 24px 24px 24px' }}>
-                    <div style={{ height: '1px', backgroundColor: '#e2e8f0', marginBottom: '20px', marginTop: isOpen && faq.bg !== '#ffffff' ? '0' : '20px' }}></div>
+                    <div className="faq-divider" style={{ height: '1px', backgroundColor: '#e2e8f0', marginBottom: '20px', marginTop: isOpen && faq.bg !== '#ffffff' ? '0' : '20px' }}></div>
                     <p style={{ margin: 0, color: '#475569', lineHeight: '1.7', fontSize: '1.05rem' }}>{faq.answer}</p>
                   </div>
                 </div>

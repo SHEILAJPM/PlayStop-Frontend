@@ -1,6 +1,6 @@
 
 const ParaClubes = () => (
-  <section id="clubes" style={{ scrollMarginTop: '80px', padding: '120px 5%', backgroundColor: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '60px', position: 'relative', overflow: 'hidden' }}>
+  <section id="clubes" className="clubes-section reveal" style={{ scrollMarginTop: '80px', padding: '120px 5%', backgroundColor: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '60px', position: 'relative', overflow: 'hidden', width: '100%', boxSizing: 'border-box' }}>
     
     {/* Background Glows */}
     <div style={{ position: 'absolute', top: '10%', right: '5%', width: '500px', height: '500px', backgroundColor: '#00d084', borderRadius: '50%', filter: 'blur(180px)', opacity: 0.15, zIndex: 0 }}></div>
@@ -88,8 +88,6 @@ const ParaClubes = () => (
       `}
     </style>
 
-    <div className="clubes-section reveal" style={{ padding: '120px 5%', backgroundColor: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '60px', position: 'relative', overflow: 'hidden', width: '100%', boxSizing: 'border-box' }}>
-    
     <div style={{ flex: '1 1 400px', maxWidth: '600px', zIndex: 10 }} className="clubes-text">
       <div style={{ display: 'inline-block', padding: '6px 18px', background: 'linear-gradient(90deg, rgba(0,208,132,0.15), rgba(0,208,132,0.05))', border: '1px solid rgba(0,208,132,0.3)', color: '#34d399', borderRadius: '20px', fontWeight: '800', fontSize: '0.85rem', marginBottom: '24px', letterSpacing: '1px', textTransform: 'uppercase' }}>Para Clubes</div>
       <h2 className="clubes-title" style={{ fontSize: '3.8rem', color: '#ffffff', fontWeight: '900', marginBottom: '20px', letterSpacing: '-1.5px', lineHeight: '1.1' }}>El software que tu complejo <span style={{ background: 'linear-gradient(90deg, #34d399, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>necesita</span></h2>
@@ -231,7 +229,6 @@ const ParaClubes = () => (
             </div>
           </div>
        </div>
-    </div>
     </div>
   </section>
 );

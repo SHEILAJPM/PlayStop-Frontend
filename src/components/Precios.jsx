@@ -17,7 +17,7 @@ const Precios = () => (
     <div style={{ position: 'absolute', top: '20%', right: '-20%', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(59,130,246,0.05) 0%, rgba(255,255,255,0) 70%)', zIndex: 0, pointerEvents: 'none' }}></div>
 
     <div style={{ textAlign: 'center', width: '100%', maxWidth: '750px', margin: '0 auto 80px auto', position: 'relative', zIndex: 10 }}>
-      <div style={{ display: 'inline-block', padding: '6px 18px', background: 'linear-gradient(90deg, rgba(37,99,235,0.1), rgba(0,208,132,0.1))', color: '#0f172a', borderRadius: '20px', fontWeight: '800', fontSize: '0.85rem', marginBottom: '24px', letterSpacing: '1px', textTransform: 'uppercase' }}>Planes a tu medida</div>
+      <div className="section-badge" style={{ display: 'inline-block', padding: '6px 18px', background: 'linear-gradient(90deg, rgba(37,99,235,0.1), rgba(0,208,132,0.1))', color: '#0f172a', borderRadius: '20px', fontWeight: '800', fontSize: '0.85rem', marginBottom: '24px', letterSpacing: '1px', textTransform: 'uppercase' }}>Planes a tu medida</div>
       <h2 className="precios-title" style={{ fontSize: '3.5rem', color: '#0f172a', fontWeight: '900', marginBottom: '24px', letterSpacing: '-1.5px', lineHeight: '1.1' }}>Precios <span style={{ background: 'linear-gradient(90deg, #3b82f6, #00d084)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>transparentes</span></h2>
       <p style={{ color: '#64748b', fontSize: '1.15rem', lineHeight: '1.7' }}>Empieza gratis y escala a medida que tu complejo deportivo crece. Sin comisiones ocultas ni sorpresas.</p>
     </div>

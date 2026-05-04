@@ -1,6 +1,6 @@
 
 const ParaJugadores = () => (
-  <section id="jugadores" style={{ scrollMarginTop: '80px', padding: '120px 5%', backgroundColor: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap-reverse', gap: '80px', overflow: 'hidden', position: 'relative' }}>
+  <section id="jugadores" className="jugadores-section reveal" style={{ scrollMarginTop: '80px', padding: '120px 5%', backgroundColor: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap-reverse', gap: '80px', overflow: 'hidden', position: 'relative', width: '100%', boxSizing: 'border-box' }}>
     
     {/* Luces de fondo sutiles */}
     <div style={{ position: 'absolute', top: '10%', left: '-10%', width: '500px', height: '500px', backgroundColor: '#2563eb', borderRadius: '50%', filter: 'blur(150px)', opacity: 0.08, zIndex: 0 }}></div>
@@ -108,8 +108,6 @@ const ParaJugadores = () => (
       `}
     </style>
     
-    <div className="jugadores-section reveal" style={{ padding: '120px 5%', backgroundColor: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap-reverse', gap: '80px', overflow: 'hidden', position: 'relative', width: '100%', boxSizing: 'border-box' }}>
-
     <div className="mockup-phone-wrapper" style={{ flex: '1 1 350px', display: 'flex', justifyContent: 'center', position: 'relative' }}>
        
        {/* Círculo decorativo de fondo */}
@@ -249,7 +247,7 @@ const ParaJugadores = () => (
 
     {/* Textos y Beneficios */}
     <div style={{ flex: '1 1 450px', maxWidth: '600px', zIndex: 10, position: 'relative' }} className="jugadores-text">
-      <div style={{ display: 'inline-block', padding: '6px 18px', background: 'linear-gradient(90deg, rgba(37,99,235,0.1), rgba(6,182,212,0.1))', color: '#1e40af', border: '1px solid rgba(37,99,235,0.2)', borderRadius: '20px', fontWeight: '800', fontSize: '0.85rem', marginBottom: '24px', letterSpacing: '1px', textTransform: 'uppercase' }}>Para Jugadores</div>
+      <div className="section-badge" style={{ display: 'inline-block', padding: '6px 18px', background: 'linear-gradient(90deg, rgba(37,99,235,0.1), rgba(6,182,212,0.1))', color: '#1e40af', border: '1px solid rgba(37,99,235,0.2)', borderRadius: '20px', fontWeight: '800', fontSize: '0.85rem', marginBottom: '24px', letterSpacing: '1px', textTransform: 'uppercase' }}>Para Jugadores</div>
       <h2 className="jugadores-title" style={{ fontSize: '3.5rem', color: '#0f172a', fontWeight: '900', marginBottom: '20px', lineHeight: '1.1', letterSpacing: '-1.5px' }}>Tu partido, <span style={{ background: 'linear-gradient(90deg, #2563eb, #06b6d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>sin estrés.</span></h2>
       <p style={{ color: '#4b5563', fontSize: '1.15rem', lineHeight: '1.7', marginBottom: '40px' }}>Olvídate de perseguir a tus amigos para que paguen o de llamar a 10 complejos distintos buscando un horario libre. PlayStop hace el trabajo duro por ti.</p>
       
@@ -286,7 +284,6 @@ const ParaJugadores = () => (
       <button style={{ marginTop: '40px', backgroundColor: '#0f172a', color: 'white', border: 'none', padding: '16px 36px', borderRadius: '12px', fontSize: '1.1rem', fontWeight: '700', cursor: 'pointer', boxShadow: '0 10px 20px -5px rgba(15,23,42,0.3)', transition: 'background-color 0.3s' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#1e293b'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0f172a'}>
         Explorar canchas
       </button>
-    </div>
     </div>
   </section>
 );
