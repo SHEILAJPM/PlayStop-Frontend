@@ -138,10 +138,22 @@ const Hero = () => {
             50% { transform: scale(1.1); opacity: 0.7; }
             100% { transform: scale(1); opacity: 1; }
           }
+          @media (max-width: 768px) {
+            .hero-container { flex-direction: column !important; padding: 120px 5% 60px 5% !important; text-align: center; gap: 40px !important; }
+            .hero-text-container { flex: 1 1 100% !important; max-width: 100% !important; }
+            .hero-title { font-size: 2.6rem !important; }
+            .hero-subtitle { font-size: 1.05rem !important; margin-bottom: 30px !important; }
+            .hero-buttons { justify-content: center !important; flex-direction: column !important; gap: 15px !important; }
+            .hero-buttons button { width: 100% !important; flex: none !important; }
+            .hero-floating-anim { justify-content: center !important; width: 100% !important; animation: none !important; margin-top: 10px; }
+            .hero-widget { width: 100% !important; max-width: 100% !important; padding: 25px 20px !important; box-sizing: border-box !important; }
+            .widget-stats { flex-direction: row !important; gap: 10px !important; }
+          }
         `}
       </style>
 
-      {backgroundImages.map((img, index) => (
+      <div className="hero-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '80px 5%', minHeight: '85vh', position: 'relative', overflow: 'hidden', width: '100%', boxSizing: 'border-box' }}>
+        {backgroundImages.map((img, index) => (
         <div
           key={index}
           style={{
@@ -164,18 +176,18 @@ const Hero = () => {
       {/* Capa oscura con gradiente para mejorar lectura y lucir la imagen */}
       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'linear-gradient(90deg, rgba(17,24,39,0.95) 0%, rgba(17,24,39,0.8) 40%, rgba(17,24,39,0.3) 100%)', zIndex: 1 }}></div>
       
-      <div style={{ flex: '1', maxWidth: '650px', zIndex: 10, position: 'relative' }}>
+      <div className="hero-text-container" style={{ flex: '1', maxWidth: '650px', zIndex: 10, position: 'relative' }}>
         <div style={{ display: 'inline-block', padding: '6px 16px', backgroundColor: 'rgba(0, 208, 132, 0.15)', color: '#34d399', border: '1px solid rgba(0, 208, 132, 0.3)', borderRadius: '20px', fontWeight: '700', fontSize: '0.85rem', marginBottom: '24px' }}>
           El ecosistema deportivo definitivo
         </div>
-        <h2 style={{ fontSize: '4.2rem', margin: '0 0 24px 0', color: '#ffffff', fontWeight: '900', lineHeight: '1.05', letterSpacing: '-2px' }}>
+        <h2 className="hero-title" style={{ fontSize: '4.2rem', margin: '0 0 24px 0', color: '#ffffff', fontWeight: '900', lineHeight: '1.05', letterSpacing: '-2px' }}>
           Digitaliza tu pasión, <br/><span style={{ color: '#00d084' }}>erradica la informalidad</span>
         </h2>
-        <p style={{ fontSize: '1.25rem', margin: '0 0 40px 0', color: '#d1d5db', lineHeight: '1.6' }}>
+        <p className="hero-subtitle" style={{ fontSize: '1.25rem', margin: '0 0 40px 0', color: '#d1d5db', lineHeight: '1.6' }}>
           La plataforma más robusta para buscar, comparar y reservar infraestructuras deportivas. Toma el control de tu club y mejora la experiencia de tus jugadores.
         </p>
         
-        <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+        <div className="hero-buttons" style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
           <button style={{ backgroundColor: '#00d084', color: '#ffffff', border: 'none', padding: '16px 36px', fontSize: '1.1rem', borderRadius: '8px', cursor: 'pointer', fontWeight: '700', boxShadow: '0 8px 20px -4px rgba(0, 208, 132, 0.4)' }}>
             Reservar una cancha
           </button>
@@ -185,10 +197,10 @@ const Hero = () => {
         </div>
       </div>
 
-      <div style={{ flex: '1', display: 'flex', justifyContent: 'flex-end', zIndex: 10, position: 'relative', animation: 'float 6s ease-in-out infinite' }}>
+        <div className="hero-floating-anim" style={{ flex: '1', display: 'flex', justifyContent: 'flex-end', zIndex: 10, position: 'relative', animation: 'float 6s ease-in-out infinite' }}>
         
         {/* Widget de Búsqueda Rápida (Glassmorphism) */}
-        <div style={{ width: '100%', maxWidth: '420px', backgroundColor: 'rgba(255, 255, 255, 0.08)', backdropFilter: 'blur(16px)', borderRadius: '24px', padding: '35px', border: '1px solid rgba(255, 255, 255, 0.2)', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}>
+        <div className="hero-widget" style={{ width: '100%', maxWidth: '420px', backgroundColor: 'rgba(255, 255, 255, 0.08)', backdropFilter: 'blur(16px)', borderRadius: '24px', padding: '35px', border: '1px solid rgba(255, 255, 255, 0.2)', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}>
           <h3 style={{ color: 'white', fontSize: '1.6rem', fontWeight: '800', marginBottom: '25px', letterSpacing: '-0.5px' }}>Encuentra tu partido</h3>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
@@ -278,7 +290,7 @@ const Hero = () => {
           </div>
 
           {/* Estadísticas Rápidas */}
-          <div style={{ marginTop: '25px', paddingTop: '20px', borderTop: '1px solid rgba(255, 255, 255, 0.1)', display: 'flex', justifyContent: 'space-around', color: 'white', textAlign: 'center' }}>
+          <div className="widget-stats" style={{ marginTop: '25px', paddingTop: '20px', borderTop: '1px solid rgba(255, 255, 255, 0.1)', display: 'flex', justifyContent: 'space-around', color: 'white', textAlign: 'center' }}>
             <div>
               <div style={{ fontWeight: '900', fontSize: '1.4rem', color: '#00d084' }}>+500</div>
               <div style={{ fontSize: '0.85rem', color: '#9ca3af', fontWeight: '500' }}>Canchas</div>
@@ -289,6 +301,7 @@ const Hero = () => {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </main>
   );
