@@ -76,15 +76,26 @@ const ParaClubes = () => (
           30%, 33% { background-color: #1e293b; transform: scale(0.95); }
           35%, 100% { background-color: #0f172a; transform: scale(1); }
         }
+        @media (max-width: 768px) {
+          .clubes-section { padding: 60px 5% !important; flex-direction: column !important; text-align: center; gap: 30px !important; }
+          .clubes-title { font-size: 2.2rem !important; }
+          .clubes-text { flex: 1 1 100% !important; max-width: 100% !important; }
+          .clubes-features { display: inline-flex !important; text-align: left; margin: 0 auto 30px auto !important; width: fit-content; }
+          .clubes-buttons { flex-direction: column !important; gap: 15px !important; }
+          .clubes-buttons button { width: 100% !important; flex: none !important; }
+          .mockup-wrapper { flex: 1 1 100% !important; max-width: 100% !important; transform: scale(0.45); transform-origin: top center; margin-bottom: -230px; }
+        }
       `}
     </style>
 
-    <div style={{ flex: '1 1 400px', maxWidth: '600px', zIndex: 10 }}>
+    <div className="clubes-section" style={{ padding: '120px 5%', backgroundColor: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '60px', position: 'relative', overflow: 'hidden', width: '100%', boxSizing: 'border-box' }}>
+    
+    <div style={{ flex: '1 1 400px', maxWidth: '600px', zIndex: 10 }} className="clubes-text">
       <div style={{ display: 'inline-block', padding: '6px 18px', background: 'linear-gradient(90deg, rgba(0,208,132,0.15), rgba(0,208,132,0.05))', border: '1px solid rgba(0,208,132,0.3)', color: '#34d399', borderRadius: '20px', fontWeight: '800', fontSize: '0.85rem', marginBottom: '24px', letterSpacing: '1px', textTransform: 'uppercase' }}>Para Clubes</div>
-      <h2 style={{ fontSize: '3.8rem', color: '#ffffff', fontWeight: '900', marginBottom: '20px', letterSpacing: '-1.5px', lineHeight: '1.1' }}>El software que tu complejo <span style={{ background: 'linear-gradient(90deg, #34d399, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>necesita</span></h2>
+      <h2 className="clubes-title" style={{ fontSize: '3.8rem', color: '#ffffff', fontWeight: '900', marginBottom: '20px', letterSpacing: '-1.5px', lineHeight: '1.1' }}>El software que tu complejo <span style={{ background: 'linear-gradient(90deg, #34d399, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>necesita</span></h2>
       <p style={{ color: '#94a3b8', fontSize: '1.15rem', lineHeight: '1.7', marginBottom: '40px' }}>Automatiza tus reservas, cobra por adelantado y reduce el ausentismo al 0%. PlayStop te da las herramientas de una gran empresa, fáciles de usar desde cualquier dispositivo.</p>
       
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '45px' }}>
+      <div className="clubes-features" style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '45px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'linear-gradient(135deg, #00d084 0%, #059669 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#fff', boxShadow: '0 4px 10px rgba(0,208,132,0.3)' }}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
           <span style={{ color: '#f8fafc', fontWeight: '600', fontSize: '1.15rem' }}>Panel de control en tiempo real</span>
@@ -99,7 +110,7 @@ const ParaClubes = () => (
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+      <div className="clubes-buttons" style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
         <button style={{ backgroundColor: '#00d084', color: '#0f172a', border: 'none', padding: '16px 32px', borderRadius: '12px', fontSize: '1.05rem', fontWeight: '800', cursor: 'pointer', boxShadow: '0 10px 25px -5px rgba(0,208,132,0.4)', transition: 'all 0.3s ease' }} onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 15px 35px -5px rgba(0,208,132,0.5)'; }} onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 10px 25px -5px rgba(0,208,132,0.4)'; }}>
           Agendar demostración
         </button>
@@ -109,9 +120,9 @@ const ParaClubes = () => (
       </div>
     </div>
     
-    <div style={{ flex: '1 1 450px', display: 'flex', justifyContent: 'center', zIndex: 10 }}>
+    <div className="mockup-wrapper" style={{ flex: '1 1 450px', display: 'flex', justifyContent: 'center', zIndex: 10 }}>
        {/* RÉPLICA EXACTA DEL PROPIETARIO DASHBOARD */}
-       <div style={{ width: '100%', maxWidth: '700px', background: '#f1f5f9', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.2)', boxShadow: '0 30px 60px -12px rgba(0,0,0,0.4)', overflow: 'hidden', animation: 'floatDashboard 8s ease-in-out infinite', transformStyle: 'preserve-3d', perspective: '1000px', display: 'flex', height: '420px', position: 'relative' }}>
+       <div style={{ width: '700px', minWidth: '700px', background: '#f1f5f9', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.2)', boxShadow: '0 30px 60px -12px rgba(0,0,0,0.4)', overflow: 'hidden', animation: 'floatDashboard 8s ease-in-out infinite', transformStyle: 'preserve-3d', perspective: '1000px', display: 'flex', height: '420px', position: 'relative' }}>
 
           {/* Sidebar Realista */}
           <div style={{ width: '160px', backgroundColor: '#0f172a', padding: '20px 12px', display: 'flex', flexDirection: 'column', zIndex: 10 }}>
@@ -220,6 +231,7 @@ const ParaClubes = () => (
             </div>
           </div>
        </div>
+    </div>
     </div>
   </section>
 );
