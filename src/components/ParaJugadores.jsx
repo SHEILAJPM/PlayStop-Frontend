@@ -99,14 +99,21 @@ const ParaJugadores = () => (
           0%, 23% { opacity: 0; }
           24%, 100% { opacity: 1; }
         }
+        @media (max-width: 768px) {
+          .jugadores-section { padding: 60px 5% !important; flex-direction: column !important; text-align: center; gap: 40px !important; }
+          .jugadores-title { font-size: 2.5rem !important; }
+          .mockup-phone-wrapper { transform: scale(0.85); transform-origin: top center; height: 560px; }
+          .jugadores-features { text-align: left; }
+        }
       `}
     </style>
     
-    {/* Simulación de App Móvil */}
-    <div style={{ flex: '1 1 350px', display: 'flex', justifyContent: 'center', position: 'relative' }}>
+    <div className="jugadores-section" style={{ padding: '120px 5%', backgroundColor: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap-reverse', gap: '80px', overflow: 'hidden', position: 'relative', width: '100%', boxSizing: 'border-box' }}>
+
+    <div className="mockup-phone-wrapper" style={{ flex: '1 1 350px', display: 'flex', justifyContent: 'center', position: 'relative' }}>
        
        {/* Círculo decorativo de fondo */}
-       <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '380px', height: '380px', background: 'linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%)', borderRadius: '50%', filter: 'blur(40px)', zIndex: 0 }}></div>
+       <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '320px', height: '320px', background: 'linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%)', borderRadius: '50%', filter: 'blur(40px)', zIndex: 0 }}></div>
 
        {/* Marco del Teléfono */}
        <div style={{ width: '100%', maxWidth: '320px', height: '640px', backgroundColor: '#ffffff', borderRadius: '45px', boxShadow: '0 25px 50px -12px rgba(37, 99, 235, 0.25), 0 0 0 10px #0f172a, inset 0 0 0 2px #334155', position: 'relative', overflow: 'hidden', zIndex: 10, animation: 'floatApp 6s ease-in-out infinite' }}>
@@ -241,12 +248,12 @@ const ParaJugadores = () => (
     </div>
 
     {/* Textos y Beneficios */}
-    <div style={{ flex: '1 1 450px', maxWidth: '600px', zIndex: 10, position: 'relative' }}>
+    <div style={{ flex: '1 1 450px', maxWidth: '600px', zIndex: 10, position: 'relative' }} className="jugadores-text">
       <div style={{ display: 'inline-block', padding: '6px 18px', background: 'linear-gradient(90deg, rgba(37,99,235,0.1), rgba(6,182,212,0.1))', color: '#1e40af', border: '1px solid rgba(37,99,235,0.2)', borderRadius: '20px', fontWeight: '800', fontSize: '0.85rem', marginBottom: '24px', letterSpacing: '1px', textTransform: 'uppercase' }}>Para Jugadores</div>
-      <h2 style={{ fontSize: '3.5rem', color: '#0f172a', fontWeight: '900', marginBottom: '20px', lineHeight: '1.1', letterSpacing: '-1.5px' }}>Tu partido, <span style={{ background: 'linear-gradient(90deg, #2563eb, #06b6d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>sin estrés.</span></h2>
+      <h2 className="jugadores-title" style={{ fontSize: '3.5rem', color: '#0f172a', fontWeight: '900', marginBottom: '20px', lineHeight: '1.1', letterSpacing: '-1.5px' }}>Tu partido, <span style={{ background: 'linear-gradient(90deg, #2563eb, #06b6d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>sin estrés.</span></h2>
       <p style={{ color: '#4b5563', fontSize: '1.15rem', lineHeight: '1.7', marginBottom: '40px' }}>Olvídate de perseguir a tus amigos para que paguen o de llamar a 10 complejos distintos buscando un horario libre. PlayStop hace el trabajo duro por ti.</p>
       
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
+      <div className="jugadores-features" style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
         <div style={{ display: 'flex', gap: '20px' }}>
            <div style={{ width: '60px', height: '60px', backgroundColor: '#ffffff', border: '1px solid #dbeafe', color: '#2563eb', borderRadius: '16px', display: 'flex', justifyContent: 'center', alignItems: 'center', flexShrink: 0, boxShadow: '0 8px 16px -4px rgba(37,99,235,0.2)' }}>
              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
@@ -279,6 +286,7 @@ const ParaJugadores = () => (
       <button style={{ marginTop: '40px', backgroundColor: '#0f172a', color: 'white', border: 'none', padding: '16px 36px', borderRadius: '12px', fontSize: '1.1rem', fontWeight: '700', cursor: 'pointer', boxShadow: '0 10px 20px -5px rgba(15,23,42,0.3)', transition: 'background-color 0.3s' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#1e293b'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0f172a'}>
         Explorar canchas
       </button>
+    </div>
     </div>
   </section>
 );
