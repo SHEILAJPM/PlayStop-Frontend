@@ -80,8 +80,8 @@ const Navbar = ({ onLogin }) => {
           <a href="#" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem' }}>Inicio</a>
           <a href="#" onClick={(e) => { e.preventDefault(); openModal('como-funciona'); }} style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem' }}>Cómo Funciona</a>
           <a href="#soluciones" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem' }}>Soluciones</a>
-          <a href="#clubes" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem' }}>Para Clubes</a>
           <a href="#jugadores" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem' }}>Para Jugadores</a>
+          <a href="#clubes" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem' }}>Para Clubes</a>
           <a href="#testimonios" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem' }}>Testimonios</a>
           <a href="#precios" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem' }}>Precios</a>
           <a href="#faq" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem' }}>FAQ</a>

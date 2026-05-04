@@ -31,8 +31,8 @@ function App() {
       <Hero />
       <CanchasDestacadas />
       <Soluciones />
-      <ParaClubes />
       <ParaJugadores />
+      <ParaClubes />
       <Testimonios />
       <Precios />
       <Faq />
