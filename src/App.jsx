@@ -17,7 +17,32 @@ import JugadorDashboard from './components/dashboards/JugadorDashboard.jsx';
 import PropietarioDashboard from './components/dashboards/PropietarioDashboard.jsx';
 import AdminDashboard from './components/dashboards/AdminDashboard.jsx';
 import SuperAdminDashboard from './components/dashboards/SuperAdminDashboard.jsx';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import Login from './components/Login.jsx';
+import Register from './components/Register.jsx';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, Outlet } from 'react-router-dom';
+
+// Layout que envuelve la Landing Page para permitir que el modal se renderice en una sub-ruta
+function LandingLayout({ darkMode, toggleTheme }) {
+  return (
+    <>
+      <Navbar darkMode={darkMode} toggleTheme={toggleTheme} />
+      <Hero />
+      <Marcas />
+      <CanchasDestacadas />
+      <Soluciones />
+      <ParaJugadores />
+      <ParaClubes />
+      <Testimonios />
+      <Precios />
+      <Faq />
+      <Blog />
+      <Contacto />
+      <Legal />
+      <Footer />
+      <Outlet /> {/* Aquí se renderizará el Login si coincide con las rutas /login, /register, etc. */}
+    </>
+  );
+}
 
 function AppContent() {
   // Leer el usuario del localStorage al iniciar la app
@@ -142,27 +167,13 @@ function AppContent() {
         `}
       </style>
       <Routes>
-        {/* RUTA PUBLICA: Landing Page */}
-        <Route path="/" element={
-          !user ? (
-            <>
-              <Navbar onLogin={handleLogin} darkMode={darkMode} toggleTheme={handleThemeToggle} />
-              <Hero />
-              <Marcas />
-              <CanchasDestacadas />
-              <Soluciones />
-              <ParaJugadores />
-              <ParaClubes />
-              <Testimonios />
-              <Precios />
-              <Faq />
-              <Blog />
-              <Contacto />
-              <Legal />
-              <Footer />
-            </>
-          ) : <Navigate to="/dashboard" replace />
-        } />
+        {/* RUTA PUBLICA: Landing Page y Rutas de Autenticación */}
+        <Route path="/" element={!user ? <LandingLayout darkMode={darkMode} toggleTheme={handleThemeToggle} /> : <Navigate to="/dashboard" replace />}>
+          <Route path="login" element={<Login type="login" onLogin={handleLogin} />} />
+          <Route path="register" element={<Register onLogin={handleLogin} />} />
+          <Route path="forgot" element={<Login type="forgot" onLogin={handleLogin} />} />
+          <Route path="como-funciona" element={<Login type="como-funciona" onLogin={handleLogin} />} />
+        </Route>
         
         {/* RUTA PRIVADA: Dashboards (Solo accesible si hay usuario) */}
         <Route path="/dashboard" element={
