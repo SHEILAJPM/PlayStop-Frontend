@@ -1,6 +1,6 @@
 
 const ParaJugadores = () => (
-  <section id="jugadores" style={{ padding: '120px 5%', backgroundColor: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap-reverse', gap: '80px', overflow: 'hidden', position: 'relative' }}>
+  <section id="jugadores" style={{ scrollMarginTop: '80px', padding: '120px 5%', backgroundColor: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap-reverse', gap: '80px', overflow: 'hidden', position: 'relative' }}>
     
     {/* Luces de fondo sutiles */}
     <div style={{ position: 'absolute', top: '10%', left: '-10%', width: '500px', height: '500px', backgroundColor: '#2563eb', borderRadius: '50%', filter: 'blur(150px)', opacity: 0.08, zIndex: 0 }}></div>
