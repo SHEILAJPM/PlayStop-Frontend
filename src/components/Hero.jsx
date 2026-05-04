@@ -124,7 +124,7 @@ const Hero = () => {
   };
 
   return (
-    <main style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '80px 5%', minHeight: '85vh', position: 'relative', overflow: 'hidden' }}>
+    <main className="hero-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '80px 5%', minHeight: '85vh', position: 'relative', overflow: 'hidden', width: '100%', boxSizing: 'border-box' }}>
       {/* Estilos CSS integrados para animaciones */}
       <style>
         {`
@@ -152,7 +152,6 @@ const Hero = () => {
         `}
       </style>
 
-      <div className="hero-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '80px 5%', minHeight: '85vh', position: 'relative', overflow: 'hidden', width: '100%', boxSizing: 'border-box' }}>
         {backgroundImages.map((img, index) => (
         <div
           key={index}
@@ -301,7 +300,6 @@ const Hero = () => {
             </div>
           </div>
         </div>
-      </div>
       </div>
     </main>
   );

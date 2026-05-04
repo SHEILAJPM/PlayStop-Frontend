@@ -17,6 +17,16 @@ import SuperAdminDashboard from './components/dashboards/SuperAdminDashboard.jsx
 
 function App() {
   const [user, setUser] = useState(null); // null = No logueado
+  
+  // Inicializar el estado de Modo Oscuro leyendo directamente el localStorage
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem('playstop-theme') === 'dark';
+  });
+
+  const handleThemeToggle = () => {
+    setDarkMode(!darkMode);
+    localStorage.setItem('playstop-theme', !darkMode ? 'dark' : 'light');
+  };
 
   // Intersection Observer para Animaciones de Scroll (Scroll Reveal)
   useEffect(() => {
@@ -46,7 +56,7 @@ function App() {
   }
 
   return (
-    <div style={{ fontFamily: '"Inter", system-ui, -apple-system, sans-serif', color: '#111827', margin: 0, padding: 0, backgroundColor: '#ffffff' }}>
+    <div className={darkMode ? 'dark-mode' : ''} style={{ fontFamily: '"Inter", system-ui, -apple-system, sans-serif', color: '#111827', margin: 0, padding: 0, backgroundColor: '#ffffff', minHeight: '100vh' }}>
       <style>
         {`
           .reveal {
@@ -58,9 +68,67 @@ function App() {
             opacity: 1;
             transform: translateY(0);
           }
+
+          /* DARK MODE GLOBAL STYLES */
+          .dark-mode { background-color: #020617 !important; color: #f8fafc !important; }
+          .dark-mode section:not(#clubes):not(#testimonios) { background-color: #020617 !important; border-color: #1e293b !important; }
+          .dark-mode #soluciones, .dark-mode #faq { background-color: #0b1120 !important; }
+          
+          .dark-mode section:not(#clubes):not(#testimonios) h2, 
+          .dark-mode section:not(#clubes):not(#testimonios) h3, 
+          .dark-mode section:not(#clubes):not(#testimonios) h4,
+          .dark-mode .precio-valor { color: #f8fafc !important; }
+          
+          .dark-mode section:not(#clubes):not(#testimonios) p,
+          .dark-mode .trust-logo { color: #94a3b8 !important; }
+          .dark-mode .trust-logo:hover { color: #f8fafc !important; }
+          
+          /* Navbar Oscuro */
+          .dark-mode .navbar-header { background-color: rgba(2, 6, 23, 0.85) !important; border-bottom: 1px solid #1e293b !important; }
+          .dark-mode .desktop-nav a { color: #cbd5e1 !important; }
+          .dark-mode .desktop-nav a:hover { color: #00d084 !important; }
+          .dark-mode .mobile-toggle { color: #f8fafc !important; }
+          .dark-mode .mobile-menu { background-color: #0f172a !important; border-bottom: 1px solid #1e293b !important; }
+          .dark-mode .mobile-menu a { color: #f8fafc !important; }
+          .dark-mode .nav-login-btn { color: #f8fafc !important; }
+          
+          /* Tarjetas y Acordeón Oscuros */
+          .dark-mode .cancha-card, .dark-mode .soluciones-card, .dark-mode .precio-card:not([style*="linear-gradient"]), .dark-mode .faq-item { background-color: #0f172a !important; border-color: #1e293b !important; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.4) !important; }
+          .dark-mode .fade-left { background: linear-gradient(to right, #020617 0%, transparent 100%) !important; }
+          .dark-mode .fade-right { background: linear-gradient(to left, #020617 0%, transparent 100%) !important; }
+          .dark-mode .faq-header { background-color: #0f172a !important; }
+          .dark-mode .faq-header.open { background-color: #1e293b !important; }
+          .dark-mode .faq-icon { background-color: #1e293b !important; color: #f8fafc !important; border-color: #334155 !important; }
+          .dark-mode .faq-divider { background-color: #1e293b !important; }
+          
+          /* Modal de Autenticación Oscuro */
+          .dark-mode .modal-container { background-color: #0f172a !important; border-color: #1e293b !important; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.05) !important; }
+          .dark-mode .modal-container h2 { color: #f8fafc !important; }
+          .dark-mode .modal-input { background-color: #020617 !important; border-color: #1e293b !important; color: #f8fafc !important; }
+          .dark-mode .modal-input:focus { background-color: #0f172a !important; }
+          .dark-mode .modal-close-btn { background-color: #1e293b !important; color: #cbd5e1 !important; }
+          .dark-mode .modal-close-btn:hover { background-color: #334155 !important; color: #f8fafc !important; }
+          .dark-mode .modal-demo-btn { background-color: #020617 !important; border-color: #1e293b !important; color: #cbd5e1 !important; }
+          .dark-mode .modal-demo-btn:hover { border-color: #00d084 !important; color: #f8fafc !important; }
+          
+          /* --- CORRECCIONES DE VISIBILIDAD (LETRAS INVISIBLES) --- */
+          /* 1. Logo del Navbar */
+          .dark-mode .navbar-header h1 { color: #f8fafc !important; }
+          .dark-mode .navbar-header img { filter: brightness(0) invert(1) !important; }
+          
+          /* 2. Textos de precios en Canchas Destacadas */
+          .dark-mode .cancha-card span { color: #cbd5e1 !important; }
+          
+          /* 3. Listas de características en Soluciones y Precios */
+          .dark-mode .soluciones-card li span,
+          .dark-mode .precio-card li,
+          .dark-mode .precio-card li span { color: #cbd5e1 !important; }
+          
+          /* 4. Etiquetas (Badges) de secciones oscuras */
+          .dark-mode .section-badge { color: #f8fafc !important; border-color: rgba(255,255,255,0.2) !important; background: rgba(255,255,255,0.05) !important; }
         `}
       </style>
-      <Navbar onLogin={setUser} />
+      <Navbar onLogin={setUser} darkMode={darkMode} toggleTheme={handleThemeToggle} />
       <Hero />
       <Marcas />
       <CanchasDestacadas />
