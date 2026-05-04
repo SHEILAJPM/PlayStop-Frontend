@@ -1,6 +1,6 @@
 
 const Precios = () => (
-  <section id="precios" style={{ padding: '120px 5%', backgroundColor: '#ffffff', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+  <section id="precios" style={{ scrollMarginTop: '80px', padding: '100px 5%', backgroundColor: '#ffffff', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
     
     {/* Decoraciones de fondo (Luces suaves) */}
     <div style={{ position: 'absolute', top: '-10%', left: '30%', transform: 'translateX(-50%)', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(0,208,132,0.05) 0%, rgba(255,255,255,0) 70%)', zIndex: 0, pointerEvents: 'none' }}></div>
@@ -74,6 +74,35 @@ const Precios = () => (
         </ul>
         <button style={{ width: '100%', backgroundColor: '#00d084', color: '#0f172a', border: 'none', padding: '16px', borderRadius: '12px', fontWeight: '800', fontSize: '1.05rem', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 10px 15px -3px rgba(0,208,132,0.3)' }} onMouseOver={(e) => { e.currentTarget.style.backgroundColor = '#34d399'; e.currentTarget.style.transform = 'translateY(-2px)'; }} onMouseOut={(e) => { e.currentTarget.style.backgroundColor = '#00d084'; e.currentTarget.style.transform = 'translateY(0)'; }}>
           Probar 14 días gratis
+        </button>
+      </div>
+
+      {/* Plan Enterprise */}
+      <div 
+        style={{ flex: '1 1 320px', maxWidth: '380px', padding: '40px', backgroundColor: '#ffffff', borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)', transition: 'all 0.3s ease', cursor: 'default', display: 'flex', flexDirection: 'column', textAlign: 'center' }}
+        onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-8px)'; e.currentTarget.style.boxShadow = '0 20px 40px -10px rgba(0,0,0,0.1)'; e.currentTarget.style.borderColor = '#cbd5e1'; }}
+        onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 10px 25px -5px rgba(0, 0, 0, 0.05)'; e.currentTarget.style.borderColor = '#e2e8f0'; }}
+      >
+        <h3 style={{ fontSize: '1.4rem', color: '#0f172a', fontWeight: '800', margin: '0 0 10px 0' }}>Plan Enterprise</h3>
+        <p style={{ color: '#64748b', fontSize: '0.95rem', margin: '0 0 20px 0', lineHeight: '1.5' }}>Para cadenas deportivas y clubes de alto rendimiento.</p>
+        <div style={{ fontSize: '3.5rem', fontWeight: '900', color: '#0f172a', margin: '0 0 30px 0', letterSpacing: '-2px' }}>S/ 199<span style={{ fontSize: '1.1rem', color: '#94a3b8', fontWeight: '600', letterSpacing: '0' }}>/mes</span></div>
+        
+        <ul style={{ listStyle: 'none', padding: 0, margin: '0 auto 40px auto', display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left', width: 'fit-content' }}>
+          <li style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#334155', fontWeight: '600' }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>Canchas y sucursales ilimitadas</span>
+          </li>
+          <li style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#334155', fontWeight: '600' }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>Plataforma Marca Blanca</span>
+          </li>
+          <li style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#334155', fontWeight: '600' }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>Soporte prioritario 24/7</span>
+          </li>
+        </ul>
+        <button style={{ width: '100%', backgroundColor: '#f1f5f9', color: '#0f172a', border: '1px solid #e2e8f0', padding: '16px', borderRadius: '12px', fontWeight: '800', fontSize: '1rem', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e2e8f0'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f1f5f9'}>
+          Contactar ventas
         </button>
       </div>
     </div>
