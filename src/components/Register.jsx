@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
 const Register = () => {
   const navigate = useNavigate();
   
@@ -24,9 +26,9 @@ const Register = () => {
 
     try {
       // Dependiendo de lo que seleccionó arriba, mandamos a la ruta correcta
-      const endpoint = role === 'Jugador' 
-        ? 'http://localhost:8080/api/auth/register/player'
-        : 'http://localhost:8080/api/auth/register/owner';
+      const endpoint = role === 'Jugador'
+        ? `${API_URL}/api/auth/register/player`
+        : `${API_URL}/api/auth/register/owner`;
 
       const registerRequest = { name, email, password, phone };
 

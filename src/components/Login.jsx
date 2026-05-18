@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
 const Login = ({ type, onLogin, darkMode = true }) => {
   const navigate = useNavigate();
   const [email, setEmail]           = useState('');
@@ -27,7 +29,7 @@ const Login = ({ type, onLogin, darkMode = true }) => {
       if (type === 'forgot') {
         const endpoint = step === 1 ? '/api/auth/forgot-password' : '/api/auth/reset-password';
         const body     = step === 1 ? { email } : { email, code, newPassword };
-        const res = await fetch(`http://localhost:8080${endpoint}`, {
+        const res = await fetch(`${API_URL}${endpoint}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body),
@@ -35,7 +37,7 @@ const Login = ({ type, onLogin, darkMode = true }) => {
         if (res.ok) { step === 1 ? setStep(2) : navigate('/login'); }
         else        { const d = await res.json(); setError(d.message || 'Error en el proceso.'); }
       } else {
-        const res  = await fetch('http://localhost:8080/api/auth/login', {
+        const res  = await fetch(`${API_URL}/api/auth/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password }),
