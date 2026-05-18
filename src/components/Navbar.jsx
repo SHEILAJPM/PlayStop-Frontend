@@ -3,65 +3,143 @@ import { useNavigate } from 'react-router-dom';
 
 const Navbar = ({ darkMode, toggleTheme }) => {
   const navigate = useNavigate();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const links = [
+    { label: 'Soluciones', href: '#soluciones' },
+    { label: 'Para Jugadores', href: '#jugadores' },
+    { label: 'Para Clubes', href: '#clubes' },
+    { label: 'Precios', href: '#precios' },
+  ];
 
   return (
     <>
-      <style>
-        {`
-          html { scroll-behavior: smooth; }
-          @media (max-width: 768px) {
-            .desktop-nav { display: none !important; }
-            .mobile-toggle { display: block !important; }
-            .navbar-header { padding: 15px 20px !important; }
-          }
-          @media (min-width: 769px) {
-            .mobile-toggle, .mobile-menu { display: none !important; }
-          }
-        `}
-      </style>
-      <header className="navbar-header" style={{ position: 'sticky', top: 0, zIndex: 50, display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 5%', backgroundColor: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(8px)', borderBottom: '1px solid #f3f4f6' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <img src="/favicon.svg" alt="PlayStop" style={{ width: '32px', height: '32px' }} />
-          <h1 style={{ margin: 0, fontSize: '24px', color: '#111827', fontWeight: '800', letterSpacing: '-0.5px' }}>PlayStop</h1>
-        </div>
-        
-        <nav className="desktop-nav" style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
-          <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo(0,0); }} style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#4b5563'}>Inicio</a>
-          <a href="#" onClick={(e) => { e.preventDefault(); navigate('/como-funciona'); }} style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#4b5563'}>Cómo Funciona</a>
-          <a href="#soluciones" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#4b5563'}>Soluciones</a>
-          <a href="#jugadores" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#4b5563'}>Para Jugadores</a>
-          <a href="#clubes" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#4b5563'}>Para Clubes</a>
-          <a href="#precios" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#4b5563'}>Precios</a>
-        </nav>
-        
-        <div className="desktop-nav" style={{ display: 'flex', gap: '15px' }}>
-          <button onClick={toggleTheme} style={{ background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '8px' }}>
-            {darkMode ? '☀️' : '🌙'}
-          </button>
-          <button className="nav-login-btn" onClick={() => navigate('/login')} style={{ backgroundColor: 'transparent', color: '#111827', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>Iniciar Sesión</button>
-          <button onClick={() => navigate('/register')} style={{ backgroundColor: '#00d084', color: '#ffffff', border: 'none', padding: '10px 24px', borderRadius: '8px', fontWeight: '700', cursor: 'pointer', boxShadow: '0 4px 14px rgba(0, 208, 132, 0.3)' }}>Comenzar Gratis</button>
+      <style>{`
+        .nav-link {
+          font-size: .9rem; font-weight: 500;
+          padding: 7px 13px; border-radius: 8px;
+          transition: all .18s; text-decoration: none; display: inline-block;
+        }
+        body.dark  .nav-link { color: rgba(255,255,255,.6); }
+        body.light .nav-link { color: #475569; }
+        body.dark  .nav-link:hover { color: #fff; background: rgba(255,255,255,.07); }
+        body.light .nav-link:hover { color: #0f172a; background: rgba(0,0,0,.05); }
+        .nav-cta {
+          background: linear-gradient(135deg,#00d084,#00b875);
+          color: #0a1628; font-weight: 800; font-size: .88rem;
+          padding: 9px 20px; border-radius: 10px; border: none;
+          cursor: pointer; transition: all .2s;
+          box-shadow: 0 0 20px rgba(0,208,132,.25); font-family: inherit;
+        }
+        .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(0,208,132,.4); }
+        body.dark  .nav-login { color: rgba(255,255,255,.7); background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); }
+        body.light .nav-login { color: #334155; background: rgba(0,0,0,.04); border: 1px solid rgba(0,0,0,.1); }
+        .nav-login {
+          font-weight: 600; font-size: .88rem;
+          padding: 9px 18px; border-radius: 10px;
+          cursor: pointer; transition: all .18s; font-family: inherit;
+        }
+        body.dark  .nav-login:hover { color: #fff; background: rgba(255,255,255,.11); }
+        body.light .nav-login:hover { color: #0f172a; background: rgba(0,0,0,.08); }
+        body.dark  .nav-theme-btn { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); }
+        body.light .nav-theme-btn { background: rgba(0,0,0,.04); border: 1px solid rgba(0,0,0,.1); }
+        .nav-theme-btn {
+          width: 36px; height: 36px; border-radius: 9px;
+          display: flex; align-items: center; justify-content: center;
+          cursor: pointer; transition: all .18s; font-size: .95rem;
+        }
+        body.dark  .nav-theme-btn:hover { background: rgba(255,255,255,.12); }
+        body.light .nav-theme-btn:hover { background: rgba(0,0,0,.09); }
+        @media (max-width: 768px) {
+          .desktop-nav { display: none !important; }
+          .nav-mobile-toggle { display: flex !important; }
+        }
+        @media (min-width: 769px) {
+          .nav-mobile-toggle { display: none !important; }
+          .nav-mobile-menu  { display: none !important; }
+        }
+      `}</style>
+
+      <header style={{
+        position: 'sticky', top: 0, zIndex: 999,
+        height: '64px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '0 5%',
+        background: darkMode ? 'rgba(9,12,22,0.9)' : 'rgba(255,255,255,0.92)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderBottom: darkMode ? '1px solid rgba(255,255,255,0.07)' : '1px solid rgba(0,0,0,0.08)',
+        transition: 'background .3s ease, border-color .3s ease',
+      }}>
+        {/* Logo */}
+        <div
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', userSelect: 'none' }}
+        >
+          <div style={{
+            width: 34, height: 34, borderRadius: 9, flexShrink: 0,
+            background: 'linear-gradient(135deg,#00d084,#00b875)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontWeight: 900, color: '#0a1628', fontSize: '.95rem',
+            boxShadow: '0 0 16px rgba(0,208,132,.4)',
+          }}>P</div>
+          <span style={{ color: darkMode ? '#fff' : '#0f172a', fontWeight: 900, fontSize: '1.2rem', letterSpacing: '-.5px', transition: 'color .3s' }}>
+            Play<span style={{ color: '#00d084' }}>Stop</span>
+          </span>
         </div>
 
-        {/* Botón Hamburguesa Móvil */}
-        <button className="mobile-toggle" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#0f172a' }}>
-          {isMobileMenuOpen ? '✖' : '☰'}
+        {/* Desktop links */}
+        <nav className="desktop-nav" style={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+          {links.map(l => (
+            <a key={l.label} href={l.href} className="nav-link">{l.label}</a>
+          ))}
+        </nav>
+
+        {/* Desktop actions */}
+        <div className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button className="nav-theme-btn" onClick={toggleTheme} title={darkMode ? 'Modo claro' : 'Modo oscuro'} style={{ color: darkMode ? 'rgba(255,255,255,.7)' : '#475569' }}>
+            {darkMode
+              ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+              : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            }
+          </button>
+          <button className="nav-login" onClick={() => navigate('/login')}>Iniciar Sesión</button>
+          <button className="nav-cta" onClick={() => navigate('/register')}>Comenzar Gratis</button>
+        </div>
+
+        {/* Mobile hamburger */}
+        <button
+          className="nav-mobile-toggle"
+          onClick={() => setMenuOpen(o => !o)}
+          style={{ background: 'rgba(255,255,255,.07)', border: '1px solid rgba(255,255,255,.1)', color: '#fff', width: 38, height: 38, borderRadius: 9, fontSize: '1.1rem', cursor: 'pointer', display: 'none', alignItems: 'center', justifyContent: 'center' }}
+        >
+          {menuOpen ? '✖' : '☰'}
         </button>
       </header>
 
-      {/* Menú Desplegable Móvil */}
-      {isMobileMenuOpen && (
-        <div className="mobile-menu" style={{ position: 'fixed', top: '65px', left: 0, width: '100%', backgroundColor: '#ffffff', borderBottom: '1px solid #e2e8f0', zIndex: 49, padding: '20px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <a href="#soluciones" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#0f172a', textDecoration: 'none', fontWeight: '700', fontSize: '1.1rem' }}>Soluciones</a>
-          <a href="#jugadores" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#0f172a', textDecoration: 'none', fontWeight: '700', fontSize: '1.1rem' }}>Para Jugadores</a>
-          <a href="#clubes" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#0f172a', textDecoration: 'none', fontWeight: '700', fontSize: '1.1rem' }}>Para Clubes</a>
-          <a href="#precios" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#0f172a', textDecoration: 'none', fontWeight: '700', fontSize: '1.1rem' }}>Precios</a>
-          <hr style={{ border: 'none', borderTop: '1px solid #e2e8f0', margin: '10px 0' }} />
-          <button onClick={() => { setIsMobileMenuOpen(false); toggleTheme(); }} style={{ width: '100%', backgroundColor: 'transparent', color: '#0f172a', border: '1px solid #e2e8f0', padding: '14px', borderRadius: '12px', fontWeight: '700', fontSize: '1rem', display: 'flex', justifyContent: 'center', gap: '8px' }}>
-            {darkMode ? '☀️ Cambiar a Modo Claro' : '🌙 Cambiar a Modo Oscuro'}
+      {/* Mobile menu */}
+      {menuOpen && (
+        <div className="nav-mobile-menu" style={{
+          position: 'fixed', top: '64px', left: 0, right: 0,
+          background: 'rgba(9,12,22,0.97)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          borderBottom: '1px solid rgba(255,255,255,.08)',
+          zIndex: 998, padding: '16px 5% 24px',
+          display: 'flex', flexDirection: 'column', gap: 8,
+        }}>
+          {links.map(l => (
+            <a key={l.label} href={l.href} className="nav-link" onClick={() => setMenuOpen(false)} style={{ fontSize: '1rem', padding: '12px 14px' }}>
+              {l.label}
+            </a>
+          ))}
+          <div style={{ height: 1, background: 'rgba(255,255,255,.08)', margin: '6px 0' }} />
+          <button className="nav-login" onClick={() => { setMenuOpen(false); navigate('/login'); }} style={{ width: '100%', padding: 13 }}>
+            Iniciar Sesión
           </button>
-          <button onClick={() => { setIsMobileMenuOpen(false); navigate('/login'); }} className="modal-demo-btn" style={{ width: '100%', backgroundColor: '#f1f5f9', color: '#0f172a', border: 'none', padding: '14px', borderRadius: '12px', fontWeight: '700', fontSize: '1rem' }}>Iniciar Sesión</button>
-          <button onClick={() => { setIsMobileMenuOpen(false); navigate('/register'); }} style={{ width: '100%', backgroundColor: '#00d084', color: '#ffffff', border: 'none', padding: '14px', borderRadius: '12px', fontWeight: '800', fontSize: '1rem', boxShadow: '0 4px 10px rgba(0,208,132,0.3)' }}>Comenzar Gratis</button>
+          <button className="nav-cta" onClick={() => { setMenuOpen(false); navigate('/register'); }} style={{ width: '100%', padding: 13, fontSize: '1rem' }}>
+            Comenzar Gratis
+          </button>
         </div>
       )}
     </>

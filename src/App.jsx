@@ -53,14 +53,22 @@ function AppContent() {
   const navigate = useNavigate();
   
   const [darkMode, setDarkMode] = useState(() => {
-    return localStorage.getItem('playstop-theme') === 'dark';
+    const saved = localStorage.getItem('playstop-theme');
+    return saved === null ? true : saved === 'dark';
   });
 
   const handleThemeToggle = () => {
     const newMode = !darkMode;
     setDarkMode(newMode);
     localStorage.setItem('playstop-theme', newMode ? 'dark' : 'light');
+    document.body.classList.toggle('dark', newMode);
+    document.body.classList.toggle('light', !newMode);
   };
+
+  useEffect(() => {
+    document.body.classList.toggle('dark', darkMode);
+    document.body.classList.toggle('light', !darkMode);
+  }, [darkMode]);
 
   // Aquí es donde se usa el useEffect para las animaciones
   useEffect(() => {
@@ -103,9 +111,9 @@ function AppContent() {
       <Routes>
         {/* RUTAS PÚBLICAS */}
         <Route path="/" element={!user ? <LandingLayout darkMode={darkMode} toggleTheme={handleThemeToggle} /> : <Navigate to="/dashboard" replace />}>
-          <Route path="login" element={<Login type="login" onLogin={handleLogin} />} />
+          <Route path="login" element={<Login type="login" onLogin={handleLogin} darkMode={darkMode} />} />
           <Route path="register" element={<Register onLogin={handleLogin} />} />
-          <Route path="forgot" element={<Login type="forgot" onLogin={handleLogin} />} />
+          <Route path="forgot" element={<Login type="forgot" onLogin={handleLogin} darkMode={darkMode} />} />
         </Route>
         
         {/* RUTA MAESTRA DE DASHBOARD */}
@@ -114,14 +122,15 @@ function AppContent() {
             <>
               {(getRole() === 'USER' || getRole() === 'JUGADOR') && <JugadorDashboard user={user} onLogout={handleLogout} darkMode={darkMode} toggleTheme={handleThemeToggle} />}
               {(getRole() === 'OWNER' || getRole() === 'PROPIETARIO') && <PropietarioDashboard user={user} onLogout={handleLogout} darkMode={darkMode} toggleTheme={handleThemeToggle} />}
-              {(getRole() === 'ADMINISTRADOR') && <AdminDashboard user={user} onLogout={handleLogout} darkMode={darkMode} toggleTheme={handleThemeToggle} />}
-              {(getRole() === 'ADMIN' || getRole() === 'SUPER ADMIN') && <SuperAdminDashboard user={user} onLogout={handleLogout} darkMode={darkMode} toggleTheme={handleThemeToggle} />}
+              {(getRole() === 'ADMIN' || getRole() === 'ADMINISTRADOR') && <AdminDashboard user={user} onLogout={handleLogout} darkMode={darkMode} toggleTheme={handleThemeToggle} />}
+              {(getRole() === 'SUPER ADMIN') && <SuperAdminDashboard user={user} onLogout={handleLogout} darkMode={darkMode} toggleTheme={handleThemeToggle} />}
             </>
           ) : <Navigate to="/login" replace />
         } />
 
         {/* RUTAS DIRECTAS (Para los navigate del Login.jsx) */}
-        <Route path="/super-admin-dashboard" element={user && (getRole() === 'ADMIN' || getRole() === 'SUPER ADMIN') ? <SuperAdminDashboard user={user} onLogout={handleLogout} darkMode={darkMode} toggleTheme={handleThemeToggle} /> : <Navigate to="/login" />} />
+        <Route path="/super-admin-dashboard" element={user && getRole() === 'SUPER ADMIN' ? <SuperAdminDashboard user={user} onLogout={handleLogout} darkMode={darkMode} toggleTheme={handleThemeToggle} /> : <Navigate to="/login" />} />
+        <Route path="/admin-dashboard" element={user && (getRole() === 'ADMIN' || getRole() === 'ADMINISTRADOR') ? <AdminDashboard user={user} onLogout={handleLogout} darkMode={darkMode} toggleTheme={handleThemeToggle} /> : <Navigate to="/login" />} />
         <Route path="/propietario-dashboard" element={user && (getRole() === 'OWNER' || getRole() === 'PROPIETARIO') ? <PropietarioDashboard user={user} onLogout={handleLogout} darkMode={darkMode} toggleTheme={handleThemeToggle} /> : <Navigate to="/login" />} />
         <Route path="/jugador-dashboard" element={user && (getRole() === 'USER' || getRole() === 'JUGADOR') ? <JugadorDashboard user={user} onLogout={handleLogout} darkMode={darkMode} toggleTheme={handleThemeToggle} /> : <Navigate to="/login" />} />
 
