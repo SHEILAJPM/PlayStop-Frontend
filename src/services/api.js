@@ -7,6 +7,12 @@ const authHeaders = () => ({
 
 const handleResponse = async (res) => {
   if (res.status === 204) return null;
+  if (res.status === 401 || res.status === 403) {
+    localStorage.removeItem('token');
+    localStorage.removeItem('playstop-user');
+    window.location.href = '/login';
+    throw new Error('Sesión expirada. Por favor inicia sesión nuevamente.');
+  }
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.message || `Error ${res.status}`);
   return data;

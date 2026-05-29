@@ -19,6 +19,7 @@ import AdminDashboard from './components/dashboards/AdminDashboard.jsx';
 import SuperAdminDashboard from './components/dashboards/SuperAdminDashboard.jsx';
 import Login from './components/Login.jsx';
 import Register from './components/Register.jsx';
+import ChatBot from './components/ChatBot.jsx';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, Outlet } from 'react-router-dom';
 
 // Layout que envuelve la Landing Page
@@ -108,6 +109,7 @@ function AppContent() {
 
   return (
     <div className={darkMode ? 'dark-mode' : ''} style={{ minHeight: '100vh' }}>
+      <ChatBot darkMode={darkMode} />
       <Routes>
         {/* RUTAS PÚBLICAS */}
         <Route path="/" element={!user ? <LandingLayout darkMode={darkMode} toggleTheme={handleThemeToggle} /> : <Navigate to="/dashboard" replace />}>
