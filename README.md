@@ -1,12 +1,8 @@
 ﻿# PlayStop Frontend
 
-## Instalacion
+## Variables de entorno
 
-1. Clonar el repositorio:
-   git clone https://github.com/SHEILAJPM/PlayStop-Frontend.git
+Crear un archivo .env.development con las siguientes variables:
 
-2. Ingresar al directorio:
-   cd PlayStop-Frontend
-
-3. Instalar dependencias:
-   npm install
+VITE_API_URL=http://localhost:8080
+VITE_APP_NAME=PlayStop
