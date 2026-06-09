@@ -1,138 +1,236 @@
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
-const authHeaders = () => ({
+const jsonHeaders = () => ({
   'Content-Type': 'application/json',
   'Authorization': `Bearer ${localStorage.getItem('token') || ''}`,
 });
 
-const handleResponse = async (res) => {
+const authHeader = () => ({
+  'Authorization': `Bearer ${localStorage.getItem('token') || ''}`,
+});
+
+let sessionExpired = false;
+
+async function handleResponse(res) {
   if (res.status === 204) return null;
-  if (res.status === 401 || res.status === 403) {
+  if ((res.status === 401 || res.status === 403) && !sessionExpired) {
+    sessionExpired = true;
     localStorage.removeItem('token');
-    localStorage.removeItem('playstop-user');
+    localStorage.removeItem('playspot-user');
     window.location.href = '/login';
     throw new Error('Sesión expirada. Por favor inicia sesión nuevamente.');
   }
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.message || `Error ${res.status}`);
   return data;
-};
+}
 
 export const api = {
-  // --- Canchas (Courts) ---
-  getAllCourts: () =>
-    fetch(`${BASE_URL}/api/courts`).then(handleResponse),
 
-  getMyCourts: () =>
-    fetch(`${BASE_URL}/api/courts/my`, { headers: authHeaders() }).then(handleResponse),
+  // ── Canchas ──────────────────────────────────────────────────────────────
 
-  getCourtSlots: (courtId, date) =>
-    fetch(`${BASE_URL}/api/courts/${courtId}/slots?date=${date}`).then(handleResponse),
-
-  createCourt: (data) =>
-    fetch(`${BASE_URL}/api/courts`, {
-      method: 'POST',
-      headers: authHeaders(),
-      body: JSON.stringify(data),
-    }).then(handleResponse),
-
-  updateCourt: (id, data) =>
-    fetch(`${BASE_URL}/api/courts/${id}`, {
-      method: 'PUT',
-      headers: authHeaders(),
-      body: JSON.stringify(data),
-    }).then(handleResponse),
-
-  deleteCourt: (id) =>
-    fetch(`${BASE_URL}/api/courts/${id}`, {
-      method: 'DELETE',
-      headers: authHeaders(),
-    }).then(handleResponse),
-
-  uploadImage: (file) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    return fetch(`${BASE_URL}/api/upload`, {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('token') || ''}` },
-      body: formData,
-    }).then(handleResponse);
+  async getAllCourts() {
+    return handleResponse(await fetch(`${BASE_URL}/api/courts`));
   },
 
-  // --- Reservas (Reservations) ---
-  getMyReservations: () =>
-    fetch(`${BASE_URL}/api/reservations/my`, { headers: authHeaders() }).then(handleResponse),
+  async getMyCourts() {
+    return handleResponse(await fetch(`${BASE_URL}/api/courts/my`, { headers: jsonHeaders() }));
+  },
 
-  getCourtReservations: (courtId) =>
-    fetch(`${BASE_URL}/api/reservations/court/${courtId}`, { headers: authHeaders() }).then(handleResponse),
+  async getCourtSlots(courtId, date) {
+    const params = new URLSearchParams({ date });
+    return handleResponse(await fetch(`${BASE_URL}/api/courts/${courtId}/slots?${params}`));
+  },
 
-  createReservation: (data) =>
-    fetch(`${BASE_URL}/api/reservations`, {
+  async createCourt(data) {
+    return handleResponse(await fetch(`${BASE_URL}/api/courts`, {
       method: 'POST',
-      headers: authHeaders(),
+      headers: jsonHeaders(),
       body: JSON.stringify(data),
-    }).then(handleResponse),
+    }));
+  },
 
-  cancelReservation: (id) =>
-    fetch(`${BASE_URL}/api/reservations/${id}/cancel`, {
-      method: 'PATCH',
-      headers: authHeaders(),
-    }).then(handleResponse),
+  async updateCourt(id, data) {
+    return handleResponse(await fetch(`${BASE_URL}/api/courts/${id}`, {
+      method: 'PUT',
+      headers: jsonHeaders(),
+      body: JSON.stringify(data),
+    }));
+  },
 
-  cancelReservationByOwner: (id) =>
-    fetch(`${BASE_URL}/api/reservations/${id}/cancel-by-owner`, {
-      method: 'PATCH',
-      headers: authHeaders(),
-    }).then(handleResponse),
-
-  getReservationQrUrl: (id) => `${BASE_URL}/api/reservations/${id}/qr`,
-
-  verifyReservation: (id) =>
-    fetch(`${BASE_URL}/api/reservations/verify/${id}`, { headers: authHeaders() }).then(handleResponse),
-
-  confirmAttendance: (id) =>
-    fetch(`${BASE_URL}/api/reservations/${id}/confirm-attendance`, {
-      method: 'PATCH',
-      headers: authHeaders(),
-    }).then(handleResponse),
-
-  // --- Admin ---
-  getAdminStats: () =>
-    fetch(`${BASE_URL}/api/admin/stats`, { headers: authHeaders() }).then(handleResponse),
-
-  getAdminAnalytics: () =>
-    fetch(`${BASE_URL}/api/admin/analytics`, { headers: authHeaders() }).then(handleResponse),
-
-  getAdminUsers: () =>
-    fetch(`${BASE_URL}/api/admin/users`, { headers: authHeaders() }).then(handleResponse),
-
-  getAdminOwners: () =>
-    fetch(`${BASE_URL}/api/admin/owners`, { headers: authHeaders() }).then(handleResponse),
-
-  getOwnerCourts: (ownerId) =>
-    fetch(`${BASE_URL}/api/admin/owners/${ownerId}/courts`, { headers: authHeaders() }).then(handleResponse),
-
-  getAdminAllReservations: () =>
-    fetch(`${BASE_URL}/api/admin/all-reservations`, { headers: authHeaders() }).then(handleResponse),
-
-  getAdminCourts: () =>
-    fetch(`${BASE_URL}/api/admin/courts`, { headers: authHeaders() }).then(handleResponse),
-
-  toggleUserStatus: (id) =>
-    fetch(`${BASE_URL}/api/admin/users/${id}/toggle-status`, {
-      method: 'PATCH',
-      headers: authHeaders(),
-    }).then(handleResponse),
-
-  deleteAdminUser: (id) =>
-    fetch(`${BASE_URL}/api/admin/users/${id}`, {
+  async deleteCourt(id) {
+    return handleResponse(await fetch(`${BASE_URL}/api/courts/${id}`, {
       method: 'DELETE',
-      headers: authHeaders(),
-    }).then(handleResponse),
+      headers: jsonHeaders(),
+    }));
+  },
 
-  toggleCourtStatus: (id) =>
-    fetch(`${BASE_URL}/api/admin/courts/${id}/toggle-status`, {
+  async uploadImage(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    return handleResponse(await fetch(`${BASE_URL}/api/upload`, {
+      method: 'POST',
+      headers: authHeader(),
+      body: formData,
+    }));
+  },
+
+  // ── Reservas ─────────────────────────────────────────────────────────────
+
+  async getMyReservations() {
+    return handleResponse(await fetch(`${BASE_URL}/api/reservations/my`, { headers: jsonHeaders() }));
+  },
+
+  async getCourtReservations(courtId) {
+    return handleResponse(await fetch(`${BASE_URL}/api/reservations/court/${courtId}`, { headers: jsonHeaders() }));
+  },
+
+  async createReservation(data) {
+    return handleResponse(await fetch(`${BASE_URL}/api/reservations`, {
+      method: 'POST',
+      headers: jsonHeaders(),
+      body: JSON.stringify(data),
+    }));
+  },
+
+  async cancelReservation(id) {
+    return handleResponse(await fetch(`${BASE_URL}/api/reservations/${id}/cancel`, {
       method: 'PATCH',
-      headers: authHeaders(),
-    }).then(handleResponse),
+      headers: jsonHeaders(),
+    }));
+  },
+
+  async cancelReservationByOwner(id) {
+    return handleResponse(await fetch(`${BASE_URL}/api/reservations/${id}/cancel-by-owner`, {
+      method: 'PATCH',
+      headers: jsonHeaders(),
+    }));
+  },
+
+  getReservationQrUrl(id) {
+    return `${BASE_URL}/api/reservations/${id}/qr`;
+  },
+
+  async verifyReservation(id) {
+    return handleResponse(await fetch(`${BASE_URL}/api/reservations/verify/${id}`, { headers: jsonHeaders() }));
+  },
+
+  async confirmAttendance(id) {
+    return handleResponse(await fetch(`${BASE_URL}/api/reservations/${id}/confirm-attendance`, {
+      method: 'PATCH',
+      headers: jsonHeaders(),
+    }));
+  },
+
+  // ── Admin ─────────────────────────────────────────────────────────────────
+
+  async getAdminStats() {
+    return handleResponse(await fetch(`${BASE_URL}/api/admin/stats`, { headers: jsonHeaders() }));
+  },
+
+  async getAdminAnalytics() {
+    return handleResponse(await fetch(`${BASE_URL}/api/admin/analytics`, { headers: jsonHeaders() }));
+  },
+
+  async getAdminUsers() {
+    return handleResponse(await fetch(`${BASE_URL}/api/admin/users`, { headers: jsonHeaders() }));
+  },
+
+  async getAdminOwners() {
+    return handleResponse(await fetch(`${BASE_URL}/api/admin/owners`, { headers: jsonHeaders() }));
+  },
+
+  async getOwnerCourts(ownerId) {
+    return handleResponse(await fetch(`${BASE_URL}/api/admin/owners/${ownerId}/courts`, { headers: jsonHeaders() }));
+  },
+
+  async getAdminAllReservations() {
+    return handleResponse(await fetch(`${BASE_URL}/api/admin/all-reservations`, { headers: jsonHeaders() }));
+  },
+
+  async getAdminCourts() {
+    return handleResponse(await fetch(`${BASE_URL}/api/admin/courts`, { headers: jsonHeaders() }));
+  },
+
+  async toggleUserStatus(id) {
+    return handleResponse(await fetch(`${BASE_URL}/api/admin/users/${id}/toggle-status`, {
+      method: 'PATCH',
+      headers: jsonHeaders(),
+    }));
+  },
+
+  async deleteAdminUser(id) {
+    return handleResponse(await fetch(`${BASE_URL}/api/admin/users/${id}`, {
+      method: 'DELETE',
+      headers: jsonHeaders(),
+    }));
+  },
+
+  async toggleCourtStatus(id) {
+    return handleResponse(await fetch(`${BASE_URL}/api/admin/courts/${id}/toggle-status`, {
+      method: 'PATCH',
+      headers: jsonHeaders(),
+    }));
+  },
+
+  // ── Reseñas ───────────────────────────────────────────────────────────────
+
+  async getCourtReviews(courtId) {
+    return handleResponse(await fetch(`${BASE_URL}/api/reviews/court/${courtId}`));
+  },
+
+  async getMyReviews() {
+    return handleResponse(await fetch(`${BASE_URL}/api/reviews/my`, { headers: jsonHeaders() }));
+  },
+
+  async createReview(data) {
+    return handleResponse(await fetch(`${BASE_URL}/api/reviews`, {
+      method: 'POST',
+      headers: jsonHeaders(),
+      body: JSON.stringify(data),
+    }));
+  },
+
+  async deleteReview(id) {
+    return handleResponse(await fetch(`${BASE_URL}/api/reviews/${id}`, {
+      method: 'DELETE',
+      headers: jsonHeaders(),
+    }));
+  },
+
+  // ── Perfil de usuario ─────────────────────────────────────────────────────
+
+  async getMe() {
+    return handleResponse(await fetch(`${BASE_URL}/api/users/me`, { headers: jsonHeaders() }));
+  },
+
+  async updateMe(data) {
+    return handleResponse(await fetch(`${BASE_URL}/api/users/me`, {
+      method: 'PATCH',
+      headers: jsonHeaders(),
+      body: JSON.stringify(data),
+    }));
+  },
+
+  async updateAvatar(profileImageUrl) {
+    return handleResponse(await fetch(`${BASE_URL}/api/users/me/avatar`, {
+      method: 'PATCH',
+      headers: jsonHeaders(),
+      body: JSON.stringify({ profileImageUrl }),
+    }));
+  },
+
+  async changePassword(data) {
+    return handleResponse(await fetch(`${BASE_URL}/api/users/me/password`, {
+      method: 'PATCH',
+      headers: jsonHeaders(),
+      body: JSON.stringify(data),
+    }));
+  },
+
+  // ── Gamificación ──────────────────────────────────────────────────────────
+
+  async getGamificationProfile() {
+    return handleResponse(await fetch(`${BASE_URL}/api/gamification/me`, { headers: jsonHeaders() }));
+  },
 };

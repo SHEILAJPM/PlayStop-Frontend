@@ -14,57 +14,57 @@ const Hero = () => {
   
   // Estados para los menús desplegables
   const [openDropdown, setOpenDropdown] = useState(null);
-  const [selectedSport, setSelectedSport] = useState({ icon: '⚽', text: '¿Qué deporte buscas?' });
-  const [selectedLocation, setSelectedLocation] = useState({ icon: '📍', text: '¿En qué ciudad?' });
-  const [selectedDistrict, setSelectedDistrict] = useState({ icon: '🏘️', text: '¿En qué distrito?' });
-  const [selectedDate, setSelectedDate] = useState({ icon: '📅', text: 'Fecha y hora' });
+  const [selectedSport, setSelectedSport] = useState({ icon: 'bi-dribbble', text: '¿Qué deporte buscas?' });
+  const [selectedLocation, setSelectedLocation] = useState({ icon: 'bi-geo-alt-fill', text: '¿En qué ciudad?' });
+  const [selectedDistrict, setSelectedDistrict] = useState({ icon: 'bi-house-fill', text: '¿En qué distrito?' });
+  const [selectedDate, setSelectedDate] = useState({ icon: 'bi-calendar3', text: 'Fecha y hora' });
   const [locatingStatus, setLocatingStatus] = useState('');
 
   // Opciones de sugerencia para cada menú
   const sports = [
-    { icon: '⚽', text: 'Fútbol' },
-    { icon: '🎾', text: 'Tenis' },
-    { icon: '🏸', text: 'Pádel' },
-    { icon: '🏀', text: 'Baloncesto' }
+    { icon: 'bi-dribbble',          text: 'Fútbol' },
+    { icon: 'bi-circle-fill',       text: 'Tenis' },
+    { icon: 'bi-record-circle',     text: 'Pádel' },
+    { icon: 'bi-circle-half',       text: 'Baloncesto' },
   ];
   const locations = [
-    { icon: '📍', text: 'Lima' },
-    { icon: '📍', text: 'Arequipa' },
-    { icon: '📍', text: 'Cusco' },
-    { icon: '📍', text: 'Trujillo' }
+    { icon: 'bi-geo-alt-fill', text: 'Lima' },
+    { icon: 'bi-geo-alt-fill', text: 'Arequipa' },
+    { icon: 'bi-geo-alt-fill', text: 'Cusco' },
+    { icon: 'bi-geo-alt-fill', text: 'Trujillo' },
   ];
   
   // Mapeo de los distritos según la ciudad seleccionada
   const districtsMap = {
     'Lima': [
-      { icon: '🏘️', text: 'Miraflores' },
-      { icon: '🏘️', text: 'San Isidro' },
-      { icon: '🏘️', text: 'Santiago de Surco' },
-      { icon: '🏘️', text: 'San Borja' }
+      { icon: 'bi-house-fill', text: 'Miraflores' },
+      { icon: 'bi-house-fill', text: 'San Isidro' },
+      { icon: 'bi-house-fill', text: 'Santiago de Surco' },
+      { icon: 'bi-house-fill', text: 'San Borja' },
     ],
     'Arequipa': [
-      { icon: '🏘️', text: 'Cayma' },
-      { icon: '🏘️', text: 'Yanahuara' },
-      { icon: '🏘️', text: 'Cerro Colorado' }
+      { icon: 'bi-house-fill', text: 'Cayma' },
+      { icon: 'bi-house-fill', text: 'Yanahuara' },
+      { icon: 'bi-house-fill', text: 'Cerro Colorado' },
     ],
     'Cusco': [
-      { icon: '🏘️', text: 'Wanchaq' },
-      { icon: '🏘️', text: 'San Sebastián' },
-      { icon: '🏘️', text: 'San Jerónimo' }
+      { icon: 'bi-house-fill', text: 'Wanchaq' },
+      { icon: 'bi-house-fill', text: 'San Sebastián' },
+      { icon: 'bi-house-fill', text: 'San Jerónimo' },
     ],
     'Trujillo': [
-      { icon: '🏘️', text: 'Víctor Larco' },
-      { icon: '🏘️', text: 'Huanchaco' },
-      { icon: '🏘️', text: 'El Porvenir' }
+      { icon: 'bi-house-fill', text: 'Víctor Larco' },
+      { icon: 'bi-house-fill', text: 'Huanchaco' },
+      { icon: 'bi-house-fill', text: 'El Porvenir' },
     ]
   };
   
   const currentDistricts = districtsMap[selectedLocation.text] || [];
 
   const dates = [
-    { icon: '📅', text: 'Hoy' },
-    { icon: '📅', text: 'Mañana' },
-    { icon: '📅', text: 'Este fin de semana' }
+    { icon: 'bi-calendar3', text: 'Hoy' },
+    { icon: 'bi-calendar3', text: 'Mañana' },
+    { icon: 'bi-calendar3', text: 'Este fin de semana' },
   ];
 
   useEffect(() => {
@@ -97,9 +97,9 @@ const Hero = () => {
               // 2. Mostrar distrito y cerrar dropdown
               setTimeout(() => {
                 if (district) {
-                  setSelectedDistrict({ icon: '🏘️', text: district });
+                  setSelectedDistrict({ icon: 'bi-house-fill', text: district });
                 } else {
-                  setSelectedDistrict({ icon: '🏘️', text: '¿En qué distrito?' });
+                  setSelectedDistrict({ icon: 'bi-house-fill', text: '¿En qué distrito?' });
                 }
                 setLocatingStatus('');
                 setOpenDropdown(null);
@@ -208,14 +208,14 @@ const Hero = () => {
               <div 
                 onClick={() => setOpenDropdown(openDropdown === 'sport' ? null : 'sport')}
                 style={{ backgroundColor: 'rgba(0, 0, 0, 0.2)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', padding: '14px 18px', color: selectedSport.text.includes('¿') ? '#d1d5db' : '#ffffff', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
-                <span style={{ fontSize: '1.2rem' }}>{selectedSport.icon}</span> <span style={{ opacity: 0.9, fontWeight: '500' }}>{selectedSport.text}</span>
+                <i className={`bi ${selectedSport.icon}`} style={{ fontSize: '1.2rem' }} /> <span style={{ opacity: 0.9, fontWeight: '500' }}>{selectedSport.text}</span>
                 <span style={{ marginLeft: 'auto', fontSize: '0.8rem', opacity: 0.7 }}>▼</span>
               </div>
               {openDropdown === 'sport' && (
                 <div style={{ position: 'absolute', top: '100%', left: 0, width: '100%', marginTop: '5px', backgroundColor: 'rgba(15, 23, 42, 0.95)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', zIndex: 50, overflow: 'hidden' }}>
                   {sports.map((item, i) => (
                     <div key={i} onClick={() => { setSelectedSport(item); setOpenDropdown(null); }} style={{ padding: '12px 18px', color: 'white', display: 'flex', gap: '12px', cursor: 'pointer', borderBottom: i < sports.length - 1 ? '1px solid rgba(255, 255, 255, 0.05)' : 'none' }}>
-                      <span>{item.icon}</span> <span>{item.text}</span>
+                      <i className={`bi ${item.icon}`} /> <span>{item.text}</span>
                     </div>
                   ))}
                 </div>
@@ -227,17 +227,17 @@ const Hero = () => {
               <div 
                 onClick={() => setOpenDropdown(openDropdown === 'location' ? null : 'location')}
                 style={{ backgroundColor: 'rgba(0, 0, 0, 0.2)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', padding: '14px 18px', color: selectedLocation.text.includes('¿') ? '#d1d5db' : '#ffffff', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
-                <span style={{ fontSize: '1.2rem' }}>{selectedLocation.icon}</span> <span style={{ opacity: 0.9, fontWeight: '500' }}>{selectedLocation.text}</span>
+                <i className={`bi ${selectedLocation.icon}`} style={{ fontSize: '1.2rem' }} /> <span style={{ opacity: 0.9, fontWeight: '500' }}>{selectedLocation.text}</span>
                 <span style={{ marginLeft: 'auto', fontSize: '0.8rem', opacity: 0.7 }}>▼</span>
               </div>
               {openDropdown === 'location' && (
                 <div style={{ position: 'absolute', top: '100%', left: 0, width: '100%', marginTop: '5px', backgroundColor: 'rgba(15, 23, 42, 0.95)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', zIndex: 50, overflow: 'hidden' }}>
                   <div onClick={(e) => { e.stopPropagation(); handleDetectLocation(); }} style={{ padding: '12px 18px', color: '#00d084', display: 'flex', gap: '12px', cursor: 'pointer', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', backgroundColor: 'rgba(0, 208, 132, 0.1)', fontWeight: '700', transition: 'background-color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(0, 208, 132, 0.2)'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'rgba(0, 208, 132, 0.1)'}>
-                    <span style={{ animation: locatingStatus !== '' ? 'pulseLocation 1s infinite' : 'none', display: 'inline-block' }}>{locatingStatus !== '' ? '⏳' : '🎯'}</span> <span>{locatingStatus === 'ciudad' ? 'Detectando ciudad...' : locatingStatus === 'distrito' ? 'Detectando distrito...' : 'Usar mi ubicación actual'}</span>
+                    <i className={`bi ${locatingStatus !== '' ? 'bi-hourglass-split' : 'bi-crosshair2'}`} style={{ animation: locatingStatus !== '' ? 'pulseLocation 1s infinite' : 'none', display: 'inline-block' }} /> <span>{locatingStatus === 'ciudad' ? 'Detectando ciudad...' : locatingStatus === 'distrito' ? 'Detectando distrito...' : 'Usar mi ubicación actual'}</span>
                   </div>
                   {locations.map((item, i) => (
-                    <div key={i} onClick={() => { setSelectedLocation(item); setSelectedDistrict({ icon: '🏘️', text: '¿En qué distrito?' }); setOpenDropdown(null); }} style={{ padding: '12px 18px', color: 'white', display: 'flex', gap: '12px', cursor: 'pointer', borderBottom: i < locations.length - 1 ? '1px solid rgba(255, 255, 255, 0.05)' : 'none' }}>
-                      <span>{item.icon}</span> <span>{item.text}</span>
+                    <div key={i} onClick={() => { setSelectedLocation(item); setSelectedDistrict({ icon: 'bi-house-fill', text: '¿En qué distrito?' }); setOpenDropdown(null); }} style={{ padding: '12px 18px', color: 'white', display: 'flex', gap: '12px', cursor: 'pointer', borderBottom: i < locations.length - 1 ? '1px solid rgba(255, 255, 255, 0.05)' : 'none' }}>
+                      <i className={`bi ${item.icon}`} /> <span>{item.text}</span>
                     </div>
                   ))}
                 </div>
@@ -249,14 +249,14 @@ const Hero = () => {
               <div 
                 onClick={() => !selectedLocation.text.includes('¿') && setOpenDropdown(openDropdown === 'district' ? null : 'district')}
                 style={{ backgroundColor: 'rgba(0, 0, 0, 0.2)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', padding: '14px 18px', color: selectedDistrict.text.includes('¿') ? '#d1d5db' : '#ffffff', display: 'flex', alignItems: 'center', gap: '12px', cursor: selectedLocation.text.includes('¿') ? 'not-allowed' : 'pointer' }}>
-                <span style={{ fontSize: '1.2rem' }}>{selectedDistrict.icon}</span> <span style={{ opacity: 0.9, fontWeight: '500' }}>{selectedDistrict.text}</span>
+                <i className={`bi ${selectedDistrict.icon}`} style={{ fontSize: '1.2rem' }} /> <span style={{ opacity: 0.9, fontWeight: '500' }}>{selectedDistrict.text}</span>
                 <span style={{ marginLeft: 'auto', fontSize: '0.8rem', opacity: 0.7 }}>▼</span>
               </div>
               {openDropdown === 'district' && currentDistricts.length > 0 && (
                 <div style={{ position: 'absolute', top: '100%', left: 0, width: '100%', marginTop: '5px', backgroundColor: 'rgba(15, 23, 42, 0.95)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', zIndex: 50, overflow: 'hidden' }}>
                   {currentDistricts.map((item, i) => (
                     <div key={i} onClick={() => { setSelectedDistrict(item); setOpenDropdown(null); }} style={{ padding: '12px 18px', color: 'white', display: 'flex', gap: '12px', cursor: 'pointer', borderBottom: i < currentDistricts.length - 1 ? '1px solid rgba(255, 255, 255, 0.05)' : 'none' }}>
-                      <span>{item.icon}</span> <span>{item.text}</span>
+                      <i className={`bi ${item.icon}`} /> <span>{item.text}</span>
                     </div>
                   ))}
                 </div>
@@ -268,14 +268,14 @@ const Hero = () => {
               <div 
                 onClick={() => setOpenDropdown(openDropdown === 'date' ? null : 'date')}
                 style={{ backgroundColor: 'rgba(0, 0, 0, 0.2)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', padding: '14px 18px', color: selectedDate.text === 'Fecha y hora' ? '#d1d5db' : '#ffffff', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
-                <span style={{ fontSize: '1.2rem' }}>{selectedDate.icon}</span> <span style={{ opacity: 0.9, fontWeight: '500' }}>{selectedDate.text}</span>
+                <i className={`bi ${selectedDate.icon}`} style={{ fontSize: '1.2rem' }} /> <span style={{ opacity: 0.9, fontWeight: '500' }}>{selectedDate.text}</span>
                 <span style={{ marginLeft: 'auto', fontSize: '0.8rem', opacity: 0.7 }}>▼</span>
               </div>
               {openDropdown === 'date' && (
                 <div style={{ position: 'absolute', top: '100%', left: 0, width: '100%', marginTop: '5px', backgroundColor: 'rgba(15, 23, 42, 0.95)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', zIndex: 50, overflow: 'hidden' }}>
                   {dates.map((item, i) => (
                     <div key={i} onClick={() => { setSelectedDate(item); setOpenDropdown(null); }} style={{ padding: '12px 18px', color: 'white', display: 'flex', gap: '12px', cursor: 'pointer', borderBottom: i < dates.length - 1 ? '1px solid rgba(255, 255, 255, 0.05)' : 'none' }}>
-                      <span>{item.icon}</span> <span>{item.text}</span>
+                      <i className={`bi ${item.icon}`} /> <span>{item.text}</span>
                     </div>
                   ))}
                 </div>

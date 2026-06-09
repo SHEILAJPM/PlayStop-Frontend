@@ -84,7 +84,7 @@ const Navbar = ({ darkMode, toggleTheme }) => {
             boxShadow: '0 0 16px rgba(0,208,132,.4)',
           }}>P</div>
           <span style={{ color: darkMode ? '#fff' : '#0f172a', fontWeight: 900, fontSize: '1.2rem', letterSpacing: '-.5px', transition: 'color .3s' }}>
-            Play<span style={{ color: '#00d084' }}>Stop</span>
+            Play<span style={{ color: '#00d084' }}>Spot</span>
           </span>
         </div>
 

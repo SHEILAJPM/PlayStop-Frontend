@@ -91,7 +91,7 @@ const ParaClubes = () => (
     <div style={{ flex: '1 1 400px', maxWidth: '600px', zIndex: 10 }} className="clubes-text">
       <div style={{ display: 'inline-block', padding: '6px 18px', background: 'linear-gradient(90deg, rgba(0,208,132,0.15), rgba(0,208,132,0.05))', border: '1px solid rgba(0,208,132,0.3)', color: '#34d399', borderRadius: '20px', fontWeight: '800', fontSize: '0.85rem', marginBottom: '24px', letterSpacing: '1px', textTransform: 'uppercase' }}>Para Clubes</div>
       <h2 className="clubes-title" style={{ fontSize: '3.8rem', color: '#ffffff', fontWeight: '900', marginBottom: '20px', letterSpacing: '-1.5px', lineHeight: '1.1' }}>El software que tu complejo <span style={{ background: 'linear-gradient(90deg, #34d399, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>necesita</span></h2>
-      <p style={{ color: '#94a3b8', fontSize: '1.15rem', lineHeight: '1.7', marginBottom: '40px' }}>Automatiza tus reservas, cobra por adelantado y reduce el ausentismo al 0%. PlayStop te da las herramientas de una gran empresa, fáciles de usar desde cualquier dispositivo.</p>
+      <p style={{ color: '#94a3b8', fontSize: '1.15rem', lineHeight: '1.7', marginBottom: '40px' }}>Automatiza tus reservas, cobra por adelantado y reduce el ausentismo al 0%. PlaySpot te da las herramientas de una gran empresa, fáciles de usar desde cualquier dispositivo.</p>
       
       <div className="clubes-features" style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '45px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -126,7 +126,7 @@ const ParaClubes = () => (
           <div style={{ width: '160px', backgroundColor: '#0f172a', padding: '20px 12px', display: 'flex', flexDirection: 'column', zIndex: 10 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px', paddingLeft: '8px' }}>
                <div style={{ width: '18px', height: '18px', backgroundColor: '#00d084', borderRadius: '4px' }}></div>
-               <span style={{ color: '#fff', fontWeight: '900', fontSize: '1rem', letterSpacing: '-0.5px' }}>PlayStop</span>
+               <span style={{ color: '#fff', fontWeight: '900', fontSize: '1rem', letterSpacing: '-0.5px' }}>PlaySpot</span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                <div style={{ backgroundColor: '#00d084', color: '#0f172a', padding: '8px 12px', borderRadius: '8px', fontSize: '0.7rem', fontWeight: '700' }}>Dashboard</div>

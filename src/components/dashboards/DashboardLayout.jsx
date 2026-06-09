@@ -1,28 +1,29 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNotifications } from '../../hooks/useNotifications.js';
 
 /* ─── Chatbot data ──────────────────────────────────────── */
 const BOT_REPLIES = [
-  { keywords: ['hola','hi','hello','buenas','buen'], reply: '¡Hola! 👋 Soy el asistente de PlayStop. ¿En qué te puedo ayudar hoy?' },
+  { keywords: ['hola','hi','hello','buenas','buen'], reply: '¡Hola! Soy el asistente de PlaySpot. ¿En qué te puedo ayudar hoy?' },
   { keywords: ['reserva','reservar','reservacion','reservación','booking'], reply: 'Para gestionar tus reservas, ve a la sección "Mis Reservas" en el menú lateral. ¿Tienes algún problema específico con una reserva?' },
-  { keywords: ['pago','cobro','factura','tarjeta','culqi','precio'], reply: 'Los pagos se procesan de forma segura a través de Culqi. Si tuviste un problema, contáctanos en soporte@playstop.pe con tu número de reserva.' },
-  { keywords: ['cancha','campo','pista','court','buscar'], reply: 'Puedes buscar canchas en "Buscar Canchas". Filtra por deporte, ciudad, precio y más. 🏟️' },
+  { keywords: ['pago','cobro','factura','tarjeta','culqi','precio'], reply: 'Los pagos se procesan de forma segura a través de Culqi. Si tuviste un problema, contáctanos en soporte@playspot.pe con tu número de reserva.' },
+  { keywords: ['cancha','campo','pista','court','buscar'], reply: 'Puedes buscar canchas en "Buscar Canchas". Filtra por deporte, ciudad, precio y más.' },
   { keywords: ['cancelar','devolucion','devolución','reembolso','refund'], reply: 'Para cancelar una reserva, ve a "Mis Reservas" y haz clic en "Cancelar". Las cancelaciones con más de 24h de anticipación son gratuitas.' },
-  { keywords: ['problema','error','falla','fallo','bug','reporte','reportar','incidencia'], reply: 'Lamentamos el inconveniente. 😔 Descríbenos el problema aquí o escríbenos a soporte@playstop.pe. ¿Qué ocurrió exactamente?' },
+  { keywords: ['problema','error','falla','fallo','bug','reporte','reportar','incidencia'], reply: 'Lamentamos el inconveniente. Descríbenos el problema aquí o escríbenos a soporte@playspot.pe. ¿Qué ocurrió exactamente?' },
   { keywords: ['propietario','owner','local','tienda','negocio'], reply: 'Los propietarios pueden gestionar canchas, productos y reservas desde su dashboard. ¿Necesitas ayuda con alguna función específica?' },
-  { keywords: ['horario','hora','slot','turno','disponible'], reply: 'Los horarios disponibles aparecen al seleccionar una cancha y elegir fecha. Cada bloque es de 1 hora. ⏰' },
-  { keywords: ['perfil','cuenta','contraseña','password','datos'], reply: 'Actualiza tu perfil y contraseña en la sección "Mi Perfil" del menú lateral. 👤' },
-  { keywords: ['qr','código','codigo','entrada','acceso'], reply: 'Tu código QR se genera al confirmar la reserva. Encuéntralo en "Mis Reservas" → Ver QR. 📱' },
-  { keywords: ['gracias','thanks','ok','perfecto','listo','genial','excelente'], reply: '¡De nada! Si necesitas algo más, aquí estaré. ¡Que disfrutes tu partido! 🏅' },
-  { keywords: ['soporte','ayuda','help','contacto','contact'], reply: 'Puedes contactarnos por: 📧 soporte@playstop.pe | 📞 +51 1 234-5678 (Lun-Vie 9am-6pm).' },
-  { keywords: ['como funciona','funcionamiento','como','cómo'], reply: 'PlayStop es la plataforma líder para reservar canchas deportivas en Perú. Busca, filtra y reserva en segundos. ¡Es muy fácil! ⚽' },
+  { keywords: ['horario','hora','slot','turno','disponible'], reply: 'Los horarios disponibles aparecen al seleccionar una cancha y elegir fecha. Cada bloque es de 1 hora.' },
+  { keywords: ['perfil','cuenta','contraseña','password','datos'], reply: 'Actualiza tu perfil y contraseña en la sección "Mi Perfil" del menú lateral.' },
+  { keywords: ['qr','código','codigo','entrada','acceso'], reply: 'Tu código QR se genera al confirmar la reserva. Encuéntralo en "Mis Reservas" → Ver QR.' },
+  { keywords: ['gracias','thanks','ok','perfecto','listo','genial','excelente'], reply: '¡De nada! Si necesitas algo más, aquí estaré. ¡Que disfrutes tu partido!' },
+  { keywords: ['soporte','ayuda','help','contacto','contact'], reply: 'Puedes contactarnos por: soporte@playspot.pe | +51 1 234-5678 (Lun-Vie 9am-6pm).' },
+  { keywords: ['como funciona','funcionamiento','como','cómo'], reply: 'PlaySpot es la plataforma líder para reservar canchas deportivas en Perú. Busca, filtra y reserva en segundos.' },
 ];
 
 const QUICK_REPLIES = [
-  { label: '🐛 Reportar problema', text: 'Quiero reportar un problema' },
-  { label: '📅 Problema con reserva', text: 'Tengo un problema con mi reserva' },
-  { label: '💳 Problema de pago', text: 'Tuve un problema con mi pago' },
-  { label: '❓ ¿Cómo funciona?', text: '¿Cómo funciona PlayStop?' },
+  { icon: 'bi-bug-fill',        label: 'Reportar problema',  text: 'Quiero reportar un problema' },
+  { icon: 'bi-calendar-check',  label: 'Problema con reserva', text: 'Tengo un problema con mi reserva' },
+  { icon: 'bi-credit-card',     label: 'Problema de pago',   text: 'Tuve un problema con mi pago' },
+  { icon: 'bi-question-circle', label: '¿Cómo funciona?',   text: '¿Cómo funciona PlaySpot?' },
 ];
 
 const getBotReply = (msg) => {
@@ -30,14 +31,14 @@ const getBotReply = (msg) => {
   for (const { keywords, reply } of BOT_REPLIES) {
     if (keywords.some(k => lower.includes(k))) return reply;
   }
-  return 'Entiendo. Para atención personalizada escríbenos a soporte@playstop.pe o llama al +51 1 234-5678 (Lun-Vie, 9am-6pm). ¿Hay algo más en que te pueda ayudar?';
+  return 'Entiendo. Para atención personalizada escríbenos a soporte@playspot.pe o llama al +51 1 234-5678 (Lun-Vie, 9am-6pm). ¿Hay algo más en que te pueda ayudar?';
 };
 
 /* ─── ChatbotWidget ─────────────────────────────────────── */
 const ChatbotWidget = ({ isDark }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { from: 'bot', text: '¡Hola! 👋 Soy el asistente de PlayStop. ¿En qué te puedo ayudar hoy?', id: 0 },
+    { from: 'bot', text: '¡Hola! Soy el asistente de PlaySpot. ¿En qué te puedo ayudar hoy?', id: 0 },
   ]);
   const [input, setInput] = useState('');
   const [typing, setTyping] = useState(false);
@@ -93,7 +94,7 @@ const ChatbotWidget = ({ isDark }) => {
         }}
         title={isOpen ? 'Cerrar chat' : 'Abrir asistente'}
       >
-        {isOpen ? '✕' : '💬'}
+        {isOpen ? <i className="bi bi-x-lg" style={{ color: '#fff', fontSize: '1.1rem' }} /> : <i className="bi bi-chat-dots-fill" style={{ color: '#fff', fontSize: '1.3rem' }} />}
       </button>
 
       {isOpen && (
@@ -109,14 +110,14 @@ const ChatbotWidget = ({ isDark }) => {
           backdropFilter:'blur(20px)',
         }}>
           <div style={{ background:'linear-gradient(135deg,rgba(0,0,0,0.9),rgba(0,40,30,0.95))', padding:'16px 20px', display:'flex', alignItems:'center', gap:12, flexShrink:0, borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
-            <div style={{ width:40, height:40, borderRadius:'50%', background:'rgba(0,208,132,.15)', border:'1px solid rgba(0,208,132,0.2)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.2rem', flexShrink:0 }}>🤖</div>
+            <div style={{ width:40, height:40, borderRadius:'50%', background:'rgba(0,208,132,.15)', border:'1px solid rgba(0,208,132,0.2)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.2rem', flexShrink:0, color:'#00d084' }}><i className="bi bi-robot" /></div>
             <div style={{ flex:1 }}>
-              <p style={{ margin:0, color:'#fff', fontWeight:800, fontSize:'.95rem', letterSpacing:'-.2px' }}>Asistente PlayStop</p>
+              <p style={{ margin:0, color:'#fff', fontWeight:800, fontSize:'.95rem', letterSpacing:'-.2px' }}>Asistente PlaySpot</p>
               <p style={{ margin:0, color:'rgba(255,255,255,.5)', fontSize:'.73rem', display:'flex', alignItems:'center', gap:5 }}>
                 <span style={{ width:7, height:7, borderRadius:'50%', background:'#00d084', display:'inline-block', boxShadow:'0 0 6px rgba(0,208,132,0.8)' }} /> En línea ahora
               </p>
             </div>
-            <button onClick={() => setMessages([{ from:'bot', text:'¡Hola! 👋 ¿En qué te puedo ayudar?', id:nextId.current++ }]) || setShowQuick(true)}
+            <button onClick={() => setMessages([{ from:'bot', text:'¡Hola! ¿En qué te puedo ayudar?', id:nextId.current++ }]) || setShowQuick(true)}
               style={{ background:'rgba(255,255,255,.08)', border:'1px solid rgba(255,255,255,0.1)', color:'rgba(255,255,255,.6)', fontSize:'.75rem', fontWeight:700, padding:'4px 10px', borderRadius:8, cursor:'pointer' }}>
               Nueva chat
             </button>
@@ -126,7 +127,7 @@ const ChatbotWidget = ({ isDark }) => {
             {messages.map(msg => (
               <div key={msg.id} style={{ display:'flex', justifyContent:msg.from==='user'?'flex-end':'flex-start', gap:8, alignItems:'flex-end' }}>
                 {msg.from === 'bot' && (
-                  <div style={{ width:28, height:28, borderRadius:'50%', background:'rgba(0,208,132,.12)', border:'1px solid rgba(0,208,132,0.2)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'.85rem', flexShrink:0 }}>🤖</div>
+                  <div style={{ width:28, height:28, borderRadius:'50%', background:'rgba(0,208,132,.12)', border:'1px solid rgba(0,208,132,0.2)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'.85rem', flexShrink:0, color:'#00d084' }}><i className="bi bi-robot" /></div>
                 )}
                 <div style={{
                   maxWidth:'78%', padding:'10px 14px',
@@ -143,7 +144,7 @@ const ChatbotWidget = ({ isDark }) => {
 
             {typing && (
               <div style={{ display:'flex', alignItems:'flex-end', gap:8 }}>
-                <div style={{ width:28, height:28, borderRadius:'50%', background:'rgba(0,208,132,.12)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'.85rem', flexShrink:0 }}>🤖</div>
+                <div style={{ width:28, height:28, borderRadius:'50%', background:'rgba(0,208,132,.12)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'.85rem', flexShrink:0, color:'#00d084' }}><i className="bi bi-robot" /></div>
                 <div style={{ padding:'12px 16px', background:botBubbleBg, borderRadius:'18px 18px 18px 4px', display:'flex', gap:4, alignItems:'center' }}>
                   {[0,1,2].map(i => (
                     <div key={i} style={{ width:7, height:7, borderRadius:'50%', background:'#94a3b8', animation:`chatDot 1.4s ease infinite`, animationDelay:`${i*0.16}s` }} />
@@ -155,7 +156,7 @@ const ChatbotWidget = ({ isDark }) => {
             {showQuick && !typing && (
               <div style={{ display:'flex', flexWrap:'wrap', gap:7, marginTop:4 }}>
                 {QUICK_REPLIES.map(qr => (
-                  <button key={qr.label} className="chat-quick-btn" onClick={() => sendMessage(qr.text)}>{qr.label}</button>
+                  <button key={qr.label} className="chat-quick-btn" onClick={() => sendMessage(qr.text)}><i className={`bi ${qr.icon}`} style={{ marginRight:5 }} />{qr.label}</button>
                 ))}
               </div>
             )}
@@ -185,11 +186,142 @@ const ChatbotWidget = ({ isDark }) => {
                 flexShrink:0, transition:'all .18s', fontSize:'1rem',
                 boxShadow: input.trim() ? '0 4px 12px rgba(0,208,132,0.3)' : 'none',
               }}
-            >➤</button>
+            ><i className="bi bi-send-fill" style={{ fontSize:'.85rem' }} /></button>
           </div>
         </div>
       )}
     </>
+  );
+};
+
+/* ─── Toast Notifications ───────────────────────────────── */
+const TOAST_COLORS = {
+  success: { bg: 'rgba(0,208,132,0.12)', border: 'rgba(0,208,132,0.3)', color: '#00d084' },
+  warning: { bg: 'rgba(245,158,11,0.12)', border: 'rgba(245,158,11,0.3)', color: '#f59e0b' },
+  info:    { bg: 'rgba(59,130,246,0.12)',  border: 'rgba(59,130,246,0.3)',  color: '#3b82f6' },
+  error:   { bg: 'rgba(239,68,68,0.12)',   border: 'rgba(239,68,68,0.3)',   color: '#ef4444' },
+};
+
+const ToastStack = ({ toasts, onDismiss }) => (
+  <div style={{ position:'fixed', bottom:96, right:24, zIndex:9988, display:'flex', flexDirection:'column', gap:10, pointerEvents:'none', maxWidth:340 }}>
+    <AnimatePresence>
+      {toasts.map(t => {
+        const c = TOAST_COLORS[t.type] || TOAST_COLORS.info;
+        return (
+          <motion.div
+            key={t.id}
+            initial={{ opacity:0, x:60, scale:.92 }}
+            animate={{ opacity:1, x:0, scale:1 }}
+            exit={{ opacity:0, x:60, scale:.92 }}
+            transition={{ duration:.3, ease:[.16,1,.3,1] }}
+            style={{
+              background:'rgba(9,9,11,0.95)', backdropFilter:'blur(20px)',
+              border:`1px solid ${c.border}`,
+              borderLeft:`3px solid ${c.color}`,
+              borderRadius:14, padding:'12px 16px',
+              display:'flex', alignItems:'center', gap:10,
+              boxShadow:'0 8px 32px rgba(0,0,0,.4)',
+              pointerEvents:'auto', cursor:'pointer',
+            }}
+            onClick={() => onDismiss(t.id)}
+          >
+            <i className={`bi ${t.icon}`} style={{ fontSize:'1.3rem', flexShrink:0, color:c.color }} />
+            <div style={{ flex:1, minWidth:0 }}>
+              <p style={{ margin:0, color:'#f8fafc', fontWeight:800, fontSize:'.85rem' }}>{t.title}</p>
+              {t.body && t.body !== t.title && (
+                <p style={{ margin:'2px 0 0', color:'#94a3b8', fontSize:'.78rem', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{t.body}</p>
+              )}
+            </div>
+            <span style={{ color:'#475569', fontSize:'1rem', flexShrink:0 }}>×</span>
+          </motion.div>
+        );
+      })}
+    </AnimatePresence>
+  </div>
+);
+
+/* ─── Notification Panel ────────────────────────────────── */
+const NotificationPanel = ({ notifications, unreadCount, onMarkAllRead, onClearAll, onClose, isDark }) => {
+  const bg = isDark ? 'rgba(9,9,11,0.97)' : '#fff';
+  const border = isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0';
+  const textPrimary = isDark ? '#f8fafc' : '#0f172a';
+  const textMuted = '#64748b';
+
+  const fmtTime = (d) => {
+    const diff = (Date.now() - new Date(d).getTime()) / 1000;
+    if (diff < 60) return 'Ahora';
+    if (diff < 3600) return `Hace ${Math.floor(diff/60)} min`;
+    if (diff < 86400) return `Hace ${Math.floor(diff/3600)} h`;
+    return new Date(d).toLocaleDateString('es-PE', { day:'numeric', month:'short' });
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity:0, y:-8, scale:.96 }}
+      animate={{ opacity:1, y:0, scale:1 }}
+      exit={{ opacity:0, y:-8, scale:.96 }}
+      transition={{ duration:.22, ease:[.16,1,.3,1] }}
+      style={{
+        position:'absolute', top:'calc(100% + 10px)', right:0, zIndex:9999,
+        width:340, maxHeight:480,
+        background:bg, backdropFilter:'blur(24px)',
+        borderRadius:18, border:`1px solid ${border}`,
+        boxShadow:'0 20px 60px rgba(0,0,0,.4)',
+        display:'flex', flexDirection:'column', overflow:'hidden',
+      }}
+    >
+      <div style={{ padding:'14px 16px', borderBottom:`1px solid ${border}`, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+          <span style={{ color:textPrimary, fontWeight:800, fontSize:'.95rem' }}>Notificaciones</span>
+          {unreadCount > 0 && (
+            <span style={{ background:'#ef4444', color:'#fff', fontSize:'.7rem', fontWeight:800, padding:'1px 7px', borderRadius:99 }}>{unreadCount}</span>
+          )}
+        </div>
+        <div style={{ display:'flex', gap:8 }}>
+          {unreadCount > 0 && (
+            <button onClick={onMarkAllRead} style={{ background:'none', border:'none', color:'#00d084', fontSize:'.75rem', fontWeight:700, cursor:'pointer', padding:'4px 8px', borderRadius:6 }}>
+              Marcar todo
+            </button>
+          )}
+          {notifications.length > 0 && (
+            <button onClick={onClearAll} style={{ background:'none', border:'none', color:textMuted, fontSize:'.75rem', cursor:'pointer', padding:'4px 8px', borderRadius:6 }}>
+              Limpiar
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div style={{ flex:1, overflowY:'auto', padding:'8px 0' }}>
+        {notifications.length === 0 ? (
+          <div style={{ padding:'40px 24px', textAlign:'center' }}>
+            <div style={{ marginBottom:8 }}><i className="bi bi-bell" style={{ fontSize:'2.5rem', color:'#64748b' }} /></div>
+            <p style={{ margin:0, color:textMuted, fontSize:'.88rem', fontWeight:600 }}>Sin notificaciones</p>
+            <p style={{ margin:'4px 0 0', color:textMuted, fontSize:'.78rem' }}>Las notificaciones en tiempo real aparecerán aquí.</p>
+          </div>
+        ) : (
+          notifications.map(n => {
+            const c = TOAST_COLORS[n.type] || TOAST_COLORS.info;
+            return (
+              <div key={n.id} style={{
+                padding:'12px 16px', display:'flex', gap:12, alignItems:'flex-start',
+                borderLeft:`3px solid ${n.read ? 'transparent' : c.color}`,
+                background: n.read ? 'transparent' : (isDark ? 'rgba(255,255,255,.025)' : '#f8fafc'),
+                transition:'background .15s',
+              }}>
+                <i className={`bi ${n.icon}`} style={{ fontSize:'1.2rem', flexShrink:0, marginTop:1, color:(TOAST_COLORS[n.type]||TOAST_COLORS.info).color }} />
+                <div style={{ flex:1, minWidth:0 }}>
+                  <p style={{ margin:0, color:textPrimary, fontWeight:n.read ? 600 : 800, fontSize:'.85rem' }}>{n.title}</p>
+                  {n.body && n.body !== n.title && (
+                    <p style={{ margin:'2px 0 0', color:textMuted, fontSize:'.78rem', lineHeight:1.4 }}>{n.body}</p>
+                  )}
+                  <p style={{ margin:'4px 0 0', color:textMuted, fontSize:'.72rem' }}>{fmtTime(n.time)}</p>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+    </motion.div>
   );
 };
 
@@ -222,9 +354,30 @@ const UserAvatar = ({ name, size = 44 }) => {
 export const DashboardLayout = ({
   user, onLogout, title, menuItems,
   activeTab, onTabChange, children, darkMode, toggleTheme,
+  tourHighlight, onRestartTour,
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [showNotifPanel, setShowNotifPanel] = useState(false);
+  const notifRef = useRef(null);
   const isDark = darkMode;
+
+  const { notifications, toasts, unreadCount, markAllRead, dismissToast, clearAll } = useNotifications();
+
+  // Close notification panel when clicking outside
+  useEffect(() => {
+    const handler = (e) => {
+      if (notifRef.current && !notifRef.current.contains(e.target)) {
+        setShowNotifPanel(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const handleBellClick = useCallback(() => {
+    setShowNotifPanel(p => !p);
+    if (!showNotifPanel && unreadCount > 0) markAllRead();
+  }, [showNotifPanel, unreadCount, markAllRead]);
 
   const colors = {
     bg:               isDark ? '#09090b'                      : '#f1f5f9',
@@ -264,6 +417,9 @@ export const DashboardLayout = ({
         @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
         @keyframes spin { to{transform:rotate(360deg)} }
         @keyframes neonPulse { 0%,100%{box-shadow:inset 3px 0 0 #00d084,0 0 16px rgba(0,208,132,.06)} 50%{box-shadow:inset 3px 0 0 #00d084,0 0 24px rgba(0,208,132,.12)} }
+        @keyframes tourPulse { 0%,100%{box-shadow:0 0 0 0 rgba(0,208,132,0);background:rgba(0,208,132,.13);} 50%{box-shadow:0 0 0 4px rgba(0,208,132,.18);background:rgba(0,208,132,.2);} }
+        @keyframes bellRing { 0%,100%{transform:rotate(0);} 20%{transform:rotate(-15deg);} 40%{transform:rotate(15deg);} 60%{transform:rotate(-8deg);} 80%{transform:rotate(8deg);} }
+        .nav-item-ps.tour-highlight { animation:tourPulse 1.5s ease infinite!important; color:#00d084!important; font-weight:700!important; border:1px solid rgba(0,208,132,.3)!important; }
         .nav-item-ps {
           display:flex; align-items:center; gap:10px;
           padding:11px 14px; color:#64748b;
@@ -280,6 +436,7 @@ export const DashboardLayout = ({
         .nav-item-ps:hover .nav-icon { transform:scale(1.1); }
         .nav-item-ps.active .nav-icon { transform:scale(1.12); }
         .nav-icon { font-size:1.05rem; width:22px; text-align:center; flex-shrink:0; transition:transform .2s; }
+        .nav-icon i { font-size:1.1rem; }
         .logout-ps {
           width:100%; padding:10px; border-radius:10px;
           background:rgba(255,255,255,.05); color:#64748b; border:none;
@@ -417,6 +574,7 @@ export const DashboardLayout = ({
         .modal-warning-ps { padding:18px; background:${isDark ? 'rgba(239,68,68,.08)' : '#fef2f2'}; border-radius:14px; border:1px solid ${isDark ? 'rgba(239,68,68,.2)' : '#fecaca'}; }
         .modal-warning-ps p { margin:0; color:${isDark ? '#fca5a5' : '#991b1b'}; font-size:.95rem; line-height:1.7; }
         .modal-info-ps { padding:16px; background:${isDark ? 'rgba(255,255,255,.04)' : '#f8fafc'}; border-radius:14px; border:1px dashed ${isDark ? 'rgba(255,255,255,.1)' : '#cbd5e1'}; }
+        .bell-ring { animation: bellRing 0.5s ease; }
       `}</style>
 
       {/* Mobile overlay */}
@@ -451,9 +609,9 @@ export const DashboardLayout = ({
             <button
               key={idx}
               onClick={() => { onTabChange(item.label); setIsSidebarOpen(false); }}
-              className={`nav-item-ps ${activeTab === item.label ? 'active' : ''}`}
+              className={`nav-item-ps ${activeTab === item.label ? 'active' : ''} ${tourHighlight === item.label ? 'tour-highlight' : ''}`}
             >
-              <span className="nav-icon">{item.icon}</span>
+              <span className="nav-icon"><i className={`bi ${item.icon}`} /></span>
               {item.label}
             </button>
           ))}
@@ -492,6 +650,7 @@ export const DashboardLayout = ({
             : '0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04)',
           border:`1px solid ${colors.headerBorder}`,
           marginBottom:20,
+          position:'relative',
         }}>
           <div style={{ display:'flex', alignItems:'center' }}>
             <button className="menu-btn-ps" onClick={() => setIsSidebarOpen(true)} style={{ color: colors.titleColor }}>
@@ -500,16 +659,79 @@ export const DashboardLayout = ({
             <h1 style={{ margin:0, color:colors.titleColor, fontSize:'1.2rem', fontWeight:800, letterSpacing:'-.3px' }}>{title}</h1>
           </div>
           <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+            {onRestartTour && (
+              <button
+                onClick={onRestartTour}
+                title="Ver tour de ayuda"
+                style={{
+                  width:38, height:38, borderRadius:10,
+                  border:`1px solid ${colors.cardBorder}`,
+                  background:isDark?'rgba(0,208,132,0.08)':'rgba(0,208,132,0.06)',
+                  display:'flex', alignItems:'center', justifyContent:'center',
+                  cursor:'pointer', transition:'all .18s', color:'#00d084',
+                  fontSize:'.85rem', fontWeight:800,
+                }}
+                onMouseOver={e => { e.currentTarget.style.background = 'rgba(0,208,132,0.15)'; e.currentTarget.style.transform = 'scale(1.06)'; }}
+                onMouseOut={e => { e.currentTarget.style.background = isDark?'rgba(0,208,132,0.08)':'rgba(0,208,132,0.06)'; e.currentTarget.style.transform = ''; }}
+              >
+                ?
+              </button>
+            )}
             <button onClick={toggleTheme} title={isDark ? 'Modo claro' : 'Modo oscuro'} style={{ width:38, height:38, borderRadius:10, border:`1px solid ${colors.cardBorder}`, background:isDark?'rgba(255,255,255,.06)':'#f8fafc', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', transition:'all .18s', color:colors.textSecondary }}>
               {isDark
                 ? <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
                 : <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
               }
             </button>
-            <button title="Notificaciones" style={{ width:38, height:38, borderRadius:10, border:`1px solid ${colors.cardBorder}`, background:isDark?'rgba(255,255,255,.06)':'#f8fafc', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', color:colors.textSecondary, position:'relative' }}>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-              <span style={{ position:'absolute', top:7, right:7, width:7, height:7, borderRadius:'50%', background:'#ef4444', border:`2px solid ${isDark ? '#09090b' : '#fff'}`, boxShadow:'0 0 6px rgba(239,68,68,0.5)' }} />
-            </button>
+
+            {/* Notification Bell */}
+            <div ref={notifRef} style={{ position:'relative' }}>
+              <button
+                onClick={handleBellClick}
+                title="Notificaciones"
+                style={{
+                  width:38, height:38, borderRadius:10,
+                  border:`1px solid ${unreadCount > 0 ? 'rgba(239,68,68,0.4)' : colors.cardBorder}`,
+                  background: unreadCount > 0 ? (isDark ? 'rgba(239,68,68,0.08)' : '#fef2f2') : (isDark?'rgba(255,255,255,.06)':'#f8fafc'),
+                  display:'flex', alignItems:'center', justifyContent:'center',
+                  cursor:'pointer', color:colors.textSecondary, position:'relative',
+                  transition:'all .2s',
+                }}
+              >
+                <svg
+                  width="15" height="15" viewBox="0 0 24 24" fill="none"
+                  stroke={unreadCount > 0 ? '#ef4444' : 'currentColor'}
+                  strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                  className={unreadCount > 0 ? 'bell-ring' : ''}
+                >
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+                {unreadCount > 0 && (
+                  <span style={{
+                    position:'absolute', top:5, right:5,
+                    width:8, height:8, borderRadius:'50%',
+                    background:'#ef4444',
+                    border:`2px solid ${isDark ? '#09090b' : '#f1f5f9'}`,
+                    boxShadow:'0 0 6px rgba(239,68,68,0.6)',
+                  }} />
+                )}
+              </button>
+
+              <AnimatePresence>
+                {showNotifPanel && (
+                  <NotificationPanel
+                    notifications={notifications}
+                    unreadCount={unreadCount}
+                    onMarkAllRead={markAllRead}
+                    onClearAll={clearAll}
+                    onClose={() => setShowNotifPanel(false)}
+                    isDark={isDark}
+                  />
+                )}
+              </AnimatePresence>
+            </div>
+
             <UserAvatar name={user?.name} size={36} />
           </div>
         </header>
@@ -530,46 +752,84 @@ export const DashboardLayout = ({
       </main>
 
       <ChatbotWidget isDark={isDark} />
+
+      {/* Toast stack */}
+      <ToastStack toasts={toasts} onDismiss={dismissToast} />
     </div>
   );
 };
 
-/* ─── MetricCard ───────────────────────────────────────── */
+/* ─── MetricCard with count-up ──────────────────────────── */
 const METRIC_ICONS = {
   up: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>,
   down: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>,
   neutral: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
 };
 
-export const MetricCard = ({ title, value, subtitle, color, trend, index = 0 }) => (
-  <motion.div
-    className="dashboard-card-ps card-hover"
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1], delay: index * 0.07 }}
-    whileHover={{ y: -3, transition: { duration: 0.2, ease: 'easeOut' } }}
-    style={{ display:'flex', flexDirection:'column', position:'relative', overflow:'hidden', borderTop:`2px solid ${color}` }}
-  >
-    <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:18 }}>
-      <div style={{ width:46, height:46, borderRadius:13, background:`${color}18`, display:'flex', alignItems:'center', justifyContent:'center', color, boxShadow:`0 0 16px ${color}20` }}>
-        {METRIC_ICONS[trend || 'neutral']}
+function useCountUp(target, duration = 1400) {
+  const [count, setCount] = useState(0);
+  const rafRef = useRef(null);
+
+  useEffect(() => {
+    if (target <= 0) { setCount(target); return; }
+    const start = performance.now();
+    const tick = (now) => {
+      const elapsed = now - start;
+      const progress = Math.min(1, elapsed / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.round(eased * target));
+      if (progress < 1) rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [target, duration]);
+
+  return count;
+}
+
+export const MetricCard = ({ title, value, subtitle, color, trend, index = 0 }) => {
+  // Extract numeric part for count-up; leave non-numeric values as-is
+  const numMatch = typeof value === 'string' ? value.match(/^([^0-9]*)(\d+(?:\.\d+)?)(.*)$/) : null;
+  const numTarget = numMatch ? parseFloat(numMatch[2]) : (typeof value === 'number' ? value : null);
+  const prefix = numMatch ? numMatch[1] : '';
+  const suffix = numMatch ? numMatch[3] : '';
+  const shouldAnimate = numTarget !== null && !isNaN(numTarget);
+
+  const counted = useCountUp(shouldAnimate ? numTarget : 0);
+  const displayValue = shouldAnimate
+    ? `${prefix}${Number.isInteger(numTarget) ? counted : counted.toFixed(1)}${suffix}`
+    : value;
+
+  return (
+    <motion.div
+      className="dashboard-card-ps card-hover"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1], delay: index * 0.07 }}
+      whileHover={{ y: -3, transition: { duration: 0.2, ease: 'easeOut' } }}
+      style={{ display:'flex', flexDirection:'column', position:'relative', overflow:'hidden', borderTop:`2px solid ${color}` }}
+    >
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:18 }}>
+        <div style={{ width:46, height:46, borderRadius:13, background:`${color}18`, display:'flex', alignItems:'center', justifyContent:'center', color, boxShadow:`0 0 16px ${color}20` }}>
+          {METRIC_ICONS[trend || 'neutral']}
+        </div>
+        {trend && (
+          <span style={{ padding:'4px 10px', borderRadius:99, background:trend==='up'?'rgba(16,185,129,0.12)':'rgba(239,68,68,0.12)', color:trend==='up'?'#10b981':'#ef4444', fontSize:'.78rem', fontWeight:800, display:'flex', alignItems:'center', gap:3 }}>
+            {trend==='up' ? '↑' : '↓'}
+          </span>
+        )}
       </div>
-      {trend && (
-        <span style={{ padding:'4px 10px', borderRadius:99, background:trend==='up'?'rgba(16,185,129,0.12)':'rgba(239,68,68,0.12)', color:trend==='up'?'#10b981':'#ef4444', fontSize:'.78rem', fontWeight:800, display:'flex', alignItems:'center', gap:3 }}>
-          {trend==='up' ? '↑' : '↓'}
-        </span>
+      <p className="ps-text-muted" style={{ margin:'0 0 4px', fontSize:'.82rem', fontWeight:600, letterSpacing:'.3px' }}>{title}</p>
+      <p className="ps-text-primary" style={{ margin:0, fontSize:'2rem', fontWeight:900, letterSpacing:'-1px', lineHeight:1 }}>{displayValue}</p>
+      {subtitle && (
+        <div className="ps-text-muted" style={{ marginTop:16, paddingTop:12, borderTop:'1px solid rgba(255,255,255,0.06)', fontSize:'.82rem', fontWeight:500, display:'flex', alignItems:'center', gap:6 }}>
+          <span style={{ width:7, height:7, borderRadius:'50%', background:color, display:'inline-block', flexShrink:0, boxShadow:`0 0 6px ${color}80` }} />
+          {subtitle}
+        </div>
       )}
-    </div>
-    <p className="ps-text-muted" style={{ margin:'0 0 4px', fontSize:'.82rem', fontWeight:600, letterSpacing:'.3px' }}>{title}</p>
-    <p className="ps-text-primary" style={{ margin:0, fontSize:'2rem', fontWeight:900, letterSpacing:'-1px', lineHeight:1 }}>{value}</p>
-    {subtitle && (
-      <div className="ps-text-muted" style={{ marginTop:16, paddingTop:12, borderTop:'1px solid rgba(255,255,255,0.06)', fontSize:'.82rem', fontWeight:500, display:'flex', alignItems:'center', gap:6 }}>
-        <span style={{ width:7, height:7, borderRadius:'50%', background:color, display:'inline-block', flexShrink:0, boxShadow:`0 0 6px ${color}80` }} />
-        {subtitle}
-      </div>
-    )}
-  </motion.div>
-);
+    </motion.div>
+  );
+};
 
 /* ─── Skeletons ────────────────────────────────────────── */
 export const SkeletonCard = () => (

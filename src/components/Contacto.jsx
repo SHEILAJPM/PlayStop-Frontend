@@ -26,8 +26,8 @@ const Contacto = () => {
               </div>
               <div>
                 <h4 className="contacto-h3" style={{ margin: '0 0 6px 0', fontSize: '1.1rem', fontWeight: '800', color: '#0f172a' }}>Correo electrónico</h4>
-                <p className="contacto-text" style={{ margin: 0, color: '#64748b', fontSize: '0.95rem' }}>soporte@playstop.com</p>
-                <p className="contacto-text" style={{ margin: '4px 0 0 0', color: '#64748b', fontSize: '0.95rem' }}>ventas@playstop.com</p>
+                <p className="contacto-text" style={{ margin: 0, color: '#64748b', fontSize: '0.95rem' }}>soporte@playspot.pe</p>
+                <p className="contacto-text" style={{ margin: '4px 0 0 0', color: '#64748b', fontSize: '0.95rem' }}>ventas@playspot.pe</p>
               </div>
             </div>
 

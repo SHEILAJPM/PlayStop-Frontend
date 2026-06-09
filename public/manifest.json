@@ -1,0 +1,36 @@
+{
+  "name": "PlayStop",
+  "short_name": "PlayStop",
+  "description": "Reserva canchas deportivas en tiempo real. Fútbol, pádel, tenis y más.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#030712",
+  "theme_color": "#00d084",
+  "categories": ["sports", "lifestyle"],
+  "lang": "es-PE",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Buscar Canchas",
+      "short_name": "Buscar",
+      "description": "Encuentra una cancha cerca de ti",
+      "url": "/dashboard",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    }
+  ]
+}

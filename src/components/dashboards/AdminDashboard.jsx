@@ -69,7 +69,7 @@ const SearchInput = memo(({ value, onChange, placeholder, dark = false }) => {
   };
   return (
     <div style={{ position:'relative', display:'inline-flex', alignItems:'center' }}>
-      <span style={{ position:'absolute', left:10, color:'#94a3b8', fontSize:'0.85rem', pointerEvents:'none' }}>🔍</span>
+      <i className="bi bi-search" style={{ position:'absolute', left:10, color:'#94a3b8', fontSize:'0.85rem', pointerEvents:'none' }} />
       <input type="text" value={value} onChange={e => onChange(e.target.value)}
         placeholder={placeholder} style={inputSt}
         onFocus={e => e.target.style.borderColor='#00d084'}
@@ -151,20 +151,20 @@ const DonutChart = memo(({ segments, size = 150, dark = false }) => {
   const total = segments.reduce((s, d) => s + (d.value || 0), 0);
   if (!total) return <div style={{ width:size, height:size, display:'flex', alignItems:'center', justifyContent:'center', color: dark ? '#475569' : '#cbd5e1', fontSize:'0.78rem' }}>Sin datos</div>;
   const cx = size/2, cy = size/2, r = size*0.38, ri = size*0.25;
-  let angle = -Math.PI/2;
+  const slices = segments.reduce(({ a, acc }, seg, i) => {
+    if (!seg.value) return { a, acc };
+    const sweep = (seg.value / total) * 2 * Math.PI;
+    const x1 = cx + r * Math.cos(a), y1 = cy + r * Math.sin(a);
+    const nextA = a + sweep;
+    const x2 = cx + r * Math.cos(nextA), y2 = cy + r * Math.sin(nextA);
+    return {
+      a: nextA,
+      acc: [...acc, <path key={i} d={`M${cx} ${cy} L${x1} ${y1} A${r} ${r} 0 ${sweep>Math.PI?1:0} 1 ${x2} ${y2}Z`} fill={seg.color} opacity={0.9} />],
+    };
+  }, { a: -Math.PI / 2, acc: [] }).acc;
   return (
     <svg width={size} height={size}>
-      {segments.map((seg, i) => {
-        if (!seg.value) return null;
-        const sweep = (seg.value / total) * 2 * Math.PI;
-        const x1 = cx + r * Math.cos(angle), y1 = cy + r * Math.sin(angle);
-        angle += sweep;
-        const x2 = cx + r * Math.cos(angle), y2 = cy + r * Math.sin(angle);
-        return (
-          <path key={i} d={`M${cx} ${cy} L${x1} ${y1} A${r} ${r} 0 ${sweep>Math.PI?1:0} 1 ${x2} ${y2}Z`}
-            fill={seg.color} opacity={0.9} />
-        );
-      })}
+      {slices}
       <circle cx={cx} cy={cy} r={ri} fill={dark ? 'rgba(9,9,11,0.85)' : '#fff'} />
       <text x={cx} y={cy-5} textAnchor="middle" fontSize={19} fontWeight="900" fill={dark ? '#f8fafc' : '#0f172a'} fontFamily="system-ui">{total}</text>
       <text x={cx} y={cy+13} textAnchor="middle" fontSize={8} fill={dark ? '#64748b' : '#94a3b8'} fontFamily="system-ui">TOTAL</text>
@@ -241,6 +241,25 @@ const usePagination = (items) => {
   return { paged, page, totalPages, setPage };
 };
 
+// ── Section header helper ─────────────────────────────────────────────────────
+const SectionHeader = ({ title, subtitle, count, onExport, isDark = false }) => (
+  <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20, flexWrap:'wrap', gap:12 }}>
+    <div>
+      <h3 style={{ margin:'0 0 3px', color: isDark ? '#f8fafc' : '#0f172a', fontSize:'1.1rem', fontWeight:800 }}>{title}</h3>
+      {subtitle && <p style={{ margin:0, color:'#94a3b8', fontSize:'0.79rem' }}>{count} {subtitle}</p>}
+    </div>
+    {onExport && (
+      <button onClick={onExport} style={{ ...btn(isDark?'rgba(255,255,255,.06)':'#f8fafc', isDark?'#f8fafc':'#0f172a'), border:`1.5px solid ${isDark?'rgba(255,255,255,.1)':'#e2e8f0'}`, fontSize:'0.82rem' }}>
+        ⬇ Exportar CSV
+      </button>
+    )}
+  </div>
+);
+
+// ── Loading rows helper ───────────────────────────────────────────────────────
+const Skeletons = ({ loading, cols, n = 6 }) =>
+  loading ? Array(n).fill(0).map((_,i) => <SkeletonRow key={i} cols={cols} />) : null;
+
 // ══════════════════════════════════════════════════════════════════════════════
 // MAIN COMPONENT
 // ══════════════════════════════════════════════════════════════════════════════
@@ -271,14 +290,6 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
     borderBottom: isDark ? '1px solid rgba(255,255,255,0.05)' : '1px solid #f8fafc',
     verticalAlign:'middle',
     color: isDark ? '#94a3b8' : '#475569',
-  };
-
-  const inputSt = {
-    padding:'9px 14px 9px 36px', borderRadius:10,
-    border: isDark ? '1.5px solid rgba(255,255,255,0.1)' : '1.5px solid #e2e8f0',
-    outline:'none', fontSize:'0.88rem',
-    backgroundColor: isDark ? 'rgba(0,0,0,0.3)' : '#fff',
-    color: isDark ? '#f8fafc' : '#0f172a',
   };
 
   const selSt = {
@@ -435,25 +446,6 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
       name:k, value:Number(v), color:SPORT_COLORS[i%SPORT_COLORS.length]
     })).sort((a,b) => b.value-a.value), [analytics]);
 
-  // ── helper: section header ──
-  const SectionHeader = ({ title, subtitle, count, onExport }) => (
-    <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20, flexWrap:'wrap', gap:12 }}>
-      <div>
-        <h3 style={{ margin:'0 0 3px', color: isDark ? '#f8fafc' : '#0f172a', fontSize:'1.1rem', fontWeight:800 }}>{title}</h3>
-        {subtitle && <p style={{ margin:0, color:'#94a3b8', fontSize:'0.79rem' }}>{count} {subtitle}</p>}
-      </div>
-      {onExport && (
-        <button onClick={onExport} style={{ ...btn(isDark?'rgba(255,255,255,.06)':'#f8fafc', isDark?'#f8fafc':'#0f172a'), border:`1.5px solid ${isDark?'rgba(255,255,255,.1)':'#e2e8f0'}`, fontSize:'0.82rem' }}>
-          ⬇ Exportar CSV
-        </button>
-      )}
-    </div>
-  );
-
-  // ── loading rows helper ──
-  const Skeletons = ({ cols, n = 6 }) =>
-    loading ? Array(n).fill(0).map((_,i) => <SkeletonRow key={i} cols={cols} />) : null;
-
   // ─────────────────────────────────────────────────────────────────────────
   return (
     <>
@@ -468,14 +460,14 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
       title={activeTab === 'Dashboard' ? 'Panel de Administración' : activeTab}
       activeTab={activeTab} onTabChange={setActiveTab}
       menuItems={[
-        { icon:'⚡', label:'Dashboard'     },
-        { icon:'📈', label:'Analíticas'    },
-        { icon:'🧑', label:'Jugadores'     },
-        { icon:'🏢', label:'Propietarios'  },
-        { icon:'🏟️', label:'Canchas'       },
-        { icon:'📅', label:'Reservas'      },
-        { icon:'🔔', label:'Actividad'     },
-        { icon:'👤', label:'Mi Perfil'     },
+        { icon:'bi-speedometer2',         label:'Dashboard'     },
+        { icon:'bi-bar-chart-line-fill',  label:'Analíticas'    },
+        { icon:'bi-people-fill',          label:'Jugadores'     },
+        { icon:'bi-person-badge-fill',    label:'Propietarios'  },
+        { icon:'bi-geo-alt-fill',         label:'Canchas'       },
+        { icon:'bi-calendar-check-fill',  label:'Reservas'      },
+        { icon:'bi-activity',             label:'Actividad'     },
+        { icon:'bi-person-circle',        label:'Mi Perfil'     },
       ]}>
 
       {/* ══════════ DASHBOARD ══════════════════════════════════════════════════ */}
@@ -567,7 +559,7 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
               {!(analytics?.recentActivity?.length) ? <p style={{ color:'#94a3b8', fontSize:'0.85rem' }}>Sin actividad</p>
               : analytics.recentActivity.slice(0,5).map((r,i) => (
                 <div key={i} style={{ display:'flex', alignItems:'flex-start', gap:10, marginBottom:13 }}>
-                  <div style={{ width:34, height:34, borderRadius:9, backgroundColor: isDark?'rgba(255,255,255,0.06)':'#f8fafc', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'0.9rem', flexShrink:0 }}>📅</div>
+                  <div style={{ width:34, height:34, borderRadius:9, backgroundColor: isDark?'rgba(255,255,255,0.06)':'#f8fafc', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'0.9rem', flexShrink:0 }}><i className="bi bi-calendar3" /></div>
                   <div style={{ flex:1, minWidth:0 }}>
                     <div style={{ fontWeight:700, color: isDark?'#f8fafc':'#0f172a', fontSize:'0.85rem', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{r.clientName}</div>
                     <div style={{ fontSize:'0.74rem', color:'#94a3b8', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{r.courtName} · {r.date}</div>
@@ -674,14 +666,14 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
               <h3 style={{ margin:'0 0 18px', color: isDark?'#f8fafc':'#0f172a', fontSize:'1rem', fontWeight:800 }}>Ir a sección</h3>
               <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
                 {[
-                  ['🧑','Jugadores','#6366f1'],['🏢','Propietarios','#8b5cf6'],
-                  ['🏟️','Canchas','#f59e0b'],['📅','Reservas','#10b981'],['🔔','Actividad','#0ea5e9'],
+                  ['bi-person-fill','Jugadores','#6366f1'],['bi-buildings-fill','Propietarios','#8b5cf6'],
+                  ['bi-building','Canchas','#f59e0b'],['bi-calendar3','Reservas','#10b981'],['bi-bell-fill','Actividad','#0ea5e9'],
                 ].map(([ic,label,color]) => (
                   <button key={label} onClick={() => setActiveTab(label)}
                     style={{ display:'flex', alignItems:'center', gap:10, padding:'11px 16px', borderRadius:10,
                       border:`1.5px solid ${color}30`, backgroundColor:`${color}10`, cursor:'pointer',
                       fontWeight:700, color, fontSize:'0.88rem', transition:'all 0.2s' }}>
-                    {ic} {label}
+                    <i className={`bi ${ic}`} /> {label}
                   </button>
                 ))}
               </div>
@@ -694,7 +686,7 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
       {activeTab === 'Jugadores' && (
         <div style={card}>
           <SectionHeader title="Gestión de Jugadores" subtitle="jugadores" count={filteredUsers.length}
-            onExport={() => exportCSV(filteredUsers,'jugadores.csv')} />
+            onExport={() => exportCSV(filteredUsers,'jugadores.csv')} isDark={isDark} />
           <div style={{ display:'flex', gap:8, flexWrap:'wrap', marginBottom:18 }}>
             <SearchInput value={userSearch} onChange={setUserSearch} placeholder="Buscar jugador..." dark={isDark} />
           </div>
@@ -735,7 +727,7 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
       {activeTab === 'Propietarios' && (
         <div style={card}>
           <SectionHeader title="Gestión de Propietarios" subtitle="propietarios" count={filteredOwners.length}
-            onExport={() => exportCSV(filteredOwners,'propietarios.csv')} />
+            onExport={() => exportCSV(filteredOwners,'propietarios.csv')} isDark={isDark} />
           <div style={{ marginBottom:18 }}>
             <SearchInput value={ownerSearch} onChange={setOwnerSearch} placeholder="Buscar propietario..." dark={isDark} />
           </div>
@@ -757,7 +749,7 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
                     <td style={{ ...tdSt, color:'#475569', fontSize:'0.85rem' }}>{o.email}</td>
                     <td style={{ ...tdSt, color:'#64748b', fontSize:'0.85rem' }}>{o.phone||'—'}</td>
                     <td style={tdSt}>
-                      <button onClick={() => openOwnerCourts(o)} style={{ ...btn('#ede9fe','#6d28d9'), display:'inline-flex', alignItems:'center', gap:4 }}>🏟️ {o.courts}</button>
+                      <button onClick={() => openOwnerCourts(o)} style={{ ...btn('#ede9fe','#6d28d9'), display:'inline-flex', alignItems:'center', gap:4 }}><i className="bi bi-building" /> {o.courts}</button>
                     </td>
                     <td style={{ ...tdSt, color:'#94a3b8', fontSize:'0.79rem', whiteSpace:'nowrap' }}>{fmtDate(o.createdAt)}</td>
                     <td style={tdSt}><EnabledBadge enabled={o.enabled} /></td>
@@ -779,7 +771,7 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
       {activeTab === 'Canchas' && (
         <div style={card}>
           <SectionHeader title="Gestión de Canchas" subtitle="canchas" count={filteredCourts.length}
-            onExport={() => exportCSV(filteredCourts,'canchas.csv')} />
+            onExport={() => exportCSV(filteredCourts,'canchas.csv')} isDark={isDark} />
           <div style={{ display:'flex', gap:8, flexWrap:'wrap', marginBottom:18, padding:'14px 16px', backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : '#f8fafc', borderRadius:12, border: isDark ? '1px solid rgba(255,255,255,0.06)' : 'none' }}>
             <SearchInput value={courtSearch} onChange={setCourtSearch} placeholder="Nombre, propietario o ciudad..." dark={isDark} />
             <select value={courtSport} onChange={e => setCourtSport(e.target.value)} style={selSt}>
@@ -910,10 +902,10 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
                       <StatusBadge status={r.status} />
                     </div>
                     <div style={{ display:'flex', gap:16, flexWrap:'wrap' }}>
-                      <span style={{ fontSize:'0.77rem', color:'#64748b' }}>📅 {r.date}</span>
+                      <span style={{ fontSize:'0.77rem', color:'#64748b' }}><i className="bi bi-calendar3" /> {r.date}</span>
                       <span style={{ fontSize:'0.77rem', color:'#64748b', fontWeight:700 }}>S/ {Number(r.amount).toFixed(2)}</span>
                       <span style={{ fontSize:'0.77rem', color:'#94a3b8' }}>
-                        🕐 {new Date(r.createdAt).toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'})}
+                        <i className="bi bi-clock" /> {new Date(r.createdAt).toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'})}
                       </span>
                     </div>
                   </div>
@@ -942,9 +934,9 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
                 ADMINISTRADOR
               </div>
               <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
-                {[['✉️ Email',user?.email],['🔐 Rol','Administrador PlayStop'],['🌐 Acceso','Panel completo']].map(([k,v]) => (
+                {[['Email',user?.email,'bi-envelope-fill'],['Rol','Administrador PlaySpot','bi-lock-fill'],['Acceso','Panel completo','bi-globe']].map(([k,v,ic]) => (
                   <div key={k} style={{ display:'flex', justifyContent:'space-between', padding:'12px 16px', backgroundColor: isDark?'rgba(255,255,255,0.05)':'#f8fafc', borderRadius:10, border: isDark?'1px solid rgba(255,255,255,0.06)':'none' }}>
-                    <span style={{ fontWeight:700, color:'#64748b', fontSize:'0.83rem' }}>{k}</span>
+                    <span style={{ fontWeight:700, color:'#64748b', fontSize:'0.83rem' }}><i className={`bi ${ic}`} style={{ marginRight:5 }} />{k}</span>
                     <span style={{ fontWeight:600, color: isDark?'#f8fafc':'#0f172a', fontSize:'0.83rem', maxWidth:'58%', textAlign:'right', wordBreak:'break-word' }}>{v}</span>
                   </div>
                 ))}
@@ -966,7 +958,7 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
             </div>
             <div style={{ padding:'14px 16px', borderRadius:12, backgroundColor: isDark?'rgba(0,208,132,0.08)':'#f0fff8', border: isDark?'1px solid rgba(0,208,132,0.15)':'1px solid #a7f3d0' }}>
               <p style={{ margin:0, fontSize:'0.83rem', color: isDark?'#00d084':'#047857', fontWeight:600 }}>
-                💰 Ingreso total: <strong>{fmtCurrency(analytics?.totalRevenue)}</strong>
+                <i className="bi bi-cash-coin" /> Ingreso total: <strong>{fmtCurrency(analytics?.totalRevenue)}</strong>
               </p>
             </div>
           </div>
@@ -989,7 +981,7 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
           <div style={{ backgroundColor: isDark?'rgba(9,9,11,0.95)':'#fff', backdropFilter:'blur(20px)', border:`1px solid ${isDark?'rgba(255,255,255,0.08)':'#f1f5f9'}`, padding:36, borderRadius:22, width:'90%', maxWidth:420, boxShadow:'0 24px 60px rgba(0,0,0,0.5)', animation:'mUp 0.28s ease' }}>
             <div style={{ width:52, height:52, borderRadius:14, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.5rem', marginBottom:16,
               backgroundColor:modal.payload.enabled?'#fef3c7':'#d1fae5' }}>
-              {modal.payload.enabled?'⚠️':'✅'}
+              <i className={`bi ${modal.payload.enabled ? 'bi-exclamation-triangle-fill' : 'bi-check-circle-fill'}`} />
             </div>
             <h2 style={{ margin:'0 0 8px', color: isDark?'#f8fafc':'#0f172a', fontSize:'1.3rem', fontWeight:900 }}>
               {modal.payload.enabled?'Suspender usuario':'Activar usuario'}
@@ -1011,15 +1003,15 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
         {/* Eliminar */}
         {modal.type === 'DELETE_USER' && (
           <div style={{ backgroundColor: isDark?'rgba(9,9,11,0.95)':'#fff', backdropFilter:'blur(20px)', border:`1px solid ${isDark?'rgba(255,255,255,0.08)':'#f1f5f9'}`, padding:36, borderRadius:22, width:'90%', maxWidth:440, boxShadow:'0 24px 60px rgba(0,0,0,0.5)', animation:'mUp 0.28s ease' }}>
-            <div style={{ width:52, height:52, borderRadius:14, backgroundColor: isDark?'rgba(239,68,68,.12)':'#fee2e2', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.5rem', marginBottom:16 }}>🗑️</div>
+            <div style={{ width:52, height:52, borderRadius:14, backgroundColor: isDark?'rgba(239,68,68,.12)':'#fee2e2', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.5rem', marginBottom:16 }}><i className="bi bi-trash3-fill" /></div>
             <h2 style={{ margin:'0 0 8px', color: isDark?'#f8fafc':'#0f172a', fontSize:'1.3rem', fontWeight:900 }}>Eliminar cuenta permanentemente</h2>
             <p style={{ margin:'0 0 12px', color:'#94a3b8', lineHeight:1.65, fontSize:'0.92rem' }}>
               ¿Eliminar la cuenta de <strong>{modal.payload.name}</strong>?
             </p>
             <div style={{ padding:'12px 16px', backgroundColor: isDark?'rgba(239,68,68,.08)':'#fef2f2', borderRadius:10, marginBottom:24, fontSize:'0.82rem', color: isDark?'#fca5a5':'#b91c1c', lineHeight:1.55 }}>
               {modal.payload.courts !== undefined
-                ? '⚠ Las canchas del propietario quedarán inactivas. El historial de reservas se preserva.'
-                : '⚠ Las reservas activas del jugador serán eliminadas definitivamente.'}
+                ? <><i className="bi bi-exclamation-triangle-fill" /> Las canchas del propietario quedarán inactivas. El historial de reservas se preserva.</>
+                : <><i className="bi bi-exclamation-triangle-fill" /> Las reservas activas del jugador serán eliminadas definitivamente.</>}
             </div>
             <div style={{ display:'flex', gap:10 }}>
               <button onClick={closeModal} style={{ flex:1, padding:13, borderRadius:12, border:`1.5px solid ${isDark?'rgba(255,255,255,.1)':'#e2e8f0'}`, backgroundColor: isDark?'rgba(255,255,255,.05)':'#f8fafc', color: isDark?'#94a3b8':'#64748b', fontWeight:800, cursor:'pointer' }}>Cancelar</button>

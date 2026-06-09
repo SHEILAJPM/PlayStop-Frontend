@@ -2,21 +2,21 @@ const ComoFunciona = () => {
   const steps = [
     {
       id: 1,
-      icon: "🔍",
+      icon: "bi-search",
       title: "Encuentra tu cancha ideal",
       description: "Filtra por deporte, ubicación y fecha. Explora cientos de complejos deportivos, compara precios y elige el mejor para tu equipo."
     },
     {
       id: 2,
-      icon: "💳",
+      icon: "bi-credit-card-fill",
       title: "Reserva y divide el pago",
       description: "Olvídate de cobrarle a tus amigos. Reserva la cancha y comparte un enlace para que cada jugador pague su parte automáticamente."
     },
     {
       id: 3,
-      icon: "🏆",
+      icon: "bi-trophy-fill",
       title: "¡A jugar!",
-      description: "Preséntate en el club con tu reserva digital. Disfruta del partido, suma puntos PlayStop y sube de nivel en nuestro ranking."
+      description: "Preséntate en el club con tu reserva digital. Disfruta del partido, suma puntos PlaySpot y sube de nivel en nuestro ranking."
     }
   ];
 
@@ -79,7 +79,7 @@ const ComoFunciona = () => {
           Reserva tu próxima partida en <span style={{ color: '#00d084' }}>3 simples pasos</span>
         </h2>
         <p style={{ color: '#64748b', fontSize: '1.15rem', lineHeight: '1.7' }}>
-          Diseñamos PlayStop para que no pierdas tiempo organizando. En menos de 2 minutos estarás listo para entrar a la cancha con tu equipo.
+          Diseñamos PlaySpot para que no pierdas tiempo organizando. En menos de 2 minutos estarás listo para entrar a la cancha con tu equipo.
         </p>
       </div>
 
@@ -87,7 +87,7 @@ const ComoFunciona = () => {
         {steps.map((step) => (
           <div key={step.id} className="step-card">
             <div className="step-bg-number">{step.id}</div>
-            <div className="step-icon-container">{step.icon}</div>
+            <div className="step-icon-container"><i className={`bi ${step.icon}`} style={{ fontSize: '2rem', color: '#00d084' }} /></div>
             <h3 style={{ fontSize: '1.4rem', color: '#0f172a', fontWeight: '800', marginBottom: '16px', letterSpacing: '-0.5px' }}>{step.id}. {step.title}</h3>
             <p style={{ color: '#475569', fontSize: '1.05rem', lineHeight: '1.6', margin: 0, fontWeight: '500' }}>{step.description}</p>
           </div>

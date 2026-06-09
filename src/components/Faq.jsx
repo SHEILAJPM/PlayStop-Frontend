@@ -9,7 +9,7 @@ const Faq = () => {
       color: '#00d084',
       bg: 'rgba(0, 208, 132, 0.05)',
       question: "¿Cómo funciona el pago dividido?",
-      answer: "Es muy fácil. Al hacer una reserva, pagas solo tu parte de la cuota. PlayStop generará un enlace único que podrás enviar a tus amigos por WhatsApp. Ellos tendrán hasta 2 horas antes del partido para entrar al enlace y pagar su parte correspondiente. ¡Adiós a perseguir a los deudores!"
+      answer: "Es muy fácil. Al hacer una reserva, pagas solo tu parte de la cuota. PlaySpot generará un enlace único que podrás enviar a tus amigos por WhatsApp. Ellos tendrán hasta 2 horas antes del partido para entrar al enlace y pagar su parte correspondiente. ¡Adiós a perseguir a los deudores!"
     },
     {
       target: 'Jugadores',
@@ -23,7 +23,7 @@ const Faq = () => {
       color: '#3b82f6',
       bg: 'rgba(59, 130, 246, 0.05)',
       question: "¿Cuándo y cómo recibo mis ingresos?",
-      answer: "Todas las transacciones procesadas a través de PlayStop se depositan automáticamente en la cuenta bancaria de tu complejo en un plazo máximo de 24 a 48 horas hábiles. Podrás ver el detalle y descargar comprobantes desde tu panel financiero."
+      answer: "Todas las transacciones procesadas a través de PlaySpot se depositan automáticamente en la cuenta bancaria de tu complejo en un plazo máximo de 24 a 48 horas hábiles. Podrás ver el detalle y descargar comprobantes desde tu panel financiero."
     },
     {
       target: 'Clubes',
@@ -64,7 +64,7 @@ const Faq = () => {
             Resolvemos tus <span style={{ color: '#00d084' }}>dudas</span>
           </h2>
           <p style={{ color: '#64748b', fontSize: '1.15rem', lineHeight: '1.6' }}>
-            Todo lo que necesitas saber sobre PlayStop, ya seas un jugador buscando cancha o un club optimizando sus reservas.
+            Todo lo que necesitas saber sobre PlaySpot, ya seas un jugador buscando cancha o un club optimizando sus reservas.
           </p>
         </div>
 

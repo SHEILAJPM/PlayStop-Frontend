@@ -10,9 +10,9 @@ const Marcas = () => {
   ];
 
   return (
-    <section className="reveal" style={{ padding: '40px 0', backgroundColor: '#ffffff', borderBottom: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', alignItems: 'center', overflow: 'hidden' }}>
+    <section id="marcas" className="reveal" style={{ padding: '40px 0', backgroundColor: '#ffffff', borderBottom: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', alignItems: 'center', overflow: 'hidden' }}>
       <p style={{ fontSize: '0.85rem', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '30px' }}>
-        Complejos deportivos que confían en PlayStop
+        Complejos deportivos que confían en PlaySpot
       </p>
       
       <style>

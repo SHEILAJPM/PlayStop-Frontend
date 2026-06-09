@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'; // Si lo usas para el Observer, déjalo. Si no, quítalo.
+import { useState, useEffect } from 'react';
+import { useAuth } from './context/AuthContext.jsx';
 import Navbar from './components/Navbar.jsx';
 import Hero from './components/Hero.jsx';
 import Marcas from './components/Marcas.jsx';
@@ -20,6 +21,7 @@ import SuperAdminDashboard from './components/dashboards/SuperAdminDashboard.jsx
 import Login from './components/Login.jsx';
 import Register from './components/Register.jsx';
 import ChatBot from './components/ChatBot.jsx';
+import BookingFlow from './pages/BookingFlow.jsx';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, Outlet } from 'react-router-dom';
 
 // Layout que envuelve la Landing Page
@@ -46,22 +48,18 @@ function LandingLayout({ darkMode, toggleTheme }) {
 }
 
 function AppContent() {
-  const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem('playstop-user');
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
-
+  const { user, login, logout } = useAuth();
   const navigate = useNavigate();
-  
+
   const [darkMode, setDarkMode] = useState(() => {
-    const saved = localStorage.getItem('playstop-theme');
+    const saved = localStorage.getItem('playspot-theme');
     return saved === null ? true : saved === 'dark';
   });
 
   const handleThemeToggle = () => {
     const newMode = !darkMode;
     setDarkMode(newMode);
-    localStorage.setItem('playstop-theme', newMode ? 'dark' : 'light');
+    localStorage.setItem('playspot-theme', newMode ? 'dark' : 'light');
     document.body.classList.toggle('dark', newMode);
     document.body.classList.toggle('light', !newMode);
   };
@@ -91,16 +89,12 @@ function AppContent() {
   }, [user]);
 
   const handleLogin = (loggedInUser) => {
-    setUser(loggedInUser);
-    localStorage.setItem('playstop-user', JSON.stringify(loggedInUser));
-    // Redirección inmediata al entrar
+    login(loggedInUser);
     navigate('/dashboard');
   };
 
   const handleLogout = () => {
-    setUser(null);
-    localStorage.removeItem('playstop-user');
-    localStorage.removeItem('token');
+    logout();
     navigate('/');
   };
 
@@ -135,6 +129,11 @@ function AppContent() {
         <Route path="/admin-dashboard" element={user && (getRole() === 'ADMIN' || getRole() === 'ADMINISTRADOR') ? <AdminDashboard user={user} onLogout={handleLogout} darkMode={darkMode} toggleTheme={handleThemeToggle} /> : <Navigate to="/login" />} />
         <Route path="/propietario-dashboard" element={user && (getRole() === 'OWNER' || getRole() === 'PROPIETARIO') ? <PropietarioDashboard user={user} onLogout={handleLogout} darkMode={darkMode} toggleTheme={handleThemeToggle} /> : <Navigate to="/login" />} />
         <Route path="/jugador-dashboard" element={user && (getRole() === 'USER' || getRole() === 'JUGADOR') ? <JugadorDashboard user={user} onLogout={handleLogout} darkMode={darkMode} toggleTheme={handleThemeToggle} /> : <Navigate to="/login" />} />
+
+        {/* FLUJO DE RESERVA */}
+        <Route path="/reservar/:courtId" element={
+          user ? <BookingFlow user={user} darkMode={darkMode} /> : <Navigate to="/login" replace />
+        } />
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

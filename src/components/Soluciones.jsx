@@ -20,7 +20,7 @@ const Soluciones = () => {
             Una plataforma, <span style={{ color: '#8b5cf6' }}>dos soluciones</span>
           </h2>
           <p style={{ color: '#64748b', fontSize: '1.15rem', maxWidth: '600px', margin: '0 auto', lineHeight: '1.6' }}>
-            Ya sea que busques jugar o administrar, PlayStop tiene las herramientas exactas para llevar tu experiencia al siguiente nivel.
+            Ya sea que busques jugar o administrar, PlaySpot tiene las herramientas exactas para llevar tu experiencia al siguiente nivel.
           </p>
         </div>
 
@@ -31,7 +31,7 @@ const Soluciones = () => {
             <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '6px', background: 'linear-gradient(90deg, #00d084, #3b82f6)' }}></div>
             
             <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'rgba(0, 208, 132, 0.1)', color: '#00d084', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', marginBottom: '24px' }}>
-              🏃‍♂️
+              <i className="bi bi-person-walking" />
             </div>
             
             <h3 style={{ fontSize: '2rem', color: '#0f172a', fontWeight: '900', marginBottom: '12px', letterSpacing: '-0.5px' }}>Para Jugadores</h3>
@@ -66,7 +66,7 @@ const Soluciones = () => {
             <div style={{ position: 'absolute', top: '-100px', right: '-100px', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%)', borderRadius: '50%', pointerEvents: 'none' }}></div>
             
             <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'rgba(59, 130, 246, 0.15)', color: '#60a5fa', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', marginBottom: '24px' }}>
-              🏟️
+              <i className="bi bi-building" />
             </div>
             
             <h3 style={{ fontSize: '2rem', color: '#ffffff', fontWeight: '900', marginBottom: '12px', letterSpacing: '-0.5px' }}>Para Clubes</h3>

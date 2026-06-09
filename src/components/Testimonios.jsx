@@ -2,7 +2,7 @@
 const testimonios = [
   {
     id: 1,
-    text: "PlayStop nos cambió la vida. La gestión de reservas es automática y los ingresos de nuestro club subieron un 40%.",
+    text: "PlaySpot nos cambió la vida. La gestión de reservas es automática y los ingresos de nuestro club subieron un 40%.",
     author: "Carlos R.",
     role: "Administrador de Club",
     image: "https://randomuser.me/api/portraits/men/32.jpg"
@@ -62,7 +62,7 @@ const Testimonios = () => {
       </style>
       
       <div style={{ textAlign: 'center', maxWidth: '750px', margin: '0 auto 60px auto', padding: '0 5%' }}>
-        <div style={{ display: 'inline-block', padding: '6px 18px', background: 'linear-gradient(90deg, rgba(245,158,11,0.1), rgba(245,158,11,0.05))', border: '1px solid rgba(245,158,11,0.3)', color: '#d97706', borderRadius: '20px', fontWeight: '800', fontSize: '0.85rem', marginBottom: '24px', letterSpacing: '1px', textTransform: 'uppercase' }}>Comunidad PlayStop</div>
+        <div style={{ display: 'inline-block', padding: '6px 18px', background: 'linear-gradient(90deg, rgba(245,158,11,0.1), rgba(245,158,11,0.05))', border: '1px solid rgba(245,158,11,0.3)', color: '#d97706', borderRadius: '20px', fontWeight: '800', fontSize: '0.85rem', marginBottom: '24px', letterSpacing: '1px', textTransform: 'uppercase' }}>Comunidad PlaySpot</div>
         <h2 style={{ fontSize: '3.5rem', color: '#ffffff', fontWeight: '900', marginBottom: '20px', letterSpacing: '-1.5px', lineHeight: '1.1' }}>Lo que dicen <span style={{ color: '#f59e0b' }}>nuestros usuarios</span></h2>
         <p style={{ color: '#94a3b8', fontSize: '1.15rem', lineHeight: '1.7' }}>Miles de jugadores y administradores ya están revolucionando su forma de vivir y gestionar el deporte.</p>
       </div>

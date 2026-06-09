@@ -125,3 +125,118 @@ button { cursor: pointer; }
 .badge-warning { background: #fef3c7; color: #92400e; }
 .badge-danger  { background: #fee2e2; color: #991b1b; }
 .badge-info    { background: #dbeafe; color: #1e40af; }
+
+/* ─── Dark mode: secciones con fondo claro ───────────────── */
+body.dark #canchas-destacadas,
+body.dark #blog {
+  background-color: #0a0f1e !important;
+}
+body.dark #canchas-destacadas h2,
+body.dark #blog h2 {
+  color: #f1f5f9 !important;
+}
+body.dark #canchas-destacadas .cancha-card {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+}
+body.dark #canchas-destacadas .cancha-card h3 {
+  color: #f1f5f9 !important;
+}
+body.dark #canchas-destacadas .cancha-card p {
+  color: #94a3b8 !important;
+}
+body.dark #canchas-destacadas .fade-left {
+  background: linear-gradient(to right, #0a0f1e 0%, transparent 100%) !important;
+}
+body.dark #canchas-destacadas .fade-right {
+  background: linear-gradient(to left, #0a0f1e 0%, transparent 100%) !important;
+}
+body.dark .jugadores-section {
+  background-color: #0a0f1e !important;
+}
+body.dark .jugadores-section h2,
+body.dark .jugadores-section h4 {
+  color: #f1f5f9 !important;
+}
+body.dark .jugadores-section p {
+  color: #94a3b8 !important;
+}
+body.dark #como-funciona {
+  background-color: #0d1526 !important;
+}
+body.dark #como-funciona h2 {
+  color: #f1f5f9 !important;
+}
+body.dark #como-funciona .step-card {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+}
+body.dark #como-funciona .step-card h3 {
+  color: #f1f5f9 !important;
+}
+body.dark #como-funciona .step-card p {
+  color: #94a3b8 !important;
+}
+body.dark .soluciones-section {
+  background-color: #0a0f1e !important;
+}
+body.dark .soluciones-section h2 {
+  color: #f1f5f9 !important;
+}
+body.dark .soluciones-section p {
+  color: #94a3b8 !important;
+}
+body.dark .faq-section {
+  background-color: #0a0f1e !important;
+}
+body.dark .faq-section h2 { color: #f1f5f9 !important; }
+body.dark .faq-section p  { color: #94a3b8 !important; }
+body.dark .faq-item {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+}
+body.dark .faq-header {
+  background-color: #1e293b !important;
+  color: #f1f5f9 !important;
+}
+body.dark .faq-header h3 { color: #f1f5f9 !important; }
+body.dark .faq-header .faq-icon {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+  color: #f1f5f9 !important;
+}
+body.dark #blog .cancha-card {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+}
+body.dark #blog h3 { color: #f1f5f9 !important; }
+body.dark #blog p  { color: #94a3b8 !important; }
+body.dark #legal {
+  background-color: #0a0f1e !important;
+  border-color: #1e293b !important;
+}
+body.dark #legal h2 { color: #f1f5f9 !important; }
+body.dark #legal p  { color: #94a3b8 !important; }
+body.dark #marcas {
+  background-color: #0a0f1e !important;
+  border-bottom-color: #1e293b !important;
+}
+body.dark #marcas p { color: #475569 !important; }
+body.dark .trust-logo { color: #475569 !important; }
+body.dark .trust-logo:hover { color: #f1f5f9 !important; }
+body.dark #marcas .fade-left {
+  background: linear-gradient(to right, #0a0f1e 0%, transparent 100%) !important;
+}
+body.dark #marcas .fade-right {
+  background: linear-gradient(to left, #0a0f1e 0%, transparent 100%) !important;
+}
+
+/* ─── PlaySpot brand colors (design system) ─────────────── */
+:root {
+  --ps-green:       #00d084;
+  --ps-green-dark:  #00b875;
+  --ps-green-glow:  rgba(0, 208, 132, 0.35);
+  --ps-dark-bg:     #030712;
+  --ps-dark-card:   #0f172a;
+  --ps-dark-border: #1e293b;
+}

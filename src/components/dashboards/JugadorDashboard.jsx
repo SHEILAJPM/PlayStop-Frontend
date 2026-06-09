@@ -1,6 +1,63 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import { DashboardLayout, MetricCard, SkeletonTable, SkeletonCourtGrid } from './DashboardLayout.jsx';
 import { api } from '../../services/api.js';
+import { useOnboarding } from '../../hooks/useOnboarding.js';
+import OnboardingTour from '../onboarding/OnboardingTour.jsx';
+
+const JUGADOR_TOUR_STEPS = [
+  {
+    icon: 'bi-emoji-smile-fill',
+    gradient: 'linear-gradient(135deg,#667eea,#764ba2)',
+    shadowColor: 'rgba(102,126,234,0.4)',
+    title: '¡Bienvenido a PlayStop!',
+    description: 'Eres parte de la comunidad deportiva más grande del Perú. En menos de un minuto te mostramos todo lo que puedes hacer.',
+    highlight: null,
+  },
+  {
+    icon: 'bi-search',
+    gradient: 'linear-gradient(135deg,#3b82f6,#1d4ed8)',
+    shadowColor: 'rgba(59,130,246,0.4)',
+    title: 'Buscar Canchas',
+    description: 'Encuentra canchas cerca de ti filtrando por deporte, ciudad y precio. Fútbol, tenis, pádel y más.',
+    highlight: 'Buscar Canchas',
+    tip: 'Haz clic en "Ver en mapa" para ver la ubicación exacta antes de reservar.',
+  },
+  {
+    icon: 'bi-calendar2-check-fill',
+    gradient: 'linear-gradient(135deg,#00d084,#00b875)',
+    shadowColor: 'rgba(0,208,132,0.4)',
+    title: 'Mis Reservas',
+    description: 'Consulta todas tus reservas activas. Desde aquí accedes al código QR de entrada y puedes cancelar con anticipación.',
+    highlight: 'Mis Reservas',
+    tip: 'Cancelas sin costo si lo haces con más de 24 horas de anticipación.',
+  },
+  {
+    icon: 'bi-trophy-fill',
+    gradient: 'linear-gradient(135deg,#f59e0b,#d97706)',
+    shadowColor: 'rgba(245,158,11,0.4)',
+    title: 'Logros y Puntos',
+    description: 'Cada partido que juegas te da puntos PlayStop. Sube de nivel y desbloquea recompensas exclusivas.',
+    highlight: 'Logros',
+  },
+  {
+    icon: 'bi-people-fill',
+    gradient: 'linear-gradient(135deg,#8b5cf6,#6d28d9)',
+    shadowColor: 'rgba(139,92,246,0.4)',
+    title: 'Mis Amigos',
+    description: 'Conecta con tus compañeros de equipo buscándolos por email. Organiza partidos y arma tu once titular.',
+    highlight: 'Mis Amigos',
+  },
+  {
+    icon: 'bi-rocket-takeoff-fill',
+    gradient: 'linear-gradient(135deg,#00d084,#3b82f6)',
+    shadowColor: 'rgba(0,208,132,0.4)',
+    title: '¡Todo listo para jugar!',
+    description: 'Ya conoces PlayStop. Busca tu primera cancha y reserva en menos de 2 minutos. ¡Nos vemos en la cancha!',
+    highlight: null,
+  },
+];
 
 const DEFAULT_IMG = 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=500&q=80';
 
@@ -24,6 +81,8 @@ const mapCourt = (c) => ({
   district: c.district || '',
   lat: c.latitude ?? null,
   lng: c.longitude ?? null,
+  averageRating: c.averageRating ?? null,
+  reviewCount: c.reviewCount ?? 0,
 });
 
 const mapReservation = (r) => {
@@ -58,17 +117,18 @@ const NIVEL_COLORS = {
 };
 
 const loadFavoritos = () => {
-  try { return JSON.parse(localStorage.getItem('playstop_favoritos') || '[]'); }
+  try { return JSON.parse(localStorage.getItem('playspot_favoritos') || '[]'); }
   catch { return []; }
 };
 
 const saveFavoritos = (ids) => {
-  localStorage.setItem('playstop_favoritos', JSON.stringify(ids));
+  localStorage.setItem('playspot_favoritos', JSON.stringify(ids));
 };
 
 const PERU_CITIES = ['Lima', 'Arequipa', 'Trujillo', 'Chiclayo', 'Piura', 'Cusco', 'Iquitos', 'Huancayo', 'Tacna', 'Ica'];
 
 const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => {
+  const navigate = useNavigate();
   const C = {
     textPrimary: darkMode ? '#f8fafc' : '#0f172a',
     textSecondary: darkMode ? '#94a3b8' : '#475569',
@@ -81,6 +141,7 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
     infoBorder: darkMode ? '#334155' : '#cbd5e1',
   };
   const [activeTab, setActiveTab] = useState('Inicio');
+  const { showTour, finishTour, retakeTour, tourHighlight, setTourHighlight } = useOnboarding('jugador');
   const [canchaSearch, setCanchaSearch] = useState('');
   const [canchaSportFilter, setCanchaSportFilter] = useState('Todos');
   const [cityFilter, setCityFilter] = useState('');
@@ -116,6 +177,29 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
   const [paymentStage, setPaymentStage] = useState('form');
   const [confirmedReservation, setConfirmedReservation] = useState(null);
 
+  // Profile
+  const [profileData, setProfileData] = useState({ nombre: user?.name || '', telefono: '' });
+  const [profileSaving, setProfileSaving] = useState(false);
+  const [profileMsg, setProfileMsg] = useState(null);
+  const [pwdData, setPwdData] = useState({ contrasenaActual: '', nuevaContrasena: '', confirmarContrasena: '' });
+  const [pwdSaving, setPwdSaving] = useState(false);
+  const [pwdMsg, setPwdMsg] = useState(null);
+
+  // Gamification
+  const [gamification, setGamification] = useState(null);
+  const [loadingGami, setLoadingGami] = useState(true);
+
+  // Confetti
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  // Armar Equipo
+  const [equipoSessions, setEquipoSessions] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('playspot_equipo_sessions') || '[]'); }
+    catch { return []; }
+  });
+  const [newSession, setNewSession] = useState({ court: '', sport: 'Fútbol', date: '', time: '08:00', totalPlayers: 10, notes: '' });
+  const [equipoModal, setEquipoModal] = useState(false);
+
   useEffect(() => {
     api.getAllCourts()
       .then(data => {
@@ -135,6 +219,19 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
       .then(data => setReservas(Array.isArray(data) ? data.map(mapReservation) : []))
       .catch(() => setReservas([]))
       .finally(() => setLoadingReservas(false));
+  }, []);
+
+  useEffect(() => {
+    api.getMe()
+      .then(data => setProfileData({ nombre: data.name || '', telefono: data.phone || '' }))
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    api.getGamificationProfile()
+      .then(data => setGamification(data))
+      .catch(() => setGamification(null))
+      .finally(() => setLoadingGami(false));
   }, []);
 
   const toggleFavorito = useCallback((canchaId) => {
@@ -273,6 +370,8 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
           amount: modal.payload.price,
         });
         setPaymentStage('success');
+        setShowConfetti(true);
+        setTimeout(() => setShowConfetti(false), 4000);
       }
     } catch (err) {
       setPaymentStage('form');
@@ -284,16 +383,20 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
 
   return (
     <>
+    {showConfetti && <Confetti />}
     <DashboardLayout user={user} onLogout={onLogout} darkMode={darkMode} toggleTheme={toggleTheme}
       title={activeTab === 'Inicio' ? 'Mi Resumen Deportivo' : activeTab}
       activeTab={activeTab} onTabChange={setActiveTab}
+      tourHighlight={tourHighlight} onRestartTour={retakeTour}
       menuItems={[
-        { icon: '🏠', label: 'Inicio' },
-        { icon: '🔍', label: 'Buscar Canchas' },
-        { icon: '📅', label: 'Mis Reservas' },
-        { icon: '👥', label: 'Mis Amigos' },
-        { icon: '❤️', label: 'Canchas Favoritas' },
-        { icon: '👤', label: 'Mi Perfil' },
+        { icon: 'bi-house-fill',           label: 'Inicio' },
+        { icon: 'bi-search',               label: 'Buscar Canchas' },
+        { icon: 'bi-calendar2-check-fill', label: 'Mis Reservas' },
+        { icon: 'bi-trophy-fill',          label: 'Logros' },
+        { icon: 'bi-people-fill',          label: 'Mis Amigos' },
+        { icon: 'bi-diagram-3-fill',       label: 'Armar Equipo' },
+        { icon: 'bi-heart-fill',           label: 'Canchas Favoritas' },
+        { icon: 'bi-person-circle',        label: 'Mi Perfil' },
       ]}>
 
       {/* ─── Inicio ────────────────────────────────────── */}
@@ -301,20 +404,20 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
         <>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '24px', marginBottom: '30px' }}>
             <MetricCard title="Próximo Partido" value={reservas.find(r => r.apiStatus === 'CONFIRMED')?.date || '—'} subtitle={reservas.find(r => r.apiStatus === 'CONFIRMED')?.court || 'Sin reservas activas'} color="#3b82f6" trend="up" />
-            <MetricCard title="Puntos PlayStop" value="1,250 pts" subtitle="Tienes S/ 15 de descuento" color="#00d084" trend="up" />
-            <MetricCard title="Partidos Jugados" value={reservas.filter(r => r.apiStatus === 'CONFIRMED').length || '0'} subtitle="Reservas confirmadas" color="#f59e0b" />
+            <MetricCard title="Puntos PlayStop" value={loadingGami ? '...' : `${gamification?.totalPoints ?? 0} pts`} subtitle={loadingGami ? '' : `Nivel ${gamification?.level ?? 1} • ${gamification?.levelName ?? 'Principiante'}`} color="#00d084" trend="up" />
+            <MetricCard title="Partidos Jugados" value={reservas.filter(r => r.apiStatus === 'ATTENDED').length || '0'} subtitle="Partidos completados" color="#f59e0b" />
           </div>
 
           {/* Canchas favoritas en inicio */}
           {canchasFavoritas.length > 0 && (
             <div style={{ marginBottom: '30px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <h3 style={{ margin: 0, color: C.textPrimary, fontSize: '1.15rem', fontWeight: '800' }}>❤️ Tus Canchas Favoritas</h3>
+                <h3 style={{ margin: 0, color: C.textPrimary, fontSize: '1.15rem', fontWeight: '800', display:'flex', alignItems:'center', gap:8 }}><i className="bi bi-heart-fill" style={{ color:'#ef4444' }} /> Tus Canchas Favoritas</h3>
                 <span onClick={() => setActiveTab('Canchas Favoritas')} style={{ color: '#3b82f6', fontWeight: '700', cursor: 'pointer', fontSize: '0.9rem' }}>Ver todas →</span>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
                 {canchasFavoritas.slice(0, 3).map(c => (
-                  <CourtCard key={c.id} cancha={c} isFavorito={true} onToggleFavorito={() => toggleFavorito(c.id)} onReservar={() => openModal('RESERVAR_CANCHA', c)} onVerMapa={() => setMapModal({ show: true, cancha: c })} darkMode={darkMode} compact />
+                  <CourtCard key={c.id} cancha={c} isFavorito={true} onToggleFavorito={() => toggleFavorito(c.id)} onReservar={() => navigate(`/reservar/${c.id}`)} onVerMapa={() => setMapModal({ show: true, cancha: c })} darkMode={darkMode} compact />
                 ))}
               </div>
             </div>
@@ -330,7 +433,7 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
                 {canchas.slice(0, 3).map((cancha, i) => (
-                  <CourtCard key={cancha.id || i} cancha={cancha} isFavorito={favoritosIds.includes(cancha.id)} onToggleFavorito={() => toggleFavorito(cancha.id)} onReservar={() => openModal('RESERVAR_CANCHA', cancha)} onVerMapa={() => setMapModal({ show: true, cancha })} darkMode={darkMode} />
+                  <CourtCard key={cancha.id || i} cancha={cancha} isFavorito={favoritosIds.includes(cancha.id)} onToggleFavorito={() => toggleFavorito(cancha.id)} onReservar={() => navigate(`/reservar/${cancha.id}`)} onVerMapa={() => setMapModal({ show: true, cancha })} darkMode={darkMode} />
                 ))}
               </div>
             )}
@@ -375,7 +478,7 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
               {/* Search bar */}
               <div style={{ display: 'flex', gap: '12px', maxWidth: '600px' }}>
                 <div style={{ flex: 1, position: 'relative' }}>
-                  <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.5)', fontSize: '1rem', pointerEvents: 'none' }}>🔍</span>
+                  <i className="bi bi-search" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.5)', fontSize: '1rem', pointerEvents: 'none' }} />
                   <input
                     type="text" value={canchaSearch}
                     onChange={(e) => setCanchaSearch(e.target.value)}
@@ -394,7 +497,7 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
 
           {errorCanchas && (
             <div style={{ padding: '16px 20px', backgroundColor: '#fef2f2', border: '1px solid #fecaca', borderRadius: '12px', color: '#991b1b', fontWeight: '600', marginBottom: '20px', display: 'flex', gap: '10px', alignItems: 'center' }}>
-              <span>⚠️</span>
+              <i className="bi bi-exclamation-triangle-fill" style={{ color:'#ef4444' }} />
               <span>No se pudieron cargar las canchas: <strong>{errorCanchas}</strong></span>
             </div>
           )}
@@ -411,7 +514,7 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
                   {['Todos', 'Fútbol', 'Pádel', 'Tenis', 'Vóley', 'Básquet'].map(s => (
                     <button key={s} className={`sport-chip ${canchaSportFilter === s ? 'active' : 'inactive'}`}
                       onClick={() => setCanchaSportFilter(s)}>
-                      {s === 'Todos' ? 'Todos' : s === 'Fútbol' ? '⚽ Fútbol' : s === 'Pádel' ? '🏓 Pádel' : s === 'Tenis' ? '🎾 Tenis' : s === 'Vóley' ? '🏐 Vóley' : '🏀 Básquet'}
+                      {s === 'Todos' ? 'Todos' : s === 'Fútbol' ? <><i className="bi bi-dribbble" style={{marginRight:5}} />Fútbol</> : s === 'Pádel' ? <><i className="bi bi-record-circle" style={{marginRight:5}} />Pádel</> : s === 'Tenis' ? <><i className="bi bi-circle-fill" style={{marginRight:5}} />Tenis</> : s === 'Vóley' ? <><i className="bi bi-circle" style={{marginRight:5}} />Vóley</> : <><i className="bi bi-circle-half" style={{marginRight:5}} />Básquet</>}
                     </button>
                   ))}
                 </div>
@@ -476,13 +579,13 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
                     <CourtCard key={cancha.id || i} cancha={cancha}
                       isFavorito={favoritosIds.includes(cancha.id)}
                       onToggleFavorito={() => toggleFavorito(cancha.id)}
-                      onReservar={() => openModal('RESERVAR_CANCHA', cancha)}
+                      onReservar={() => navigate(`/reservar/${cancha.id}`)}
                       onVerMapa={() => setMapModal({ show: true, cancha })}
                       darkMode={darkMode} />
                   ))}
                 </div>
               ) : (
-                <EmptyState icon="🔍" title="Sin resultados" message="Prueba ajustando los filtros o el rango de precios." darkMode={darkMode} />
+                <EmptyState icon="bi-search" title="Sin resultados" message="Prueba ajustando los filtros o el rango de precios." darkMode={darkMode} />
               )}
             </div>
           </div>
@@ -495,10 +598,10 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
           {/* Header con estadísticas rápidas */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', marginBottom: '24px' }}>
             {[
-              { label: 'Total reservas', val: reservas.length, icon: '📅', color: '#3b82f6' },
-              { label: 'Confirmadas', val: reservas.filter(r => r.apiStatus === 'CONFIRMED').length, icon: '✅', color: '#00d084' },
-              { label: 'Completadas', val: reservas.filter(r => r.apiStatus === 'ATTENDED').length, icon: '🏅', color: '#8b5cf6' },
-              { label: 'Canceladas', val: reservas.filter(r => r.apiStatus === 'CANCELLED').length, icon: '❌', color: '#ef4444' },
+              { label: 'Total reservas', val: reservas.length, icon: 'bi-calendar3', color: '#3b82f6' },
+              { label: 'Confirmadas', val: reservas.filter(r => r.apiStatus === 'CONFIRMED').length, icon: 'bi-check-circle-fill', color: '#00d084' },
+              { label: 'Completadas', val: reservas.filter(r => r.apiStatus === 'ATTENDED').length, icon: 'bi-award-fill', color: '#8b5cf6' },
+              { label: 'Canceladas', val: reservas.filter(r => r.apiStatus === 'CANCELLED').length, icon: 'bi-x-circle-fill', color: '#ef4444' },
             ].map(stat => (
               <div key={stat.label} style={{ background: C.cardBg, border: `1px solid ${C.cardBorder}`, borderRadius: '16px', padding: '18px 20px', display: 'flex', alignItems: 'center', gap: '14px', borderLeft: `4px solid ${stat.color}` }}>
                 <span style={{ fontSize: '1.6rem' }}>{stat.icon}</span>
@@ -521,8 +624,14 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
             {loadingReservas ? (
               <div style={{ padding: '24px' }}><SkeletonTable rows={3} /></div>
             ) : reservas.length === 0 ? (
-              <div style={{ padding: '60px 24px', textAlign: 'center' }}>
-                <EmptyState icon="📅" title="Sin reservas" message="¡Busca una cancha y reserva tu próximo partido!" />
+              <div style={{ padding: '40px 24px' }}>
+                <EmptyState
+                  icon="bi-calendar3"
+                  title="Aún no tienes reservas"
+                  message="Busca una cancha, elige tu horario favorito y reserva en menos de 2 minutos."
+                  darkMode={darkMode}
+                  cta={{ label: 'Buscar canchas', onClick: () => setActiveTab('Buscar Canchas') }}
+                />
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -537,7 +646,7 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
                   >
                     {/* Estado icon */}
                     <div style={{ width: '44px', height: '44px', borderRadius: '12px', flexShrink: 0, background: row.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem' }}>
-                      {row.apiStatus === 'CONFIRMED' ? '✅' : row.apiStatus === 'CANCELLED' ? '❌' : row.apiStatus === 'ATTENDED' ? '🏅' : '⏳'}
+                      <i className={`bi ${row.apiStatus === 'CONFIRMED' ? 'bi-check-circle-fill' : row.apiStatus === 'CANCELLED' ? 'bi-x-circle-fill' : row.apiStatus === 'ATTENDED' ? 'bi-award-fill' : 'bi-hourglass-split'}`} style={{ color: row.color }} />
                     </div>
                     {/* Info */}
                     <div style={{ flex: 1, minWidth: '150px' }}>
@@ -554,18 +663,18 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
                       <button
                         onClick={() => setMapModal({ show: true, cancha: { name: row.court, location: row.courtAddress, lat: row.courtLat, lng: row.courtLng, district: '', city: '' } })}
                         style={{ padding: '7px 13px', borderRadius: '9px', border: 'none', background: darkMode ? 'rgba(59,130,246,.15)' : '#eff6ff', color: '#3b82f6', fontWeight: '700', fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                        📍 Cómo llegar
+                        <i className="bi bi-geo-alt-fill" /> Cómo llegar
                       </button>
                       {(row.apiStatus === 'CONFIRMED' || row.apiStatus === 'PENDING') && (
                         <button
                           onClick={() => setQrModal({ show: true, reservationId: row.id, courtName: row.court, date: row.rawDate, slot: row.slotLabel, timestamp: Date.now() })}
                           style={{ padding: '7px 13px', borderRadius: '9px', border: 'none', background: darkMode ? '#1e293b' : '#0f172a', color: '#00d084', fontWeight: '700', fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                          📱 Ver QR
+                          <i className="bi bi-qr-code-scan" /> Ver QR
                         </button>
                       )}
                       {row.apiStatus === 'ATTENDED' && (
                         <span style={{ padding: '7px 13px', borderRadius: '9px', background: darkMode ? 'rgba(139,92,246,.2)' : '#ede9fe', color: darkMode ? '#a78bfa' : '#7c3aed', fontWeight: '700', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                          🏅 Asistió
+                          <i className="bi bi-award-fill" /> Asistió
                         </span>
                       )}
                       {row.apiStatus !== 'CANCELLED' && row.apiStatus !== 'ATTENDED' && (
@@ -579,6 +688,171 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {/* ─── Logros ───────────────────────────────────── */}
+      {activeTab === 'Logros' && (
+        <div>
+          <style>{`
+            @keyframes fillBar { from { width: 0; } to { width: var(--bar-pct); } }
+            @keyframes badgePop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+          `}</style>
+
+          {loadingGami ? (
+            <div style={{ textAlign: 'center', padding: '60px', color: C.textMuted, fontSize: '1rem', fontWeight: '700' }}>
+              Cargando logros...
+            </div>
+          ) : !gamification ? (
+            <EmptyState icon="bi-trophy-fill" title="No disponible" message="No se pudo cargar tu perfil de logros." darkMode={darkMode} />
+          ) : (
+            <>
+              {/* ── Level card ── */}
+              <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f4c75 100%)', borderRadius: '24px', padding: '32px', marginBottom: '28px', color: '#fff', position: 'relative', overflow: 'hidden' }}>
+                <div style={{ position: 'absolute', top: '-30px', right: '-30px', width: '160px', height: '160px', borderRadius: '50%', background: 'rgba(0,208,132,0.08)' }} />
+                <div style={{ position: 'absolute', bottom: '-50px', right: '100px', width: '120px', height: '120px', borderRadius: '50%', background: 'rgba(59,130,246,0.08)' }} />
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '20px', marginBottom: '24px' }}>
+                    <div>
+                      <div style={{ fontSize: '0.82rem', fontWeight: '800', color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '0.6px', marginBottom: '6px' }}>
+                        Tu nivel actual
+                      </div>
+                      <div style={{ fontSize: '2.2rem', fontWeight: '900', letterSpacing: '-0.5px' }}>
+                        {gamification.levelName}
+                      </div>
+                      <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.6)', marginTop: '4px' }}>
+                        Nivel {gamification.level}
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ fontSize: '0.82rem', fontWeight: '800', color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '0.6px', marginBottom: '4px' }}>
+                        Puntos totales
+                      </div>
+                      <div style={{ fontSize: '2.8rem', fontWeight: '900', color: '#00d084', letterSpacing: '-1px', lineHeight: 1 }}>
+                        {gamification.totalPoints.toLocaleString()}
+                      </div>
+                      <div style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.5)', marginTop: '4px' }}>
+                        pts acumulados
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Progress bar */}
+                  {gamification.pointsToNextLevel > 0 && (
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                        <span style={{ fontSize: '0.8rem', fontWeight: '700', color: 'rgba(255,255,255,0.7)' }}>
+                          Progreso al siguiente nivel
+                        </span>
+                        <span style={{ fontSize: '0.8rem', fontWeight: '800', color: '#00d084' }}>
+                          {gamification.pointsToNextLevel} pts restantes
+                        </span>
+                      </div>
+                      <div style={{ height: '8px', borderRadius: '99px', background: 'rgba(255,255,255,0.1)', overflow: 'hidden' }}>
+                        {(() => {
+                          const thresholds = [0, 100, 250, 500, 1000, 2000];
+                          const lvl = gamification.level - 1;
+                          const from = thresholds[lvl] ?? 0;
+                          const to = thresholds[lvl + 1] ?? from + 1000;
+                          const pct = Math.min(100, ((gamification.totalPoints - from) / (to - from)) * 100);
+                          return (
+                            <div style={{
+                              height: '100%', borderRadius: '99px',
+                              background: 'linear-gradient(90deg, #00d084, #3b82f6)',
+                              width: `${pct}%`,
+                              animation: 'fillBar 1s ease forwards',
+                              '--bar-pct': `${pct}%`,
+                            }} />
+                          );
+                        })()}
+                      </div>
+                    </div>
+                  )}
+                  {gamification.pointsToNextLevel === 0 && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(0,208,132,0.15)', padding: '10px 16px', borderRadius: '10px', border: '1px solid rgba(0,208,132,0.3)' }}>
+                      <i className="bi bi-trophy-fill" style={{ fontSize: '1.2rem', color: '#00d084' }} />
+                      <span style={{ fontSize: '0.88rem', fontWeight: '800', color: '#00d084' }}>¡Has alcanzado el nivel máximo! Eres una leyenda.</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* ── How to earn points ── */}
+              <div style={{ background: C.cardBg, border: `1px solid ${C.cardBorder}`, borderRadius: '20px', padding: '20px 24px', marginBottom: '28px' }}>
+                <h3 style={{ margin: '0 0 16px', color: C.textPrimary, fontSize: '1rem', fontWeight: '800' }}>¿Cómo ganar puntos?</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
+                  {[
+                    { icon: 'bi-check-circle-fill', label: 'Partido completado', pts: '+5 pts' },
+                    { icon: 'bi-geo-alt-fill',      label: 'Primera reserva',    pts: '+10 pts' },
+                    { icon: 'bi-pencil-fill',        label: 'Primera reseña',     pts: '+20 pts' },
+                    { icon: 'bi-award-fill',         label: 'Logros desbloqueados', pts: '+ bonus' },
+                  ].map(item => (
+                    <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', borderRadius: '12px', background: darkMode ? '#0f172a' : '#f8fafc', border: `1px solid ${C.cardBorder}` }}>
+                      <i className={`bi ${item.icon}`} style={{ fontSize: '1.3rem', color: '#00d084' }} />
+                      <div>
+                        <div style={{ fontSize: '0.78rem', fontWeight: '700', color: C.textPrimary }}>{item.label}</div>
+                        <div style={{ fontSize: '0.82rem', fontWeight: '900', color: '#00d084' }}>{item.pts}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* ── Achievements grid ── */}
+              <h3 style={{ margin: '0 0 16px', color: C.textPrimary, fontSize: '1.15rem', fontWeight: '800' }}>
+                Logros ({gamification.achievements.filter(a => a.unlocked).length}/{gamification.achievements.length} desbloqueados)
+              </h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
+                {gamification.achievements.map((a, i) => (
+                  <div key={a.id} style={{
+                    background: C.cardBg,
+                    border: `1px solid ${a.unlocked ? (darkMode ? 'rgba(0,208,132,0.4)' : 'rgba(0,208,132,0.5)') : C.cardBorder}`,
+                    borderRadius: '16px',
+                    padding: '20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '16px',
+                    opacity: a.unlocked ? 1 : 0.55,
+                    animation: a.unlocked ? `badgePop 0.4s ease ${i * 0.05}s both` : 'none',
+                    position: 'relative',
+                    overflow: 'hidden',
+                  }}>
+                    {a.unlocked && (
+                      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(90deg, #00d084, #3b82f6)', borderRadius: '16px 16px 0 0' }} />
+                    )}
+                    <div style={{
+                      width: '52px', height: '52px', borderRadius: '14px', flexShrink: 0,
+                      background: a.unlocked ? 'linear-gradient(135deg, rgba(0,208,132,0.15), rgba(59,130,246,0.15))' : (darkMode ? '#1e293b' : '#f1f5f9'),
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: '1.6rem',
+                      border: a.unlocked ? '1px solid rgba(0,208,132,0.3)' : `1px solid ${C.cardBorder}`,
+                      filter: a.unlocked ? 'none' : 'grayscale(1)',
+                    }}>
+                      {a.icon}
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>
+                        <span style={{ fontWeight: '800', color: C.textPrimary, fontSize: '0.95rem' }}>{a.name}</span>
+                        {a.unlocked && <span style={{ fontSize: '0.7rem', fontWeight: '800', color: '#00d084', background: 'rgba(0,208,132,0.12)', padding: '2px 7px', borderRadius: '99px', whiteSpace: 'nowrap' }}>Desbloqueado</span>}
+                      </div>
+                      <div style={{ fontSize: '0.8rem', color: C.textMuted, marginBottom: '6px' }}>{a.description}</div>
+                      <div style={{ fontSize: '0.8rem', fontWeight: '800', color: a.unlocked ? '#00d084' : C.textMuted }}>
+                        +{a.pointsReward} pts
+                        {a.unlocked && a.unlockedAt && (
+                          <span style={{ fontWeight: '600', color: C.textMuted, marginLeft: '8px' }}>
+                            · {new Date(a.unlockedAt).toLocaleDateString('es-PE', { day: '2-digit', month: 'short', year: 'numeric' })}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    {!a.unlocked && (
+                      <div style={{ fontSize: '1.2rem', color: C.textMuted, flexShrink: 0 }}>🔒</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       )}
 
@@ -651,7 +925,7 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
               <h3 style={{ margin: 0, color: C.textPrimary, fontSize: '1.2rem', fontWeight: '800' }}>Mis Amigos ({amigos.length})</h3>
             </div>
             {amigos.length === 0 ? (
-              <EmptyState icon="👥" title="Sin amigos aún" message="Busca jugadores por correo para agregarlos a tu lista." darkMode={darkMode} />
+              <EmptyState icon="bi-people-fill" title="Sin amigos aún" message="Busca jugadores por correo para agregarlos a tu lista." darkMode={darkMode} />
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px' }}>
                 {amigos.map((amigo) => {
@@ -682,6 +956,169 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
         </div>
       )}
 
+      {/* ─── Armar Equipo ─────────────────────────────── */}
+      {activeTab === 'Armar Equipo' && (
+        <div>
+          <style>{`
+            @keyframes sessionPop { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+          `}</style>
+          {/* Hero */}
+          <div style={{ borderRadius:24, background:'linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#312e81 100%)', padding:'32px', marginBottom:28, position:'relative', overflow:'hidden' }}>
+            <div style={{ position:'absolute', top:'-30px', right:'-30px', width:'140px', height:'140px', borderRadius:'50%', background:'rgba(139,92,246,0.12)' }} />
+            <div style={{ position:'relative', zIndex:1 }}>
+              <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:10 }}>
+                <span style={{ background:'rgba(139,92,246,0.2)', color:'#a78bfa', padding:'4px 12px', borderRadius:99, fontSize:'.78rem', fontWeight:800 }}>
+                  {equipoSessions.filter(s => s.confirmed < s.totalPlayers).length} sesiones abiertas
+                </span>
+              </div>
+              <h2 style={{ margin:'0 0 8px', color:'#fff', fontSize:'1.8rem', fontWeight:900, letterSpacing:'-0.5px' }}>Arma tu equipo</h2>
+              <p style={{ margin:'0 0 24px', color:'rgba(255,255,255,0.6)', fontSize:'.95rem' }}>Crea o únete a sesiones públicas. Llena canchas, encuentra compañeros.</p>
+              <button
+                onClick={() => setEquipoModal(true)}
+                style={{ background:'linear-gradient(135deg,#8b5cf6,#6d28d9)', color:'#fff', border:'none', borderRadius:12, padding:'12px 22px', fontWeight:800, fontSize:'.95rem', cursor:'pointer', boxShadow:'0 8px 20px rgba(139,92,246,0.35)' }}
+              >
+                + Crear sesión
+              </button>
+            </div>
+          </div>
+
+          {/* Sessions grid */}
+          {equipoSessions.length === 0 ? (
+            <EmptyState
+              icon="bi-dribbble"
+              title="Sin sesiones activas"
+              message="Crea la primera sesión y encuentra compañeros para jugar."
+              darkMode={darkMode}
+              cta={{ label: '+ Crear sesión', onClick: () => setEquipoModal(true) }}
+            />
+          ) : (
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))', gap:20 }}>
+              {equipoSessions.map((s, i) => {
+                const spotsLeft = s.totalPlayers - s.confirmed;
+                const isFull = spotsLeft === 0;
+                const spotColor = isFull ? '#ef4444' : spotsLeft <= 2 ? '#f59e0b' : '#00d084';
+                return (
+                  <div key={s.id} className="card-hover" style={{ background:C.cardBg, border:`1px solid ${C.cardBorder}`, borderRadius:20, overflow:'hidden', animation:`sessionPop 0.3s ease ${i*0.05}s both` }}>
+                    <div style={{ height:6, background:`linear-gradient(90deg,${spotColor},${spotColor}80)` }} />
+                    <div style={{ padding:'18px 20px' }}>
+                      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:12 }}>
+                        <div>
+                          <div style={{ fontSize:'.72rem', fontWeight:800, color:'#8b5cf6', textTransform:'uppercase', letterSpacing:'.4px', marginBottom:4 }}>{s.sport}</div>
+                          <h4 style={{ margin:0, color:C.textPrimary, fontSize:'1rem', fontWeight:800 }}>{s.court || 'Cancha por definir'}</h4>
+                        </div>
+                        <span style={{ padding:'4px 10px', borderRadius:99, background:isFull?'rgba(239,68,68,0.12)':spotsLeft<=2?'rgba(245,158,11,0.12)':'rgba(0,208,132,0.12)', color:spotColor, fontSize:'.75rem', fontWeight:800, whiteSpace:'nowrap' }}>
+                          {isFull ? 'Completo' : `${spotsLeft} cupos`}
+                        </span>
+                      </div>
+                      <div style={{ display:'flex', flexDirection:'column', gap:6, marginBottom:16 }}>
+                        <div style={{ display:'flex', alignItems:'center', gap:8, fontSize:'.82rem', color:C.textMuted }}>
+                          <i className="bi bi-calendar3" /><span>{s.date} • {s.time}</span>
+                        </div>
+                        <div style={{ display:'flex', alignItems:'center', gap:8, fontSize:'.82rem', color:C.textMuted }}>
+                          <i className="bi bi-people-fill" /><span>{s.confirmed}/{s.totalPlayers} jugadores</span>
+                        </div>
+                        {s.notes && (
+                          <div style={{ fontSize:'.8rem', color:C.textSecondary, background:C.infoBg, borderRadius:8, padding:'8px 10px', marginTop:4 }}>{s.notes}</div>
+                        )}
+                      </div>
+                      {/* Progress bar */}
+                      <div style={{ height:4, borderRadius:99, background:darkMode?'#1e293b':'#e2e8f0', overflow:'hidden', marginBottom:14 }}>
+                        <div style={{ height:'100%', borderRadius:99, background:spotColor, width:`${(s.confirmed/s.totalPlayers)*100}%`, transition:'width .4s ease' }} />
+                      </div>
+                      <div style={{ display:'flex', gap:8 }}>
+                        {!isFull && (
+                          <button
+                            onClick={() => {
+                              const updated = equipoSessions.map(x => x.id === s.id ? { ...x, confirmed: x.confirmed + 1 } : x);
+                              setEquipoSessions(updated);
+                              localStorage.setItem('playspot_equipo_sessions', JSON.stringify(updated));
+                            }}
+                            style={{ flex:1, padding:'9px 0', borderRadius:10, border:'none', background:'linear-gradient(135deg,#8b5cf6,#6d28d9)', color:'#fff', fontWeight:700, fontSize:'.85rem', cursor:'pointer' }}
+                          >
+                            Unirme
+                          </button>
+                        )}
+                        <button
+                          onClick={() => {
+                            if (window.confirm('¿Eliminar esta sesión?')) {
+                              const updated = equipoSessions.filter(x => x.id !== s.id);
+                              setEquipoSessions(updated);
+                              localStorage.setItem('playspot_equipo_sessions', JSON.stringify(updated));
+                            }
+                          }}
+                          style={{ padding:'9px 14px', borderRadius:10, border:`1px solid ${C.cardBorder}`, background:'transparent', color:C.textMuted, fontWeight:600, fontSize:'.82rem', cursor:'pointer' }}
+                        >
+                          Eliminar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Create session modal */}
+          {equipoModal && (
+            <div style={{ position:'fixed', inset:0, background:'rgba(15,23,42,0.88)', zIndex:9999, display:'flex', alignItems:'center', justifyContent:'center', backdropFilter:'blur(12px)' }}>
+              <div className="modal-box-ps" style={{ maxWidth:460 }}>
+                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:24 }}>
+                  <h2 className="modal-title-ps">Crear sesión de juego</h2>
+                  <button onClick={() => setEquipoModal(false)} className="modal-close-ps">×</button>
+                </div>
+                <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
+                  <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
+                    <label className="modal-label-ps">Deporte</label>
+                    <select className="modal-ps-input" value={newSession.sport} onChange={e => setNewSession(p => ({ ...p, sport: e.target.value }))}>
+                      {['Fútbol','Pádel','Tenis','Vóley','Básquet'].map(s => <option key={s}>{s}</option>)}
+                    </select>
+                  </div>
+                  <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
+                    <label className="modal-label-ps">Cancha (opcional)</label>
+                    <input className="modal-ps-input" placeholder="Ej. Cancha Los Olivos" value={newSession.court} onChange={e => setNewSession(p => ({ ...p, court: e.target.value }))} />
+                  </div>
+                  <div style={{ display:'flex', gap:12 }}>
+                    <div style={{ flex:1, display:'flex', flexDirection:'column', gap:6 }}>
+                      <label className="modal-label-ps">Fecha</label>
+                      <input type="date" className="modal-ps-input" value={newSession.date} min={new Date().toISOString().split('T')[0]} onChange={e => setNewSession(p => ({ ...p, date: e.target.value }))} />
+                    </div>
+                    <div style={{ flex:1, display:'flex', flexDirection:'column', gap:6 }}>
+                      <label className="modal-label-ps">Hora</label>
+                      <input type="time" className="modal-ps-input" value={newSession.time} onChange={e => setNewSession(p => ({ ...p, time: e.target.value }))} />
+                    </div>
+                  </div>
+                  <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
+                    <label className="modal-label-ps">Jugadores necesarios</label>
+                    <input type="number" className="modal-ps-input" min={2} max={22} value={newSession.totalPlayers} onChange={e => setNewSession(p => ({ ...p, totalPlayers: parseInt(e.target.value) || 2 }))} />
+                  </div>
+                  <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
+                    <label className="modal-label-ps">Notas (opcional)</label>
+                    <input className="modal-ps-input" placeholder="Ej. Traer peto amarillo, nivel intermedio" value={newSession.notes} onChange={e => setNewSession(p => ({ ...p, notes: e.target.value }))} />
+                  </div>
+                  <div style={{ display:'flex', gap:12, marginTop:8 }}>
+                    <button onClick={() => setEquipoModal(false)} className="modal-btn-cancel-ps">Cancelar</button>
+                    <button
+                      onClick={() => {
+                        if (!newSession.date) { alert('Selecciona una fecha'); return; }
+                        const session = { ...newSession, id: Date.now(), confirmed: 1, createdBy: user?.name || 'Tú' };
+                        const updated = [session, ...equipoSessions];
+                        setEquipoSessions(updated);
+                        localStorage.setItem('playspot_equipo_sessions', JSON.stringify(updated));
+                        setEquipoModal(false);
+                        setNewSession({ court: '', sport: 'Fútbol', date: '', time: '08:00', totalPlayers: 10, notes: '' });
+                      }}
+                      className="modal-btn-submit-ps"
+                    >
+                      Crear sesión
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* ─── Canchas Favoritas ─────────────────────────── */}
       {activeTab === 'Canchas Favoritas' && (
         <div>
@@ -694,11 +1131,17 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
           {loadingCanchas ? (
             <SkeletonCourtGrid count={3} />
           ) : canchasFavoritas.length === 0 ? (
-            <EmptyState icon="❤️" title="Sin favoritos aún" message="Busca canchas y toca el corazón para guardarlas aquí." darkMode={darkMode} />
+            <EmptyState
+              icon="bi-heart-fill"
+              title="Sin canchas favoritas"
+              message="Toca el corazón en cualquier cancha para guardarla aquí y acceder rápido."
+              darkMode={darkMode}
+              cta={{ label: 'Explorar canchas', onClick: () => setActiveTab('Buscar Canchas') }}
+            />
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
               {canchasFavoritas.map(cancha => (
-                <CourtCard key={cancha.id} cancha={cancha} isFavorito={true} onToggleFavorito={() => toggleFavorito(cancha.id)} onReservar={() => openModal('RESERVAR_CANCHA', cancha)} onVerMapa={() => setMapModal({ show: true, cancha })} darkMode={darkMode} />
+                <CourtCard key={cancha.id} cancha={cancha} isFavorito={true} onToggleFavorito={() => toggleFavorito(cancha.id)} onReservar={() => navigate(`/reservar/${cancha.id}`)} onVerMapa={() => setMapModal({ show: true, cancha })} darkMode={darkMode} />
               ))}
             </div>
           )}
@@ -712,34 +1155,65 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
             <div style={{ height: '120px', background: 'linear-gradient(135deg, rgba(0, 208, 132, 0.8) 0%, rgba(59, 130, 246, 0.8) 100%)' }}></div>
             <div style={{ padding: '0 32px 32px 32px', marginTop: '-40px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
-                <div style={{ width: '100px', height: '100px', borderRadius: '50%', backgroundColor: '#e2e8f0', backgroundImage: `url(https://ui-avatars.com/api/?name=${user?.name || 'User'}&background=0f172a&color=fff&size=150)`, backgroundSize: 'cover', backgroundPosition: 'center', boxShadow: '0 4px 10px rgba(0,0,0,0.2)' }}></div>
+                <div style={{ width: '100px', height: '100px', borderRadius: '50%', backgroundColor: '#e2e8f0', backgroundImage: `url(https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.nombre || user?.name || 'U')}&background=0f172a&color=fff&size=150)`, backgroundSize: 'cover', backgroundPosition: 'center', boxShadow: '0 4px 10px rgba(0,0,0,0.2)' }}></div>
                 <div>
                   <label htmlFor="profile-pic" className="btn-secondary-ps" style={{ padding: '8px 16px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem' }}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
                     Cambiar Foto
                   </label>
-                  <input type="file" id="profile-pic" accept="image/*" style={{ display: 'none' }} onChange={() => alert('Foto seleccionada exitosamente.')} />
+                  <input type="file" id="profile-pic" accept="image/*" style={{ display: 'none' }}
+                    onChange={async (e) => {
+                      const file = e.target.files[0];
+                      if (!file) return;
+                      try {
+                        const { url } = await api.uploadImage(file);
+                        await api.updateAvatar(url);
+                        setProfileMsg({ type: 'success', text: 'Foto actualizada correctamente' });
+                      } catch (err) {
+                        setProfileMsg({ type: 'error', text: err.message || 'Error al subir la foto' });
+                      }
+                    }} />
                 </div>
               </div>
               <h3 style={{ margin: '0 0 4px 0', color: C.textPrimary, fontSize: '1.4rem', fontWeight: '800' }}>Información Personal</h3>
               <p style={{ margin: '0 0 24px 0', color: C.textSecondary, fontSize: '0.95rem' }}>Actualiza tus datos y cómo te ven los demás.</p>
-              <form onSubmit={(e) => { e.preventDefault(); alert('Perfil actualizado con éxito'); }} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                setProfileSaving(true); setProfileMsg(null);
+                try {
+                  await api.updateMe({ nombre: profileData.nombre, telefono: profileData.telefono });
+                  setProfileMsg({ type: 'success', text: '¡Perfil actualizado con éxito!' });
+                } catch (err) {
+                  setProfileMsg({ type: 'error', text: err.message || 'Error al guardar' });
+                } finally { setProfileSaving(false); }
+              }} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
                   <div style={{ flex: 1, minWidth: '150px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <label style={{ fontSize: '0.9rem', fontWeight: '800', color: C.textSecondary }}>Nombre Completo</label>
-                    <input type="text" defaultValue={user?.name} className="modal-ps-input" required />
+                    <input type="text" value={profileData.nombre}
+                      onChange={e => setProfileData(p => ({ ...p, nombre: e.target.value }))}
+                      className="modal-ps-input" required />
                   </div>
                   <div style={{ flex: 1, minWidth: '150px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <label style={{ fontSize: '0.9rem', fontWeight: '800', color: C.textSecondary }}>Teléfono</label>
-                    <input type="tel" defaultValue="+51 987 654 321" className="modal-ps-input" />
+                    <input type="tel" value={profileData.telefono}
+                      onChange={e => setProfileData(p => ({ ...p, telefono: e.target.value }))}
+                      className="modal-ps-input" />
                   </div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <label style={{ fontSize: '0.9rem', fontWeight: '800', color: C.textSecondary }}>Correo Electrónico</label>
-                  <input type="email" defaultValue={user?.email} className="modal-ps-input" required />
+                  <input type="email" value={user?.email || ''} className="modal-ps-input" disabled style={{ opacity: 0.6 }} />
                 </div>
+                {profileMsg && (
+                  <div style={{ padding: '10px 14px', borderRadius: '10px', background: profileMsg.type === 'success' ? '#d1fae5' : '#fee2e2', color: profileMsg.type === 'success' ? '#065f46' : '#991b1b', fontWeight: '700', fontSize: '0.88rem' }}>
+                    {profileMsg.text}
+                  </div>
+                )}
                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
-                  <button type="submit" className="btn-primary-ps" style={{ padding: '12px 24px' }}>Guardar Cambios</button>
+                  <button type="submit" className="btn-primary-ps" style={{ padding: '12px 24px' }} disabled={profileSaving}>
+                    {profileSaving ? 'Guardando...' : 'Guardar Cambios'}
+                  </button>
                 </div>
               </form>
             </div>
@@ -754,27 +1228,50 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
                 <h3 style={{ margin: 0, color: C.textPrimary, fontSize: '1.4rem', fontWeight: '800' }}>Seguridad</h3>
               </div>
               <p style={{ margin: '0 0 24px 0', color: C.textSecondary, fontSize: '0.95rem' }}>Protege tu cuenta con una contraseña segura.</p>
-              <form onSubmit={(e) => { e.preventDefault(); alert('Contraseña actualizada con éxito'); e.target.reset(); }} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                setPwdSaving(true); setPwdMsg(null);
+                try {
+                  await api.changePassword(pwdData);
+                  setPwdMsg({ type: 'success', text: 'Contraseña actualizada correctamente' });
+                  setPwdData({ contrasenaActual: '', nuevaContrasena: '', confirmarContrasena: '' });
+                } catch (err) {
+                  setPwdMsg({ type: 'error', text: err.message || 'Error al cambiar contraseña' });
+                } finally { setPwdSaving(false); }
+              }} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <label style={{ fontSize: '0.9rem', fontWeight: '800', color: C.textSecondary }}>Contraseña Actual</label>
-                  <input type="password" required className="modal-ps-input" placeholder="••••••••" />
+                  <input type="password" required className="modal-ps-input" placeholder="••••••••"
+                    value={pwdData.contrasenaActual}
+                    onChange={e => setPwdData(p => ({ ...p, contrasenaActual: e.target.value }))} />
                 </div>
                 <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
                   <div style={{ flex: 1, minWidth: '150px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <label style={{ fontSize: '0.9rem', fontWeight: '800', color: C.textSecondary }}>Nueva Contraseña</label>
-                    <input type="password" required minLength="6" className="modal-ps-input" placeholder="••••••••" />
+                    <input type="password" required minLength="8" className="modal-ps-input" placeholder="••••••••"
+                      value={pwdData.nuevaContrasena}
+                      onChange={e => setPwdData(p => ({ ...p, nuevaContrasena: e.target.value }))} />
                   </div>
                   <div style={{ flex: 1, minWidth: '150px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <label style={{ fontSize: '0.9rem', fontWeight: '800', color: C.textSecondary }}>Confirmar Nueva</label>
-                    <input type="password" required minLength="6" className="modal-ps-input" placeholder="••••••••" />
+                    <input type="password" required minLength="8" className="modal-ps-input" placeholder="••••••••"
+                      value={pwdData.confirmarContrasena}
+                      onChange={e => setPwdData(p => ({ ...p, confirmarContrasena: e.target.value }))} />
                   </div>
                 </div>
+                {pwdMsg && (
+                  <div style={{ padding: '10px 14px', borderRadius: '10px', background: pwdMsg.type === 'success' ? '#d1fae5' : '#fee2e2', color: pwdMsg.type === 'success' ? '#065f46' : '#991b1b', fontWeight: '700', fontSize: '0.88rem' }}>
+                    {pwdMsg.text}
+                  </div>
+                )}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', backgroundColor: C.infoBg, padding: '16px', borderRadius: '12px', border: `1px dashed ${C.infoBorder}` }}>
                   <span style={{ fontSize: '0.85rem', color: C.textSecondary, display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600' }}><span style={{ color: '#00d084', fontSize: '1.2rem' }}>✓</span> Mínimo 8 caracteres</span>
                   <span style={{ fontSize: '0.85rem', color: C.textSecondary, display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600' }}><span style={{ color: '#00d084', fontSize: '1.2rem' }}>✓</span> Al menos un número y un símbolo especial</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
-                  <button type="submit" className="btn-dark-ps" style={{ padding: '12px 24px' }}>Actualizar Contraseña</button>
+                  <button type="submit" className="btn-dark-ps" style={{ padding: '12px 24px' }} disabled={pwdSaving}>
+                    {pwdSaving ? 'Actualizando...' : 'Actualizar Contraseña'}
+                  </button>
                 </div>
               </form>
             </div>
@@ -800,15 +1297,15 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
           {/* Info de la reserva */}
           <div style={{ background: C.infoBg, borderRadius: '16px', padding: '14px 18px', marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '6px', textAlign: 'left' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ fontSize: '0.8rem', color: C.textSecondary, fontWeight: '600' }}>🏟️ Cancha</span>
+              <span style={{ fontSize: '0.8rem', color: C.textSecondary, fontWeight: '600' }}><i className="bi bi-building" /> Cancha</span>
               <span style={{ fontSize: '0.85rem', fontWeight: '800', color: C.textPrimary }}>{qrModal.courtName}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ fontSize: '0.8rem', color: C.textSecondary, fontWeight: '600' }}>📅 Fecha</span>
+              <span style={{ fontSize: '0.8rem', color: C.textSecondary, fontWeight: '600' }}><i className="bi bi-calendar3" /> Fecha</span>
               <span style={{ fontSize: '0.85rem', fontWeight: '700', color: C.textPrimary }}>{qrModal.date}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ fontSize: '0.8rem', color: C.textSecondary, fontWeight: '600' }}>⏰ Horario</span>
+              <span style={{ fontSize: '0.8rem', color: C.textSecondary, fontWeight: '600' }}><i className="bi bi-clock" /> Horario</span>
               <span style={{ fontSize: '0.85rem', fontWeight: '700', color: C.textPrimary }}>{qrModal.slot}</span>
             </div>
           </div>
@@ -822,14 +1319,14 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
               onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
             />
             <div style={{ display: 'none', width: '220px', height: '220px', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '8px', color: '#94a3b8' }}>
-              <span style={{ fontSize: '2rem' }}>⚠️</span>
+              <i className="bi bi-exclamation-triangle-fill" style={{ fontSize: '2rem', color: '#94a3b8' }} />
               <span style={{ fontSize: '0.8rem', fontWeight: '600' }}>No se pudo cargar el QR</span>
             </div>
           </div>
 
           <div style={{ background: 'linear-gradient(135deg, rgba(0,208,132,0.1), rgba(0,208,132,0.05))', border: '1px solid rgba(0,208,132,0.25)', borderRadius: '12px', padding: '12px 16px', marginBottom: '20px' }}>
             <p style={{ margin: 0, fontSize: '0.82rem', color: '#065f46', fontWeight: '700' }}>
-              📲 El propietario escaneará este código para confirmar tu asistencia
+              <i className="bi bi-phone-fill" /> El propietario escaneará este código para confirmar tu asistencia
             </p>
           </div>
 
@@ -951,7 +1448,7 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
                     )}
                     {selectedSlot !== null && (
                       <div style={{ background: 'linear-gradient(135deg, rgba(0,208,132,0.1), rgba(0,208,132,0.05))', border: '1px solid rgba(0,208,132,0.3)', borderRadius: '10px', padding: '10px 14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span style={{ fontSize: '1rem' }}>⏰</span>
+                        <i className="bi bi-clock" style={{ fontSize: '1rem', color: '#065f46' }} />
                         <span style={{ fontWeight: '800', color: '#065f46', fontSize: '0.9rem' }}>
                           {slots.find(s => s.hour === selectedSlot)?.label || `${String(selectedSlot).padStart(2,'0')}:00 - ${String(selectedSlot+1).padStart(2,'0')}:00`}
                         </span>
@@ -1055,20 +1552,20 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
                 {/* Detalles de la reserva */}
                 <div style={{ background: C.infoBg, borderRadius: '14px', padding: '18px', textAlign: 'left', marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   {[
-                    { icon: '🏟️', label: 'Cancha',  value: confirmedReservation.court },
-                    { icon: '📅', label: 'Fecha',   value: confirmedReservation.date },
-                    { icon: '⏰', label: 'Horario', value: confirmedReservation.slot },
-                    { icon: '💳', label: 'Pagado',  value: confirmedReservation.amount },
+                    { icon: 'bi-building',      label: 'Cancha',  value: confirmedReservation.court },
+                    { icon: 'bi-calendar3',     label: 'Fecha',   value: confirmedReservation.date },
+                    { icon: 'bi-clock',         label: 'Horario', value: confirmedReservation.slot },
+                    { icon: 'bi-credit-card-fill', label: 'Pagado', value: confirmedReservation.amount },
                   ].map(({ icon, label, value }) => (
                     <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '0.88rem', color: C.textSecondary, fontWeight: '600' }}>{icon} {label}</span>
+                      <span style={{ fontSize: '0.88rem', color: C.textSecondary, fontWeight: '600' }}><i className={`bi ${icon}`} /> {label}</span>
                       <span style={{ fontSize: '0.9rem', fontWeight: '800', color: C.textPrimary }}>{value}</span>
                     </div>
                   ))}
                 </div>
                 <div style={{ background: '#d1fae5', borderRadius: '10px', padding: '10px 14px', marginBottom: '8px' }}>
                   <p style={{ margin: 0, fontSize: '0.82rem', color: '#065f46', fontWeight: '700' }}>
-                    📧 Código QR enviado a tu correo — preséntalo al ingresar
+                    <i className="bi bi-envelope-fill" /> Código QR enviado a tu correo — preséntalo al ingresar
                   </p>
                 </div>
               </div>
@@ -1105,21 +1602,87 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
     {mapModal.show && mapModal.cancha && (
       <MapModal cancha={mapModal.cancha} onClose={() => setMapModal({ show: false, cancha: null })} darkMode={darkMode} />
     )}
+
+    {/* ─── TOUR ONBOARDING ───────────────────────────── */}
+    <AnimatePresence>
+      {showTour && (
+        <OnboardingTour
+          steps={JUGADOR_TOUR_STEPS}
+          onComplete={finishTour}
+          onSkip={finishTour}
+          onHighlight={setTourHighlight}
+          isDark={darkMode}
+        />
+      )}
+    </AnimatePresence>
     </>
   );
 };
 
+/* ── Confetti ────────────────────────────────────────── */
+const CONFETTI_COLORS = ['#00d084','#3b82f6','#f59e0b','#ef4444','#8b5cf6','#ec4899','#06b6d4'];
+const Confetti = () => {
+  const pieces = Array.from({ length: 72 }, (_, i) => ({
+    id: i,
+    color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+    x: Math.random() * 100,
+    delay: Math.random() * 1.5,
+    duration: 2.2 + Math.random() * 1.6,
+    size: 7 + Math.random() * 7,
+    rotate: Math.random() * 360,
+    drift: (Math.random() - 0.5) * 120,
+  }));
+  return (
+    <div style={{ position:'fixed', inset:0, pointerEvents:'none', zIndex:99999, overflow:'hidden' }}>
+      <style>{`
+        @keyframes cfall {
+          0%   { transform: translateY(-30px) translateX(0) rotate(0deg); opacity: 1; }
+          100% { transform: translateY(110vh) translateX(var(--drift)) rotate(var(--rotate)); opacity: 0; }
+        }
+      `}</style>
+      {pieces.map(p => (
+        <div key={p.id} style={{
+          position:'absolute', left:`${p.x}%`, top:0,
+          width:p.size, height:p.size * 0.55,
+          background:p.color, borderRadius:2,
+          '--drift':`${p.drift}px`, '--rotate':`${p.rotate + 540}deg`,
+          animation:`cfall ${p.duration}s ease-in ${p.delay}s forwards`,
+        }} />
+      ))}
+    </div>
+  );
+};
+
 /* ── Empty state ─────────────────────────────────────── */
-const EmptyState = ({ icon, title, message, darkMode = false }) => (
+const EmptyState = ({ icon, title, message, darkMode = false, cta }) => (
   <div style={{
-    gridColumn: '1 / -1', textAlign: 'center', padding: '60px 24px',
+    gridColumn: '1 / -1', textAlign: 'center', padding: '64px 32px',
     background: darkMode ? '#0f172a' : '#fff',
-    borderRadius: 20,
-    border: `1px solid ${darkMode ? '#1e293b' : '#f1f5f9'}`,
+    borderRadius: 24,
+    border: `1px dashed ${darkMode ? '#1e293b' : '#e2e8f0'}`,
+    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0,
   }}>
-    <div style={{ fontSize: '3rem', marginBottom: 12 }}>{icon}</div>
-    <h3 style={{ margin: '0 0 8px', color: darkMode ? '#f8fafc' : '#0f172a', fontWeight: 800 }}>{title}</h3>
-    <p style={{ margin: 0, color: '#94a3b8', maxWidth: 320, marginInline: 'auto' }}>{message}</p>
+    {/* Illustrated icon ring */}
+    <div style={{
+      width: 88, height: 88, borderRadius: '50%',
+      background: darkMode ? 'rgba(255,255,255,0.04)' : '#f8fafc',
+      border: `2px dashed ${darkMode ? '#1e293b' : '#e2e8f0'}`,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontSize: '2.6rem', marginBottom: 20,
+      boxShadow: darkMode ? '0 0 40px rgba(0,208,132,0.04)' : '0 4px 20px rgba(0,0,0,0.04)',
+    }}>
+      {icon}
+    </div>
+    <h3 style={{ margin: '0 0 8px', color: darkMode ? '#f8fafc' : '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>{title}</h3>
+    <p style={{ margin: 0, color: '#94a3b8', maxWidth: 300, marginInline: 'auto', fontSize: '.9rem', lineHeight: 1.6 }}>{message}</p>
+    {cta && (
+      <button
+        onClick={cta.onClick}
+        style={{ marginTop: 20, padding: '10px 22px', borderRadius: 12, border: 'none', background: 'linear-gradient(135deg,#00d084,#00b875)', color: '#0f172a', fontWeight: 800, fontSize: '.9rem', cursor: 'pointer', boxShadow: '0 4px 16px rgba(0,208,132,0.25)' }}
+      >
+        {cta.label}
+      </button>
+    )}
   </div>
 );
 
@@ -1135,25 +1698,61 @@ const sportColor = (type = '') => {
   return SPORT_COLORS[key] || '#64748b';
 };
 
-const CourtCard = ({ cancha, isFavorito, onToggleFavorito, onReservar, onVerMapa, darkMode = false }) => {
+/* ── Mini star rating ────────────────────────────────── */
+const MiniStars = ({ rating, count }) => {
+  if (!rating) return <span style={{ fontSize: '.75rem', color: '#64748b' }}>Sin reseñas</span>;
+  const full = Math.floor(rating);
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+      {[1,2,3,4,5].map(i => (
+        <svg key={i} width="11" height="11" viewBox="0 0 24 24"
+          fill={i <= full ? '#f59e0b' : 'none'} stroke="#f59e0b" strokeWidth="1.5"
+          strokeLinecap="round" strokeLinejoin="round">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+      ))}
+      <span style={{ fontSize: '.75rem', color: '#f59e0b', fontWeight: 700 }}>{rating.toFixed(1)}</span>
+      {count > 0 && <span style={{ fontSize: '.72rem', color: '#64748b' }}>({count})</span>}
+    </span>
+  );
+};
+
+const CourtCard = ({ cancha, isFavorito, onToggleFavorito, onReservar, onVerMapa, darkMode = false, compact = false }) => {
   const accent = sportColor(cancha.type);
   const cardBg = darkMode ? '#0f172a' : '#fff';
   const cardBorder = darkMode ? '#1e293b' : '#e2e8f0';
   const textPrimary = darkMode ? '#f8fafc' : '#0f172a';
   const textMuted = '#94a3b8';
   const dividerColor = darkMode ? '#1e293b' : '#f1f5f9';
+
+  const handleShare = async (e) => {
+    e.stopPropagation();
+    const shareData = {
+      title: `${cancha.name} — PlayStop`,
+      text: `Reserva ${cancha.type} en ${cancha.name}. Desde ${cancha.price}/hora`,
+      url: `${window.location.origin}/reservar/${cancha.id}`,
+    };
+    if (navigator.share) {
+      try { await navigator.share(shareData); } catch {}
+    } else {
+      navigator.clipboard?.writeText(shareData.url);
+      alert('¡Enlace copiado!');
+    }
+  };
+
   return (
     <div className="card-hover" style={{
       backgroundColor: cardBg, borderRadius: 20,
       border: `1px solid ${cardBorder}`, overflow: 'hidden',
       transition: 'all .28s ease', display: 'flex', flexDirection: 'column',
     }}>
-      <div style={{ position: 'relative', height: 168 }}>
+      <div style={{ position: 'relative', height: compact ? 140 : 168 }}>
         <div style={{
           height: '100%',
           backgroundImage: `url(${cancha.img})`,
           backgroundSize: 'cover', backgroundPosition: 'center',
         }} />
+        <div style={{ position:'absolute', inset:0, background:'linear-gradient(to top, rgba(0,0,0,0.35) 0%, transparent 50%)' }} />
         <span style={{
           position: 'absolute', top: 12, left: 12,
           background: accent, color: '#fff',
@@ -1164,30 +1763,55 @@ const CourtCard = ({ cancha, isFavorito, onToggleFavorito, onReservar, onVerMapa
         }}>
           {cancha.type}
         </span>
-        {/* Botón favorito */}
-        <button
-          onClick={(e) => { e.stopPropagation(); onToggleFavorito(); }}
-          title={isFavorito ? 'Quitar de favoritos' : 'Agregar a favoritos'}
-          style={{
-            position: 'absolute', top: 10, right: 12,
-            width: '34px', height: '34px', borderRadius: '50%',
-            border: 'none', cursor: 'pointer',
-            backgroundColor: 'rgba(255,255,255,0.92)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '1.15rem', transition: 'all 0.2s',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-          }}
-          onMouseOver={e => e.currentTarget.style.transform = 'scale(1.15)'}
-          onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
-        >
-          {isFavorito ? '❤️' : '🤍'}
-        </button>
+        <div style={{ position:'absolute', top:10, right:12, display:'flex', gap:6 }}>
+          {/* Share button */}
+          <button
+            onClick={handleShare}
+            title="Compartir cancha"
+            style={{
+              width: '34px', height: '34px', borderRadius: '50%',
+              border: 'none', cursor: 'pointer',
+              backgroundColor: 'rgba(255,255,255,0.92)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '.85rem', transition: 'all 0.2s',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+            }}
+            onMouseOver={e => e.currentTarget.style.transform = 'scale(1.15)'}
+            onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            </svg>
+          </button>
+          {/* Favorito */}
+          <button
+            onClick={(e) => { e.stopPropagation(); onToggleFavorito(); }}
+            title={isFavorito ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+            style={{
+              width: '34px', height: '34px', borderRadius: '50%',
+              border: 'none', cursor: 'pointer',
+              backgroundColor: 'rgba(255,255,255,0.92)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '1.15rem', transition: 'all 0.2s',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+            }}
+            onMouseOver={e => e.currentTarget.style.transform = 'scale(1.15)'}
+            onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+          >
+            <i className={`bi ${isFavorito ? 'bi-heart-fill' : 'bi-heart'}`} style={{ color: isFavorito ? '#ef4444' : '#94a3b8' }} />
+          </button>
+        </div>
       </div>
 
-      <div style={{ padding: '18px 20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <h4 style={{ margin: '0 0 6px', fontSize: '1rem', fontWeight: 800, color: textPrimary }}>
+      <div style={{ padding: '16px 20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <h4 style={{ margin: '0 0 4px', fontSize: '1rem', fontWeight: 800, color: textPrimary }}>
           {cancha.name}
         </h4>
+        {/* Star rating */}
+        <div style={{ marginBottom: 6 }}>
+          <MiniStars rating={cancha.averageRating} count={cancha.reviewCount} />
+        </div>
         {cancha.location && (
           <p style={{ margin: '0 0 10px', fontSize: '.8rem', color: textMuted, display: 'flex', alignItems: 'center', gap: 4 }}>
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -1247,10 +1871,6 @@ const MapModal = ({ cancha, onClose, darkMode = false }) => {
     hasCoords ? `${cancha.lat},${cancha.lng}` : `${cancha.name} ${cancha.location}`
   );
 
-  const mapSrc = hasCoords
-    ? `https://www.openstreetmap.org/export/embed.html?bbox=${cancha.lng - 0.008},${cancha.lat - 0.006},${cancha.lng + 0.008},${cancha.lat + 0.006}&layer=mapnik&marker=${cancha.lat},${cancha.lng}`
-    : `https://www.openstreetmap.org/export/embed.html?bbox=-77.05,-12.12,-76.97,-12.05&layer=mapnik`;
-
   const googleMapsUrl = hasCoords
     ? `https://www.google.com/maps/dir/?api=1&destination=${cancha.lat},${cancha.lng}`
     : `https://www.google.com/maps/search/?api=1&query=${query}`;
@@ -1275,7 +1895,9 @@ const MapModal = ({ cancha, onClose, darkMode = false }) => {
         <div style={{ position: 'relative', width: '100%', height: '280px', background: '#e2e8f0' }}>
           <iframe
             title="Mapa de la cancha"
-            src={mapSrc}
+            src={hasCoords
+              ? `https://www.openstreetmap.org/export/embed.html?bbox=${cancha.lng - 0.008},${cancha.lat - 0.006},${cancha.lng + 0.008},${cancha.lat + 0.006}&layer=mapnik&marker=${cancha.lat},${cancha.lng}`
+              : `https://www.openstreetmap.org/export/embed.html?bbox=-77.05,-12.12,-76.97,-12.05&layer=mapnik`}
             style={{ width: '100%', height: '100%', border: 'none' }}
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"

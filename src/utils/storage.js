@@ -1,4 +1,4 @@
-﻿const PREFIX = 'playstop_';
+﻿const PREFIX = 'playspot_';
 
 export const storage = {
   get: (key) => {

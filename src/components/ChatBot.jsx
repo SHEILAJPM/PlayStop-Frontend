@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 const RESPONSES = [
   {
     keywords: ['hola', 'buenas', 'buenos', 'hey', 'hi', 'saludos', 'buen día', 'buenas tardes', 'buenas noches'],
-    answer: '¡Hola! 👋 Soy el asistente de PlayStop. Puedo ayudarte con reservas, precios, soporte técnico y más. ¿En qué te ayudo hoy?',
+    answer: '¡Hola! 👋 Soy el asistente de PlaySpot. Puedo ayudarte con reservas, precios, soporte técnico y más. ¿En qué te ayudo hoy?',
   },
   {
     keywords: ['gracias', 'thanks', 'perfecto', 'genial', 'excelente', 'ok', 'okey', 'entendido'],
@@ -32,7 +32,7 @@ const RESPONSES = [
   },
   {
     keywords: ['pago dividido', 'dividir pago', 'split', 'entre amigos', 'entre varios'],
-    answer: '💳 ¡El pago dividido es muy fácil! Al reservar, pagas solo tu parte. PlayStop genera un enlace único que compartes con tus amigos por WhatsApp. Ellos tienen hasta 2 horas antes del partido para pagar su parte. ¡Adiós deudas!',
+    answer: '💳 ¡El pago dividido es muy fácil! Al reservar, pagas solo tu parte. PlaySpot genera un enlace único que compartes con tus amigos por WhatsApp. Ellos tienen hasta 2 horas antes del partido para pagar su parte. ¡Adiós deudas!',
   },
   // --- Precios y planes ---
   {
@@ -41,11 +41,11 @@ const RESPONSES = [
   },
   {
     keywords: ['plan', 'planes', 'suscripción', 'suscripcion', 'mensual', 'comisión', 'comision'],
-    answer: '📊 PlayStop tiene dos planes para propietarios:\n\n• **Básico**: 0 costo de afiliación + comisión por reserva exitosa\n• **PRO**: cuota mensual fija con analíticas avanzadas, gestión de calendario y soporte prioritario\n\nPara jugadores, la app es siempre gratuita.',
+    answer: '📊 PlaySpot tiene dos planes para propietarios:\n\n• **Básico**: 0 costo de afiliación + comisión por reserva exitosa\n• **PRO**: cuota mensual fija con analíticas avanzadas, gestión de calendario y soporte prioritario\n\nPara jugadores, la app es siempre gratuita.',
   },
   {
     keywords: ['gratis', 'gratuito', 'free', 'sin costo', 'cobro'],
-    answer: '🎉 ¡Sí! Para los jugadores, usar PlayStop para buscar canchas y reservar es completamente gratis. Solo pagas el alquiler de la cancha al momento de reservar.',
+    answer: '🎉 ¡Sí! Para los jugadores, usar PlaySpot para buscar canchas y reservar es completamente gratis. Solo pagas el alquiler de la cancha al momento de reservar.',
   },
   {
     keywords: ['ingresos', 'cobro propietario', 'recibir dinero', 'depósito', 'deposito', 'pago a propietario'],
@@ -58,7 +58,7 @@ const RESPONSES = [
   },
   {
     keywords: ['fútbol', 'futbol', 'pádel', 'padel', 'tenis', 'vóley', 'voley', 'básquet', 'basquet', 'deporte', 'deportes'],
-    answer: '⚽🎾🏐 PlayStop tiene canchas de:\n• **Fútbol** (grass, sintético)\n• **Pádel**\n• **Tenis**\n• **Vóley**\n• **Básquet**\n\nFiltra por deporte en la sección "Buscar Canchas" de tu dashboard.',
+    answer: '⚽🎾🏐 PlaySpot tiene canchas de:\n• **Fútbol** (grass, sintético)\n• **Pádel**\n• **Tenis**\n• **Vóley**\n• **Básquet**\n\nFiltra por deporte en la sección "Buscar Canchas" de tu dashboard.',
   },
   {
     keywords: ['favoritos', 'favorita', 'guardar cancha'],
@@ -67,38 +67,38 @@ const RESPONSES = [
   // --- Soporte técnico ---
   {
     keywords: ['contraseña', 'contrasena', 'olvidé', 'olvide', 'no puedo entrar', 'recuperar cuenta', 'forgot'],
-    answer: '🔐 Para recuperar tu contraseña:\n1. Ve a la pantalla de inicio de sesión\n2. Haz clic en **"¿Olvidaste tu contraseña?"**\n3. Ingresa tu correo\n4. Recibirás un código de verificación\n5. Ingresa el código y crea una nueva contraseña\n\n¿Sigues teniendo problemas? Escríbenos a soporte@playstop.pe',
+    answer: '🔐 Para recuperar tu contraseña:\n1. Ve a la pantalla de inicio de sesión\n2. Haz clic en **"¿Olvidaste tu contraseña?"**\n3. Ingresa tu correo\n4. Recibirás un código de verificación\n5. Ingresa el código y crea una nueva contraseña\n\n¿Sigues teniendo problemas? Escríbenos a soporte@playspot.pe',
   },
   {
     keywords: ['login', 'iniciar sesión', 'iniciar sesion', 'ingresar', 'no me deja entrar', 'no puedo logear', 'error al entrar'],
-    answer: '🔑 Si tienes problemas para iniciar sesión:\n1. Verifica que tu correo y contraseña sean correctos\n2. Si olvidaste tu contraseña, usa "¿Olvidaste tu contraseña?"\n3. Asegúrate de tener conexión a internet\n\nSi el problema persiste, escríbenos a soporte@playstop.pe',
+    answer: '🔑 Si tienes problemas para iniciar sesión:\n1. Verifica que tu correo y contraseña sean correctos\n2. Si olvidaste tu contraseña, usa "¿Olvidaste tu contraseña?"\n3. Asegúrate de tener conexión a internet\n\nSi el problema persiste, escríbenos a soporte@playspot.pe',
   },
   {
     keywords: ['registrar', 'registro', 'crear cuenta', 'nueva cuenta', 'sign up'],
-    answer: '✍️ Para crear tu cuenta en PlayStop:\n1. Haz clic en **"Registrarse"** en la página principal\n2. Ingresa tu nombre, correo y contraseña\n3. Confirma tu correo con el código que te enviamos\n4. ¡Listo! Ya puedes buscar y reservar canchas\n\n¡Es completamente gratis!',
+    answer: '✍️ Para crear tu cuenta en PlaySpot:\n1. Haz clic en **"Registrarse"** en la página principal\n2. Ingresa tu nombre, correo y contraseña\n3. Confirma tu correo con el código que te enviamos\n4. ¡Listo! Ya puedes buscar y reservar canchas\n\n¡Es completamente gratis!',
   },
   {
     keywords: ['error', 'falla', 'no funciona', 'problema', 'bug', 'no carga'],
-    answer: '⚠️ Lamentamos los inconvenientes. Para reportar un problema:\n• Intenta recargar la página\n• Limpia el caché de tu navegador\n• Si el problema persiste, escríbenos a **soporte@playstop.pe** con una captura de pantalla del error.\n\n¡Lo resolveremos a la brevedad!',
+    answer: '⚠️ Lamentamos los inconvenientes. Para reportar un problema:\n• Intenta recargar la página\n• Limpia el caché de tu navegador\n• Si el problema persiste, escríbenos a **soporte@playspot.pe** con una captura de pantalla del error.\n\n¡Lo resolveremos a la brevedad!',
   },
   {
     keywords: ['soporte', 'ayuda', 'contacto', 'contactar', 'atención', 'atencion', 'servicio al cliente'],
-    answer: '📞 Puedes contactar a nuestro equipo de soporte:\n• 📧 **Email**: soporte@playstop.pe\n• 💬 **WhatsApp**: +51 900 000 000\n• Horario: Lun–Vie 9am a 6pm (Lima, Perú)\n\nTambién puedes usar el formulario en la sección "Contacto" de nuestra web.',
+    answer: '📞 Puedes contactar a nuestro equipo de soporte:\n• 📧 **Email**: soporte@playspot.pe\n• 💬 **WhatsApp**: +51 900 000 000\n• Horario: Lun–Vie 9am a 6pm (Lima, Perú)\n\nTambién puedes usar el formulario en la sección "Contacto" de nuestra web.',
   },
   // --- Club / Propietario ---
   {
     keywords: ['club', 'complejo', 'propietario', 'registrar cancha', 'publicar cancha', 'tengo canchas', 'dueño'],
-    answer: '🏢 ¿Eres propietario de un complejo deportivo? Con PlayStop puedes:\n• Publicar tus canchas en minutos\n• Gestionar reservas y calendario\n• Recibir pagos automáticos\n• Ver analíticas de tus ingresos\n\nEscríbenos a **clubes@playstop.pe** o regístrate como propietario desde nuestra web.',
+    answer: '🏢 ¿Eres propietario de un complejo deportivo? Con PlaySpot puedes:\n• Publicar tus canchas en minutos\n• Gestionar reservas y calendario\n• Recibir pagos automáticos\n• Ver analíticas de tus ingresos\n\nEscríbenos a **clubes@playspot.pe** o regístrate como propietario desde nuestra web.',
   },
   {
-    keywords: ['PlayStop', 'playstop', 'qué es', 'que es', 'cómo funciona', 'como funciona'],
-    answer: '🎯 **PlayStop** es la plataforma para reservar canchas deportivas en Perú. Conectamos jugadores con complejos deportivos para que reservar sea fácil, rápido y seguro.\n\n• Para **jugadores**: encuentra y reserva canchas en segundos\n• Para **clubes**: gestiona reservas y cobra automáticamente\n\n¿Quieres saber algo más específico?',
+    keywords: ['PlaySpot', 'playspot', 'qué es', 'que es', 'cómo funciona', 'como funciona'],
+    answer: '🎯 **PlaySpot** es la plataforma para reservar canchas deportivas en Perú. Conectamos jugadores con complejos deportivos para que reservar sea fácil, rápido y seguro.\n\n• Para **jugadores**: encuentra y reserva canchas en segundos\n• Para **clubes**: gestiona reservas y cobra automáticamente\n\n¿Quieres saber algo más específico?',
   },
 ];
 
-const DEFAULT_RESPONSE = '🤔 No estoy seguro de entenderte. Puedes preguntarme sobre:\n• **Reservas** (cómo reservar, cancelar, QR)\n• **Precios** (costos, planes, comisiones)\n• **Canchas** (buscar, filtrar, favoritos)\n• **Soporte** (login, contraseña, errores)\n\nO escríbenos directamente a soporte@playstop.pe';
+const DEFAULT_RESPONSE = '🤔 No estoy seguro de entenderte. Puedes preguntarme sobre:\n• **Reservas** (cómo reservar, cancelar, QR)\n• **Precios** (costos, planes, comisiones)\n• **Canchas** (buscar, filtrar, favoritos)\n• **Soporte** (login, contraseña, errores)\n\nO escríbenos directamente a soporte@playspot.pe';
 
-const WELCOME = '¡Hola! 👋 Soy el asistente virtual de **PlayStop**. Estoy aquí para ayudarte con reservas, precios, soporte y más.\n\n¿En qué puedo ayudarte hoy?';
+const WELCOME = '¡Hola! 👋 Soy el asistente virtual de **PlaySpot**. Estoy aquí para ayudarte con reservas, precios, soporte y más.\n\n¿En qué puedo ayudarte hoy?';
 
 function getResponse(input) {
   const text = input.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
@@ -124,10 +124,10 @@ function renderText(text) {
 }
 
 const QUICK_OPTIONS = [
-  { label: '📅 ¿Cómo reservo?', text: '¿Cómo reservar una cancha?' },
-  { label: '💰 Precios', text: '¿Cuánto cuesta?' },
-  { label: '❌ Cancelar reserva', text: '¿Cómo cancelo una reserva?' },
-  { label: '🔐 Olvidé mi contraseña', text: 'Olvidé mi contraseña' },
+  { icon: 'bi-calendar-check', label: '¿Cómo reservo?',      text: '¿Cómo reservar una cancha?' },
+  { icon: 'bi-cash-coin',      label: 'Precios',              text: '¿Cuánto cuesta?' },
+  { icon: 'bi-x-circle',       label: 'Cancelar reserva',     text: '¿Cómo cancelo una reserva?' },
+  { icon: 'bi-lock-fill',      label: 'Olvidé mi contraseña', text: 'Olvidé mi contraseña' },
 ];
 
 export default function ChatBot({ darkMode = false }) {
@@ -171,8 +171,6 @@ export default function ChatBot({ darkMode = false }) {
   const surface = dk ? '#1e293b' : '#f8fafc';
   const border = dk ? '#334155' : '#e2e8f0';
   const textPrimary = dk ? '#f8fafc' : '#0f172a';
-  const textMuted = dk ? '#94a3b8' : '#64748b';
-
   return (
     <>
       <style>{`
@@ -206,9 +204,9 @@ export default function ChatBot({ darkMode = false }) {
             {/* Header */}
             <div style={{ padding: '14px 18px', background: 'linear-gradient(135deg, #0f172a, #1e3a5f)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(0,208,132,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>🤖</div>
+                <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(0,208,132,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', color: '#00d084' }}><i className="bi bi-robot" /></div>
                 <div>
-                  <div style={{ color: '#fff', fontWeight: '800', fontSize: '0.95rem', lineHeight: 1 }}>Asistente PlayStop</div>
+                  <div style={{ color: '#fff', fontWeight: '800', fontSize: '0.95rem', lineHeight: 1 }}>Asistente PlaySpot</div>
                   <div style={{ color: '#00d084', fontSize: '0.72rem', fontWeight: '700', marginTop: '3px', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#00d084', display: 'inline-block' }} />
                     En línea
@@ -243,7 +241,7 @@ export default function ChatBot({ darkMode = false }) {
               <div style={{ padding: '8px 14px 4px', background: surface, display: 'flex', gap: '6px', flexWrap: 'wrap', borderTop: `1px solid ${border}` }}>
                 {QUICK_OPTIONS.map(opt => (
                   <button key={opt.label} className="quick-chip" onClick={() => sendMessage(opt.text)}>
-                    {opt.label}
+                    <i className={`bi ${opt.icon}`} style={{ marginRight: 5 }} />{opt.label}
                   </button>
                 ))}
               </div>

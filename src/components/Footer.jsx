@@ -17,8 +17,8 @@ const Footer = () => {
           {/* Marca y Descripción */}
           <div style={{ flex: '1 1 300px', maxWidth: '400px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-              <img src="/favicon.svg" alt="PlayStop" style={{ width: '32px', height: '32px', filter: 'grayscale(1) brightness(2)' }} />
-              <span style={{ fontSize: '1.5rem', color: '#ffffff', fontWeight: '900', letterSpacing: '-0.5px' }}>PlayStop</span>
+              <img src="/favicon.svg" alt="PlaySpot" style={{ width: '32px', height: '32px', filter: 'grayscale(1) brightness(2)' }} />
+              <span style={{ fontSize: '1.5rem', color: '#ffffff', fontWeight: '900', letterSpacing: '-0.5px' }}>PlaySpot</span>
             </div>
             <p style={{ lineHeight: '1.7', fontSize: '0.95rem', marginBottom: '24px' }}>
               El ecosistema digital definitivo para el deporte amateur. Conectamos a jugadores apasionados con las mejores infraestructuras deportivas, erradicando la informalidad.
@@ -71,7 +71,7 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="footer-bottom-bar" style={{ paddingTop: '30px', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '20px' }}>
-          <p style={{ margin: 0, fontSize: '0.85rem' }}>&copy; {new Date().getFullYear()} PlayStop Inc. Todos los derechos reservados.</p>
+          <p style={{ margin: 0, fontSize: '0.85rem' }}>&copy; {new Date().getFullYear()} PlaySpot Inc. Todos los derechos reservados.</p>
           <div style={{ display: 'flex', gap: '20px', fontSize: '0.85rem' }}>
              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#00d084' }}></span> Sistemas Operativos

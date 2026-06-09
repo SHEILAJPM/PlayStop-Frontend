@@ -1,9 +1,65 @@
 
 import { useState, useEffect, useRef } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import { DashboardLayout, MetricCard, SkeletonCard, SkeletonTable, SkeletonCourtGrid } from './DashboardLayout.jsx';
 // bootstrap imported globally in main.jsx
 import CalendarioCancha from './CalendarioCancha.jsx';
 import { api } from '../../services/api.js';
+import { useOnboarding } from '../../hooks/useOnboarding.js';
+import OnboardingTour from '../onboarding/OnboardingTour.jsx';
+
+const PROPIETARIO_TOUR_STEPS = [
+  {
+    icon: 'bi-star-fill',
+    gradient: 'linear-gradient(135deg,#f59e0b,#d97706)',
+    shadowColor: 'rgba(245,158,11,0.4)',
+    title: '¡Bienvenido, Propietario!',
+    description: 'Desde aquí gestionas todo tu complejo deportivo: canchas, reservas, ingresos y verificación de asistencia.',
+    highlight: null,
+  },
+  {
+    icon: 'bi-building',
+    gradient: 'linear-gradient(135deg,#3b82f6,#1d4ed8)',
+    shadowColor: 'rgba(59,130,246,0.4)',
+    title: 'Gestiona tus Canchas',
+    description: 'Agrega nuevas canchas, sube fotos, establece el precio por hora y actívalas o desactívalas cuando quieras.',
+    highlight: 'Mis Canchas',
+    tip: 'Canchas con fotos reciben hasta 3× más reservas.',
+  },
+  {
+    icon: 'bi-calendar3',
+    gradient: 'linear-gradient(135deg,#00d084,#00b875)',
+    shadowColor: 'rgba(0,208,132,0.4)',
+    title: 'Calendario de Reservas',
+    description: 'Visualiza todas las reservas en un calendario claro. Filtra por cancha, fecha y estado. Sin sorpresas.',
+    highlight: 'Calendario de Reservas',
+  },
+  {
+    icon: 'bi-phone-fill',
+    gradient: 'linear-gradient(135deg,#8b5cf6,#6d28d9)',
+    shadowColor: 'rgba(139,92,246,0.4)',
+    title: 'Verificar Asistencia con QR',
+    description: 'Cuando llegue un jugador, escanea su código QR desde esta sección. Confirmación instantánea sin papel.',
+    highlight: 'Escanear QR',
+    tip: 'Funciona desde el celular. Solo apunta la cámara al QR del jugador.',
+  },
+  {
+    icon: 'bi-cash-coin',
+    gradient: 'linear-gradient(135deg,#00d084,#065f46)',
+    shadowColor: 'rgba(0,208,132,0.35)',
+    title: 'Control de Finanzas',
+    description: 'Sigue tus ingresos en tiempo real, analiza el rendimiento de cada cancha y exporta reportes.',
+    highlight: 'Finanzas',
+  },
+  {
+    icon: 'bi-check-circle-fill',
+    gradient: 'linear-gradient(135deg,#00d084,#3b82f6)',
+    shadowColor: 'rgba(0,208,132,0.4)',
+    title: '¡Tu complejo está listo!',
+    description: 'Empieza agregando tu primera cancha en "Mis Canchas" para que los jugadores puedan encontrarla y reservarla.',
+    highlight: null,
+  },
+];
 
 const DEFAULT_IMG = 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=500&q=80';
 
@@ -77,7 +133,7 @@ const ImageUploader = ({ preview, dragOver, uploading, onFile, onDragOver, onDra
       ) : (
         <>
           <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: 'rgba(0,208,132,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px', fontSize: '1.5rem' }}>
-            {uploading ? '⏳' : '📷'}
+            <i className={`bi ${uploading ? 'bi-hourglass-split' : 'bi-camera-fill'}`} />
           </div>
           <p style={{ margin: 0, fontWeight: '700', color: isDark ? '#94a3b8' : '#334155', fontSize: '0.95rem' }}>
             {uploading ? 'Subiendo...' : 'Haz clic o arrastra una foto'}
@@ -91,17 +147,17 @@ const ImageUploader = ({ preview, dragOver, uploading, onFile, onDragOver, onDra
 );
 
 const ICON_MAP = {
-  Deportivos: ['⚽', '🏀', '🎾', '🏐', '🥊', '🎽', '👟', '🥅'],
-  Abarrotes:  ['💧', '🥤', '🍫', '🍌', '🧃', '🍬', '🥜', '🍞'],
+  Deportivos: ['bi-dribbble', 'bi-circle-half', 'bi-circle-fill', 'bi-record-circle', 'bi-shield-fill', 'bi-person-running', 'bi-lightning-fill', 'bi-trophy-fill'],
+  Abarrotes:  ['bi-droplet-fill', 'bi-cup-straw', 'bi-box-seam', 'bi-apple', 'bi-cup', 'bi-candy', 'bi-bag', 'bi-basket2'],
 };
 
 const TIENDA_DEFAULT = [
-  { id: 1, name: 'Pelota de Fútbol', category: 'Deportivos', price: 45.00, stock: 10, icon: '⚽', imageUrl: null },
-  { id: 2, name: 'Guantes de Arquero', category: 'Deportivos', price: 65.00, stock: 5,  icon: '🥅', imageUrl: null },
-  { id: 3, name: 'Rodilleras Profesionales', category: 'Deportivos', price: 35.00, stock: 8, icon: '🎽', imageUrl: null },
-  { id: 4, name: 'Agua Mineral 600ml', category: 'Abarrotes', price: 2.50, stock: 80, icon: '💧', imageUrl: null },
-  { id: 5, name: 'Gatorade 500ml', category: 'Abarrotes', price: 5.00, stock: 40, icon: '🥤', imageUrl: null },
-  { id: 6, name: 'Barra Energética', category: 'Abarrotes', price: 3.50, stock: 30, icon: '🍫', imageUrl: null },
+  { id: 1, name: 'Pelota de Fútbol', category: 'Deportivos', price: 45.00, stock: 10, icon: 'bi-dribbble', imageUrl: null },
+  { id: 2, name: 'Guantes de Arquero', category: 'Deportivos', price: 65.00, stock: 5,  icon: 'bi-shield-fill', imageUrl: null },
+  { id: 3, name: 'Rodilleras Profesionales', category: 'Deportivos', price: 35.00, stock: 8, icon: 'bi-person-running', imageUrl: null },
+  { id: 4, name: 'Agua Mineral 600ml', category: 'Abarrotes', price: 2.50, stock: 80, icon: 'bi-droplet-fill', imageUrl: null },
+  { id: 5, name: 'Gatorade 500ml', category: 'Abarrotes', price: 5.00, stock: 40, icon: 'bi-cup-straw', imageUrl: null },
+  { id: 6, name: 'Barra Energética', category: 'Abarrotes', price: 3.50, stock: 30, icon: 'bi-box-seam', imageUrl: null },
 ];
 
 const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => {
@@ -127,6 +183,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
     rowHover: darkMode ? '#1a2236' : '#fafbff',
   };
   const [activeTab, setActiveTab] = useState('Dashboard');
+  const { showTour, finishTour, retakeTour, tourHighlight, setTourHighlight } = useOnboarding('propietario');
 
   const [canchas, setCanchas] = useState([]);
   const [loadingCanchas, setLoadingCanchas] = useState(true);
@@ -355,14 +412,16 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
     <DashboardLayout user={user} onLogout={onLogout} darkMode={darkMode} toggleTheme={toggleTheme}
       title={activeTab === 'Dashboard' ? 'Panel del Complejo' : activeTab}
       activeTab={activeTab} onTabChange={setActiveTab}
+      tourHighlight={tourHighlight} onRestartTour={retakeTour}
       menuItems={[
-        { icon: '📊', label: 'Dashboard' },
-        { icon: '📅', label: 'Calendario de Reservas' },
-        { icon: '🏟️', label: 'Mis Canchas' },
-        { icon: '📱', label: 'Escanear QR' },
-        { icon: '🛒', label: 'Tienda' },
-        { icon: '💰', label: 'Finanzas' },
-        { icon: '👤', label: 'Mi Perfil' },
+        { icon: 'bi-grid-fill',           label: 'Dashboard' },
+        { icon: 'bi-calendar3',           label: 'Calendario de Reservas' },
+        { icon: 'bi-geo-alt-fill',        label: 'Mis Canchas' },
+        { icon: 'bi-qr-code-scan',        label: 'Escanear QR' },
+        { icon: 'bi-shop',                label: 'Tienda' },
+        { icon: 'bi-cash-stack',          label: 'Finanzas' },
+        { icon: 'bi-bar-chart-fill',      label: 'Analíticas' },
+        { icon: 'bi-person-circle',       label: 'Mi Perfil' },
       ]}>
 
       {/* ─── Dashboard ─────────────────────────────────── */}
@@ -389,7 +448,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
               <SkeletonTable rows={4} />
             ) : reservas.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '48px', color: C.textMuted }}>
-                <div style={{ fontSize: '2.5rem', marginBottom: 10 }}>📭</div>
+                <div style={{ fontSize: '2.5rem', marginBottom: 10 }}><i className="bi bi-inbox" /></div>
                 <p style={{ margin: 0, fontWeight: 600, color: C.textSecondary }}>Aún no tienes reservas registradas.</p>
               </div>
             ) : (
@@ -425,7 +484,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
       {activeTab === 'Calendario de Reservas' && (
         loadingReservas ? (
           <div className="dashboard-card-ps" style={{ textAlign: 'center', padding: '60px', color: '#64748b' }}>
-            <div style={{ fontSize: '2rem', marginBottom: '12px' }}>📅</div>
+            <div style={{ fontSize: '2rem', marginBottom: '12px' }}><i className="bi bi-calendar3" /></div>
             <p style={{ margin: 0, fontWeight: '600' }}>Cargando calendario...</p>
           </div>
         ) : (
@@ -446,7 +505,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
             <SkeletonCourtGrid count={3} />
           ) : canchas.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '60px 24px', background: C.cardBg, borderRadius: 20, border: `1px solid ${C.cardBorder}` }}>
-              <div style={{ fontSize: '3rem', marginBottom: 12 }}>🏟️</div>
+              <div style={{ fontSize: '3rem', marginBottom: 12 }}><i className="bi bi-building" /></div>
               <h3 style={{ margin: '0 0 8px', color: C.textPrimary, fontWeight: 800 }}>Sin canchas registradas</h3>
               <p style={{ margin: 0, color: C.textMuted }}>Agrega tu primera cancha para empezar a recibir reservas.</p>
             </div>
@@ -462,7 +521,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
                   <div style={{ padding: '20px' }}>
                     <h4 style={{ margin: '0 0 4px 0', fontSize: '1.1rem', fontWeight: '800', color: C.textPrimary }}>{cancha.name}</h4>
                     <p style={{ margin: '0 0 4px 0', fontSize: '0.9rem', color: C.textSecondary, fontWeight: '500' }}>{cancha.type}</p>
-                    {cancha.location && <p style={{ margin: '0 0 14px 0', fontSize: '0.8rem', color: C.textMuted }}>📍 {cancha.location}</p>}
+                    {cancha.location && <p style={{ margin: '0 0 14px 0', fontSize: '0.8rem', color: C.textMuted }}><i className="bi bi-geo-alt-fill" /> {cancha.location}</p>}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `1px solid ${C.cardBorder}`, paddingTop: '14px' }}>
                       <span style={{ fontSize: '1.1rem', fontWeight: '900', color: C.textPrimary }}>{cancha.price}<span style={{ fontSize: '0.8rem', color: C.textMuted, fontWeight: '500' }}>/hora</span></span>
                       <div style={{ display: 'flex', gap: '8px' }}>
@@ -562,7 +621,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
                       </div>
                     ) : (
                       <div style={{ height: '100px', background: C.infoBg, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
-                        <span style={{ fontSize: '2.2rem' }}>{producto.icon}</span>
+                        <i className={`bi ${producto.icon}`} style={{ fontSize: '2.2rem' }} />
                         <span style={{
                           fontSize: '0.68rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.5px',
                           color: producto.category === 'Deportivos' ? C.tagDeportivosColor : C.tagAbarrotesColor,
@@ -574,7 +633,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
                     <div style={{ padding: '14px 16px', flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
                       <h4 style={{ margin: '0 0 2px', fontWeight: '800', color: C.textPrimary, fontSize: '0.95rem' }}>{producto.name}</h4>
                       <p style={{ margin: 0, color: producto.stock <= 5 ? '#ef4444' : C.textMuted, fontSize: '0.82rem', fontWeight: producto.stock <= 5 ? '700' : '400' }}>
-                        {producto.stock <= 5 ? '⚠️ ' : ''}Stock: {producto.stock} uds
+                        {producto.stock <= 5 ? <><i className="bi bi-exclamation-triangle-fill" />{' '}</> : ''}Stock: {producto.stock} uds
                       </p>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `1px solid ${C.cardBorder}`, paddingTop: '10px', marginTop: 'auto' }}>
                         <span style={{ fontWeight: '900', fontSize: '1.05rem', color: C.textPrimary }}>S/ {producto.price.toFixed(2)}</span>
@@ -598,7 +657,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '24px', marginBottom: '30px' }}>
             <MetricCard title="Total Ingresos" value={`S/ ${reservas.filter(r => r.status === 'Pagado').reduce((sum, r) => sum + parseFloat(r.amount.replace('S/ ', '') || 0), 0).toFixed(2)}`} subtitle="Reservas confirmadas" color="#00d084" />
             <MetricCard title="Reservas Totales" value={reservas.length} subtitle="Todas las reservas" color="#3b82f6" trend="up" />
-            <MetricCard title="Comisiones PlayStop" value="S/ 0.00" subtitle="Plan Pro Activo" color="#f59e0b" />
+            <MetricCard title="Comisiones PlaySpot" value="S/ 0.00" subtitle="Plan Pro Activo" color="#f59e0b" />
           </div>
           <div className="dashboard-card-ps">
             <h3 style={{ margin: '0 0 20px 0', color: C.textPrimary, fontSize: '1.2rem', fontWeight: '800' }}>Historial de Reservas Pagadas</h3>
@@ -630,6 +689,178 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
           </div>
         </div>
       )}
+
+      {/* ─── Analíticas ───────────────────────────────── */}
+      {activeTab === 'Analíticas' && (() => {
+        // Derive analytics from reservas & canchas
+        const paid = reservas.filter(r => r.status === 'Pagado');
+        const totalIngresos = paid.reduce((s, r) => s + parseFloat(r.amount.replace('S/ ','') || 0), 0);
+
+        // Revenue by court
+        const revByCourt = {};
+        const resByCourt = {};
+        paid.forEach(r => {
+          revByCourt[r.court] = (revByCourt[r.court] || 0) + parseFloat(r.amount.replace('S/ ','') || 0);
+          resByCourt[r.court] = (resByCourt[r.court] || 0) + 1;
+        });
+        const courtRevEntries = Object.entries(revByCourt).sort((a,b) => b[1]-a[1]).slice(0,6);
+        const maxRev = Math.max(...courtRevEntries.map(e => e[1]), 1);
+
+        // Reservations by status
+        const statusCount = {
+          Pagado:   reservas.filter(r => r.status === 'Pagado').length,
+          Pendiente: reservas.filter(r => r.status === 'Pendiente').length,
+          Cancelada: reservas.filter(r => r.status === 'Cancelada').length,
+          'Asistió':  reservas.filter(r => r.status === 'Asistió').length,
+        };
+
+        // Peak hours: count reservations per hour from time field "HH:00 - HH+1:00"
+        const hourCounts = {};
+        reservas.forEach(r => {
+          const m = r.time?.match(/^(\d+):/);
+          if (m) { const h = parseInt(m[1]); hourCounts[h] = (hourCounts[h] || 0) + 1; }
+        });
+        const maxHour = Math.max(...Object.values(hourCounts), 1);
+        const hours = Array.from({ length: 15 }, (_, i) => i + 8);
+
+        // Revenue last 7 days (simulated from date field)
+        const dayRevMap = {};
+        paid.forEach(r => {
+          const d = r.date || '';
+          if (d) dayRevMap[d] = (dayRevMap[d] || 0) + parseFloat(r.amount.replace('S/ ','') || 0);
+        });
+        const last7 = Array.from({ length:7 }, (_, i) => {
+          const d = new Date(); d.setDate(d.getDate() - (6-i));
+          const iso = d.toISOString().split('T')[0];
+          return { label: d.toLocaleDateString('es-PE',{weekday:'short'}), value: dayRevMap[iso] || 0 };
+        });
+        const maxDay = Math.max(...last7.map(d=>d.value), 1);
+
+        const barColor = '#00d084';
+        const mutedColor = darkMode ? '#64748b' : '#94a3b8';
+        const textColor = darkMode ? '#f8fafc' : '#0f172a';
+        const borderColor = darkMode ? '#1e293b' : '#e2e8f0';
+        const cardBgColor = darkMode ? '#0f172a' : '#fff';
+
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+
+            {/* KPIs row */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 20 }}>
+              {[
+                { label: 'Total Ingresos', value: `S/ ${totalIngresos.toFixed(2)}`, color: '#00d084', icon: 'bi-cash-coin' },
+                { label: 'Reservas totales', value: reservas.length, color: '#3b82f6', icon: 'bi-calendar3' },
+                { label: 'Tasa de cancelación', value: reservas.length > 0 ? `${Math.round((statusCount.Cancelada/reservas.length)*100)}%` : '0%', color: '#ef4444', icon: 'bi-x-circle-fill' },
+                { label: 'Canchas activas', value: canchas.filter(c=>c.status==='Operativa').length, color: '#f59e0b', icon: 'bi-building' },
+              ].map(k => (
+                <div key={k.label} className="dashboard-card-ps card-hover" style={{ borderTop: `2px solid ${k.color}`, display: 'flex', alignItems: 'center', gap: 16 }}>
+                  <div style={{ width: 44, height: 44, borderRadius: 12, background: `${k.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }}><i className={`bi ${k.icon}`} /></div>
+                  <div>
+                    <div style={{ fontSize: '.78rem', fontWeight: 700, color: mutedColor, marginBottom: 3, textTransform: 'uppercase', letterSpacing: '.3px' }}>{k.label}</div>
+                    <div style={{ fontSize: '1.6rem', fontWeight: 900, color: textColor, lineHeight: 1 }}>{k.value}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Revenue last 7 days bar chart */}
+            <div className="dashboard-card-ps">
+              <h3 style={{ margin: '0 0 20px', color: textColor, fontSize: '1.1rem', fontWeight: 800 }}>Ingresos — últimos 7 días</h3>
+              <div style={{ display: 'flex', alignItems: 'flex-end', gap: 10, height: 160 }}>
+                {last7.map((d, i) => (
+                  <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, height: '100%', justifyContent: 'flex-end' }}>
+                    <span style={{ fontSize: '.7rem', fontWeight: 700, color: barColor, opacity: d.value > 0 ? 1 : 0 }}>
+                      S/{d.value.toFixed(0)}
+                    </span>
+                    <div style={{ width: '100%', borderRadius: 8, background: barColor, opacity: d.value > 0 ? 1 : 0.18, height: `${Math.max((d.value / maxDay) * 130, d.value > 0 ? 8 : 4)}px`, transition: 'height .6s ease', boxShadow: d.value > 0 ? `0 0 12px ${barColor}40` : 'none' }} />
+                    <span style={{ fontSize: '.72rem', color: mutedColor, fontWeight: 600 }}>{d.label}</span>
+                  </div>
+                ))}
+              </div>
+              {paid.length === 0 && (
+                <p style={{ margin: '12px 0 0', textAlign: 'center', color: mutedColor, fontSize: '.85rem' }}>Aún no hay reservas pagadas para mostrar.</p>
+              )}
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(320px,1fr))', gap: 20 }}>
+              {/* Revenue by court */}
+              <div className="dashboard-card-ps">
+                <h3 style={{ margin: '0 0 16px', color: textColor, fontSize: '1.1rem', fontWeight: 800 }}>Ingresos por cancha</h3>
+                {courtRevEntries.length === 0 ? (
+                  <p style={{ margin: 0, color: mutedColor, fontSize: '.88rem', textAlign: 'center', padding: '24px 0' }}>Sin datos aún.</p>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                    {courtRevEntries.map(([court, rev], i) => (
+                      <div key={court}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
+                          <span style={{ fontSize: '.85rem', fontWeight: 700, color: textColor, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '65%' }}>{court}</span>
+                          <span style={{ fontSize: '.85rem', fontWeight: 900, color: barColor }}>S/ {rev.toFixed(2)}</span>
+                        </div>
+                        <div style={{ height: 6, borderRadius: 99, background: darkMode ? '#1e293b' : '#e2e8f0', overflow: 'hidden' }}>
+                          <div style={{ height: '100%', borderRadius: 99, width: `${(rev/maxRev)*100}%`, background: `linear-gradient(90deg,${barColor},#3b82f6)`, transition: 'width .7s ease' }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Status breakdown donut-like */}
+              <div className="dashboard-card-ps">
+                <h3 style={{ margin: '0 0 16px', color: textColor, fontSize: '1.1rem', fontWeight: 800 }}>Estado de reservas</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {[
+                    { label: 'Pagadas / Confirmadas', count: statusCount.Pagado,   color: '#00d084' },
+                    { label: 'Asistidas',              count: statusCount['Asistió'], color: '#8b5cf6' },
+                    { label: 'Pendientes',             count: statusCount.Pendiente, color: '#f59e0b' },
+                    { label: 'Canceladas',             count: statusCount.Cancelada, color: '#ef4444' },
+                  ].map(s => {
+                    const pct = reservas.length > 0 ? Math.round((s.count / reservas.length) * 100) : 0;
+                    return (
+                      <div key={s.label}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
+                          <span style={{ fontSize: '.82rem', fontWeight: 600, color: mutedColor }}>{s.label}</span>
+                          <span style={{ fontSize: '.82rem', fontWeight: 800, color: s.color }}>{s.count} ({pct}%)</span>
+                        </div>
+                        <div style={{ height: 6, borderRadius: 99, background: darkMode ? '#1e293b' : '#e2e8f0', overflow: 'hidden' }}>
+                          <div style={{ height: '100%', borderRadius: 99, width: `${pct}%`, background: s.color, transition: 'width .6s ease' }} />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Peak hours heatmap */}
+            <div className="dashboard-card-ps">
+              <h3 style={{ margin: '0 0 16px', color: textColor, fontSize: '1.1rem', fontWeight: 800 }}>Horas pico</h3>
+              <div style={{ display: 'flex', alignItems: 'flex-end', gap: 6, height: 100, flexWrap: 'nowrap', overflowX: 'auto', paddingBottom: 4 }}>
+                {hours.map(h => {
+                  const cnt = hourCounts[h] || 0;
+                  const pct = cnt / maxHour;
+                  const heatColor = pct > 0.7 ? '#ef4444' : pct > 0.4 ? '#f59e0b' : pct > 0 ? '#00d084' : (darkMode ? '#1e293b' : '#e2e8f0');
+                  return (
+                    <div key={h} style={{ flex: '0 0 auto', width: 32, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5, height: '100%', justifyContent: 'flex-end' }}>
+                      {cnt > 0 && <span style={{ fontSize: '.65rem', fontWeight: 700, color: heatColor }}>{cnt}</span>}
+                      <div style={{ width: '100%', borderRadius: 6, background: heatColor, height: `${Math.max(pct*80, cnt>0?8:4)}px`, transition: 'height .5s ease', boxShadow: pct > 0 ? `0 0 8px ${heatColor}50` : 'none' }} />
+                      <span style={{ fontSize: '.68rem', color: mutedColor, fontWeight: 600 }}>{h}h</span>
+                    </div>
+                  );
+                })}
+              </div>
+              <div style={{ display: 'flex', gap: 16, marginTop: 14 }}>
+                {[{ color: '#00d084', label: 'Baja demanda' }, { color: '#f59e0b', label: 'Media' }, { color: '#ef4444', label: 'Alta demanda' }].map(l => (
+                  <span key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: '.75rem', color: mutedColor }}>
+                    <span style={{ width: 10, height: 10, borderRadius: 3, background: l.color, display: 'inline-block' }} />{l.label}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+          </div>
+        );
+      })()}
 
       {/* ─── Mi Perfil ────────────────────────────────── */}
       {activeTab === 'Mi Perfil' && (
@@ -849,7 +1080,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
                       </>
                     ) : (
                       <>
-                        <div style={{ fontSize: '1.8rem', marginBottom: '8px' }}>{uploadingProductImage ? '⏳' : '🖼️'}</div>
+                        <div style={{ fontSize: '1.8rem', marginBottom: '8px' }}><i className={`bi ${uploadingProductImage ? 'bi-hourglass-split' : 'bi-image-fill'}`} /></div>
                         <p style={{ margin: 0, fontWeight: '700', color: C.textSecondary, fontSize: '0.88rem' }}>
                           {uploadingProductImage ? 'Subiendo...' : 'Haz clic o arrastra una foto'}
                         </p>
@@ -910,6 +1141,19 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
         </div>
       </div>
     )}
+
+    {/* ─── TOUR ONBOARDING ─────────────────────────────── */}
+    <AnimatePresence>
+      {showTour && (
+        <OnboardingTour
+          steps={PROPIETARIO_TOUR_STEPS}
+          onComplete={finishTour}
+          onSkip={finishTour}
+          onHighlight={setTourHighlight}
+          isDark={darkMode}
+        />
+      )}
+    </AnimatePresence>
     </>
   );
 };
@@ -1044,7 +1288,7 @@ const QrScannerSection = ({
         <div style={{ background: QC.bg, borderRadius: '24px', border: `1px solid ${QC.border}`, overflow: 'hidden', marginBottom: '20px', boxShadow: '0 4px 20px rgba(0,0,0,0.06)' }}>
           {/* Banner superior */}
           <div style={{ background: attendanceConfirmed ? 'linear-gradient(135deg, #6d28d9, #8b5cf6)' : 'linear-gradient(135deg, #0f172a, #1e3a5f)', padding: '24px 28px', color: '#fff' }}>
-            <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>{attendanceConfirmed ? '🏅' : '✅'}</div>
+            <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}><i className={`bi ${attendanceConfirmed ? 'bi-award-fill' : 'bi-check-circle-fill'}`} /></div>
             <h3 style={{ margin: '0 0 4px', fontSize: '1.3rem', fontWeight: '900' }}>
               {attendanceConfirmed ? '¡Asistencia Confirmada!' : 'Reserva Válida'}
             </h3>
@@ -1056,21 +1300,21 @@ const QrScannerSection = ({
           {/* Datos */}
           <div style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {[
-              { icon: '👤', label: 'Jugador', value: qrVerified.clientName },
-              { icon: '📧', label: 'Correo',  value: qrVerified.clientEmail },
-              { icon: '🏟️', label: 'Cancha',  value: qrVerified.courtName },
-              { icon: '📅', label: 'Fecha',   value: qrVerified.date },
-              { icon: '⏰', label: 'Horario', value: qrVerified.slotLabel },
-              { icon: '💳', label: 'Monto',   value: `S/ ${qrVerified.totalAmount}` },
+              { icon: 'bi-person-fill',       label: 'Jugador', value: qrVerified.clientName },
+              { icon: 'bi-envelope-fill',     label: 'Correo',  value: qrVerified.clientEmail },
+              { icon: 'bi-building',          label: 'Cancha',  value: qrVerified.courtName },
+              { icon: 'bi-calendar3',         label: 'Fecha',   value: qrVerified.date },
+              { icon: 'bi-clock',             label: 'Horario', value: qrVerified.slotLabel },
+              { icon: 'bi-credit-card-fill',  label: 'Monto',   value: `S/ ${qrVerified.totalAmount}` },
             ].map(({ icon, label, value }) => (
               <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: `1px solid ${QC.divider}` }}>
-                <span style={{ fontSize: '0.88rem', color: QC.textSecondary, fontWeight: '600' }}>{icon} {label}</span>
+                <span style={{ fontSize: '0.88rem', color: QC.textSecondary, fontWeight: '600' }}><i className={`bi ${icon}`} /> {label}</span>
                 <span style={{ fontSize: '0.92rem', fontWeight: '800', color: QC.textPrimary }}>{value}</span>
               </div>
             ))}
             {/* Estado */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '4px' }}>
-              <span style={{ fontSize: '0.88rem', color: QC.textSecondary, fontWeight: '600' }}>📋 Estado</span>
+              <span style={{ fontSize: '0.88rem', color: QC.textSecondary, fontWeight: '600' }}><i className="bi bi-clipboard-check" /> Estado</span>
               <span style={{ padding: '4px 14px', borderRadius: '99px', fontSize: '0.82rem', fontWeight: '800', color: (statusColors[qrVerified.status] || statusColors.PENDING).color, background: (statusColors[qrVerified.status] || statusColors.PENDING).bg }}>
                 {(statusColors[qrVerified.status] || { label: qrVerified.status }).label}
               </span>
@@ -1082,12 +1326,12 @@ const QrScannerSection = ({
             {!attendanceConfirmed && qrVerified.status !== 'CANCELLED' && qrVerified.status !== 'ATTENDED' && (
               <button onClick={confirmAttendance} disabled={confirmingAttendance}
                 style={{ flex: 1, padding: '16px', borderRadius: '14px', border: 'none', background: 'linear-gradient(135deg, #00d084, #00b875)', color: '#fff', fontWeight: '800', fontSize: '1rem', cursor: confirmingAttendance ? 'wait' : 'pointer', opacity: confirmingAttendance ? 0.7 : 1 }}>
-                {confirmingAttendance ? 'Confirmando...' : '✅ Confirmar Asistencia'}
+                {confirmingAttendance ? 'Confirmando...' : 'Confirmar Asistencia'}
               </button>
             )}
             {(qrVerified.status === 'CANCELLED') && (
               <div style={{ flex: 1, padding: '16px', borderRadius: '14px', background: '#fee2e2', color: '#ef4444', fontWeight: '800', textAlign: 'center' }}>
-                ❌ Reserva cancelada — no puede ingresar
+                <i className="bi bi-x-circle-fill" /> Reserva cancelada — no puede ingresar
               </div>
             )}
             <button onClick={reset} style={{ padding: '16px 20px', borderRadius: '14px', border: `1.5px solid ${QC.btnBorder}`, background: QC.btnBg, color: QC.btnColor, fontWeight: '700', cursor: 'pointer' }}>
@@ -1108,7 +1352,7 @@ const QrScannerSection = ({
       {/* Error */}
       {qrError && (
         <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '14px', padding: '16px 20px', marginBottom: '20px', display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-          <span style={{ fontSize: '1.3rem' }}>⚠️</span>
+          <i className="bi bi-exclamation-triangle-fill" style={{ fontSize: '1.3rem', color: '#991b1b', flexShrink: 0 }} />
           <div>
             <p style={{ margin: '0 0 4px', fontWeight: '800', color: '#991b1b' }}>Error al verificar</p>
             <p style={{ margin: 0, color: '#b91c1c', fontSize: '0.88rem' }}>{qrError}</p>
@@ -1120,7 +1364,7 @@ const QrScannerSection = ({
       {!qrVerified && (
         <div style={{ background: QC.bg, borderRadius: '24px', border: `1px solid ${QC.border}`, overflow: 'hidden', marginBottom: '20px' }}>
           <div style={{ padding: '24px 28px 20px', borderBottom: `1px solid ${QC.divider}` }}>
-            <h3 style={{ margin: '0 0 4px', color: QC.textPrimary, fontWeight: '800' }}>📷 Escanear con cámara</h3>
+            <h3 style={{ margin: '0 0 4px', color: QC.textPrimary, fontWeight: '800' }}><i className="bi bi-camera-fill" /> Escanear con cámara</h3>
             <p style={{ margin: 0, color: QC.textSecondary, fontSize: '0.88rem' }}>Apunta la cámara al QR del jugador.</p>
           </div>
           <div style={{ padding: '20px 28px 24px' }}>
@@ -1136,7 +1380,7 @@ const QrScannerSection = ({
                 style={{ width: '100%', padding: '20px', borderRadius: '16px', border: `2px dashed ${darkMode ? '#334155' : '#cbd5e1'}`, background: QC.infoBg, cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', transition: 'all 0.2s' }}
                 onMouseOver={e => { e.currentTarget.style.borderColor = '#00d084'; e.currentTarget.style.background = 'rgba(0,208,132,0.04)'; }}
                 onMouseOut={e => { e.currentTarget.style.borderColor = darkMode ? '#334155' : '#cbd5e1'; e.currentTarget.style.background = QC.infoBg; }}>
-                <span style={{ fontSize: '2.5rem' }}>📷</span>
+                <i className="bi bi-camera-fill" style={{ fontSize: '2.5rem', color: '#64748b' }} />
                 <span style={{ fontWeight: '700', color: QC.textPrimary, fontSize: '1rem' }}>Abrir cámara</span>
                 <span style={{ fontSize: '0.8rem', color: QC.textSecondary }}>Se solicitará permiso de cámara</span>
               </button>
@@ -1148,7 +1392,7 @@ const QrScannerSection = ({
       {/* Entrada manual */}
       {!qrVerified && (
         <div style={{ background: QC.bg, borderRadius: '24px', border: `1px solid ${QC.border}`, padding: '24px 28px' }}>
-          <h3 style={{ margin: '0 0 4px', color: QC.textPrimary, fontWeight: '800' }}>⌨️ Ingreso manual</h3>
+          <h3 style={{ margin: '0 0 4px', color: QC.textPrimary, fontWeight: '800' }}><i className="bi bi-keyboard" /> Ingreso manual</h3>
           <p style={{ margin: '0 0 16px', color: QC.textSecondary, fontSize: '0.88rem' }}>Pega el ID de reserva del jugador (visible en su QR).</p>
           <div style={{ display: 'flex', gap: '10px' }}>
             <input

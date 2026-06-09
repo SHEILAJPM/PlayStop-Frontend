@@ -6,7 +6,7 @@
   FORBIDDEN:      'No tienes permiso para realizar esta accion.',
   NOT_FOUND:      'El recurso solicitado no fue encontrado.',
   SERVER_ERROR:   'Error interno del servidor. Contacta al soporte.',
-  SUCCESS_LOGIN:  'Bienvenido de vuelta a PlayStop.',
-  SUCCESS_REGISTER: 'Cuenta creada exitosamente. Bienvenido a PlayStop.',
+  SUCCESS_LOGIN:  'Bienvenido de vuelta a PlaySpot.',
+  SUCCESS_REGISTER: 'Cuenta creada exitosamente. Bienvenido a PlaySpot.',
   SUCCESS_LOGOUT: 'Sesion cerrada correctamente.',
 };

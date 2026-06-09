@@ -88,7 +88,7 @@ const Register = () => {
           
           {/* SELECTOR DE ROL */}
           <div>
-            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '8px' }}>¿Cómo usarás PlayStop?</label>
+            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#475569', marginBottom: '8px' }}>¿Cómo usarás PlaySpot?</label>
             <div style={{ display: 'flex', gap: '12px' }}>
               <button
                 type="button"

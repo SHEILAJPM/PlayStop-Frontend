@@ -46,7 +46,7 @@ const SuperAdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
 
   // Mock Data para CMS
   const [contenidos] = useState([
-    { id: 1, title: '5 Consejos para mejorar tu saque en Pádel', category: 'Blog', author: 'Equipo PlayStop', status: 'Publicado' },
+    { id: 1, title: '5 Consejos para mejorar tu saque en Pádel', category: 'Blog', author: 'Equipo PlaySpot', status: 'Publicado' },
     { id: 2, title: 'Torneo Nacional 2024', category: 'Evento', author: 'Marketing', status: 'Borrador' },
     { id: 3, title: 'Términos y Condiciones actualizados', category: 'Legal', author: 'Legal', status: 'Publicado' }
   ]);
@@ -78,15 +78,15 @@ const SuperAdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
       `}
     </style>
     <DashboardLayout user={user} onLogout={onLogout} darkMode={darkMode} toggleTheme={toggleTheme} title={activeTab === 'Global' ? 'Centro de Control (Root)' : activeTab} activeTab={activeTab} onTabChange={setActiveTab} menuItems={[
-      { icon: '👑', label: 'Global' },
-      { icon: '📈', label: 'Métricas Financieras' },
-      { icon: '💎', label: 'Gestión de Planes' },
-      { icon: '📢', label: 'Promociones' },
-      { icon: '📝', label: 'Contenido (CMS)' },
-      { icon: '', label: 'Integraciones API' },
-      { icon: '⚙️', label: 'Configuración del Sistema' },
-      { icon: '🛡️', label: 'Seguridad y Logs' },
-      { icon: '👤', label: 'Mi Perfil' },
+      { icon: 'bi-globe2',                 label: 'Global' },
+      { icon: 'bi-graph-up-arrow',         label: 'Métricas Financieras' },
+      { icon: 'bi-card-list',              label: 'Gestión de Planes' },
+      { icon: 'bi-tag-fill',               label: 'Promociones' },
+      { icon: 'bi-file-earmark-text-fill', label: 'Contenido (CMS)' },
+      { icon: 'bi-plug-fill',              label: 'Integraciones API' },
+      { icon: 'bi-gear-fill',              label: 'Configuración del Sistema' },
+      { icon: 'bi-shield-lock-fill',       label: 'Seguridad y Logs' },
+      { icon: 'bi-person-circle',          label: 'Mi Perfil' },
     ]}>
       {activeTab === 'Global' && (
         <>

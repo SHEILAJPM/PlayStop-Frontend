@@ -4,14 +4,14 @@ const ThemeContext = createContext(null);
 
 export function ThemeProvider({ children }) {
   const [darkMode, setDarkMode] = useState(() => {
-    const saved = localStorage.getItem('playstop-theme');
+    const saved = localStorage.getItem('playspot-theme');
     return saved === null ? true : saved === 'dark';
   });
 
   useEffect(() => {
     document.body.classList.toggle('dark', darkMode);
     document.body.classList.toggle('light', !darkMode);
-    localStorage.setItem('playstop-theme', darkMode ? 'dark' : 'light');
+    localStorage.setItem('playspot-theme', darkMode ? 'dark' : 'light');
   }, [darkMode]);
 
   const toggleTheme = () => setDarkMode((prev) => !prev);
