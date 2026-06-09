@@ -1,16 +1,14 @@
 ﻿# Registro de cambios - PlayStop Frontend
 
-## [1.0.0] - 2026-06-08
+## [1.0.0] - 2026-06-08 - Version inicial estable
 
-### Servicios e integraciones
-- Servicio de API centralizado con Axios
-- Interceptores de autenticacion JWT automaticos
-- Manejo de errores HTTP con mensajes en espanol
-- Integracion con backend Spring Boot
-- Soporte para subida de archivos e imagenes
+### Correcciones incluidas
+- Correccion de redireccionamiento tras login por rol de usuario
+- Correccion de persistencia de sesion al recargar la pagina
+- Correccion de estilos en modo oscuro en Safari
+- Mejora de rendimiento en componentes con React.memo
 
-### Configuracion
-- Tailwind CSS con tema personalizado de PlayStop
-- Vite optimizado con code splitting y aliases
-- ESLint configurado para React y hooks
-- Variables de entorno para desarrollo y produccion
+### Seguridad
+- Rutas protegidas con verificacion de token JWT
+- Cierre de sesion automatico al expirar el token
+- Validacion de formularios en cliente
