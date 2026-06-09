@@ -1,6 +1,9 @@
 ﻿# PlayStop Frontend
 
-## Despliegue en Render
+## Linter y formato
 
-Utilizar el archivo render.yaml incluido en el repositorio.
-Configurar las variables de entorno en el dashboard de Render.
+Ejecutar el linter:
+  npm run lint
+
+Formatear el codigo:
+  npm run format
