@@ -1,7 +1,12 @@
 ﻿# PlayStop Frontend
 
-## Requisitos previos
+## Instalacion
 
-- Node.js 18 o superior
-- npm 9 o superior
-- Acceso al backend de PlayStop en ejecucion
+1. Clonar el repositorio:
+   git clone https://github.com/SHEILAJPM/PlayStop-Frontend.git
+
+2. Ingresar al directorio:
+   cd PlayStop-Frontend
+
+3. Instalar dependencias:
+   npm install
