@@ -15,6 +15,12 @@ export default defineConfig({
     port: 5173,
     open: true,
     cors: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      },
+    },
   },
   build: {
     outDir: 'dist',
