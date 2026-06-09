@@ -10,6 +10,7 @@ export default {
       colors: {
         primary: { 50: '#ecfdf5', 500: '#10b981', 600: '#059669', 700: '#047857' },
         secondary: { 500: '#6366f1', 600: '#4f46e5' },
+        dark: { bg: '#0f172a', card: '#1e293b', border: '#334155' },
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
@@ -17,7 +18,6 @@ export default {
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
         'slide-up': 'slideUp 0.4s ease-out',
-        'bounce-slow': 'bounce 2s infinite',
       },
       keyframes: {
         fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
