@@ -1,20 +1,21 @@
 ﻿# Registro de cambios - PlayStop Frontend
 
-Todos los cambios importantes de este proyecto seran documentados en este archivo.
-El formato sigue la guia de keepachangelog.com
+> Formato basado en Keep a Changelog | Versionado semantico
 
 ## [Unreleased]
-
-### En desarrollo
-- Sistema de notificaciones en tiempo real con WebSocket
-- Pasarela de pagos integrada
-- Internacionalizacion para mercado latinoamericano
+- Notificaciones push en tiempo real
+- Pasarela de pagos Stripe/PayPal
+- App movil con React Native
 
 ## [1.0.0] - 2026-06-08
+Primera version estable de produccion.
+- Landing page completa con 15+ secciones
+- Autenticacion JWT con 4 roles de usuario
+- 5 dashboards especializados por rol
+- Calendario interactivo de reservas
+- ChatBot de asistencia virtual
+- Modo oscuro/claro con persistencia
+- DiseÃ±o 100% responsivo
+- Despliegue en Vercel y Render
 
-### Resumen
-Primera version estable con todas las funcionalidades core.
-Sistema de reservas completo con multiples roles de usuario.
-Interfaz responsiva con soporte para modo oscuro.
-
-Desarrollado por Sheila JPM - PlayStop 2026
+[PlayStop] (c) 2026 Sheila JPM
