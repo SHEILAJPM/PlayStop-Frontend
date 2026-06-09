@@ -13,10 +13,10 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        display: ['Inter', 'sans-serif'],
       },
-      borderRadius: {
-        '4xl': '2rem',
+      animation: {
+        'fade-in': 'fadeIn 0.5s ease-in-out',
+        'slide-up': 'slideUp 0.4s ease-out',
       },
     },
   },
