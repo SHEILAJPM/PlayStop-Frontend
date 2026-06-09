@@ -1,12 +1,7 @@
 ﻿# PlayStop Frontend
 
-Plataforma de reserva de canchas deportivas en tiempo real.
+## Requisitos previos
 
-## Tecnologias principales
-
-- React 19
-- Vite 8
-- Tailwind CSS 3
-- React Router DOM 7
-- Framer Motion 12
-- Axios
+- Node.js 18 o superior
+- npm 9 o superior
+- Acceso al backend de PlayStop en ejecucion
