@@ -3,12 +3,18 @@ import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react({
+      jsxImportSource: 'react',
+      fastRefresh: true,
+    }),
+  ],
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
       '@components': resolve(__dirname, 'src/components'),
       '@services': resolve(__dirname, 'src/services'),
+      '@utils': resolve(__dirname, 'src/utils'),
     },
   },
   server: {
@@ -16,10 +22,7 @@ export default defineConfig({
     open: true,
     cors: true,
     proxy: {
-      '/api': {
-        target: 'http://localhost:8080',
-        changeOrigin: true,
-      },
+      '/api': { target: 'http://localhost:8080', changeOrigin: true },
     },
   },
   build: {
@@ -31,6 +34,7 @@ export default defineConfig({
         manualChunks: {
           vendor: ['react', 'react-dom'],
           router: ['react-router-dom'],
+          motion: ['framer-motion'],
         },
       },
     },
