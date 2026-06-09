@@ -42,5 +42,6 @@
                      "react",
                      "vite"
                  ],
-    "homepage":  "https://playstop.vercel.app"
+    "homepage":  "https://playstop.vercel.app",
+    "author":  "Sheila JPM \u003cprincipemerinosheila@gmail.com\u003e"
 }
