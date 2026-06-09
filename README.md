@@ -2,7 +2,11 @@
 
 Plataforma de reserva de canchas deportivas en tiempo real.
 
-## Descripcion
+## Tecnologias principales
 
-PlayStop conecta jugadores con propietarios de canchas deportivas,
-permitiendo realizar reservas instantaneas con confirmacion en tiempo real.
+- React 19
+- Vite 8
+- Tailwind CSS 3
+- React Router DOM 7
+- Framer Motion 12
+- Axios
