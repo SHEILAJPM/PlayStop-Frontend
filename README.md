@@ -1,8 +1,7 @@
 ﻿# PlayStop Frontend
 
-## Variables de entorno
+## Ejecucion en desarrollo
 
-Crear un archivo .env.development con las siguientes variables:
+npm run dev
 
-VITE_API_URL=http://localhost:8080
-VITE_APP_NAME=PlayStop
+La aplicacion estara disponible en: http://localhost:5173
