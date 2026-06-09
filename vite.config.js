@@ -9,16 +9,17 @@ export default defineConfig({
       '@': resolve(__dirname, 'src'),
       '@components': resolve(__dirname, 'src/components'),
       '@services': resolve(__dirname, 'src/services'),
-      '@assets': resolve(__dirname, 'src/assets'),
     },
   },
   server: {
     port: 5173,
     open: true,
+    cors: true,
   },
   build: {
     outDir: 'dist',
     sourcemap: false,
     minify: 'esbuild',
+    chunkSizeWarningLimit: 1000,
   },
 })
