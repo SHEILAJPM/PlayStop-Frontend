@@ -41,5 +41,6 @@
                      "reservas",
                      "react",
                      "vite"
-                 ]
+                 ],
+    "homepage":  "https://playstop.vercel.app"
 }
