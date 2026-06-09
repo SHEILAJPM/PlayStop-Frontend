@@ -1,28 +1,32 @@
 ﻿# PlayStop Frontend
 
-> Plataforma de reserva de canchas deportivas en tiempo real
+> Sistema de reservas de canchas deportivas - Interfaz de usuario
 
-## Descripcion
+Aplicacion web moderna para la gestion y reserva de canchas deportivas.
+Desarrollada con React 19 y Vite 8, con soporte para multiples roles de usuario.
 
-PlayStop conecta jugadores con propietarios de canchas deportivas.
-Permite realizar reservas instantaneas con confirmacion inmediata.
+## Stack tecnologico
 
-## Tecnologias
+- React 19 + Vite 8
+- Tailwind CSS + Bootstrap 5
+- React Router DOM 7
+- Framer Motion
+- Axios
 
-- **Frontend:** React 19, Vite 8, Tailwind CSS 3
-- **Enrutamiento:** React Router DOM 7
-- **Animaciones:** Framer Motion 12
-- **HTTP:** Axios
-- **Estilos:** Bootstrap 5, Tailwind CSS
+## Scripts disponibles
 
-## Instalacion rapida
+| Comando         | Descripcion                          |
+|-----------------|--------------------------------------|
+| npm run dev     | Servidor de desarrollo (puerto 5173) |
+| npm run build   | Compilacion para produccion          |
+| npm run preview | Vista previa del build               |
+| npm run lint    | Verificacion de calidad de codigo    |
 
-npm install && npm run dev
+## Estructura
 
-## Roles disponibles
+src/components/ - Todos los componentes de la interfaz
+src/services/   - Capa de comunicacion con el backend
+src/assets/     - Recursos estaticos
 
-JUGADOR | PROPIETARIO | ADMIN | SUPER ADMIN
-
-## Version
-
-1.0.0 - Junio 2026
+---
+Desarrollado por Sheila JPM | PlayStop 2026
