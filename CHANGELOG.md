@@ -2,13 +2,15 @@
 
 ## [1.0.0] - 2026-06-08
 
-### Componentes creados
-- Navbar con navegacion responsiva y toggle de tema
-- Hero con imagen principal y llamada a la accion
-- Caracteristicas, ComoFunciona, CanchasDestacadas
-- Testimonios, Precios, FAQ, CallToAction
-- Contacto, Blog, Marcas, ParaJugadores, ParaClubes
-- Soluciones, Legal, ChatBot, Footer
-- Login, Register, PrivateRoute
-- Dashboards: Jugador, Propietario, Admin, SuperAdmin
-- CalendarioCancha para seleccion de horarios
+### Servicios e integraciones
+- Servicio de API centralizado con Axios
+- Interceptores de autenticacion JWT automaticos
+- Manejo de errores HTTP con mensajes en espanol
+- Integracion con backend Spring Boot
+- Soporte para subida de archivos e imagenes
+
+### Configuracion
+- Tailwind CSS con tema personalizado de PlayStop
+- Vite optimizado con code splitting y aliases
+- ESLint configurado para React y hooks
+- Variables de entorno para desarrollo y produccion
