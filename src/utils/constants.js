@@ -1,6 +1,7 @@
 ﻿export const APP_NAME = 'PlayStop';
 export const APP_VERSION = '1.0.0';
 export const APP_DESCRIPTION = 'Plataforma de reserva de canchas deportivas';
+export const APP_URL = 'https://playstop.vercel.app';
 
 export const ROLES = {
   JUGADOR: 'USER',
@@ -25,3 +26,6 @@ export const ESTADOS_RESERVA = {
 export const TOKEN_KEY = 'token';
 export const USER_KEY = 'playstop-user';
 export const THEME_KEY = 'playstop-theme';
+
+export const DEFAULT_PAGE_SIZE = 10;
+export const MAX_FILE_SIZE_MB = 5;
