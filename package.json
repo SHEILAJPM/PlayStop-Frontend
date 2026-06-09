@@ -45,5 +45,9 @@
                      "vite"
                  ],
     "homepage":  "https://playstop.vercel.app",
-    "author":  "Sheila JPM \u003cprincipemerinosheila@gmail.com\u003e"
+    "author":  "Sheila JPM \u003cprincipemerinosheila@gmail.com\u003e",
+    "engines":  {
+                    "node":  "\u003e=18.0.0",
+                    "npm":  "\u003e=9.0.0"
+                }
 }
