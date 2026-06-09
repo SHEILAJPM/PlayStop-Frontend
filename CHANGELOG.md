@@ -1,15 +1,20 @@
 ﻿# Registro de cambios - PlayStop Frontend
 
+Todos los cambios importantes de este proyecto seran documentados en este archivo.
+El formato sigue la guia de keepachangelog.com
+
 ## [Unreleased]
 
 ### En desarrollo
-- Internacionalizacion (i18n) para multiples idiomas
-- Notificaciones push en tiempo real
-- Integracion con pasarela de pagos
+- Sistema de notificaciones en tiempo real con WebSocket
+- Pasarela de pagos integrada
+- Internacionalizacion para mercado latinoamericano
 
 ## [1.0.0] - 2026-06-08
 
 ### Resumen
-Primera version estable de PlayStop Frontend.
-Plataforma completa de reserva de canchas deportivas.
-Desarrollada con React 19, Vite 8 y Tailwind CSS 3.
+Primera version estable con todas las funcionalidades core.
+Sistema de reservas completo con multiples roles de usuario.
+Interfaz responsiva con soporte para modo oscuro.
+
+Desarrollado por Sheila JPM - PlayStop 2026
