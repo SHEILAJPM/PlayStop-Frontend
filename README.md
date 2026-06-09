@@ -1,10 +1,9 @@
 ﻿# PlayStop Frontend
 
-## Roles de usuario
+## Despliegue en Vercel
 
-| Rol         | Acceso                                      |
-|-------------|---------------------------------------------|
-| JUGADOR     | Reservar canchas, ver historial             |
-| PROPIETARIO | Gestionar canchas propias, ver reservas     |
-| ADMIN       | Administrar instalaciones asignadas         |
-| SUPER ADMIN | Control total de la plataforma              |
+1. Conectar repositorio en vercel.com
+2. Configurar variables de entorno de produccion
+3. Desplegar con: git push origin main
+
+El archivo vercel.json ya contiene la configuracion necesaria.
