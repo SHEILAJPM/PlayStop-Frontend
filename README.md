@@ -1,6 +1,7 @@
 ﻿# PlayStop Frontend
 
-## Licencia
+## Contacto
 
-Este proyecto es de uso privado. Todos los derechos reservados.
-Desarrollado por Sheila JPM para PlayStop.
+Para consultas tecnicas o reportar errores:
+Email: principemerinosheila@gmail.com
+GitHub: https://github.com/SHEILAJPM
