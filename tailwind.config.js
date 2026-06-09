@@ -13,6 +13,10 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Inter', 'sans-serif'],
+      },
+      borderRadius: {
+        '4xl': '2rem',
       },
     },
   },
