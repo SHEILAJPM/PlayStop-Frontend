@@ -1,7 +1,11 @@
 ﻿# PlayStop Frontend
 
-## Ejecucion en desarrollo
+## Compilacion para produccion
 
-npm run dev
+npm run build
 
-La aplicacion estara disponible en: http://localhost:5173
+Los archivos compilados se generan en la carpeta dist/
+
+## Vista previa de produccion
+
+npm run preview
