@@ -1,14 +1,13 @@
 ﻿# Registro de cambios - PlayStop Frontend
 
-## [1.0.0] - 2026-06-08 - Version inicial estable
+## [1.0.0] - 2026-06-08
 
-### Correcciones incluidas
-- Correccion de redireccionamiento tras login por rol de usuario
-- Correccion de persistencia de sesion al recargar la pagina
-- Correccion de estilos en modo oscuro en Safari
-- Mejora de rendimiento en componentes con React.memo
+### Despliegue
+- Configuracion de Vercel con vercel.json (SPA routing)
+- Configuracion de Render con render.yaml
+- Variables de entorno de produccion documentadas
 
-### Seguridad
-- Rutas protegidas con verificacion de token JWT
-- Cierre de sesion automatico al expirar el token
-- Validacion de formularios en cliente
+### Accesibilidad
+- Atributos ARIA en componentes interactivos
+- Contraste de color WCAG AA en modo oscuro y claro
+- Navegacion por teclado en modales y dropdowns
