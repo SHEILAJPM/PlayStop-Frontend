@@ -1,7 +1,7 @@
-﻿export const APP_NAME = 'PlaySpot';
+﻿export const APP_NAME = 'PlayStop';
 export const APP_VERSION = '1.0.0';
 export const APP_DESCRIPTION = 'Plataforma de reserva de canchas deportivas';
-export const APP_URL = 'https://playspot.vercel.app';
+export const APP_URL = 'https://playstop.onrender.com';
 
 export const ROLES = {
   JUGADOR: 'USER',
