@@ -326,7 +326,7 @@ const NotificationPanel = ({ notifications, unreadCount, onMarkAllRead, onClearA
 };
 
 /* ─── UserAvatar ────────────────────────────────────────── */
-const UserAvatar = ({ name, size = 44 }) => {
+const UserAvatar = ({ name, size = 44, src }) => {
   const gradients = [
     'linear-gradient(135deg,#667eea,#764ba2)',
     'linear-gradient(135deg,#00d084,#00b875)',
@@ -340,12 +340,15 @@ const UserAvatar = ({ name, size = 44 }) => {
   return (
     <div style={{
       width: size, height: size, borderRadius: 12,
-      background: gradients[idx],
+      background: src ? 'transparent' : gradients[idx],
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       color: '#fff', fontWeight: 800, fontSize: size * 0.42,
       flexShrink: 0, boxShadow: '0 4px 12px rgba(0,0,0,0.25)',
+      overflow: 'hidden',
     }}>
-      {initial}
+      {src
+        ? <img src={src} alt={initial} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement.style.background = gradients[idx]; e.currentTarget.parentElement.textContent = initial; }} />
+        : initial}
     </div>
   );
 };
@@ -354,7 +357,7 @@ const UserAvatar = ({ name, size = 44 }) => {
 export const DashboardLayout = ({
   user, onLogout, title, menuItems,
   activeTab, onTabChange, children, darkMode, toggleTheme,
-  tourHighlight, onRestartTour,
+  tourHighlight, onRestartTour, avatarUrl,
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showNotifPanel, setShowNotifPanel] = useState(false);
@@ -620,7 +623,7 @@ export const DashboardLayout = ({
         {/* User */}
         <div style={{ padding:16, borderTop:`1px solid rgba(255,255,255,0.06)`, background:'rgba(0,0,0,.25)' }}>
           <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:12 }}>
-            <UserAvatar name={user?.name} />
+            <UserAvatar name={user?.name} src={avatarUrl} />
             <div style={{ overflow:'hidden' }}>
               <p style={{ margin:0, color:'#f8fafc', fontWeight:700, fontSize:'.88rem', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', maxWidth:160 }}>{user?.name || 'Usuario'}</p>
               <p style={{ margin:0, color:'#4b5563', fontSize:'.75rem', fontWeight:500, textTransform:'uppercase', letterSpacing:'.4px' }}>{user?.role || 'Miembro'}</p>

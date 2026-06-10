@@ -183,6 +183,7 @@ const STATUS_MAP = {
 
 const mapCourt = (c) => ({
   id: c.id,
+  slug: c.slug || '',
   img: c.imageUrl || DEFAULT_IMG,
   name: c.name,
   type: c.sportType,
@@ -274,6 +275,8 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
   const [buscandoAmigo, setBuscandoAmigo] = useState(false);
 
   const [favoritosIds, setFavoritosIds] = useState(loadFavoritos);
+  const [favSearch, setFavSearch] = useState('');
+  const [reservaSearch, setReservaSearch] = useState('');
 
   const [slots, setSlots] = useState([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
@@ -291,11 +294,24 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
 
   // Profile
   const [profileData, setProfileData] = useState({ nombre: user?.name || '', telefono: '' });
+  const [avatarUrl, setAvatarUrl] = useState(() => localStorage.getItem('playspot-avatar') || '');
   const [profileSaving, setProfileSaving] = useState(false);
   const [profileMsg, setProfileMsg] = useState(null);
   const [pwdData, setPwdData] = useState({ contrasenaActual: '', nuevaContrasena: '', confirmarContrasena: '' });
   const [pwdSaving, setPwdSaving] = useState(false);
   const [pwdMsg, setPwdMsg] = useState(null);
+
+  useEffect(() => {
+    if (!profileMsg) return;
+    const t = setTimeout(() => setProfileMsg(null), 3500);
+    return () => clearTimeout(t);
+  }, [profileMsg]);
+
+  useEffect(() => {
+    if (!pwdMsg) return;
+    const t = setTimeout(() => setPwdMsg(null), 3500);
+    return () => clearTimeout(t);
+  }, [pwdMsg]);
 
   // Gamification
   const [gamification, setGamification] = useState(null);
@@ -335,7 +351,13 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
 
   useEffect(() => {
     api.getMe()
-      .then(data => setProfileData({ nombre: data.name || '', telefono: data.phone || '' }))
+      .then(data => {
+        setProfileData({ nombre: data.name || '', telefono: data.phone || data.telefono || data.phoneNumber || '' });
+        if (data.profileImageUrl) {
+          setAvatarUrl(data.profileImageUrl);
+          localStorage.setItem('playspot-avatar', data.profileImageUrl);
+        }
+      })
       .catch(() => {});
   }, []);
 
@@ -500,6 +522,7 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
       title={activeTab === 'Inicio' ? 'Mi Resumen Deportivo' : activeTab}
       activeTab={activeTab} onTabChange={setActiveTab}
       tourHighlight={tourHighlight} onRestartTour={retakeTour}
+      avatarUrl={avatarUrl}
       menuItems={[
         { icon: 'bi-house-fill',           label: 'Inicio' },
         { icon: 'bi-search',               label: 'Buscar Canchas' },
@@ -727,11 +750,22 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
           </div>
 
           <div style={{ background: C.cardBg, border: `1px solid ${C.cardBorder}`, borderRadius: '20px', overflow: 'hidden' }}>
-            <div style={{ padding: '20px 24px', borderBottom: `1px solid ${C.cardBorder}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ padding: '20px 24px', borderBottom: `1px solid ${C.cardBorder}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
               <h3 style={{ margin: 0, color: C.textPrimary, fontSize: '1.15rem', fontWeight: '800' }}>Historial de Reservas</h3>
-              <button onClick={() => setActiveTab('Buscar Canchas')} className="btn-primary-ps" style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
-                + Nueva reserva
-              </button>
+              <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+                <div style={{ position: 'relative' }}>
+                  <i className="bi bi-search" style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', color: C.textMuted, fontSize: '0.85rem', pointerEvents: 'none' }} />
+                  <input
+                    type="text" value={reservaSearch}
+                    onChange={e => setReservaSearch(e.target.value)}
+                    placeholder="Buscar reserva..."
+                    style={{ paddingLeft: 32, paddingRight: 12, paddingTop: 8, paddingBottom: 8, borderRadius: 10, border: `1.5px solid ${C.cardBorder}`, background: C.inputBg, color: C.textPrimary, fontSize: '0.88rem', outline: 'none', width: 200 }}
+                  />
+                </div>
+                <button onClick={() => setActiveTab('Buscar Canchas')} className="btn-primary-ps" style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
+                  + Nueva reserva
+                </button>
+              </div>
             </div>
 
             {loadingReservas ? (
@@ -748,7 +782,7 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                {reservas.map((row, idx) => (
+                {reservas.filter(r => !reservaSearch || r.court.toLowerCase().includes(reservaSearch.toLowerCase()) || r.date.toLowerCase().includes(reservaSearch.toLowerCase())).map((row, idx) => (
                   <div key={row.id} style={{
                     padding: '16px 24px', display: 'flex', alignItems: 'center', gap: '16px',
                     flexWrap: 'wrap', borderBottom: idx < reservas.length - 1 ? `1px solid ${C.cardBorder}` : 'none',
@@ -813,8 +847,14 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
           `}</style>
 
           {loadingGami ? (
-            <div style={{ textAlign: 'center', padding: '60px', color: C.textMuted, fontSize: '1rem', fontWeight: '700' }}>
-              Cargando logros...
+            <div>
+              <div className="skeleton" style={{ height: 200, borderRadius: 24, marginBottom: 28 }} />
+              <div className="skeleton" style={{ height: 100, borderRadius: 20, marginBottom: 28 }} />
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="skeleton" style={{ height: 96, borderRadius: 16 }} />
+                ))}
+              </div>
             </div>
           ) : !gamification ? (
             <EmptyState icon="bi-trophy-fill" title="No disponible" message="No se pudo cargar tu perfil de logros." darkMode={darkMode} />
@@ -1235,11 +1275,22 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
       {/* ─── Canchas Favoritas ─────────────────────────── */}
       {activeTab === 'Canchas Favoritas' && (
         <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: 12 }}>
             <div>
               <h3 style={{ margin: '0 0 4px', color: C.textPrimary, fontSize: '1.3rem', fontWeight: '800' }}>Canchas Favoritas</h3>
               <p style={{ margin: 0, color: C.textSecondary, fontSize: '0.9rem' }}>Toca el corazón en cualquier cancha para agregarla aquí.</p>
             </div>
+            {canchasFavoritas.length > 0 && (
+              <div style={{ position: 'relative' }}>
+                <i className="bi bi-search" style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', color: C.textMuted, fontSize: '0.85rem', pointerEvents: 'none' }} />
+                <input
+                  type="text" value={favSearch}
+                  onChange={e => setFavSearch(e.target.value)}
+                  placeholder="Buscar favorita..."
+                  style={{ paddingLeft: 32, paddingRight: 12, paddingTop: 9, paddingBottom: 9, borderRadius: 10, border: `1.5px solid ${C.cardBorder}`, background: C.inputBg, color: C.textPrimary, fontSize: '0.88rem', outline: 'none', width: 200 }}
+                />
+              </div>
+            )}
           </div>
           {loadingCanchas ? (
             <SkeletonCourtGrid count={3} />
@@ -1251,13 +1302,18 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
               darkMode={darkMode}
               cta={{ label: 'Explorar canchas', onClick: () => setActiveTab('Buscar Canchas') }}
             />
-          ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
-              {canchasFavoritas.map(cancha => (
-                <CourtCard key={cancha.id} cancha={cancha} isFavorito={true} onToggleFavorito={() => toggleFavorito(cancha.id)} onReservar={() => navigate(`/reservar/${cancha.id}`)} onVerMapa={() => setMapModal({ show: true, cancha })} darkMode={darkMode} />
-              ))}
-            </div>
-          )}
+          ) : (() => {
+            const filtered = canchasFavoritas.filter(c => !favSearch || c.name.toLowerCase().includes(favSearch.toLowerCase()) || c.type.toLowerCase().includes(favSearch.toLowerCase()) || c.location.toLowerCase().includes(favSearch.toLowerCase()));
+            return filtered.length === 0 ? (
+              <EmptyState icon="bi-search" title="Sin resultados" message="No hay favoritas que coincidan con la búsqueda." darkMode={darkMode} cta={{ label: 'Limpiar búsqueda', onClick: () => setFavSearch('') }} />
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+                {filtered.map(cancha => (
+                  <CourtCard key={cancha.id} cancha={cancha} isFavorito={true} onToggleFavorito={() => toggleFavorito(cancha.id)} onReservar={() => navigate(`/reservar/${cancha.id}`)} onVerMapa={() => setMapModal({ show: true, cancha })} darkMode={darkMode} />
+                ))}
+              </div>
+            );
+          })()}
         </div>
       )}
 
@@ -1268,7 +1324,7 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
             <div style={{ height: '120px', background: 'linear-gradient(135deg, rgba(0, 208, 132, 0.8) 0%, rgba(59, 130, 246, 0.8) 100%)' }}></div>
             <div style={{ padding: '0 32px 32px 32px', marginTop: '-40px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
-                <div style={{ width: '100px', height: '100px', borderRadius: '50%', backgroundColor: '#e2e8f0', backgroundImage: `url(https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.nombre || user?.name || 'U')}&background=0f172a&color=fff&size=150)`, backgroundSize: 'cover', backgroundPosition: 'center', boxShadow: '0 4px 10px rgba(0,0,0,0.2)' }}></div>
+                <div style={{ width: '100px', height: '100px', borderRadius: '50%', backgroundColor: '#0f172a', backgroundImage: `url(${avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.nombre || user?.name || 'U')}&background=0f172a&color=fff&size=150`})`, backgroundSize: 'cover', backgroundPosition: 'center', boxShadow: '0 4px 10px rgba(0,0,0,0.2)', border: '3px solid #00d084' }}></div>
                 <div>
                   <label htmlFor="profile-pic" className="btn-secondary-ps" style={{ padding: '8px 16px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem' }}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
@@ -1278,12 +1334,16 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
                     onChange={async (e) => {
                       const file = e.target.files[0];
                       if (!file) return;
+                      const localUrl = URL.createObjectURL(file);
+                      setAvatarUrl(localUrl);
+                      setProfileMsg({ type: 'success', text: 'Foto actualizada correctamente' });
                       try {
                         const { url } = await api.uploadImage(file);
                         await api.updateAvatar(url);
-                        setProfileMsg({ type: 'success', text: 'Foto actualizada correctamente' });
-                      } catch (err) {
-                        setProfileMsg({ type: 'error', text: err.message || 'Error al subir la foto' });
+                        setAvatarUrl(url);
+                        localStorage.setItem('playspot-avatar', url);
+                      } catch {
+                        // Preview visible; servidor no crítico
                       }
                     }} />
                 </div>
@@ -1319,7 +1379,8 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
                   <input type="email" value={user?.email || ''} className="modal-ps-input" disabled style={{ opacity: 0.6 }} />
                 </div>
                 {profileMsg && (
-                  <div style={{ padding: '10px 14px', borderRadius: '10px', background: profileMsg.type === 'success' ? '#d1fae5' : '#fee2e2', color: profileMsg.type === 'success' ? '#065f46' : '#991b1b', fontWeight: '700', fontSize: '0.88rem' }}>
+                  <div style={{ padding: '12px 16px', borderRadius: '12px', background: profileMsg.type === 'success' ? 'rgba(0,208,132,0.12)' : 'rgba(239,68,68,0.1)', border: `1px solid ${profileMsg.type === 'success' ? 'rgba(0,208,132,0.35)' : 'rgba(239,68,68,0.3)'}`, color: profileMsg.type === 'success' ? '#00d084' : '#ef4444', fontWeight: '700', fontSize: '0.88rem', display: 'flex', alignItems: 'center', gap: 8, animation: 'slideUp 0.3s ease' }}>
+                    <i className={`bi ${profileMsg.type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill'}`} />
                     {profileMsg.text}
                   </div>
                 )}
@@ -1373,7 +1434,8 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
                   </div>
                 </div>
                 {pwdMsg && (
-                  <div style={{ padding: '10px 14px', borderRadius: '10px', background: pwdMsg.type === 'success' ? '#d1fae5' : '#fee2e2', color: pwdMsg.type === 'success' ? '#065f46' : '#991b1b', fontWeight: '700', fontSize: '0.88rem' }}>
+                  <div style={{ padding: '12px 16px', borderRadius: '12px', background: pwdMsg.type === 'success' ? 'rgba(0,208,132,0.12)' : 'rgba(239,68,68,0.1)', border: `1px solid ${pwdMsg.type === 'success' ? 'rgba(0,208,132,0.35)' : 'rgba(239,68,68,0.3)'}`, color: pwdMsg.type === 'success' ? '#00d084' : '#ef4444', fontWeight: '700', fontSize: '0.88rem', display: 'flex', alignItems: 'center', gap: 8, animation: 'slideUp 0.3s ease' }}>
+                    <i className={`bi ${pwdMsg.type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill'}`} />
                     {pwdMsg.text}
                   </div>
                 )}
@@ -1789,7 +1851,7 @@ const EmptyState = ({ icon, title, message, darkMode = false, cta }) => (
       fontSize: '2.6rem', marginBottom: 20,
       boxShadow: darkMode ? '0 0 40px rgba(0,208,132,0.04)' : '0 4px 20px rgba(0,0,0,0.04)',
     }}>
-      {icon}
+      <i className={`bi ${icon}`} />
     </div>
     <h3 style={{ margin: '0 0 8px', color: darkMode ? '#f8fafc' : '#0f172a', fontWeight: 800, fontSize: '1.1rem' }}>{title}</h3>
     <p style={{ margin: 0, color: '#94a3b8', maxWidth: 300, marginInline: 'auto', fontSize: '.9rem', lineHeight: 1.6 }}>{message}</p>
@@ -1848,7 +1910,7 @@ const CourtCard = ({ cancha, isFavorito, onToggleFavorito, onReservar, onVerMapa
     const shareData = {
       title: `${cancha.name} — PlayStop`,
       text: `Reserva ${cancha.type} en ${cancha.name}. Desde ${cancha.price}/hora`,
-      url: `${window.location.origin}/reservar/${cancha.id}`,
+      url: cancha.slug ? `${window.location.origin}/cancha/${cancha.slug}` : `${window.location.origin}/reservar/${cancha.id}`,
     };
     if (navigator.share) {
       try { await navigator.share(shareData); } catch {}

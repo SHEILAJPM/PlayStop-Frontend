@@ -291,8 +291,9 @@ const Hero = () => {
       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'linear-gradient(90deg, rgba(17,24,39,0.95) 0%, rgba(17,24,39,0.8) 40%, rgba(17,24,39,0.3) 100%)', zIndex: 1 }}></div>
       
       <div className="hero-text-container" style={{ flex: '1', maxWidth: '650px', zIndex: 10, position: 'relative' }}>
-        <div style={{ display: 'inline-block', padding: '6px 16px', backgroundColor: 'rgba(0, 208, 132, 0.15)', color: '#34d399', border: '1px solid rgba(0, 208, 132, 0.3)', borderRadius: '20px', fontWeight: '700', fontSize: '0.85rem', marginBottom: '24px' }}>
-          El ecosistema deportivo definitivo
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+          <div style={{ width: '36px', height: '3px', borderRadius: '2px', background: 'linear-gradient(90deg, #00d084, transparent)' }} />
+          <span style={{ color: '#00d084', fontWeight: '700', fontSize: '0.8rem', letterSpacing: '2.5px', textTransform: 'uppercase' }}>El ecosistema deportivo definitivo</span>
         </div>
         <h2 className="hero-title" style={{ fontSize: '4.2rem', margin: '0 0 24px 0', color: '#ffffff', fontWeight: '900', lineHeight: '1.05', letterSpacing: '-2px' }}>
           Digitaliza tu pasión, <br/><span style={{

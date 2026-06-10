@@ -17,20 +17,20 @@ const Footer = () => {
           {/* Marca y Descripción */}
           <div style={{ flex: '1 1 300px', maxWidth: '400px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-              <img src="/favicon.svg" alt="PlaySpot" style={{ width: '32px', height: '32px', filter: 'grayscale(1) brightness(2)' }} />
-              <span style={{ fontSize: '1.5rem', color: '#ffffff', fontWeight: '900', letterSpacing: '-0.5px' }}>PlaySpot</span>
+              <img src="/favicon.svg" alt="PlayStop" style={{ width: '32px', height: '32px' }} />
+              <span style={{ fontSize: '1.5rem', color: '#ffffff', fontWeight: '900', letterSpacing: '-0.5px' }}>Play<span style={{ color: '#00d084' }}>Stop</span></span>
             </div>
             <p style={{ lineHeight: '1.7', fontSize: '0.95rem', marginBottom: '24px' }}>
               El ecosistema digital definitivo para el deporte amateur. Conectamos a jugadores apasionados con las mejores infraestructuras deportivas, erradicando la informalidad.
             </p>
             <div style={{ display: 'flex', gap: '12px' }}>
-              <a href="#" style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: 'rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#94a3b8', transition: 'all 0.2s', textDecoration: 'none' }} onMouseOver={(e) => {e.currentTarget.style.backgroundColor='#1e293b'; e.currentTarget.style.color='#ffffff'}} onMouseOut={(e) => {e.currentTarget.style.backgroundColor='rgba(255,255,255,0.05)'; e.currentTarget.style.color='#94a3b8'}}>
+              <a href="#" title="Facebook" style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: 'rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#94a3b8', transition: 'all 0.2s', textDecoration: 'none' }} onMouseOver={(e) => {e.currentTarget.style.backgroundColor='rgba(24,119,242,0.15)'; e.currentTarget.style.color='#1877F2'; e.currentTarget.style.borderColor='rgba(24,119,242,0.3)'}} onMouseOut={(e) => {e.currentTarget.style.backgroundColor='rgba(255,255,255,0.05)'; e.currentTarget.style.color='#94a3b8'; e.currentTarget.style.borderColor='transparent'}}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
               </a>
-              <a href="#" style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: 'rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#94a3b8', transition: 'all 0.2s', textDecoration: 'none' }} onMouseOver={(e) => {e.currentTarget.style.backgroundColor='#1e293b'; e.currentTarget.style.color='#ffffff'}} onMouseOut={(e) => {e.currentTarget.style.backgroundColor='rgba(255,255,255,0.05)'; e.currentTarget.style.color='#94a3b8'}}>
+              <a href="#" title="Instagram" style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: 'rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#94a3b8', transition: 'all 0.2s', textDecoration: 'none' }} onMouseOver={(e) => {e.currentTarget.style.backgroundColor='rgba(225,48,108,0.15)'; e.currentTarget.style.color='#E1306C'; e.currentTarget.style.borderColor='rgba(225,48,108,0.3)'}} onMouseOut={(e) => {e.currentTarget.style.backgroundColor='rgba(255,255,255,0.05)'; e.currentTarget.style.color='#94a3b8'; e.currentTarget.style.borderColor='transparent'}}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
               </a>
-              <a href="#" style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: 'rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#94a3b8', transition: 'all 0.2s', textDecoration: 'none' }} onMouseOver={(e) => {e.currentTarget.style.backgroundColor='#1e293b'; e.currentTarget.style.color='#ffffff'}} onMouseOut={(e) => {e.currentTarget.style.backgroundColor='rgba(255,255,255,0.05)'; e.currentTarget.style.color='#94a3b8'}}>
+              <a href="#" title="Twitter / X" style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: 'rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#94a3b8', transition: 'all 0.2s', textDecoration: 'none' }} onMouseOver={(e) => {e.currentTarget.style.backgroundColor='rgba(29,161,242,0.15)'; e.currentTarget.style.color='#1DA1F2'; e.currentTarget.style.borderColor='rgba(29,161,242,0.3)'}} onMouseOut={(e) => {e.currentTarget.style.backgroundColor='rgba(255,255,255,0.05)'; e.currentTarget.style.color='#94a3b8'; e.currentTarget.style.borderColor='transparent'}}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
               </a>
             </div>
@@ -71,7 +71,7 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="footer-bottom-bar" style={{ paddingTop: '30px', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '20px' }}>
-          <p style={{ margin: 0, fontSize: '0.85rem' }}>&copy; {new Date().getFullYear()} PlaySpot Inc. Todos los derechos reservados.</p>
+          <p style={{ margin: 0, fontSize: '0.85rem' }}>&copy; {new Date().getFullYear()} PlayStop Inc. Todos los derechos reservados.</p>
           <div style={{ display: 'flex', gap: '20px', fontSize: '0.85rem' }}>
              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#00d084' }}></span> Sistemas Operativos
