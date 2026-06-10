@@ -11,6 +11,8 @@ const authHeader = () => ({
 
 let sessionExpired = false;
 
+export const resetSessionExpired = () => { sessionExpired = false; };
+
 async function handleResponse(res) {
   if (res.status === 204) return null;
   if ((res.status === 401 || res.status === 403) && !sessionExpired) {

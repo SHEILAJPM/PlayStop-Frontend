@@ -1,10 +1,17 @@
+const isLocalhost = self.location.hostname === 'localhost' || self.location.hostname === '127.0.0.1';
+
+// In dev, immediately unregister so Vite's HMR modules are never cached
+if (isLocalhost) {
+  self.addEventListener('install', () => self.skipWaiting());
+  self.addEventListener('activate', () => {
+    self.registration.unregister().then(() =>
+      self.clients.matchAll({ type: 'window' })
+    ).then((clients) => clients.forEach((c) => c.navigate(c.url)));
+  });
+} else {
+
 const CACHE = 'playstop-v1';
 const OFFLINE_URL = '/';
-
-const PRECACHE = [
-  '/',
-  '/src/main.jsx',
-];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(
@@ -38,7 +45,6 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  // Cache-first for static assets, network-first for pages
   const isPage = e.request.mode === 'navigate';
 
   if (isPage) {
@@ -65,7 +71,6 @@ self.addEventListener('fetch', (e) => {
   }
 });
 
-// Push notifications (for future use)
 self.addEventListener('push', (e) => {
   if (!e.data) return;
   const data = e.data.json();
@@ -82,5 +87,7 @@ self.addEventListener('push', (e) => {
 
 self.addEventListener('notificationclick', (e) => {
   e.notification.close();
-  e.waitUntil(clients.openWindow(e.notification.data.url || '/'));
+  e.waitUntil(self.clients.openWindow(e.notification.data.url || '/'));
 });
+
+} // end else (production only)

@@ -1,0 +1,152 @@
+import { useState } from 'react';
+import EmptyState from '../shared/EmptyState.jsx';
+import { SkeletonTable } from '../DashboardLayout.jsx';
+
+const STATUS_FILTERS = [
+  { label: 'Todas', value: 'ALL' },
+  { label: 'Confirmadas', value: 'CONFIRMED' },
+  { label: 'Completadas', value: 'ATTENDED' },
+  { label: 'Canceladas', value: 'CANCELLED' },
+];
+
+const ReservasTab = ({ reservas, loadingReservas, openModal, openReview, reviewedIds, setQrModal, setMapModal, setActiveTab, darkMode, C }) => {
+  const [reservaSearch, setReservaSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('ALL');
+
+  const filtered = reservas.filter(r => {
+    const matchStatus = statusFilter === 'ALL' || r.apiStatus === statusFilter;
+    const matchSearch = !reservaSearch || r.court.toLowerCase().includes(reservaSearch.toLowerCase()) || r.date.toLowerCase().includes(reservaSearch.toLowerCase());
+    return matchStatus && matchSearch;
+  });
+
+  return (
+    <div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', marginBottom: '24px' }}>
+        {[
+          { label: 'Total reservas',  val: reservas.length,                                          icon: 'bi-calendar3',        color: '#3b82f6' },
+          { label: 'Confirmadas',     val: reservas.filter(r => r.apiStatus === 'CONFIRMED').length,  icon: 'bi-check-circle-fill', color: '#00d084' },
+          { label: 'Completadas',     val: reservas.filter(r => r.apiStatus === 'ATTENDED').length,   icon: 'bi-award-fill',        color: '#8b5cf6' },
+          { label: 'Canceladas',      val: reservas.filter(r => r.apiStatus === 'CANCELLED').length,  icon: 'bi-x-circle-fill',     color: '#ef4444' },
+        ].map(stat => (
+          <div key={stat.label} style={{ background: C.cardBg, border: `1px solid ${C.cardBorder}`, borderRadius: '16px', padding: '18px 20px', display: 'flex', alignItems: 'center', gap: '14px', borderLeft: `4px solid ${stat.color}` }}>
+            <i className={`bi ${stat.icon}`} style={{ fontSize: '1.6rem', color: stat.color }} />
+            <div>
+              <div style={{ fontSize: '1.6rem', fontWeight: '900', color: C.textPrimary, lineHeight: 1 }}>{stat.val}</div>
+              <div style={{ fontSize: '0.78rem', color: C.textMuted, fontWeight: '600', marginTop: '2px' }}>{stat.label}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ background: C.cardBg, border: `1px solid ${C.cardBorder}`, borderRadius: '20px', overflow: 'hidden' }}>
+        <div style={{ padding: '20px 24px', borderBottom: `1px solid ${C.cardBorder}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+          <h3 style={{ margin: 0, color: C.textPrimary, fontSize: '1.15rem', fontWeight: '800' }}>Historial de Reservas</h3>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+            <div style={{ position: 'relative' }}>
+              <i className="bi bi-search" style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', color: C.textMuted, fontSize: '0.85rem', pointerEvents: 'none' }} />
+              <input
+                type="text" value={reservaSearch}
+                onChange={e => setReservaSearch(e.target.value)}
+                placeholder="Buscar reserva..."
+                style={{ paddingLeft: 32, paddingRight: 12, paddingTop: 8, paddingBottom: 8, borderRadius: 10, border: `1.5px solid ${C.cardBorder}`, background: C.inputBg, color: C.textPrimary, fontSize: '0.88rem', outline: 'none', width: 200 }}
+              />
+            </div>
+            <button onClick={() => setActiveTab('Buscar Canchas')} className="btn-primary-ps" style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
+              + Nueva reserva
+            </button>
+          </div>
+        </div>
+
+        {/* Status filter chips */}
+        <div style={{ padding: '12px 24px', borderBottom: `1px solid ${C.cardBorder}`, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {STATUS_FILTERS.map(f => (
+            <button key={f.value} onClick={() => setStatusFilter(f.value)}
+              style={{
+                padding: '6px 14px', borderRadius: 99, border: 'none', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', transition: 'all 0.15s',
+                background: statusFilter === f.value ? (darkMode ? '#00d084' : '#0f172a') : (darkMode ? '#1e293b' : '#f1f5f9'),
+                color: statusFilter === f.value ? (darkMode ? '#0f172a' : '#fff') : C.textSecondary,
+              }}>
+              {f.label}
+            </button>
+          ))}
+        </div>
+
+        {loadingReservas ? (
+          <div style={{ padding: '24px' }}><SkeletonTable rows={3} /></div>
+        ) : reservas.length === 0 ? (
+          <div style={{ padding: '40px 24px' }}>
+            <EmptyState
+              icon="bi-calendar3"
+              title="Aún no tienes reservas"
+              message="Busca una cancha, elige tu horario favorito y reserva en menos de 2 minutos."
+              darkMode={darkMode}
+              cta={{ label: 'Buscar canchas', onClick: () => setActiveTab('Buscar Canchas') }}
+            />
+          </div>
+        ) : filtered.length === 0 ? (
+          <div style={{ padding: '40px 24px' }}>
+            <EmptyState icon="bi-funnel" title="Sin resultados" message="No hay reservas que coincidan con el filtro seleccionado." darkMode={darkMode} cta={{ label: 'Ver todas', onClick: () => { setStatusFilter('ALL'); setReservaSearch(''); } }} />
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            {filtered.map((row, idx) => (
+              <div key={row.id} style={{
+                padding: '16px 24px', display: 'flex', alignItems: 'center', gap: '16px',
+                flexWrap: 'wrap', borderBottom: idx < filtered.length - 1 ? `1px solid ${C.cardBorder}` : 'none',
+                transition: 'background .15s',
+              }}
+                onMouseOver={e => e.currentTarget.style.background = darkMode ? '#1a2236' : '#fafbff'}
+                onMouseOut={e => e.currentTarget.style.background = 'transparent'}
+              >
+                <div style={{ width: '44px', height: '44px', borderRadius: '12px', flexShrink: 0, background: row.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem' }}>
+                  <i className={`bi ${row.apiStatus === 'CONFIRMED' ? 'bi-check-circle-fill' : row.apiStatus === 'CANCELLED' ? 'bi-x-circle-fill' : row.apiStatus === 'ATTENDED' ? 'bi-award-fill' : 'bi-hourglass-split'}`} style={{ color: row.color }} />
+                </div>
+                <div style={{ flex: 1, minWidth: '150px' }}>
+                  <div style={{ fontWeight: '800', color: C.textPrimary, fontSize: '0.95rem', marginBottom: '2px' }}>{row.court}</div>
+                  <div style={{ fontSize: '0.82rem', color: C.textMuted }}>{row.date}</div>
+                </div>
+                <span style={{ padding: '4px 12px', borderRadius: '99px', fontSize: '0.75rem', fontWeight: '800', color: row.color, background: row.bg, whiteSpace: 'nowrap', flexShrink: 0 }}>
+                  {row.status}
+                </span>
+                <div style={{ display: 'flex', gap: '8px', flexShrink: 0, flexWrap: 'wrap' }}>
+                  <button
+                    onClick={() => setMapModal({ show: true, cancha: { name: row.court, location: row.courtAddress, lat: row.courtLat, lng: row.courtLng, district: '', city: '' } })}
+                    style={{ padding: '7px 13px', borderRadius: '9px', border: 'none', background: darkMode ? 'rgba(59,130,246,.15)' : '#eff6ff', color: '#3b82f6', fontWeight: '700', fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <i className="bi bi-geo-alt-fill" /> Cómo llegar
+                  </button>
+                  {(row.apiStatus === 'CONFIRMED' || row.apiStatus === 'PENDING') && (
+                    <button
+                      onClick={() => setQrModal({ show: true, reservationId: row.id, courtName: row.court, date: row.rawDate, slot: row.slotLabel, timestamp: Date.now() })}
+                      style={{ padding: '7px 13px', borderRadius: '9px', border: 'none', background: darkMode ? '#1e293b' : '#0f172a', color: '#00d084', fontWeight: '700', fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <i className="bi bi-qr-code-scan" /> Ver QR
+                    </button>
+                  )}
+                  {row.apiStatus === 'ATTENDED' && !reviewedIds.has(row.id) && (
+                    <button
+                      onClick={() => openReview(row)}
+                      style={{ padding: '7px 13px', borderRadius: '9px', border: 'none', background: 'linear-gradient(135deg,#f59e0b,#d97706)', color: '#fff', fontWeight: '700', fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <i className="bi bi-star-fill" /> Dejar reseña
+                    </button>
+                  )}
+                  {row.apiStatus === 'ATTENDED' && reviewedIds.has(row.id) && (
+                    <span style={{ padding: '7px 13px', borderRadius: '9px', background: darkMode ? 'rgba(245,158,11,0.12)' : '#fef3c7', color: '#d97706', fontWeight: '700', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <i className="bi bi-star-fill" /> Reseñado
+                    </span>
+                  )}
+                  {row.apiStatus !== 'CANCELLED' && row.apiStatus !== 'ATTENDED' && (
+                    <button onClick={() => openModal('CANCELAR_RESERVA', row)}
+                      style={{ padding: '7px 13px', borderRadius: '9px', border: 'none', background: darkMode ? 'rgba(239,68,68,.15)' : '#fee2e2', color: darkMode ? '#f87171' : '#ef4444', fontWeight: '700', fontSize: '0.8rem', cursor: 'pointer' }}>
+                      Cancelar
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default ReservasTab;

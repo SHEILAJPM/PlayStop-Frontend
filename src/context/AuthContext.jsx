@@ -1,4 +1,5 @@
 ﻿import { createContext, useContext, useState } from 'react';
+import { resetSessionExpired } from '../services/api.js';
 
 const AuthContext = createContext(null);
 
@@ -14,6 +15,7 @@ export function AuthProvider({ children }) {
   });
 
   const login = (userData) => {
+    resetSessionExpired();
     setUser(userData);
     localStorage.setItem('playspot-user', JSON.stringify(userData));
   };
@@ -22,6 +24,7 @@ export function AuthProvider({ children }) {
     setUser(null);
     localStorage.removeItem('playspot-user');
     localStorage.removeItem('token');
+    localStorage.removeItem('playspot-avatar');
   };
 
   return (

@@ -4,10 +4,7 @@ import { resolve } from 'path'
 
 export default defineConfig({
   plugins: [
-    react({
-      jsxImportSource: 'react',
-      fastRefresh: true,
-    }),
+    react(),
   ],
   resolve: {
     alias: {
@@ -28,13 +25,14 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: false,
-    minify: 'esbuild',
+    minify: 'rolldown-esbuild',
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          motion: ['framer-motion'],
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return;
+          if (id.includes('react-dom') || id.includes('react/')) return 'vendor';
+          if (id.includes('react-router-dom')) return 'router';
+          if (id.includes('framer-motion')) return 'motion';
         },
       },
     },
