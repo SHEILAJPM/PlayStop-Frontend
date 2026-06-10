@@ -91,7 +91,7 @@ const Hero = () => {
             
             // 1. Mostrar ciudad y cambiar estado a buscando distrito
             setTimeout(() => {
-              setSelectedLocation({ icon: '📍', text: city });
+              setSelectedLocation({ icon: 'bi-geo-alt-fill', text: city });
               setLocatingStatus('distrito');
               
               // 2. Mostrar distrito y cerrar dropdown
@@ -138,6 +138,121 @@ const Hero = () => {
             50% { transform: scale(1.1); opacity: 0.7; }
             100% { transform: scale(1); opacity: 1; }
           }
+          .widget-selector {
+            background: rgba(0,0,0,0.25);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #d1d5db;
+          }
+          .widget-selector:hover {
+            border-color: rgba(0,208,132,0.45);
+            background: rgba(0,208,132,0.06);
+            box-shadow: 0 0 0 3px rgba(0,208,132,0.1);
+          }
+          .widget-selector.active {
+            border-color: rgba(0,208,132,0.6);
+            background: rgba(0,208,132,0.08);
+            box-shadow: 0 0 0 3px rgba(0,208,132,0.12);
+          }
+          .widget-selector.selected { color: #ffffff; }
+          .widget-selector.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+          }
+          .widget-dropdown {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            width: 100%;
+            background: rgba(10,16,36,0.97);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            z-index: 50;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+          }
+          .widget-option {
+            padding: 12px 18px;
+            color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: background 0.15s ease;
+            font-size: 0.95rem;
+          }
+          .widget-option:hover { background: rgba(0,208,132,0.1); color: #00d084; }
+          .widget-option + .widget-option { border-top: 1px solid rgba(255,255,255,0.05); }
+          .widget-search-btn {
+            margin-top: 10px;
+            background: linear-gradient(135deg, #00d084 0%, #00b875 100%);
+            color: #fff;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 1.05rem;
+            cursor: pointer;
+            box-shadow: 0 8px 24px -4px rgba(0,208,132,0.45);
+            transition: all 0.25s ease;
+            width: 100%;
+          }
+          .widget-search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px -4px rgba(0,208,132,0.55);
+          }
+          .hero-btn-primary {
+            background: linear-gradient(135deg, #00d084 0%, #00b875 100%);
+            color: #fff;
+            border: none;
+            padding: 16px 36px;
+            font-size: 1.05rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            box-shadow: 0 8px 24px -4px rgba(0,208,132,0.45);
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+          }
+          .hero-btn-primary::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.25s ease;
+          }
+          .hero-btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 36px -4px rgba(0,208,132,0.55);
+          }
+          .hero-btn-primary:hover::after { opacity: 1; }
+          .hero-btn-secondary {
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.18);
+            padding: 16px 36px;
+            font-size: 1.05rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            backdrop-filter: blur(8px);
+            transition: all 0.25s ease;
+          }
+          .hero-btn-secondary:hover {
+            transform: translateY(-3px);
+            background: rgba(255,255,255,0.14);
+            border-color: rgba(0,208,132,0.45);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.3);
+          }
           @media (max-width: 768px) {
             .hero-container { flex-direction: column !important; padding: 120px 5% 60px 5% !important; text-align: center; gap: 40px !important; }
             .hero-text-container { flex: 1 1 100% !important; max-width: 100% !important; }
@@ -180,17 +295,23 @@ const Hero = () => {
           El ecosistema deportivo definitivo
         </div>
         <h2 className="hero-title" style={{ fontSize: '4.2rem', margin: '0 0 24px 0', color: '#ffffff', fontWeight: '900', lineHeight: '1.05', letterSpacing: '-2px' }}>
-          Digitaliza tu pasión, <br/><span style={{ color: '#00d084' }}>erradica la informalidad</span>
+          Digitaliza tu pasión, <br/><span style={{
+            background: 'linear-gradient(90deg, #00d084 0%, #34d399 55%, #a7f3d0 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            filter: 'drop-shadow(0 0 24px rgba(0,208,132,0.45))'
+          }}>erradica la informalidad</span>
         </h2>
         <p className="hero-subtitle" style={{ fontSize: '1.25rem', margin: '0 0 40px 0', color: '#d1d5db', lineHeight: '1.6' }}>
           La plataforma más robusta para buscar, comparar y reservar infraestructuras deportivas. Toma el control de tu club y mejora la experiencia de tus jugadores.
         </p>
         
         <div className="hero-buttons" style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-          <button onClick={() => document.getElementById('canchas-destacadas').scrollIntoView()} style={{ backgroundColor: '#00d084', color: '#ffffff', border: 'none', padding: '16px 36px', fontSize: '1.1rem', borderRadius: '8px', cursor: 'pointer', fontWeight: '700', boxShadow: '0 8px 20px -4px rgba(0, 208, 132, 0.4)' }}>
+          <button className="hero-btn-primary" onClick={() => document.getElementById('canchas-destacadas').scrollIntoView()}>
             Reservar una cancha
           </button>
-          <button onClick={() => document.getElementById('clubes').scrollIntoView()} style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.2)', padding: '16px 36px', fontSize: '1.1rem', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', backdropFilter: 'blur(4px)' }}>
+          <button className="hero-btn-secondary" onClick={() => document.getElementById('clubes').scrollIntoView()}>
             Gestionar mi Club
           </button>
         </div>
@@ -205,17 +326,18 @@ const Hero = () => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
             {/* Selector de Deporte */}
             <div style={{ position: 'relative' }}>
-              <div 
-                onClick={() => setOpenDropdown(openDropdown === 'sport' ? null : 'sport')}
-                style={{ backgroundColor: 'rgba(0, 0, 0, 0.2)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', padding: '14px 18px', color: selectedSport.text.includes('¿') ? '#d1d5db' : '#ffffff', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
-                <i className={`bi ${selectedSport.icon}`} style={{ fontSize: '1.2rem' }} /> <span style={{ opacity: 0.9, fontWeight: '500' }}>{selectedSport.text}</span>
-                <span style={{ marginLeft: 'auto', fontSize: '0.8rem', opacity: 0.7 }}>▼</span>
+              <div
+                className={`widget-selector${openDropdown === 'sport' ? ' active' : ''}${!selectedSport.text.includes('¿') ? ' selected' : ''}`}
+                onClick={() => setOpenDropdown(openDropdown === 'sport' ? null : 'sport')}>
+                <i className={`bi ${selectedSport.icon}`} style={{ fontSize: '1.15rem', color: '#00d084' }} />
+                <span style={{ fontWeight: '500', flex: 1 }}>{selectedSport.text}</span>
+                <span style={{ fontSize: '0.75rem', opacity: 0.5, transform: openDropdown === 'sport' ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }}>▼</span>
               </div>
               {openDropdown === 'sport' && (
-                <div style={{ position: 'absolute', top: '100%', left: 0, width: '100%', marginTop: '5px', backgroundColor: 'rgba(15, 23, 42, 0.95)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', zIndex: 50, overflow: 'hidden' }}>
+                <div className="widget-dropdown">
                   {sports.map((item, i) => (
-                    <div key={i} onClick={() => { setSelectedSport(item); setOpenDropdown(null); }} style={{ padding: '12px 18px', color: 'white', display: 'flex', gap: '12px', cursor: 'pointer', borderBottom: i < sports.length - 1 ? '1px solid rgba(255, 255, 255, 0.05)' : 'none' }}>
-                      <i className={`bi ${item.icon}`} /> <span>{item.text}</span>
+                    <div key={i} className="widget-option" onClick={() => { setSelectedSport(item); setOpenDropdown(null); }}>
+                      <i className={`bi ${item.icon}`} style={{ color: '#00d084' }} /> <span>{item.text}</span>
                     </div>
                   ))}
                 </div>
@@ -224,39 +346,44 @@ const Hero = () => {
 
             {/* Selector de Ubicación */}
             <div style={{ position: 'relative' }}>
-              <div 
-                onClick={() => setOpenDropdown(openDropdown === 'location' ? null : 'location')}
-                style={{ backgroundColor: 'rgba(0, 0, 0, 0.2)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', padding: '14px 18px', color: selectedLocation.text.includes('¿') ? '#d1d5db' : '#ffffff', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
-                <i className={`bi ${selectedLocation.icon}`} style={{ fontSize: '1.2rem' }} /> <span style={{ opacity: 0.9, fontWeight: '500' }}>{selectedLocation.text}</span>
-                <span style={{ marginLeft: 'auto', fontSize: '0.8rem', opacity: 0.7 }}>▼</span>
+              <div
+                className={`widget-selector${openDropdown === 'location' ? ' active' : ''}${!selectedLocation.text.includes('¿') ? ' selected' : ''}`}
+                onClick={() => setOpenDropdown(openDropdown === 'location' ? null : 'location')}>
+                <i className={`bi ${selectedLocation.icon}`} style={{ fontSize: '1.15rem', color: '#00d084' }} />
+                <span style={{ fontWeight: '500', flex: 1 }}>{selectedLocation.text}</span>
+                <span style={{ fontSize: '0.75rem', opacity: 0.5, transform: openDropdown === 'location' ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }}>▼</span>
               </div>
               {openDropdown === 'location' && (
-                <div style={{ position: 'absolute', top: '100%', left: 0, width: '100%', marginTop: '5px', backgroundColor: 'rgba(15, 23, 42, 0.95)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', zIndex: 50, overflow: 'hidden' }}>
-                  <div onClick={(e) => { e.stopPropagation(); handleDetectLocation(); }} style={{ padding: '12px 18px', color: '#00d084', display: 'flex', gap: '12px', cursor: 'pointer', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', backgroundColor: 'rgba(0, 208, 132, 0.1)', fontWeight: '700', transition: 'background-color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(0, 208, 132, 0.2)'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'rgba(0, 208, 132, 0.1)'}>
-                    <i className={`bi ${locatingStatus !== '' ? 'bi-hourglass-split' : 'bi-crosshair2'}`} style={{ animation: locatingStatus !== '' ? 'pulseLocation 1s infinite' : 'none', display: 'inline-block' }} /> <span>{locatingStatus === 'ciudad' ? 'Detectando ciudad...' : locatingStatus === 'distrito' ? 'Detectando distrito...' : 'Usar mi ubicación actual'}</span>
+                <div className="widget-dropdown">
+                  <div className="widget-option" style={{ color: '#00d084', fontWeight: '700', background: 'rgba(0,208,132,0.07)' }}
+                    onClick={(e) => { e.stopPropagation(); handleDetectLocation(); }}>
+                    <i className={`bi ${locatingStatus !== '' ? 'bi-hourglass-split' : 'bi-crosshair2'}`}
+                      style={{ animation: locatingStatus !== '' ? 'pulseLocation 1s infinite' : 'none' }} />
+                    <span>{locatingStatus === 'ciudad' ? 'Detectando ciudad...' : locatingStatus === 'distrito' ? 'Detectando distrito...' : 'Usar mi ubicación actual'}</span>
                   </div>
                   {locations.map((item, i) => (
-                    <div key={i} onClick={() => { setSelectedLocation(item); setSelectedDistrict({ icon: 'bi-house-fill', text: '¿En qué distrito?' }); setOpenDropdown(null); }} style={{ padding: '12px 18px', color: 'white', display: 'flex', gap: '12px', cursor: 'pointer', borderBottom: i < locations.length - 1 ? '1px solid rgba(255, 255, 255, 0.05)' : 'none' }}>
-                      <i className={`bi ${item.icon}`} /> <span>{item.text}</span>
+                    <div key={i} className="widget-option" onClick={() => { setSelectedLocation(item); setSelectedDistrict({ icon: 'bi-house-fill', text: '¿En qué distrito?' }); setOpenDropdown(null); }}>
+                      <i className={`bi ${item.icon}`} style={{ color: '#64748b' }} /> <span>{item.text}</span>
                     </div>
                   ))}
                 </div>
               )}
             </div>
 
-            {/* Selector de Distrito (Depende de la ciudad) */}
-            <div style={{ position: 'relative', transition: 'all 0.3s ease', opacity: selectedLocation.text.includes('¿') ? 0.6 : 1 }}>
-              <div 
-                onClick={() => !selectedLocation.text.includes('¿') && setOpenDropdown(openDropdown === 'district' ? null : 'district')}
-                style={{ backgroundColor: 'rgba(0, 0, 0, 0.2)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', padding: '14px 18px', color: selectedDistrict.text.includes('¿') ? '#d1d5db' : '#ffffff', display: 'flex', alignItems: 'center', gap: '12px', cursor: selectedLocation.text.includes('¿') ? 'not-allowed' : 'pointer' }}>
-                <i className={`bi ${selectedDistrict.icon}`} style={{ fontSize: '1.2rem' }} /> <span style={{ opacity: 0.9, fontWeight: '500' }}>{selectedDistrict.text}</span>
-                <span style={{ marginLeft: 'auto', fontSize: '0.8rem', opacity: 0.7 }}>▼</span>
+            {/* Selector de Distrito */}
+            <div style={{ position: 'relative', opacity: selectedLocation.text.includes('¿') ? 0.5 : 1, transition: 'opacity 0.3s' }}>
+              <div
+                className={`widget-selector${openDropdown === 'district' ? ' active' : ''}${!selectedDistrict.text.includes('¿') ? ' selected' : ''}${selectedLocation.text.includes('¿') ? ' disabled' : ''}`}
+                onClick={() => !selectedLocation.text.includes('¿') && setOpenDropdown(openDropdown === 'district' ? null : 'district')}>
+                <i className={`bi ${selectedDistrict.icon}`} style={{ fontSize: '1.15rem', color: '#00d084' }} />
+                <span style={{ fontWeight: '500', flex: 1 }}>{selectedDistrict.text}</span>
+                <span style={{ fontSize: '0.75rem', opacity: 0.5 }}>▼</span>
               </div>
               {openDropdown === 'district' && currentDistricts.length > 0 && (
-                <div style={{ position: 'absolute', top: '100%', left: 0, width: '100%', marginTop: '5px', backgroundColor: 'rgba(15, 23, 42, 0.95)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', zIndex: 50, overflow: 'hidden' }}>
+                <div className="widget-dropdown">
                   {currentDistricts.map((item, i) => (
-                    <div key={i} onClick={() => { setSelectedDistrict(item); setOpenDropdown(null); }} style={{ padding: '12px 18px', color: 'white', display: 'flex', gap: '12px', cursor: 'pointer', borderBottom: i < currentDistricts.length - 1 ? '1px solid rgba(255, 255, 255, 0.05)' : 'none' }}>
-                      <i className={`bi ${item.icon}`} /> <span>{item.text}</span>
+                    <div key={i} className="widget-option" onClick={() => { setSelectedDistrict(item); setOpenDropdown(null); }}>
+                      <i className={`bi ${item.icon}`} style={{ color: '#64748b' }} /> <span>{item.text}</span>
                     </div>
                   ))}
                 </div>
@@ -265,25 +392,26 @@ const Hero = () => {
 
             {/* Selector de Fecha */}
             <div style={{ position: 'relative' }}>
-              <div 
-                onClick={() => setOpenDropdown(openDropdown === 'date' ? null : 'date')}
-                style={{ backgroundColor: 'rgba(0, 0, 0, 0.2)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', padding: '14px 18px', color: selectedDate.text === 'Fecha y hora' ? '#d1d5db' : '#ffffff', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
-                <i className={`bi ${selectedDate.icon}`} style={{ fontSize: '1.2rem' }} /> <span style={{ opacity: 0.9, fontWeight: '500' }}>{selectedDate.text}</span>
-                <span style={{ marginLeft: 'auto', fontSize: '0.8rem', opacity: 0.7 }}>▼</span>
+              <div
+                className={`widget-selector${openDropdown === 'date' ? ' active' : ''}${selectedDate.text !== 'Fecha y hora' ? ' selected' : ''}`}
+                onClick={() => setOpenDropdown(openDropdown === 'date' ? null : 'date')}>
+                <i className={`bi ${selectedDate.icon}`} style={{ fontSize: '1.15rem', color: '#00d084' }} />
+                <span style={{ fontWeight: '500', flex: 1 }}>{selectedDate.text}</span>
+                <span style={{ fontSize: '0.75rem', opacity: 0.5, transform: openDropdown === 'date' ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }}>▼</span>
               </div>
               {openDropdown === 'date' && (
-                <div style={{ position: 'absolute', top: '100%', left: 0, width: '100%', marginTop: '5px', backgroundColor: 'rgba(15, 23, 42, 0.95)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', zIndex: 50, overflow: 'hidden' }}>
+                <div className="widget-dropdown">
                   {dates.map((item, i) => (
-                    <div key={i} onClick={() => { setSelectedDate(item); setOpenDropdown(null); }} style={{ padding: '12px 18px', color: 'white', display: 'flex', gap: '12px', cursor: 'pointer', borderBottom: i < dates.length - 1 ? '1px solid rgba(255, 255, 255, 0.05)' : 'none' }}>
-                      <i className={`bi ${item.icon}`} /> <span>{item.text}</span>
+                    <div key={i} className="widget-option" onClick={() => { setSelectedDate(item); setOpenDropdown(null); }}>
+                      <i className={`bi ${item.icon}`} style={{ color: '#64748b' }} /> <span>{item.text}</span>
                     </div>
                   ))}
                 </div>
               )}
             </div>
-            
+
             {/* Botón Buscar */}
-            <button onClick={() => document.getElementById('canchas-destacadas').scrollIntoView()} style={{ marginTop: '10px', backgroundColor: '#00d084', color: '#ffffff', border: 'none', padding: '16px', borderRadius: '12px', fontWeight: '800', fontSize: '1.1rem', cursor: 'pointer', boxShadow: '0 8px 20px -4px rgba(0, 208, 132, 0.4)' }}>
+            <button className="widget-search-btn" onClick={() => document.getElementById('canchas-destacadas').scrollIntoView()}>
               Buscar Canchas
             </button>
           </div>

@@ -13,14 +13,24 @@ const Soluciones = () => {
       <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
         
         <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-          <div className="section-badge" style={{ display: 'inline-block', padding: '6px 16px', background: 'rgba(139, 92, 246, 0.1)', border: '1px solid rgba(139, 92, 246, 0.3)', color: '#8b5cf6', borderRadius: '20px', fontWeight: '800', fontSize: '0.85rem', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '1px' }}>
-            Doble Beneficio
+          {/* Label decorativo con línea verde centrada */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '16px' }}>
+            <div style={{ width: '36px', height: '3px', borderRadius: '2px', background: 'linear-gradient(90deg, transparent, #00d084)' }} />
+            <span style={{ color: '#00d084', fontWeight: '700', fontSize: '0.8rem', letterSpacing: '2.5px', textTransform: 'uppercase' }}>
+              Doble Beneficio
+            </span>
+            <div style={{ width: '36px', height: '3px', borderRadius: '2px', background: 'linear-gradient(90deg, #00d084, transparent)' }} />
           </div>
           <h2 className="soluciones-title" style={{ fontSize: '3rem', color: '#0f172a', fontWeight: '900', margin: '0 0 16px 0', letterSpacing: '-1px' }}>
-            Una plataforma, <span style={{ color: '#8b5cf6' }}>dos soluciones</span>
+            Una plataforma, <span style={{
+              background: 'linear-gradient(90deg, #8b5cf6 0%, #a78bfa 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text'
+            }}>dos soluciones</span>
           </h2>
           <p style={{ color: '#64748b', fontSize: '1.15rem', maxWidth: '600px', margin: '0 auto', lineHeight: '1.6' }}>
-            Ya sea que busques jugar o administrar, PlaySpot tiene las herramientas exactas para llevar tu experiencia al siguiente nivel.
+            Ya sea que busques jugar o administrar, PlayStop tiene las herramientas exactas para llevar tu experiencia al siguiente nivel.
           </p>
         </div>
 

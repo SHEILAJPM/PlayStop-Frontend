@@ -89,7 +89,10 @@ const ParaClubes = () => (
     </style>
 
     <div style={{ flex: '1 1 400px', maxWidth: '600px', zIndex: 10 }} className="clubes-text">
-      <div style={{ display: 'inline-block', padding: '6px 18px', background: 'linear-gradient(90deg, rgba(0,208,132,0.15), rgba(0,208,132,0.05))', border: '1px solid rgba(0,208,132,0.3)', color: '#34d399', borderRadius: '20px', fontWeight: '800', fontSize: '0.85rem', marginBottom: '24px', letterSpacing: '1px', textTransform: 'uppercase' }}>Para Clubes</div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+        <div style={{ width: '36px', height: '3px', borderRadius: '2px', background: 'linear-gradient(90deg, #00d084, transparent)' }} />
+        <span style={{ color: '#00d084', fontWeight: '700', fontSize: '0.8rem', letterSpacing: '2.5px', textTransform: 'uppercase' }}>Para Clubes</span>
+      </div>
       <h2 className="clubes-title" style={{ fontSize: '3.8rem', color: '#ffffff', fontWeight: '900', marginBottom: '20px', letterSpacing: '-1.5px', lineHeight: '1.1' }}>El software que tu complejo <span style={{ background: 'linear-gradient(90deg, #34d399, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>necesita</span></h2>
       <p style={{ color: '#94a3b8', fontSize: '1.15rem', lineHeight: '1.7', marginBottom: '40px' }}>Automatiza tus reservas, cobra por adelantado y reduce el ausentismo al 0%. PlaySpot te da las herramientas de una gran empresa, fáciles de usar desde cualquier dispositivo.</p>
       

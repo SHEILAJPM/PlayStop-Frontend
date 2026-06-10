@@ -247,7 +247,10 @@ const ParaJugadores = () => (
 
     {/* Textos y Beneficios */}
     <div style={{ flex: '1 1 450px', maxWidth: '600px', zIndex: 10, position: 'relative' }} className="jugadores-text">
-      <div className="section-badge" style={{ display: 'inline-block', padding: '6px 18px', background: 'linear-gradient(90deg, rgba(37,99,235,0.1), rgba(6,182,212,0.1))', color: '#1e40af', border: '1px solid rgba(37,99,235,0.2)', borderRadius: '20px', fontWeight: '800', fontSize: '0.85rem', marginBottom: '24px', letterSpacing: '1px', textTransform: 'uppercase' }}>Para Jugadores</div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+        <div style={{ width: '36px', height: '3px', borderRadius: '2px', background: 'linear-gradient(90deg, #00d084, transparent)' }} />
+        <span style={{ color: '#00d084', fontWeight: '700', fontSize: '0.8rem', letterSpacing: '2.5px', textTransform: 'uppercase' }}>Para Jugadores</span>
+      </div>
       <h2 className="jugadores-title" style={{ fontSize: '3.5rem', color: '#0f172a', fontWeight: '900', marginBottom: '20px', lineHeight: '1.1', letterSpacing: '-1.5px' }}>Tu partido, <span style={{ background: 'linear-gradient(90deg, #2563eb, #06b6d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>sin estrés.</span></h2>
       <p style={{ color: '#4b5563', fontSize: '1.15rem', lineHeight: '1.7', marginBottom: '40px' }}>Olvídate de perseguir a tus amigos para que paguen o de llamar a 10 complejos distintos buscando un horario libre. PlaySpot hace el trabajo duro por ti.</p>
       
