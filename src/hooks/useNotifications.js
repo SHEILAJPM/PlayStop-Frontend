@@ -16,6 +16,10 @@ export function useNotifications() {
   }, []);
 
   useEffect(() => {
+    // SSE desactivado hasta que el backend implemente el endpoint.
+    // Activar con VITE_SSE_ENABLED=true en .env cuando esté listo.
+    if (import.meta.env.VITE_SSE_ENABLED !== 'true') return;
+
     const token = localStorage.getItem('token');
     if (!token) return;
 
@@ -33,16 +37,14 @@ export function useNotifications() {
         }
       };
 
-      es.addEventListener('new_reservation',        handle('success', 'bi-stars',            'Nueva reserva recibida'));
-      es.addEventListener('reservation_confirmed',  handle('success', 'bi-check-circle-fill', 'Reserva confirmada'));
-      es.addEventListener('reservation_cancelled',  handle('warning', 'bi-x-circle-fill',     'Reserva cancelada'));
-      es.addEventListener('payment_received',       handle('success', 'bi-cash-coin',          'Pago recibido'));
-      es.addEventListener('reservation_attended',   handle('info',    'bi-award-fill',         'Asistencia confirmada'));
+      es.addEventListener('new_reservation',       handle('success', 'bi-stars',            'Nueva reserva recibida'));
+      es.addEventListener('reservation_confirmed', handle('success', 'bi-check-circle-fill', 'Reserva confirmada'));
+      es.addEventListener('reservation_cancelled', handle('warning', 'bi-x-circle-fill',     'Reserva cancelada'));
+      es.addEventListener('payment_received',      handle('success', 'bi-cash-coin',          'Pago recibido'));
+      es.addEventListener('reservation_attended',  handle('info',    'bi-award-fill',         'Asistencia confirmada'));
 
       es.onerror = () => es.close();
-    } catch {
-      // SSE not supported or server unavailable — silent fallback
-    }
+    } catch { /* SSE no disponible */ }
 
     return () => { try { esRef.current?.close(); } catch {} };
   }, [addNotification]);

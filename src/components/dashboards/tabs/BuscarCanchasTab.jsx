@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import CourtCard from '../shared/CourtCard.jsx';
 import EmptyState from '../shared/EmptyState.jsx';
 import { SkeletonCourtGrid } from '../DashboardLayout.jsx';
+
+const PAGE_SIZE = 12;
 
 const PERU_CITIES = ['Lima', 'Arequipa', 'Trujillo', 'Chiclayo', 'Piura', 'Cusco', 'Iquitos', 'Huancayo', 'Tacna', 'Ica'];
 
@@ -12,8 +14,9 @@ const BuscarCanchasTab = ({ canchas, loadingCanchas, errorCanchas, favoritosIds,
   const [districtFilter, setDistrictFilter] = useState('');
   const [priceMin, setPriceMin] = useState(0);
   const [priceMax, setPriceMax] = useState(500);
+  const [page, setPage] = useState(1);
 
-  const filteredCanchas = canchas.filter(c => {
+  const filteredCanchas = useMemo(() => canchas.filter(c => {
     const q = canchaSearch.toLowerCase();
     const matchSearch = !q || c.name.toLowerCase().includes(q) || c.type.toLowerCase().includes(q) || c.location.toLowerCase().includes(q);
     const matchSport = canchaSportFilter === 'Todos' || c.type.toLowerCase().includes(canchaSportFilter.toLowerCase());
@@ -21,9 +24,14 @@ const BuscarCanchasTab = ({ canchas, loadingCanchas, errorCanchas, favoritosIds,
     const matchDistrict = !districtFilter || c.district.toLowerCase().includes(districtFilter.toLowerCase()) || c.location.toLowerCase().includes(districtFilter.toLowerCase());
     const matchPrice = c.priceNum >= priceMin && c.priceNum <= priceMax;
     return matchSearch && matchSport && matchCity && matchDistrict && matchPrice;
-  });
+  }), [canchas, canchaSearch, canchaSportFilter, cityFilter, districtFilter, priceMin, priceMax]);
+
+  const totalPages = Math.ceil(filteredCanchas.length / PAGE_SIZE);
+  const paginated = filteredCanchas.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const hasActiveFilters = canchaSearch || canchaSportFilter !== 'Todos' || cityFilter || districtFilter || priceMin > 0 || priceMax < 500;
+
+  const resetPage = () => setPage(1);
 
   const clearFilters = () => {
     setCanchaSearch('');
@@ -32,6 +40,7 @@ const BuscarCanchasTab = ({ canchas, loadingCanchas, errorCanchas, favoritosIds,
     setDistrictFilter('');
     setPriceMin(0);
     setPriceMax(500);
+    setPage(1);
   };
 
   return (
@@ -99,7 +108,7 @@ const BuscarCanchasTab = ({ canchas, loadingCanchas, errorCanchas, favoritosIds,
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
               {['Todos', 'Fútbol', 'Pádel', 'Tenis', 'Vóley', 'Básquet'].map(s => (
                 <button key={s} className={`sport-chip ${canchaSportFilter === s ? 'active' : 'inactive'}`}
-                  onClick={() => setCanchaSportFilter(s)}>
+                  onClick={() => { setCanchaSportFilter(s); resetPage(); }}>
                   {s}
                 </button>
               ))}
@@ -108,7 +117,7 @@ const BuscarCanchasTab = ({ canchas, loadingCanchas, errorCanchas, favoritosIds,
 
           <div className="filter-card">
             <span className="filter-label">Ciudad</span>
-            <select className="filter-input" value={cityFilter} onChange={e => setCityFilter(e.target.value)}>
+            <select className="filter-input" value={cityFilter} onChange={e => { setCityFilter(e.target.value); resetPage(); }}>
               <option value="">Todas las ciudades</option>
               {PERU_CITIES.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
@@ -117,7 +126,7 @@ const BuscarCanchasTab = ({ canchas, loadingCanchas, errorCanchas, favoritosIds,
           <div className="filter-card">
             <span className="filter-label">Distrito</span>
             <input className="filter-input" type="text" value={districtFilter}
-              onChange={e => setDistrictFilter(e.target.value)} placeholder="Ej. Miraflores, Surco..." />
+              onChange={e => { setDistrictFilter(e.target.value); resetPage(); }} placeholder="Ej. Miraflores, Surco..." />
           </div>
 
           <div className="filter-card">
@@ -150,16 +159,36 @@ const BuscarCanchasTab = ({ canchas, loadingCanchas, errorCanchas, favoritosIds,
           {loadingCanchas ? (
             <SkeletonCourtGrid count={6} />
           ) : filteredCanchas.length > 0 ? (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
-              {filteredCanchas.map((cancha, i) => (
-                <CourtCard key={cancha.id || i} cancha={cancha}
-                  isFavorito={favoritosIds.includes(cancha.id)}
-                  onToggleFavorito={() => toggleFavorito(cancha.id)}
-                  onReservar={() => navigate(`/reservar/${cancha.id}`)}
-                  onVerMapa={() => setMapModal({ show: true, cancha })}
-                  darkMode={darkMode} />
-              ))}
-            </div>
+            <>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
+                {paginated.map((cancha, i) => (
+                  <CourtCard key={cancha.id || i} cancha={cancha}
+                    isFavorito={favoritosIds.includes(cancha.id)}
+                    onToggleFavorito={() => toggleFavorito(cancha.id)}
+                    onReservar={() => navigate(`/reservar/${cancha.id}`)}
+                    onVerMapa={() => setMapModal({ show: true, cancha })}
+                    darkMode={darkMode} />
+                ))}
+              </div>
+              {totalPages > 1 && (
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', marginTop: '28px', flexWrap: 'wrap' }}>
+                  <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
+                    style={{ padding: '8px 14px', borderRadius: '10px', border: '1.5px solid', borderColor: page === 1 ? (darkMode ? '#1e293b' : '#e2e8f0') : '#00d084', background: 'transparent', color: page === 1 ? '#475569' : '#00d084', fontWeight: '700', cursor: page === 1 ? 'not-allowed' : 'pointer', fontSize: '0.85rem' }}>
+                    ← Anterior
+                  </button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+                    <button key={n} onClick={() => setPage(n)}
+                      style={{ width: '36px', height: '36px', borderRadius: '10px', border: '1.5px solid', borderColor: n === page ? '#00d084' : (darkMode ? '#1e293b' : '#e2e8f0'), background: n === page ? '#00d084' : 'transparent', color: n === page ? '#0f172a' : (darkMode ? '#94a3b8' : '#64748b'), fontWeight: '800', cursor: 'pointer', fontSize: '0.85rem' }}>
+                      {n}
+                    </button>
+                  ))}
+                  <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+                    style={{ padding: '8px 14px', borderRadius: '10px', border: '1.5px solid', borderColor: page === totalPages ? (darkMode ? '#1e293b' : '#e2e8f0') : '#00d084', background: 'transparent', color: page === totalPages ? '#475569' : '#00d084', fontWeight: '700', cursor: page === totalPages ? 'not-allowed' : 'pointer', fontSize: '0.85rem' }}>
+                    Siguiente →
+                  </button>
+                </div>
+              )}
+            </>
           ) : (
             <EmptyState icon="bi-search" title="Sin resultados" message="Prueba ajustando los filtros o el rango de precios." darkMode={darkMode} />
           )}

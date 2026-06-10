@@ -8,6 +8,7 @@ import OnboardingTour from '../onboarding/OnboardingTour.jsx';
 
 import Confetti from './shared/Confetti.jsx';
 import MapModal from './shared/MapModal.jsx';
+import ErrorBoundary from './shared/ErrorBoundary.jsx';
 
 import InicioTab from './tabs/InicioTab.jsx';
 import BuscarCanchasTab from './tabs/BuscarCanchasTab.jsx';
@@ -294,6 +295,7 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
           { icon: 'bi-person-circle',        label: 'Mi Perfil' },
         ]}>
 
+        <ErrorBoundary C={C}>
         {activeTab === 'Inicio' && (
           <InicioTab canchas={canchas} loadingCanchas={loadingCanchas} reservas={reservas} gamification={gamification} loadingGami={loadingGami} favoritosIds={favoritosIds} toggleFavorito={toggleFavorito} canchasFavoritas={canchasFavoritas} setActiveTab={setActiveTab} setMapModal={setMapModal} navigate={navigate} darkMode={darkMode} C={C} />
         )}
@@ -319,6 +321,7 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
         {activeTab === 'Mi Perfil' && (
           <PerfilTab user={user} avatarUrl={avatarUrl} setAvatarUrl={setAvatarUrl} darkMode={darkMode} C={C} />
         )}
+        </ErrorBoundary>
       </DashboardLayout>
 
       {/* ── QR Modal ─────────────────────────────────────────────────────────── */}

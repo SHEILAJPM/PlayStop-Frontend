@@ -121,6 +121,16 @@ const ReservasTab = ({ reservas, loadingReservas, openModal, openReview, reviewe
                       <i className="bi bi-qr-code-scan" /> Ver QR
                     </button>
                   )}
+                  {row.apiStatus === 'CONFIRMED' && (
+                    <button
+                      onClick={() => {
+                        const texto = `⚽ ¡Reserva confirmada en PlayStop!\n🏟️ ${row.court}\n📅 ${row.date}\nReserva tu turno en https://playstop.pe`;
+                        window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank');
+                      }}
+                      style={{ padding: '7px 13px', borderRadius: '9px', border: 'none', background: 'rgba(37,211,102,0.15)', color: '#25D366', fontWeight: '700', fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <i className="bi bi-whatsapp" /> Compartir
+                    </button>
+                  )}
                   {row.apiStatus === 'ATTENDED' && !reviewedIds.has(row.id) && (
                     <button
                       onClick={() => openReview(row)}

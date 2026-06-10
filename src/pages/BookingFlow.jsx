@@ -323,6 +323,7 @@ function DateTimePicker({ courtId, onNext, onBack: _onBack }) {
   const [slots, setSlots] = useState([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState(null);
+  const [lastRefresh, setLastRefresh] = useState(null);
 
   const today = new Date(); today.setHours(0, 0, 0, 0);
 
@@ -334,19 +335,31 @@ function DateTimePicker({ courtId, onNext, onBack: _onBack }) {
 
   const monthLabel = MONTHS_ES[weekDays[0].getMonth()] + ' ' + weekDays[0].getFullYear();
 
+  const fetchSlots = async (iso, silent = false) => {
+    if (!courtId || !iso) return;
+    if (!silent) setLoadingSlots(true);
+    try {
+      const data = await api.getCourtSlots(courtId, iso);
+      setSlots(Array.isArray(data) ? data : []);
+      setLastRefresh(new Date());
+    } catch { if (!silent) setSlots([]); }
+    finally { if (!silent) setLoadingSlots(false); }
+  };
+
   const handleSelectDate = async (d) => {
     const iso = fmtDate(d);
     setSelectedDate(iso);
     setSelectedSlot(null);
     setSlots([]);
-    if (!courtId) return;
-    setLoadingSlots(true);
-    try {
-      const data = await api.getCourtSlots(courtId, iso);
-      setSlots(Array.isArray(data) ? data : []);
-    } catch { setSlots([]); }
-    finally { setLoadingSlots(false); }
+    await fetchSlots(iso);
   };
+
+  // Poll cada 30s mientras hay fecha seleccionada
+  useEffect(() => {
+    if (!selectedDate) return;
+    const id = setInterval(() => fetchSlots(selectedDate, true), 30000);
+    return () => clearInterval(id);
+  }, [selectedDate, courtId]);
 
   const allHours = Array.from({ length: 15 }, (_, i) => `${(8 + i).toString().padStart(2,'0')}:00`);
 
@@ -444,18 +457,25 @@ function DateTimePicker({ courtId, onNext, onBack: _onBack }) {
           </>
         )}
 
-        {/* Legend */}
-        <div style={{ display: 'flex', gap: 14, marginTop: 16, flexWrap: 'wrap' }}>
-          {[
-            { color: '#00d084', label: 'Disponible' },
-            { color: '#f59e0b', label: 'Últimos horarios' },
-            { color: '#ef4444', label: 'No disponible' },
-          ].map(l => (
-            <span key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 5, color: '#64748b', fontSize: '0.75rem' }}>
-              <span style={{ width: 10, height: 10, borderRadius: 3, background: l.color, display: 'inline-block' }} />
-              {l.label}
+        {/* Legend + last refresh */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16, flexWrap: 'wrap', gap: 8 }}>
+          <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+            {[
+              { color: '#00d084', label: 'Disponible' },
+              { color: '#f59e0b', label: 'Últimos horarios' },
+              { color: '#ef4444', label: 'No disponible' },
+            ].map(l => (
+              <span key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 5, color: '#64748b', fontSize: '0.75rem' }}>
+                <span style={{ width: 10, height: 10, borderRadius: 3, background: l.color, display: 'inline-block' }} />
+                {l.label}
+              </span>
+            ))}
+          </div>
+          {lastRefresh && (
+            <span style={{ color: '#334155', fontSize: '0.7rem' }}>
+              ↻ Actualizado {lastRefresh.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })}
             </span>
-          ))}
+          )}
         </div>
       </div>
 
@@ -530,7 +550,41 @@ function BookingSummary({ court, booking, onNext, onBack: _onBack }) {
 /* ── Step 4: Payment ── */
 function PaymentView({ court, booking, onPay, processing }) {
   const [method, setMethod] = useState('card');
+  const [cardNumber, setCardNumber] = useState('');
+  const [cardName, setCardName] = useState('');
+  const [expiry, setExpiry] = useState('');
+  const [cvv, setCvv] = useState('');
+  const [cardError, setCardError] = useState('');
   const total = parseFloat(court?.pricePerHour || 0);
+
+  const formatExpiry = (val) => {
+    const digits = val.replace(/\D/g, '').slice(0, 4);
+    return digits.length >= 3 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits;
+  };
+
+  const validateCard = () => {
+    if (method !== 'card') return true;
+    if (cardNumber.replace(/\s/g, '').length < 16) { setCardError('Número de tarjeta inválido'); return false; }
+    if (!cardName.trim()) { setCardError('Ingresa el nombre del titular'); return false; }
+    const [mm, yy] = expiry.split('/').map(Number);
+    if (!mm || !yy || mm < 1 || mm > 12) { setCardError('Fecha de expiración inválida'); return false; }
+    const now = new Date();
+    const cardYear = 2000 + yy;
+    const cardMonth = mm;
+    if (cardYear < now.getFullYear() || (cardYear === now.getFullYear() && cardMonth < now.getMonth() + 1)) {
+      setCardError('La tarjeta está vencida'); return false;
+    }
+    if (cvv.length < 3) { setCardError('CVV inválido'); return false; }
+    setCardError('');
+    return true;
+  };
+
+  const handlePay = () => {
+    if (!validateCard()) return;
+    onPay(method);
+  };
+
+  const inputStyle = { width: '100%', background: '#0f172a', border: '1px solid #1e293b', borderRadius: 10, color: '#f1f5f9', padding: '11px 14px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' };
 
   const methods = [
     { id: 'card', label: 'Tarjeta de crédito/débito',
@@ -572,13 +626,33 @@ function PaymentView({ court, booking, onPay, processing }) {
         ))}
       </div>
 
+      {/* Card form */}
+      {method === 'card' && (
+        <div style={{ background: '#0f172a', border: '1px solid #1e293b', borderRadius: 14, padding: 16, marginBottom: 20, display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <input style={inputStyle} placeholder="Número de tarjeta (16 dígitos)"
+            value={cardNumber} maxLength={19}
+            onChange={e => setCardNumber(e.target.value.replace(/\D/g,'').replace(/(.{4})/g,'$1 ').trim())} />
+          <input style={inputStyle} placeholder="Nombre del titular"
+            value={cardName} onChange={e => setCardName(e.target.value)} />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+            <input style={inputStyle} placeholder="MM/AA"
+              value={expiry} maxLength={5}
+              onChange={e => setExpiry(formatExpiry(e.target.value))} />
+            <input style={inputStyle} placeholder="CVV"
+              value={cvv} maxLength={4} type="password"
+              onChange={e => setCvv(e.target.value.replace(/\D/g,''))} />
+          </div>
+          {cardError && <p style={{ color: '#ef4444', fontSize: '0.82rem', margin: 0, fontWeight: 600 }}>{cardError}</p>}
+        </div>
+      )}
+
       {/* Security note */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(0,208,132,0.06)', border: '1px solid rgba(0,208,132,0.15)', borderRadius: 10, padding: '10px 14px', marginBottom: 24 }}>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00d084" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         <span style={{ color: '#00d084', fontSize: '0.82rem', fontWeight: 600 }}>Transacción 100% segura y encriptada</span>
       </div>
 
-      <button onClick={() => onPay(method)} disabled={processing}
+      <button onClick={handlePay} disabled={processing}
         style={{ width: '100%', padding: 16, background: processing ? '#1e293b' : 'linear-gradient(135deg,#00d084,#00b875)', color: processing ? '#475569' : '#0a1628', border: 'none', borderRadius: 14, fontWeight: 800, fontSize: '1rem', cursor: processing ? 'not-allowed' : 'pointer', boxShadow: processing ? 'none' : '0 8px 20px rgba(0,208,132,0.3)', transition: 'all 0.2s' }}>
         {processing ? 'Procesando...' : `Pagar y reservar ${fmtPrice(total)}`}
       </button>

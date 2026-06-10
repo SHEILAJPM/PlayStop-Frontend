@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNotifications } from '../../hooks/useNotifications.js';
 
@@ -262,11 +263,11 @@ const NotificationPanel = ({ notifications, unreadCount, onMarkAllRead, onClearA
       exit={{ opacity:0, y:-8, scale:.96 }}
       transition={{ duration:.22, ease:[.16,1,.3,1] }}
       style={{
-        position:'absolute', top:'calc(100% + 10px)', right:0, zIndex:9999,
+        position:'fixed', top:78, right:16, zIndex:99999,
         width:340, maxHeight:480,
-        background:bg, backdropFilter:'blur(24px)',
+        background:bg,
         borderRadius:18, border:`1px solid ${border}`,
-        boxShadow:'0 20px 60px rgba(0,0,0,.4)',
+        boxShadow:'0 20px 60px rgba(0,0,0,.55)',
         display:'flex', flexDirection:'column', overflow:'hidden',
       }}
     >
@@ -722,7 +723,7 @@ export const DashboardLayout = ({
               </button>
 
               <AnimatePresence>
-                {showNotifPanel && (
+                {showNotifPanel && createPortal(
                   <NotificationPanel
                     notifications={notifications}
                     unreadCount={unreadCount}
@@ -730,7 +731,8 @@ export const DashboardLayout = ({
                     onClearAll={clearAll}
                     onClose={() => setShowNotifPanel(false)}
                     isDark={isDark}
-                  />
+                  />,
+                  document.body
                 )}
               </AnimatePresence>
             </div>

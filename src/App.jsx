@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { useAuth } from './context/AuthContext.jsx';
 import Navbar from './components/Navbar.jsx';
 import Hero from './components/Hero.jsx';
@@ -14,19 +14,30 @@ import Blog from './components/Blog.jsx';
 import Contacto from './components/Contacto.jsx';
 import Legal from './components/Legal.jsx';
 import Footer from "./components/Footer.jsx";
-import JugadorDashboard from './components/dashboards/JugadorDashboard.jsx';
-import PropietarioDashboard from './components/dashboards/PropietarioDashboard.jsx';
-import AdminDashboard from './components/dashboards/AdminDashboard.jsx';
-import SuperAdminDashboard from './components/dashboards/SuperAdminDashboard.jsx';
-import Login from './components/Login.jsx';
-import Register from './components/Register.jsx';
 import ChatBot from './components/ChatBot.jsx';
-import BookingFlow from './pages/BookingFlow.jsx';
-import CourtPublicPage from './pages/CourtPublicPage.jsx';
-import MapaCanchas from './pages/MapaCanchas.jsx';
-import Matchmaking from './pages/Matchmaking.jsx';
 import { ComparadorProvider, ComparadorBar } from './components/ComparadorCanchas.jsx';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, Outlet } from 'react-router-dom';
+
+const JugadorDashboard    = lazy(() => import('./components/dashboards/JugadorDashboard.jsx'));
+const PropietarioDashboard = lazy(() => import('./components/dashboards/PropietarioDashboard.jsx'));
+const AdminDashboard      = lazy(() => import('./components/dashboards/AdminDashboard.jsx'));
+const SuperAdminDashboard = lazy(() => import('./components/dashboards/SuperAdminDashboard.jsx'));
+const Login               = lazy(() => import('./components/Login.jsx'));
+const Register            = lazy(() => import('./components/Register.jsx'));
+const BookingFlow         = lazy(() => import('./pages/BookingFlow.jsx'));
+const CourtPublicPage     = lazy(() => import('./pages/CourtPublicPage.jsx'));
+const MapaCanchas         = lazy(() => import('./pages/MapaCanchas.jsx'));
+const Matchmaking         = lazy(() => import('./pages/Matchmaking.jsx'));
+
+function PageLoader() {
+  return (
+    <div style={{ minHeight: '100vh', background: '#030712', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 16 }}>
+      <div style={{ width: 44, height: 44, borderRadius: '50%', border: '3px solid #1e293b', borderTop: '3px solid #00d084', animation: 'spin 0.8s linear infinite' }} />
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+      <p style={{ color: '#475569', fontWeight: 600, margin: 0 }}>Cargando...</p>
+    </div>
+  );
+}
 
 // Layout que envuelve la Landing Page
 function LandingLayout({ darkMode, toggleTheme }) {
@@ -109,6 +120,7 @@ function AppContent() {
     <div className={darkMode ? 'dark-mode' : ''} style={{ minHeight: '100vh' }}>
       <ChatBot darkMode={darkMode} />
       <ComparadorBar />
+      <Suspense fallback={<PageLoader />}>
       <Routes>
         {/* RUTAS PÚBLICAS */}
         <Route path="/" element={!user ? <LandingLayout darkMode={darkMode} toggleTheme={handleThemeToggle} /> : <Navigate to="/dashboard" replace />}>
@@ -147,6 +159,7 @@ function AppContent() {
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      </Suspense>
     </div>
   );
 }

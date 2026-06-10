@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import EmptyState from '../shared/EmptyState.jsx';
+import { api } from '../../../services/api.js';
 
 const AMIGOS_DEFAULT = [
   { id: 1, name: 'Martín Fernández', email: 'martin@gmail.com', img: 'https://randomuser.me/api/portraits/men/44.jpg',   level: 'Intermedio',   lastMatch: 'Ayer' },
@@ -25,25 +26,34 @@ const AmigosTab = ({ darkMode, C }) => {
     if (!email) return;
     setBuscandoAmigo(true);
     setResultadoBusqueda(null);
-    await new Promise(r => setTimeout(r, 700));
-    const yaEsAmigo = amigos.find(a => a.email.toLowerCase() === email);
-    if (yaEsAmigo) {
-      setResultadoBusqueda({ type: 'already', ...yaEsAmigo });
-    } else if (email.includes('@')) {
-      const nombre = email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-      setResultadoBusqueda({
-        type: 'found', id: Date.now(), name: nombre, email,
-        img: `https://ui-avatars.com/api/?name=${encodeURIComponent(nombre)}&background=0f172a&color=fff&size=100`,
-        level: 'Principiante', lastMatch: 'Nuevo',
-      });
-    } else {
+    try {
+      const yaEsAmigo = amigos.find(a => a.email.toLowerCase() === email);
+      if (yaEsAmigo) { setResultadoBusqueda({ type: 'already', ...yaEsAmigo }); return; }
+      const user = await api.searchUserByEmail(email);
+      if (user?.id) {
+        setResultadoBusqueda({
+          type: 'found', id: user.id,
+          name: user.name || user.fullName || email.split('@')[0],
+          email: user.email,
+          img: user.profileImageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || email)}&background=0f172a&color=fff&size=100`,
+          level: user.level || 'Principiante',
+          lastMatch: 'Nuevo',
+        });
+      } else {
+        setResultadoBusqueda({ type: 'not_found' });
+      }
+    } catch {
       setResultadoBusqueda({ type: 'not_found' });
+    } finally {
+      setBuscandoAmigo(false);
     }
-    setBuscandoAmigo(false);
   };
 
-  const confirmarAgregarAmigo = () => {
+  const confirmarAgregarAmigo = async () => {
     if (!resultadoBusqueda || resultadoBusqueda.type !== 'found') return;
+    try {
+      await api.sendFriendRequest(resultadoBusqueda.id);
+    } catch { /* continúa aunque falle, el backend puede manejar duplicados */ }
     setAmigos(prev => [{ ...resultadoBusqueda }, ...prev]);
     setResultadoBusqueda({ type: 'sent', name: resultadoBusqueda.name });
   };

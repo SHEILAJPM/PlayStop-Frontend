@@ -3,6 +3,23 @@ import { useNavigate, Link } from 'react-router-dom';
 import { api } from '../services/api.js';
 import { useAuth } from '../context/AuthContext.jsx';
 
+function JoinSuccessToast({ match, onClose }) {
+  useEffect(() => { const t = setTimeout(onClose, 5000); return () => clearTimeout(t); }, [onClose]);
+  return (
+    <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 9999, background: '#0f172a', border: '1px solid #00d084', borderRadius: 16, padding: '16px 20px', boxShadow: '0 8px 32px rgba(0,208,132,0.25)', maxWidth: 340, animation: 'slideUp 0.3s ease' }}>
+      <style>{`@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}`}</style>
+      <p style={{ margin: '0 0 4px', color: '#00d084', fontWeight: 800, fontSize: '0.95rem' }}>✓ ¡Te uniste al partido!</p>
+      <p style={{ margin: '0 0 12px', color: '#94a3b8', fontSize: '0.82rem' }}>{match?.courtName} · {match?.date}</p>
+      <div style={{ display: 'flex', gap: 8 }}>
+        <Link to="/dashboard" style={{ flex: 1, textAlign: 'center', padding: '8px', background: 'rgba(0,208,132,0.15)', color: '#00d084', borderRadius: 8, fontWeight: 700, fontSize: '0.82rem', textDecoration: 'none' }}>
+          Ver mis reservas →
+        </Link>
+        <button onClick={onClose} style={{ padding: '8px 12px', background: 'transparent', border: '1px solid #1e293b', borderRadius: 8, color: '#475569', cursor: 'pointer', fontSize: '0.82rem' }}>✕</button>
+      </div>
+    </div>
+  );
+}
+
 const DAYS_ES = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 const MONTHS_ES = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
@@ -220,6 +237,7 @@ export default function Matchmaking() {
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
   const [sportFilter, setSportFilter] = useState('Todos');
+  const [joinedMatch, setJoinedMatch] = useState(null);
 
   const sports = ['Todos', ...new Set(matches.map(m => m.sportType).filter(Boolean))];
 
@@ -235,6 +253,7 @@ export default function Matchmaking() {
     try {
       const updated = await api.joinMatch(id);
       setMatches(prev => prev.map(m => m.id === id ? updated : m));
+      setJoinedMatch(updated);
     } catch (err) { alert(err.message); }
   };
 
@@ -314,6 +333,8 @@ export default function Matchmaking() {
           </div>
         )}
       </div>
+
+      {joinedMatch && <JoinSuccessToast match={joinedMatch} onClose={() => setJoinedMatch(null)} />}
 
       {showCreate && (
         <CreateMatchModal

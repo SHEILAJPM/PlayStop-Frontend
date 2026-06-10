@@ -270,6 +270,24 @@ export const api = {
     }));
   },
 
+  // ── Amigos / búsqueda de usuarios ────────────────────────────────────────
+
+  async searchUserByEmail(email) {
+    return handleResponse(await fetch(`${BASE_URL}/api/users/search?email=${encodeURIComponent(email)}`, { headers: jsonHeaders() }));
+  },
+
+  async sendFriendRequest(targetUserId) {
+    return handleResponse(await fetch(`${BASE_URL}/api/friends/request`, {
+      method: 'POST',
+      headers: jsonHeaders(),
+      body: JSON.stringify({ targetUserId }),
+    }));
+  },
+
+  async getFriends() {
+    return handleResponse(await fetch(`${BASE_URL}/api/friends`, { headers: jsonHeaders() }));
+  },
+
   // ── Referidos ─────────────────────────────────────────────────────────────
 
   async getReferralInfo() {
