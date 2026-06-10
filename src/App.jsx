@@ -22,6 +22,10 @@ import Login from './components/Login.jsx';
 import Register from './components/Register.jsx';
 import ChatBot from './components/ChatBot.jsx';
 import BookingFlow from './pages/BookingFlow.jsx';
+import CourtPublicPage from './pages/CourtPublicPage.jsx';
+import MapaCanchas from './pages/MapaCanchas.jsx';
+import Matchmaking from './pages/Matchmaking.jsx';
+import { ComparadorProvider, ComparadorBar } from './components/ComparadorCanchas.jsx';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, Outlet } from 'react-router-dom';
 
 // Layout que envuelve la Landing Page
@@ -104,6 +108,7 @@ function AppContent() {
   return (
     <div className={darkMode ? 'dark-mode' : ''} style={{ minHeight: '100vh' }}>
       <ChatBot darkMode={darkMode} />
+      <ComparadorBar />
       <Routes>
         {/* RUTAS PÚBLICAS */}
         <Route path="/" element={!user ? <LandingLayout darkMode={darkMode} toggleTheme={handleThemeToggle} /> : <Navigate to="/dashboard" replace />}>
@@ -135,6 +140,11 @@ function AppContent() {
           user ? <BookingFlow user={user} darkMode={darkMode} /> : <Navigate to="/login" replace />
         } />
 
+        {/* Paginas Publicas */}
+        <Route path="/cancha/:slug" element={<CourtPublicPage />} />
+        <Route path="/mapa" element={<MapaCanchas />} />
+        <Route path="/matchmaking" element={<Matchmaking />} />
+
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </div>
@@ -144,7 +154,9 @@ function AppContent() {
 function App() {
   return (
     <Router>
-      <AppContent />
+      <ComparadorProvider>
+        <AppContent />
+      </ComparadorProvider>
     </Router>
   );
 }

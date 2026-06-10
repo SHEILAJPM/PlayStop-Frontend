@@ -113,7 +113,7 @@ const Navbar = ({ darkMode, toggleTheme }) => {
           onClick={() => setMenuOpen(o => !o)}
           style={{ background: 'rgba(255,255,255,.07)', border: '1px solid rgba(255,255,255,.1)', color: '#fff', width: 38, height: 38, borderRadius: 9, fontSize: '1.1rem', cursor: 'pointer', display: 'none', alignItems: 'center', justifyContent: 'center' }}
         >
-          {menuOpen ? '✖' : '☰'}
+          <i className={`bi ${menuOpen ? 'bi-x-lg' : 'bi-list'}`} />
         </button>
       </header>
 

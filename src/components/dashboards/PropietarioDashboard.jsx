@@ -330,7 +330,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
 
         case 'AGREGAR_PRODUCTO': {
           const cat = fd.get('category');
-          const iconList = ICON_MAP[cat] || ['🛍️'];
+          const iconList = ICON_MAP[cat] || ['bi-bag-fill'];
           let productImgUrl = null;
           if (productImageFile) {
             setUploadingProductImage(true);
@@ -595,7 +595,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
             {/* Grid de productos */}
             {filteredTienda.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '48px 24px', color: C.textMuted }}>
-                <div style={{ fontSize: '2.5rem', marginBottom: 10 }}>🛒</div>
+                <div style={{ fontSize: '2.5rem', marginBottom: 10 }}><i className="bi bi-cart3" /></div>
                 <h3 style={{ margin: '0 0 6px', color: C.textPrimary, fontWeight: 800 }}>Sin productos</h3>
                 <p style={{ margin: 0 }}>Agrega tu primer producto a la tienda.</p>
               </div>

@@ -3,102 +3,102 @@ import { useState, useEffect, useRef } from 'react';
 const RESPONSES = [
   {
     keywords: ['hola', 'buenas', 'buenos', 'hey', 'hi', 'saludos', 'buen día', 'buenas tardes', 'buenas noches'],
-    answer: '¡Hola! 👋 Soy el asistente de PlaySpot. Puedo ayudarte con reservas, precios, soporte técnico y más. ¿En qué te ayudo hoy?',
+    answer: '¡Hola! Soy el asistente de PlaySpot. Puedo ayudarte con reservas, precios, soporte técnico y más. ¿En qué te ayudo hoy?',
   },
   {
     keywords: ['gracias', 'thanks', 'perfecto', 'genial', 'excelente', 'ok', 'okey', 'entendido'],
-    answer: '¡De nada! 😊 Si tienes más preguntas, aquí estaré. ¿Hay algo más en lo que pueda ayudarte?',
+    answer: '¡De nada! Si tienes más preguntas, aquí estaré. ¿Hay algo más en lo que pueda ayudarte?',
   },
   // --- Reservas ---
   {
     keywords: ['cómo reservo', 'como reservo', 'cómo reservar', 'como reservar', 'hacer una reserva', 'hacer reserva', 'quiero reservar', 'reservar cancha'],
-    answer: '📅 Para reservar una cancha:\n1. Inicia sesión en tu cuenta\n2. Ve a "Buscar Canchas" en tu dashboard\n3. Elige la cancha que te guste\n4. Selecciona fecha y horario disponible\n5. Confirma el pago\n\n¡Listo! Recibirás un código QR en tu correo para presentar al llegar.',
+    answer: 'Para reservar una cancha:\n1. Inicia sesión en tu cuenta\n2. Ve a "Buscar Canchas" en tu dashboard\n3. Elige la cancha que te guste\n4. Selecciona fecha y horario disponible\n5. Confirma el pago\n\n¡Listo! Recibirás un código QR en tu correo para presentar al llegar.',
   },
   {
     keywords: ['reserva', 'reservas', 'mis reservas', 'ver reservas', 'historial'],
-    answer: '📋 Puedes ver todas tus reservas en la sección "Mis Reservas" de tu dashboard. Ahí encontrarás el estado (Confirmada, Pendiente, Cancelada) y el código QR de cada una.',
+    answer: 'Puedes ver todas tus reservas en la sección "Mis Reservas" de tu dashboard. Ahí encontrarás el estado (Confirmada, Pendiente, Cancelada) y el código QR de cada una.',
   },
   {
     keywords: ['cancelar', 'cancelación', 'cancelacion', 'anular'],
-    answer: '❌ Puedes cancelar una reserva desde "Mis Reservas" en tu dashboard. La cancelación es gratuita si la haces con más de 12 horas de anticipación. Si el complejo cancela por fuerza mayor, recibes reembolso automático del 100%.',
+    answer: 'Puedes cancelar una reserva desde "Mis Reservas" en tu dashboard. La cancelación es gratuita si la haces con más de 12 horas de anticipación. Si el complejo cancela por fuerza mayor, recibes reembolso automático del 100%.',
   },
   {
     keywords: ['qr', 'código qr', 'codigo qr', 'código de entrada', 'acceso'],
-    answer: '📱 Tu código QR se genera automáticamente al confirmar la reserva. Lo encuentras en "Mis Reservas" pulsando el botón "Ver QR". También te lo enviamos por correo. Preséntalo al propietario al llegar.',
+    answer: 'Tu código QR se genera automáticamente al confirmar la reserva. Lo encuentras en "Mis Reservas" pulsando el botón "Ver QR". También te lo enviamos por correo. Preséntalo al propietario al llegar.',
   },
   {
     keywords: ['reprogramar', 'cambiar fecha', 'cambiar horario', 'mover reserva'],
-    answer: '🔄 Por ahora puedes cancelar tu reserva actual y hacer una nueva con la fecha/horario que prefieras. Recuerda que la cancelación es sin costo hasta 12 horas antes del partido.',
+    answer: 'Por ahora puedes cancelar tu reserva actual y hacer una nueva con la fecha/horario que prefieras. Recuerda que la cancelación es sin costo hasta 12 horas antes del partido.',
   },
   {
     keywords: ['pago dividido', 'dividir pago', 'split', 'entre amigos', 'entre varios'],
-    answer: '💳 ¡El pago dividido es muy fácil! Al reservar, pagas solo tu parte. PlaySpot genera un enlace único que compartes con tus amigos por WhatsApp. Ellos tienen hasta 2 horas antes del partido para pagar su parte. ¡Adiós deudas!',
+    answer: '¡El pago dividido es muy fácil! Al reservar, pagas solo tu parte. PlaySpot genera un enlace único que compartes con tus amigos por WhatsApp. Ellos tienen hasta 2 horas antes del partido para pagar su parte. ¡Adiós deudas!',
   },
   // --- Precios y planes ---
   {
     keywords: ['precio', 'precios', 'costo', 'costos', 'cuánto cuesta', 'cuanto cuesta', 'cobran', 'tarifa'],
-    answer: '💰 Para jugadores: descargar y buscar canchas es **100% gratis**. Solo pagas el alquiler de la cancha al reservar.\n\nPara clubes y propietarios:\n• **Plan Básico**: sin costo fijo, solo comisión por reserva exitosa\n• **Plan PRO**: cuota fija mensual con funciones avanzadas\n\n¿Te interesa algún plan en particular?',
+    answer: 'Para jugadores: descargar y buscar canchas es **100% gratis**. Solo pagas el alquiler de la cancha al reservar.\n\nPara clubes y propietarios:\n• **Plan Básico**: sin costo fijo, solo comisión por reserva exitosa\n• **Plan PRO**: cuota fija mensual con funciones avanzadas\n\n¿Te interesa algún plan en particular?',
   },
   {
     keywords: ['plan', 'planes', 'suscripción', 'suscripcion', 'mensual', 'comisión', 'comision'],
-    answer: '📊 PlaySpot tiene dos planes para propietarios:\n\n• **Básico**: 0 costo de afiliación + comisión por reserva exitosa\n• **PRO**: cuota mensual fija con analíticas avanzadas, gestión de calendario y soporte prioritario\n\nPara jugadores, la app es siempre gratuita.',
+    answer: 'PlaySpot tiene dos planes para propietarios:\n\n• **Básico**: 0 costo de afiliación + comisión por reserva exitosa\n• **PRO**: cuota mensual fija con analíticas avanzadas, gestión de calendario y soporte prioritario\n\nPara jugadores, la app es siempre gratuita.',
   },
   {
     keywords: ['gratis', 'gratuito', 'free', 'sin costo', 'cobro'],
-    answer: '🎉 ¡Sí! Para los jugadores, usar PlaySpot para buscar canchas y reservar es completamente gratis. Solo pagas el alquiler de la cancha al momento de reservar.',
+    answer: '¡Sí! Para los jugadores, usar PlaySpot para buscar canchas y reservar es completamente gratis. Solo pagas el alquiler de la cancha al momento de reservar.',
   },
   {
     keywords: ['ingresos', 'cobro propietario', 'recibir dinero', 'depósito', 'deposito', 'pago a propietario'],
-    answer: '🏦 Los propietarios reciben sus ingresos en un plazo de 24 a 48 horas hábiles después de cada transacción, directo a su cuenta bancaria. Pueden ver el detalle y descargar comprobantes desde su panel financiero.',
+    answer: 'Los propietarios reciben sus ingresos en un plazo de 24 a 48 horas hábiles después de cada transacción, directo a su cuenta bancaria. Pueden ver el detalle y descargar comprobantes desde su panel financiero.',
   },
   // --- Canchas ---
   {
     keywords: ['cancha', 'canchas', 'buscar cancha', 'encontrar cancha', 'disponible', 'disponibles'],
-    answer: '🏟️ Para encontrar la cancha ideal:\n• Usa los filtros de **deporte**, **ciudad** y **distrito**\n• Ajusta el **rango de precio** por hora\n• Ve las fotos y ubicación antes de reservar\n\nTenemos canchas de fútbol, pádel, tenis, vóley y básquet.',
+    answer: 'Para encontrar la cancha ideal:\n• Usa los filtros de **deporte**, **ciudad** y **distrito**\n• Ajusta el **rango de precio** por hora\n• Ve las fotos y ubicación antes de reservar\n\nTenemos canchas de fútbol, pádel, tenis, vóley y básquet.',
   },
   {
     keywords: ['fútbol', 'futbol', 'pádel', 'padel', 'tenis', 'vóley', 'voley', 'básquet', 'basquet', 'deporte', 'deportes'],
-    answer: '⚽🎾🏐 PlaySpot tiene canchas de:\n• **Fútbol** (grass, sintético)\n• **Pádel**\n• **Tenis**\n• **Vóley**\n• **Básquet**\n\nFiltra por deporte en la sección "Buscar Canchas" de tu dashboard.',
+    answer: 'PlaySpot tiene canchas de:\n• **Fútbol** (grass, sintético)\n• **Pádel**\n• **Tenis**\n• **Vóley**\n• **Básquet**\n\nFiltra por deporte en la sección "Buscar Canchas" de tu dashboard.',
   },
   {
     keywords: ['favoritos', 'favorita', 'guardar cancha'],
-    answer: '❤️ Puedes guardar canchas favoritas tocando el corazón en cada tarjeta de cancha. Las encontrarás todas reunidas en la sección "Canchas Favoritas" de tu dashboard.',
+    answer: 'Puedes guardar canchas favoritas tocando el corazón en cada tarjeta de cancha. Las encontrarás todas reunidas en la sección "Canchas Favoritas" de tu dashboard.',
   },
   // --- Soporte técnico ---
   {
     keywords: ['contraseña', 'contrasena', 'olvidé', 'olvide', 'no puedo entrar', 'recuperar cuenta', 'forgot'],
-    answer: '🔐 Para recuperar tu contraseña:\n1. Ve a la pantalla de inicio de sesión\n2. Haz clic en **"¿Olvidaste tu contraseña?"**\n3. Ingresa tu correo\n4. Recibirás un código de verificación\n5. Ingresa el código y crea una nueva contraseña\n\n¿Sigues teniendo problemas? Escríbenos a soporte@playspot.pe',
+    answer: 'Para recuperar tu contraseña:\n1. Ve a la pantalla de inicio de sesión\n2. Haz clic en **"¿Olvidaste tu contraseña?"**\n3. Ingresa tu correo\n4. Recibirás un código de verificación\n5. Ingresa el código y crea una nueva contraseña\n\n¿Sigues teniendo problemas? Escríbenos a soporte@playspot.pe',
   },
   {
     keywords: ['login', 'iniciar sesión', 'iniciar sesion', 'ingresar', 'no me deja entrar', 'no puedo logear', 'error al entrar'],
-    answer: '🔑 Si tienes problemas para iniciar sesión:\n1. Verifica que tu correo y contraseña sean correctos\n2. Si olvidaste tu contraseña, usa "¿Olvidaste tu contraseña?"\n3. Asegúrate de tener conexión a internet\n\nSi el problema persiste, escríbenos a soporte@playspot.pe',
+    answer: 'Si tienes problemas para iniciar sesión:\n1. Verifica que tu correo y contraseña sean correctos\n2. Si olvidaste tu contraseña, usa "¿Olvidaste tu contraseña?"\n3. Asegúrate de tener conexión a internet\n\nSi el problema persiste, escríbenos a soporte@playspot.pe',
   },
   {
     keywords: ['registrar', 'registro', 'crear cuenta', 'nueva cuenta', 'sign up'],
-    answer: '✍️ Para crear tu cuenta en PlaySpot:\n1. Haz clic en **"Registrarse"** en la página principal\n2. Ingresa tu nombre, correo y contraseña\n3. Confirma tu correo con el código que te enviamos\n4. ¡Listo! Ya puedes buscar y reservar canchas\n\n¡Es completamente gratis!',
+    answer: 'Para crear tu cuenta en PlaySpot:\n1. Haz clic en **"Registrarse"** en la página principal\n2. Ingresa tu nombre, correo y contraseña\n3. Confirma tu correo con el código que te enviamos\n4. ¡Listo! Ya puedes buscar y reservar canchas\n\n¡Es completamente gratis!',
   },
   {
     keywords: ['error', 'falla', 'no funciona', 'problema', 'bug', 'no carga'],
-    answer: '⚠️ Lamentamos los inconvenientes. Para reportar un problema:\n• Intenta recargar la página\n• Limpia el caché de tu navegador\n• Si el problema persiste, escríbenos a **soporte@playspot.pe** con una captura de pantalla del error.\n\n¡Lo resolveremos a la brevedad!',
+    answer: 'Lamentamos los inconvenientes. Para reportar un problema:\n• Intenta recargar la página\n• Limpia el caché de tu navegador\n• Si el problema persiste, escríbenos a **soporte@playspot.pe** con una captura de pantalla del error.\n\n¡Lo resolveremos a la brevedad!',
   },
   {
     keywords: ['soporte', 'ayuda', 'contacto', 'contactar', 'atención', 'atencion', 'servicio al cliente'],
-    answer: '📞 Puedes contactar a nuestro equipo de soporte:\n• 📧 **Email**: soporte@playspot.pe\n• 💬 **WhatsApp**: +51 900 000 000\n• Horario: Lun–Vie 9am a 6pm (Lima, Perú)\n\nTambién puedes usar el formulario en la sección "Contacto" de nuestra web.',
+    answer: 'Puedes contactar a nuestro equipo de soporte:\n• **Email**: soporte@playspot.pe\n• **WhatsApp**: +51 900 000 000\n• Horario: Lun–Vie 9am a 6pm (Lima, Perú)\n\nTambién puedes usar el formulario en la sección "Contacto" de nuestra web.',
   },
   // --- Club / Propietario ---
   {
     keywords: ['club', 'complejo', 'propietario', 'registrar cancha', 'publicar cancha', 'tengo canchas', 'dueño'],
-    answer: '🏢 ¿Eres propietario de un complejo deportivo? Con PlaySpot puedes:\n• Publicar tus canchas en minutos\n• Gestionar reservas y calendario\n• Recibir pagos automáticos\n• Ver analíticas de tus ingresos\n\nEscríbenos a **clubes@playspot.pe** o regístrate como propietario desde nuestra web.',
+    answer: '¿Eres propietario de un complejo deportivo? Con PlaySpot puedes:\n• Publicar tus canchas en minutos\n• Gestionar reservas y calendario\n• Recibir pagos automáticos\n• Ver analíticas de tus ingresos\n\nEscríbenos a **clubes@playspot.pe** o regístrate como propietario desde nuestra web.',
   },
   {
     keywords: ['PlaySpot', 'playspot', 'qué es', 'que es', 'cómo funciona', 'como funciona'],
-    answer: '🎯 **PlaySpot** es la plataforma para reservar canchas deportivas en Perú. Conectamos jugadores con complejos deportivos para que reservar sea fácil, rápido y seguro.\n\n• Para **jugadores**: encuentra y reserva canchas en segundos\n• Para **clubes**: gestiona reservas y cobra automáticamente\n\n¿Quieres saber algo más específico?',
+    answer: '**PlaySpot** es la plataforma para reservar canchas deportivas en Perú. Conectamos jugadores con complejos deportivos para que reservar sea fácil, rápido y seguro.\n\n• Para **jugadores**: encuentra y reserva canchas en segundos\n• Para **clubes**: gestiona reservas y cobra automáticamente\n\n¿Quieres saber algo más específico?',
   },
 ];
 
-const DEFAULT_RESPONSE = '🤔 No estoy seguro de entenderte. Puedes preguntarme sobre:\n• **Reservas** (cómo reservar, cancelar, QR)\n• **Precios** (costos, planes, comisiones)\n• **Canchas** (buscar, filtrar, favoritos)\n• **Soporte** (login, contraseña, errores)\n\nO escríbenos directamente a soporte@playspot.pe';
+const DEFAULT_RESPONSE = 'No estoy seguro de entenderte. Puedes preguntarme sobre:\n• **Reservas** (cómo reservar, cancelar, QR)\n• **Precios** (costos, planes, comisiones)\n• **Canchas** (buscar, filtrar, favoritos)\n• **Soporte** (login, contraseña, errores)\n\nO escríbenos directamente a soporte@playspot.pe';
 
-const WELCOME = '¡Hola! 👋 Soy el asistente virtual de **PlaySpot**. Estoy aquí para ayudarte con reservas, precios, soporte y más.\n\n¿En qué puedo ayudarte hoy?';
+const WELCOME = '¡Hola! Soy el asistente virtual de **PlaySpot**. Estoy aquí para ayudarte con reservas, precios, soporte y más.\n\n¿En qué puedo ayudarte hoy?';
 
 function getResponse(input) {
   const text = input.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');

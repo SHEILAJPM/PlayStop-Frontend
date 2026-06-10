@@ -31,6 +31,27 @@
       "description": "Encuentra una cancha cerca de ti",
       "url": "/dashboard",
       "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Mapa de Canchas",
+      "short_name": "Mapa",
+      "description": "Ver canchas en el mapa interactivo",
+      "url": "/mapa",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Buscar Jugadores",
+      "short_name": "Matchmaking",
+      "description": "Únete a un partido y divide el costo",
+      "url": "/matchmaking",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Mis Reservas",
+      "short_name": "Reservas",
+      "description": "Ver tus reservas activas",
+      "url": "/dashboard",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
     }
   ]
 }

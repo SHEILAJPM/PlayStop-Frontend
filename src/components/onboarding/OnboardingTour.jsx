@@ -172,7 +172,7 @@ const OnboardingTour = ({ steps, onComplete, onSkip, onHighlight, isDark }) => {
                   fontSize: '.84rem', color: '#00d084', fontWeight: 600,
                   display: 'flex', gap: 8, alignItems: 'flex-start',
                 }}>
-                  <span style={{ flexShrink: 0 }}>💡</span>
+                  <i className="bi bi-lightbulb-fill" style={{ flexShrink: 0, color: '#00d084' }} />
                   {step.tip}
                 </div>
               )}

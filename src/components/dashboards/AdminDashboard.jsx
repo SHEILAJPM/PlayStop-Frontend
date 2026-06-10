@@ -516,7 +516,7 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
                   <div style={{ width:28, height:28, borderRadius:8, flexShrink:0, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'0.85rem',
                     backgroundColor:i===0?'#fef3c7':i===1?'#f1f5f9':'#f8fafc',
                     fontWeight:900, color:i===0?'#b45309':'#94a3b8' }}>
-                    {i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}
+                    {i===0?<i className="bi bi-trophy-fill" style={{color:'#d97706'}} />:i===1?<i className="bi bi-award-fill" style={{color:'#94a3b8'}} />:i===2?<i className="bi bi-award" style={{color:'#b45309'}} />:i+1}
                   </div>
                   <div style={{ flex:1 }}>
                     <div style={{ fontWeight:700, color: isDark?'#f8fafc':'#0f172a', fontSize:'0.87rem', marginBottom:4 }}>{c.name}</div>
@@ -878,7 +878,7 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
           </div>
           {!(analytics?.recentActivity?.length) && (
             <div style={{ textAlign:'center', padding:'48px 0', color:'#cbd5e1' }}>
-              <div style={{ fontSize:'2.5rem', marginBottom:12 }}>📋</div>
+              <div style={{ fontSize:'2.5rem', marginBottom:12 }}><i className="bi bi-clipboard2" /></div>
               <p style={{ margin:0, fontWeight:600 }}>Sin actividad registrada</p>
             </div>
           )}
@@ -1028,7 +1028,7 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
           <div style={{ backgroundColor: isDark?'rgba(9,9,11,0.95)':'#fff', backdropFilter:'blur(20px)', border:`1px solid ${isDark?'rgba(255,255,255,0.08)':'#f1f5f9'}`, padding:36, borderRadius:22, width:'90%', maxWidth:420, boxShadow:'0 24px 60px rgba(0,0,0,0.5)', animation:'mUp 0.28s ease' }}>
             <div style={{ width:52, height:52, borderRadius:14, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.5rem', marginBottom:16,
               backgroundColor: modal.payload.active ? (isDark?'rgba(245,158,11,.12)':'#fef3c7') : (isDark?'rgba(34,197,94,.12)':'#d1fae5') }}>
-              {modal.payload.active?'🔒':'🔓'}
+              <i className={`bi ${modal.payload.active ? 'bi-lock-fill' : 'bi-unlock-fill'}`} />
             </div>
             <h2 style={{ margin:'0 0 8px', color: isDark?'#f8fafc':'#0f172a', fontSize:'1.3rem', fontWeight:900 }}>
               {modal.payload.active?'Desactivar cancha':'Activar cancha'}

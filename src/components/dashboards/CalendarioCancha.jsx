@@ -218,7 +218,7 @@ const CalendarioCancha = ({ reservas = [] }) => {
 
           {selectedRsvs.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '32px', color: '#94a3b8' }}>
-              <div style={{ fontSize: '2rem', marginBottom: '8px' }}>📭</div>
+              <div style={{ fontSize: '2rem', marginBottom: '8px' }}><i className="bi bi-inbox" /></div>
               <p style={{ margin: 0, fontWeight: '600' }}>No hay reservas para este día.</p>
             </div>
           ) : (
@@ -243,7 +243,7 @@ const CalendarioCancha = ({ reservas = [] }) => {
                     }}>
                       {/* Hora */}
                       <div style={{ minWidth: '100px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span style={{ fontSize: '1rem' }}>⏰</span>
+                        <i className="bi bi-clock" style={{ fontSize: '1rem' }} />
                         <span style={{ fontWeight: '800', fontSize: '0.9rem', color: '#0f172a' }}>{r.time}</span>
                       </div>
                       {/* Cancha */}

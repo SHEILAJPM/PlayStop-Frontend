@@ -93,8 +93,12 @@ function ReviewsSection({ courtId, user }) {
   const [loading, setLoading] = useState(true);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
+  const [photoFiles, setPhotoFiles] = useState([]);
+  const [photoPreviews, setPhotoPreviews] = useState([]);
+  const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     api.getCourtReviews(courtId)
@@ -103,18 +107,38 @@ function ReviewsSection({ courtId, user }) {
       .finally(() => setLoading(false));
   }, [courtId]);
 
+  const handlePhotoChange = (e) => {
+    const files = Array.from(e.target.files).slice(0, 5 - photoFiles.length);
+    setPhotoFiles(prev => [...prev, ...files].slice(0, 5));
+    files.forEach(f => {
+      const reader = new FileReader();
+      reader.onload = ev => setPhotoPreviews(prev => [...prev, ev.target.result].slice(0, 5));
+      reader.readAsDataURL(f);
+    });
+  };
+
+  const removePhoto = (i) => {
+    setPhotoFiles(prev => prev.filter((_, idx) => idx !== i));
+    setPhotoPreviews(prev => prev.filter((_, idx) => idx !== i));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (rating === 0) { setError('Selecciona una calificación'); return; }
-    setSubmitting(true); setError('');
+    setSubmitting(true); setUploading(photoFiles.length > 0); setError('');
     try {
-      const newReview = await api.createReview({ courtId, rating, comment });
+      const photoUrls = [];
+      for (const file of photoFiles) {
+        const res = await api.uploadImage(file);
+        if (res?.url) photoUrls.push(res.url);
+      }
+      const newReview = await api.createReview({ courtId, rating, comment, photoUrls });
       setReviews(prev => [newReview, ...prev]);
-      setRating(0); setComment('');
+      setRating(0); setComment(''); setPhotoFiles([]); setPhotoPreviews([]);
     } catch (err) {
       setError(err.message || 'Error al enviar la reseña');
     } finally {
-      setSubmitting(false);
+      setSubmitting(false); setUploading(false);
     }
   };
 
@@ -140,10 +164,38 @@ function ReviewsSection({ courtId, user }) {
             rows={3}
             style={{ width: '100%', background: '#020617', border: '1px solid #1e293b', borderRadius: 10, color: '#f1f5f9', padding: '10px 12px', fontSize: '0.85rem', resize: 'none', boxSizing: 'border-box', outline: 'none' }}
           />
+
+          {/* Photo upload */}
+          <div style={{ marginTop: 10 }}>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: photoPreviews.length > 0 ? 8 : 0 }}>
+              {photoPreviews.map((src, i) => (
+                <div key={i} style={{ position: 'relative' }}>
+                  <img src={src} alt={`foto ${i + 1}`}
+                    style={{ width: 64, height: 64, borderRadius: 8, objectFit: 'cover', border: '1px solid #1e293b' }} />
+                  <button type="button" onClick={() => removePhoto(i)}
+                    style={{ position: 'absolute', top: -6, right: -6, width: 18, height: 18, borderRadius: '50%', background: '#ef4444', border: 'none', color: '#fff', fontSize: '0.65rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900 }}>
+                    ✕
+                  </button>
+                </div>
+              ))}
+              {photoFiles.length < 5 && (
+                <button type="button" onClick={() => fileInputRef.current?.click()}
+                  style={{ width: 64, height: 64, borderRadius: 8, border: '1.5px dashed #334155', background: 'transparent', color: '#64748b', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2, fontSize: '0.65rem', fontWeight: 700 }}>
+                  <i className="bi bi-camera-fill" style={{ fontSize: '1.1rem' }} />
+                  Foto
+                </button>
+              )}
+            </div>
+            <input ref={fileInputRef} type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={handlePhotoChange} />
+            {photoFiles.length > 0 && (
+              <p style={{ margin: 0, color: '#64748b', fontSize: '0.72rem' }}>{photoFiles.length}/5 fotos</p>
+            )}
+          </div>
+
           {error && <p style={{ color: '#ef4444', fontSize: '0.8rem', margin: '6px 0 0' }}>{error}</p>}
           <button type="submit" disabled={submitting || rating === 0}
             style={{ marginTop: 10, padding: '10px 20px', background: rating > 0 ? 'linear-gradient(135deg,#00d084,#00b875)' : '#1e293b', color: rating > 0 ? '#0a1628' : '#475569', border: 'none', borderRadius: 10, fontWeight: 800, fontSize: '0.88rem', cursor: rating > 0 ? 'pointer' : 'not-allowed' }}>
-            {submitting ? 'Enviando...' : 'Publicar reseña'}
+            {uploading ? 'Subiendo fotos...' : submitting ? 'Enviando...' : 'Publicar reseña'}
           </button>
         </form>
       )}
@@ -165,7 +217,16 @@ function ReviewsSection({ courtId, user }) {
                 </div>
                 <StarRating value={r.rating} size={12} />
               </div>
-              {r.comment && <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.85rem', lineHeight: 1.5 }}>{r.comment}</p>}
+              {r.comment && <p style={{ margin: '0 0 8px', color: '#94a3b8', fontSize: '0.85rem', lineHeight: 1.5 }}>{r.comment}</p>}
+              {r.photoUrls?.length > 0 && (
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                  {r.photoUrls.map((url, i) => (
+                    <img key={i} src={url} alt={`foto ${i + 1}`}
+                      style={{ width: 64, height: 64, borderRadius: 8, objectFit: 'cover', border: '1px solid #1e293b', cursor: 'pointer' }}
+                      onClick={() => window.open(url, '_blank')} />
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -423,13 +484,13 @@ function BookingSummary({ court, booking, onNext, onBack: _onBack }) {
           <p style={{ margin: '0 0 4px 0', color: '#64748b', fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase' }}>{court.sportType}</p>
           <h3 style={{ margin: '0 0 10px 0', color: '#f1f5f9', fontSize: '0.95rem', fontWeight: 800, lineHeight: 1.2 }}>{court.name}</h3>
           {[
-            { icon: '📅', text: fmtDateLabel(date) },
-            { icon: '🕐', text: `${slot} — ${String(parseInt(slot) + 1).padStart(2,'0')}:00 (1 hora)` },
-            { icon: '🏟️', text: `Cancha 1 • ${court.sportType || 'Fútbol'}` },
-            { icon: '💰', text: fmtPrice(court.pricePerHour) + '/hora' },
+            { icon: 'bi-calendar3',        text: fmtDateLabel(date) },
+            { icon: 'bi-clock',            text: `${slot} — ${String(parseInt(slot) + 1).padStart(2,'0')}:00 (1 hora)` },
+            { icon: 'bi-building',         text: `Cancha 1 • ${court.sportType || 'Fútbol'}` },
+            { icon: 'bi-cash-coin',        text: fmtPrice(court.pricePerHour) + '/hora' },
           ].map(({ icon, text }) => (
             <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-              <span style={{ fontSize: '0.8rem' }}>{icon}</span>
+              <i className={`bi ${icon}`} style={{ fontSize: '0.8rem', color: '#64748b' }} />
               <span style={{ color: '#94a3b8', fontSize: '0.8rem', fontWeight: 500 }}>{text}</span>
             </div>
           ))}
@@ -480,8 +541,8 @@ function PaymentView({ court, booking, onPay, processing }) {
           ))}
         </div>
       )},
-    { id: 'yape', label: 'Yape', badge: '📱' },
-    { id: 'plin', label: 'Plin', badge: '📱' },
+    { id: 'yape', label: 'Yape', badge: 'bi-phone-fill' },
+    { id: 'plin', label: 'Plin', badge: 'bi-phone-fill' },
   ];
 
   return (
@@ -504,7 +565,7 @@ function PaymentView({ court, booking, onPay, processing }) {
               {method === m.id && <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#0a1628' }} />}
             </div>
             <div style={{ flex: 1 }}>
-              <span style={{ color: '#f1f5f9', fontWeight: 700, fontSize: '0.9rem' }}>{m.badge && `${m.badge} `}{m.label}</span>
+              <span style={{ color: '#f1f5f9', fontWeight: 700, fontSize: '0.9rem' }}>{m.badge && <><i className={`bi ${m.badge}`} style={{ marginRight: 4 }} /></>}{m.label}</span>
               {m.extra}
             </div>
           </button>
@@ -557,7 +618,7 @@ function BookingSuccess({ court, booking, reservationId, onDone }) {
       </div>
 
       <p style={{ color: '#475569', fontSize: '0.82rem', marginBottom: 24 }}>
-        📧 Recibirás tu código QR de acceso por correo electrónico.
+        <i className="bi bi-envelope-fill" /> Recibirás tu código QR de acceso por correo electrónico.
       </p>
 
       <button onClick={onDone} style={{ width: '100%', padding: 16, background: 'linear-gradient(135deg,#00d084,#00b875)', color: '#0a1628', border: 'none', borderRadius: 14, fontWeight: 800, fontSize: '1rem', cursor: 'pointer', boxShadow: '0 8px 20px rgba(0,208,132,0.3)' }}>
@@ -647,7 +708,7 @@ export default function BookingFlow({ darkMode: _darkMode = true }) {
           </div>
         ) : error ? (
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 32, textAlign: 'center' }}>
-            <div style={{ fontSize: '3rem', marginBottom: 16 }}>⚠️</div>
+            <div style={{ fontSize: '3rem', marginBottom: 16 }}><i className="bi bi-exclamation-triangle-fill" style={{ color: '#ef4444' }} /></div>
             <p style={{ color: '#ef4444', fontWeight: 700, marginBottom: 24 }}>{error}</p>
             <button onClick={() => navigate(-1)} style={{ background: '#1e293b', border: '1px solid #334155', color: '#f1f5f9', borderRadius: 12, padding: '12px 24px', cursor: 'pointer', fontWeight: 700 }}>Volver</button>
           </div>

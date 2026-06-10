@@ -233,4 +233,52 @@ export const api = {
   async getGamificationProfile() {
     return handleResponse(await fetch(`${BASE_URL}/api/gamification/me`, { headers: jsonHeaders() }));
   },
+
+  // ── Cancha por slug (página pública) ──────────────────────────────────────
+
+  async getCourtBySlug(slug) {
+    return handleResponse(await fetch(`${BASE_URL}/api/courts/slug/${encodeURIComponent(slug)}`));
+  },
+
+  // ── Matchmaking ───────────────────────────────────────────────────────────
+
+  async getOpenMatches() {
+    return handleResponse(await fetch(`${BASE_URL}/api/match`));
+  },
+
+  async createMatch(data) {
+    return handleResponse(await fetch(`${BASE_URL}/api/match`, {
+      method: 'POST',
+      headers: jsonHeaders(),
+      body: JSON.stringify(data),
+    }));
+  },
+
+  async joinMatch(id) {
+    return handleResponse(await fetch(`${BASE_URL}/api/match/${id}/join`, {
+      method: 'POST',
+      headers: jsonHeaders(),
+    }));
+  },
+
+  async cancelMatch(id) {
+    return handleResponse(await fetch(`${BASE_URL}/api/match/${id}`, {
+      method: 'DELETE',
+      headers: jsonHeaders(),
+    }));
+  },
+
+  // ── Referidos ─────────────────────────────────────────────────────────────
+
+  async getReferralInfo() {
+    return handleResponse(await fetch(`${BASE_URL}/api/referrals/me`, { headers: jsonHeaders() }));
+  },
+
+  async applyReferralCode(code) {
+    return handleResponse(await fetch(`${BASE_URL}/api/referrals/apply`, {
+      method: 'POST',
+      headers: jsonHeaders(),
+      body: JSON.stringify({ code }),
+    }));
+  },
 };
