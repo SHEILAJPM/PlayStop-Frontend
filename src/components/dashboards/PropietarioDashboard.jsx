@@ -63,6 +63,15 @@ const PROPIETARIO_TOUR_STEPS = [
 
 const DEFAULT_IMG = 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=500&q=80';
 
+// Convierte cualquier formato de fecha del backend a "YYYY-MM-DD"
+const toIsoDate = (d) => {
+  if (!d) return '';
+  if (typeof d === 'string') return d.substring(0, 10);
+  if (Array.isArray(d)) return `${d[0]}-${String(d[1]).padStart(2,'0')}-${String(d[2]).padStart(2,'0')}`;
+  if (typeof d === 'object' && d.year) return `${d.year}-${String(d.monthValue).padStart(2,'0')}-${String(d.dayOfMonth).padStart(2,'0')}`;
+  return String(d).substring(0, 10);
+};
+
 const mapOwnerCourt = (c) => ({
   id: c.id,
   img: c.imageUrl || DEFAULT_IMG,
@@ -100,7 +109,7 @@ const mapOwnerReservation = (r) => {
     status,
     color,
     bg,
-    date: r.date,
+    date: toIsoDate(r.date),
     apiStatus: r.status,
   };
 };
@@ -237,10 +246,17 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
         const results = await Promise.allSettled(
           courts.map(c => api.getCourtReservations(c.id))
         );
+        results.forEach((r, i) => {
+          if (r.status === 'rejected') console.error(`Error reservas cancha[${i}]:`, r.reason);
+          else console.log(`Reservas cancha[${i}] (${courts[i]?.name}):`, r.value);
+        });
         const all = results
           .filter(r => r.status === 'fulfilled' && Array.isArray(r.value))
           .flatMap(r => r.value.map(mapOwnerReservation));
+        console.log('Total reservas mapeadas:', all.length, all);
         setReservas(all);
+      } else {
+        console.warn('El propietario no tiene canchas registradas.');
       }
     } catch (err) {
       console.error('Error cargando datos del propietario:', err);
