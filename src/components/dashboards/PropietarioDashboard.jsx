@@ -81,9 +81,15 @@ const mapOwnerCourt = (c) => ({
 });
 
 const mapOwnerReservation = (r) => {
-  const isConfirmed = r.status === 'CONFIRMED';
   const isCancelled = r.status === 'CANCELLED';
-  const isAttended = r.status === 'ATTENDED';
+  const isAttended  = r.status === 'ATTENDED';
+  // PENDING y CONFIRMED se tratan como Pagado (pago simulado siempre aprobado)
+  const isActive    = r.status === 'PENDING' || r.status === 'CONFIRMED';
+
+  const status = isCancelled ? 'Cancelada' : isAttended ? 'Asistió' : isActive ? 'Pagado' : 'Pendiente';
+  const color  = isCancelled ? '#ef4444'   : isAttended ? '#8b5cf6' : '#00d084';
+  const bg     = isCancelled ? '#fee2e2'   : isAttended ? '#ede9fe' : '#d1fae5';
+
   return {
     id: r.id,
     time: r.slotLabel || `${r.slotHour}:00 - ${r.slotHour + 1}:00`,
@@ -91,9 +97,9 @@ const mapOwnerReservation = (r) => {
     client: r.clientName || 'Cliente',
     clientEmail: r.clientEmail || '',
     amount: `S/ ${r.totalAmount}`,
-    status: isCancelled ? 'Cancelada' : isAttended ? 'Asistió' : isConfirmed ? 'Pagado' : 'Pendiente',
-    color: isCancelled ? '#ef4444' : isAttended ? '#8b5cf6' : isConfirmed ? '#00d084' : '#f59e0b',
-    bg: isCancelled ? '#fee2e2' : isAttended ? '#ede9fe' : isConfirmed ? '#d1fae5' : '#fef3c7',
+    status,
+    color,
+    bg,
     date: r.date,
     apiStatus: r.status,
   };
@@ -220,28 +226,31 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
   const [uploadingProductImage, setUploadingProductImage] = useState(false);
   const [productImageDragOver, setProductImageDragOver] = useState(false);
 
-  useEffect(() => {
-    api.getMyCourts()
-      .then(async (data) => {
-        const courts = Array.isArray(data) ? data.map(mapOwnerCourt) : [];
-        setCanchas(courts);
-        setLoadingCanchas(false);
-        if (courts.length > 0) {
-          const results = await Promise.allSettled(
-            courts.map(c => api.getCourtReservations(c.id))
-          );
-          const all = results
-            .filter(r => r.status === 'fulfilled' && Array.isArray(r.value))
-            .flatMap(r => r.value.map(mapOwnerReservation));
-          setReservas(all);
-        }
-        setLoadingReservas(false);
-      })
-      .catch(() => {
-        setLoadingCanchas(false);
-        setLoadingReservas(false);
-      });
-  }, []);
+  const loadData = async () => {
+    try {
+      const data = await api.getMyCourts();
+      const courts = Array.isArray(data) ? data.map(mapOwnerCourt) : [];
+      setCanchas(courts);
+      setLoadingCanchas(false);
+
+      if (courts.length > 0) {
+        const results = await Promise.allSettled(
+          courts.map(c => api.getCourtReservations(c.id))
+        );
+        const all = results
+          .filter(r => r.status === 'fulfilled' && Array.isArray(r.value))
+          .flatMap(r => r.value.map(mapOwnerReservation));
+        setReservas(all);
+      }
+    } catch (err) {
+      console.error('Error cargando datos del propietario:', err);
+      setLoadingCanchas(false);
+    } finally {
+      setLoadingReservas(false);
+    }
+  };
+
+  useEffect(() => { loadData(); }, []);
 
   const openModal = (action, payload = null) => {
     const isCancha = action?.includes('CANCHA');
@@ -385,8 +394,9 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
     }
   };
 
+  const hoy = new Date().toISOString().split('T')[0];
   const ingresosHoy = reservas
-    .filter(r => r.status === 'Pagado' && r.date === new Date().toISOString().split('T')[0])
+    .filter(r => (r.status === 'Pagado' || r.status === 'Asistió') && r.date === hoy)
     .reduce((sum, r) => sum + parseFloat(r.amount.replace('S/ ', '') || 0), 0);
   const reservasActivas = reservas.filter(r => r.status !== 'Cancelada').length;
   const ocupacion = canchas.length > 0 ? Math.round((reservasActivas / (canchas.length * 10)) * 100) : 0;
@@ -442,7 +452,12 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
           <div className="dashboard-card-ps">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <h3 style={{ margin: 0, color: C.textPrimary, fontSize: '1.2rem', fontWeight: '800' }}>Últimas Reservas</h3>
-              <button onClick={() => setActiveTab('Calendario de Reservas')} className="btn-secondary-ps">Ver calendario</button>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button onClick={() => { setLoadingReservas(true); loadData(); }} className="btn-secondary-ps">
+                  <i className="bi bi-arrow-clockwise" /> Actualizar
+                </button>
+                <button onClick={() => setActiveTab('Calendario de Reservas')} className="btn-secondary-ps">Ver calendario</button>
+              </div>
             </div>
             {loadingReservas ? (
               <SkeletonTable rows={4} />
@@ -655,7 +670,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
       {activeTab === 'Finanzas' && (
         <div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '24px', marginBottom: '30px' }}>
-            <MetricCard title="Total Ingresos" value={`S/ ${reservas.filter(r => r.status === 'Pagado').reduce((sum, r) => sum + parseFloat(r.amount.replace('S/ ', '') || 0), 0).toFixed(2)}`} subtitle="Reservas confirmadas" color="#00d084" />
+            <MetricCard title="Total Ingresos" value={`S/ ${reservas.filter(r => r.status === 'Pagado' || r.status === 'Asistió').reduce((sum, r) => sum + parseFloat(r.amount.replace('S/ ', '') || 0), 0).toFixed(2)}`} subtitle="Reservas confirmadas" color="#00d084" />
             <MetricCard title="Reservas Totales" value={reservas.length} subtitle="Todas las reservas" color="#3b82f6" trend="up" />
             <MetricCard title="Comisiones PlaySpot" value="S/ 0.00" subtitle="Plan Pro Activo" color="#f59e0b" />
           </div>
@@ -670,7 +685,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
                     <tr><th>Fecha</th><th>Horario</th><th>Cancha</th><th>Monto</th><th>Estado</th></tr>
                   </thead>
                   <tbody>
-                    {reservas.filter(r => r.status === 'Pagado').map((row) => (
+                    {reservas.filter(r => r.status === 'Pagado' || r.status === 'Asistió').map((row) => (
                       <tr key={row.id} className="table-row">
                         <td style={{ color: C.textPrimary, fontWeight: '500' }}>{row.date}</td>
                         <td style={{ color: C.textSecondary }}>{row.time}</td>
@@ -679,7 +694,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
                         <td><span className="status-badge" style={{ color: row.color, backgroundColor: row.bg }}>{row.status}</span></td>
                       </tr>
                     ))}
-                    {reservas.filter(r => r.status === 'Pagado').length === 0 && (
+                    {reservas.filter(r => r.status === 'Pagado' || r.status === 'Asistió').length === 0 && (
                       <tr><td colSpan="5" style={{ textAlign: 'center', padding: '40px', color: C.textMuted }}>No hay ingresos registrados.</td></tr>
                     )}
                   </tbody>

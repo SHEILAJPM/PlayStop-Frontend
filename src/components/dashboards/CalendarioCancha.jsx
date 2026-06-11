@@ -8,6 +8,7 @@ const DIAS_SEMANA = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
 
 const STATUS_STYLES = {
   Pagado:   { dot: '#00d084', bg: '#d1fae5', text: '#065f46' },
+  Asistió:  { dot: '#8b5cf6', bg: '#ede9fe', text: '#5b21b6' },
   Pendiente:{ dot: '#f59e0b', bg: '#fef3c7', text: '#92400e' },
   Cancelada:{ dot: '#ef4444', bg: '#fee2e2', text: '#991b1b' },
 };
@@ -70,19 +71,20 @@ const CalendarioCancha = ({ reservas = [] }) => {
   const cellStyle = (rsvs) => {
     if (!rsvs.length) return { bg: 'transparent', dot: null };
     if (rsvs.some(r => r.status === 'Pagado'))    return { bg: '#d1fae5', dot: '#00d084' };
+    if (rsvs.some(r => r.status === 'Asistió'))   return { bg: '#ede9fe', dot: '#8b5cf6' };
     if (rsvs.some(r => r.status === 'Pendiente')) return { bg: '#fef3c7', dot: '#f59e0b' };
-    return { bg: '#fee2e2', dot: '#ef4444' };
+    if (rsvs.some(r => r.status === 'Cancelada')) return { bg: '#fee2e2', dot: '#ef4444' };
+    return { bg: '#fef3c7', dot: '#f59e0b' };
   };
 
   // Summary metrics
-  const totalMes   = reservas.filter(r => {
+  const esMismoMes = (r) => {
     const [y, m] = (r.date || '').split('-').map(Number);
     return y === viewDate.getFullYear() && m === viewDate.getMonth() + 1;
-  }).length;
-  const pagadasMes  = reservas.filter(r => {
-    const [y, m] = (r.date || '').split('-').map(Number);
-    return y === viewDate.getFullYear() && m === viewDate.getMonth() + 1 && r.status === 'Pagado';
-  }).length;
+  };
+  const totalMes    = reservas.filter(esMismoMes).length;
+  const pagadasMes  = reservas.filter(r => esMismoMes(r) && (r.status === 'Pagado' || r.status === 'Asistió')).length;
+  const canceladasMes = reservas.filter(r => esMismoMes(r) && r.status === 'Cancelada').length;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -90,9 +92,9 @@ const CalendarioCancha = ({ reservas = [] }) => {
       {/* ── Métricas del mes ── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '16px' }}>
         {[
-          { label: 'Reservas este mes', value: totalMes,   color: '#3b82f6' },
-          { label: 'Pagadas',           value: pagadasMes, color: '#00d084' },
-          { label: 'Pendientes',        value: totalMes - pagadasMes, color: '#f59e0b' },
+          { label: 'Reservas este mes', value: totalMes,                              color: '#3b82f6' },
+          { label: 'Confirmadas',       value: pagadasMes,                            color: '#00d084' },
+          { label: 'Canceladas',        value: canceladasMes,                         color: '#ef4444' },
         ].map(m => (
           <div key={m.label} style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '16px 20px' }}>
             <p style={{ margin: '0 0 4px', fontSize: '0.8rem', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{m.label}</p>

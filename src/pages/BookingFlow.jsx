@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import QRCode from 'react-qr-code';
 import { api } from '../services/api.js';
 import { useAuth } from '../context/AuthContext.jsx';
 
@@ -548,7 +549,7 @@ function BookingSummary({ court, booking, onNext, onBack: _onBack }) {
 }
 
 /* ── Step 4: Payment ── */
-function PaymentView({ court, booking, onPay, processing }) {
+function PaymentView({ court, booking, onPay, processing, payError }) {
   const [method, setMethod] = useState('card');
   const [cardNumber, setCardNumber] = useState('');
   const [cardName, setCardName] = useState('');
@@ -601,6 +602,12 @@ function PaymentView({ court, booking, onPay, processing }) {
 
   return (
     <div style={{ padding: '20px' }}>
+      {/* Simulation banner */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 10, padding: '10px 14px', marginBottom: 16 }}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span style={{ color: '#f59e0b', fontSize: '0.82rem', fontWeight: 700 }}>Modo simulación — no se realiza ningún cobro real</span>
+      </div>
+
       {/* Total */}
       <div style={{ background: '#0f172a', borderRadius: 16, padding: 20, marginBottom: 20, border: '1px solid #1e293b' }}>
         <p style={{ margin: '0 0 8px 0', color: '#64748b', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total a pagar</p>
@@ -643,6 +650,7 @@ function PaymentView({ court, booking, onPay, processing }) {
               onChange={e => setCvv(e.target.value.replace(/\D/g,''))} />
           </div>
           {cardError && <p style={{ color: '#ef4444', fontSize: '0.82rem', margin: 0, fontWeight: 600 }}>{cardError}</p>}
+          <p style={{ margin: 0, color: '#475569', fontSize: '0.75rem' }}>Puedes usar cualquier dato de prueba, ej: 4111 1111 1111 1111</p>
         </div>
       )}
 
@@ -652,6 +660,11 @@ function PaymentView({ court, booking, onPay, processing }) {
         <span style={{ color: '#00d084', fontSize: '0.82rem', fontWeight: 600 }}>Transacción 100% segura y encriptada</span>
       </div>
 
+      {payError && (
+        <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 10, padding: '10px 14px', marginBottom: 12 }}>
+          <span style={{ color: '#ef4444', fontSize: '0.85rem', fontWeight: 600 }}>⚠ {payError}</span>
+        </div>
+      )}
       <button onClick={handlePay} disabled={processing}
         style={{ width: '100%', padding: 16, background: processing ? '#1e293b' : 'linear-gradient(135deg,#00d084,#00b875)', color: processing ? '#475569' : '#0a1628', border: 'none', borderRadius: 14, fontWeight: 800, fontSize: '1rem', cursor: processing ? 'not-allowed' : 'pointer', boxShadow: processing ? 'none' : '0 8px 20px rgba(0,208,132,0.3)', transition: 'all 0.2s' }}>
         {processing ? 'Procesando...' : `Pagar y reservar ${fmtPrice(total)}`}
@@ -661,7 +674,7 @@ function PaymentView({ court, booking, onPay, processing }) {
 }
 
 /* ── Step 5: Success ── */
-function BookingSuccess({ court, booking, reservationId, onDone }) {
+function BookingSuccess({ court, booking, reservationId, userEmail, onDone }) {
   const [showConf, setShowConf] = useState(true);
   useEffect(() => { const t = setTimeout(() => setShowConf(false), 4000); return () => clearTimeout(t); }, []);
 
@@ -691,9 +704,35 @@ function BookingSuccess({ court, booking, reservationId, onDone }) {
         ))}
       </div>
 
-      <p style={{ color: '#475569', fontSize: '0.82rem', marginBottom: 24 }}>
-        <i className="bi bi-envelope-fill" /> Recibirás tu código QR de acceso por correo electrónico.
+      {/* QR de acceso */}
+      <div style={{ background: '#fff', borderRadius: 16, padding: 20, marginBottom: 12, display: 'inline-block' }}>
+        <QRCode
+          value={`PLAYSTOP|${reservationId}|${court?.name}|${booking.date}|${booking.slot}`}
+          size={160}
+          bgColor="#ffffff"
+          fgColor="#030712"
+          level="M"
+        />
+      </div>
+      <p style={{ color: '#64748b', fontSize: '0.78rem', marginBottom: 16 }}>
+        Muestra este QR al llegar a la cancha
       </p>
+
+      {/* Notificaciones simuladas */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 24, textAlign: 'left' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 10, padding: '10px 14px' }}>
+          <i className="bi bi-envelope-check-fill" style={{ color: '#3b82f6', fontSize: '0.95rem', flexShrink: 0 }} />
+          <span style={{ color: '#93c5fd', fontSize: '0.8rem' }}>
+            QR enviado a <strong>{userEmail || 'tu correo'}</strong>
+          </span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(0,208,132,0.06)', border: '1px solid rgba(0,208,132,0.15)', borderRadius: 10, padding: '10px 14px' }}>
+          <i className="bi bi-bell-fill" style={{ color: '#00d084', fontSize: '0.95rem', flexShrink: 0 }} />
+          <span style={{ color: '#6ee7b7', fontSize: '0.8rem' }}>
+            El propietario ha sido notificado de tu reserva
+          </span>
+        </div>
+      </div>
 
       <button onClick={onDone} style={{ width: '100%', padding: 16, background: 'linear-gradient(135deg,#00d084,#00b875)', color: '#0a1628', border: 'none', borderRadius: 14, fontWeight: 800, fontSize: '1rem', cursor: 'pointer', boxShadow: '0 8px 20px rgba(0,208,132,0.3)' }}>
         Ir a mis reservas
@@ -712,6 +751,7 @@ export default function BookingFlow({ darkMode: _darkMode = true }) {
   const [court, setCourt] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [payError, setPayError] = useState('');
   const [booking, setBooking] = useState({ date: '', slot: null });
   const [processing, setProcessing] = useState(false);
   const [confirmedId, setConfirmedId] = useState(null);
@@ -731,15 +771,15 @@ export default function BookingFlow({ darkMode: _darkMode = true }) {
   const handlePay = async (_method) => {
     setProcessing(true);
     try {
-      const res = await api.createReservation({
-        courtId: parseInt(courtId),
+      const reservation = await api.createReservation({
+        courtId: court.id,
         date: booking.date,
         slotHour: parseInt(booking.slot),
       });
-      setConfirmedId(res?.id || res?.reservationId || null);
+      setConfirmedId(reservation.id);
       setStep(5);
     } catch (err) {
-      alert(err.message || 'Error al procesar el pago');
+      setPayError(err.message || 'Error al crear la reserva. Intenta nuevamente.');
     } finally {
       setProcessing(false);
     }
@@ -791,8 +831,8 @@ export default function BookingFlow({ darkMode: _darkMode = true }) {
             {step === 1 && court && <CourtDetail court={court} onNext={() => setStep(2)} user={user} />}
             {step === 2 && <DateTimePicker courtId={courtId} onBack={goBack} onNext={(sel) => { setBooking(sel); setStep(3); }} />}
             {step === 3 && court && <BookingSummary court={court} booking={booking} onNext={() => setStep(4)} onBack={goBack} />}
-            {step === 4 && court && <PaymentView court={court} booking={booking} onPay={handlePay} processing={processing} />}
-            {step === 5 && court && <BookingSuccess court={court} booking={booking} reservationId={confirmedId} onDone={() => navigate('/dashboard')} />}
+            {step === 4 && court && <PaymentView court={court} booking={booking} onPay={handlePay} processing={processing} payError={payError} />}
+            {step === 5 && court && <BookingSuccess court={court} booking={booking} reservationId={confirmedId} userEmail={user?.email} onDone={() => navigate('/dashboard', { state: { tab: 'Mis Reservas' } })} />}
           </>
         )}
       </div>
