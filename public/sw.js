@@ -1,6 +1,6 @@
 const isLocalhost = self.location.hostname === 'localhost' || self.location.hostname === '127.0.0.1';
 
-// In dev, immediately unregister so Vite's HMR modules are never cached
+// En dev: desregistrar para que Vite HMR funcione sin interferencias
 if (isLocalhost) {
   self.addEventListener('install', () => self.skipWaiting());
   self.addEventListener('activate', () => {
@@ -10,12 +10,20 @@ if (isLocalhost) {
   });
 } else {
 
-const CACHE = 'playstop-v1';
-const OFFLINE_URL = '/';
+const CACHE = 'playstop-v2';
+const OFFLINE_URL = '/offline.html';
+
+// Recursos que se precachean al instalar
+const PRECACHE = [
+  '/',
+  '/offline.html',
+  '/favicon.svg',
+  '/manifest.json',
+];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open(CACHE).then((cache) => cache.addAll([OFFLINE_URL]))
+    caches.open(CACHE).then((cache) => cache.addAll(PRECACHE))
   );
   self.skipWaiting();
 });
@@ -32,8 +40,8 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return;
 
-  // Never cache API calls
-  if (e.request.url.includes('/api/')) {
+  // Nunca cachear llamadas a la API
+  if (e.request.url.includes('/api/') || e.request.url.includes('/ws')) {
     e.respondWith(
       fetch(e.request).catch(() =>
         new Response(JSON.stringify({ error: 'Sin conexión. Verifica tu red.' }), {
@@ -45,9 +53,8 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  const isPage = e.request.mode === 'navigate';
-
-  if (isPage) {
+  // Navegación: network-first, fallback a offline.html
+  if (e.request.mode === 'navigate') {
     e.respondWith(
       fetch(e.request)
         .then((res) => {
@@ -57,23 +64,28 @@ self.addEventListener('fetch', (e) => {
         })
         .catch(() => caches.match(OFFLINE_URL))
     );
-  } else {
-    e.respondWith(
-      caches.match(e.request).then((cached) => {
-        if (cached) return cached;
-        return fetch(e.request).then((res) => {
-          const clone = res.clone();
-          caches.open(CACHE).then((c) => c.put(e.request, clone));
-          return res;
-        });
-      })
-    );
+    return;
   }
+
+  // Assets: cache-first, luego red
+  e.respondWith(
+    caches.match(e.request).then((cached) => {
+      if (cached) return cached;
+      return fetch(e.request).then((res) => {
+        if (!res || res.status !== 200 || res.type === 'opaque') return res;
+        const clone = res.clone();
+        caches.open(CACHE).then((c) => c.put(e.request, clone));
+        return res;
+      }).catch(() => caches.match(OFFLINE_URL));
+    })
+  );
 });
 
+// Notificaciones push
 self.addEventListener('push', (e) => {
   if (!e.data) return;
-  const data = e.data.json();
+  let data;
+  try { data = e.data.json(); } catch { data = { title: 'PlayStop', body: e.data.text() }; }
   e.waitUntil(
     self.registration.showNotification(data.title || 'PlayStop', {
       body: data.body || '',
@@ -81,13 +93,21 @@ self.addEventListener('push', (e) => {
       badge: '/favicon.svg',
       tag: data.tag || 'playstop',
       data: { url: data.url || '/' },
+      vibrate: [200, 100, 200],
     })
   );
 });
 
 self.addEventListener('notificationclick', (e) => {
   e.notification.close();
-  e.waitUntil(self.clients.openWindow(e.notification.data.url || '/'));
+  e.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
+      const url = e.notification.data?.url || '/';
+      const match = clients.find((c) => c.url === url && 'focus' in c);
+      if (match) return match.focus();
+      return self.clients.openWindow(url);
+    })
+  );
 });
 
-} // end else (production only)
+} // end else (producción)

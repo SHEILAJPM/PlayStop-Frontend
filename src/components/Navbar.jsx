@@ -1,9 +1,32 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Navbar = ({ darkMode, toggleTheme }) => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [installPrompt, setInstallPrompt] = useState(null);
+  const [installed, setInstalled] = useState(false);
+  const deferredPrompt = useRef(null);
+
+  useEffect(() => {
+    const handler = (e) => {
+      e.preventDefault();
+      deferredPrompt.current = e;
+      setInstallPrompt(true);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    window.addEventListener('appinstalled', () => { setInstalled(true); setInstallPrompt(false); });
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstall = async () => {
+    if (!deferredPrompt.current) return;
+    deferredPrompt.current.prompt();
+    const { outcome } = await deferredPrompt.current.userChoice;
+    if (outcome === 'accepted') setInstalled(true);
+    setInstallPrompt(false);
+    deferredPrompt.current = null;
+  };
 
   const links = [
     { label: 'Soluciones', href: '#soluciones' },
@@ -105,6 +128,19 @@ const Navbar = ({ darkMode, toggleTheme }) => {
               : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
             }
           </button>
+          {installPrompt && !installed && (
+            <button onClick={handleInstall} style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              background: 'linear-gradient(135deg,#3b82f6,#1d4ed8)',
+              color: '#fff', fontWeight: 700, fontSize: '.82rem',
+              padding: '8px 14px', borderRadius: 10, border: 'none',
+              cursor: 'pointer', transition: 'all .2s',
+              boxShadow: '0 0 16px rgba(59,130,246,.3)',
+            }}>
+              <i className="bi bi-phone-fill" />
+              Instalar App
+            </button>
+          )}
           <button className="nav-login" onClick={() => navigate('/login')}>Iniciar Sesión</button>
           <button className="nav-cta" onClick={() => navigate('/register')}>Comenzar Gratis</button>
         </div>
@@ -138,6 +174,16 @@ const Navbar = ({ darkMode, toggleTheme }) => {
           <button className="nav-link" onClick={() => { setMenuOpen(false); navigate('/matchmaking'); }} style={{ background:'none', border:'none', cursor:'pointer', textAlign:'left', fontSize:'1rem', padding:'12px 14px' }}>Matchmaking</button>
           <button className="nav-link" onClick={() => { setMenuOpen(false); navigate('/torneos'); }} style={{ background:'none', border:'none', cursor:'pointer', textAlign:'left', fontSize:'1rem', padding:'12px 14px', color:'#00d084', fontWeight:700 }}>🏆 Torneos</button>
           <div style={{ height: 1, background: 'rgba(255,255,255,.08)', margin: '6px 0' }} />
+          {installPrompt && !installed && (
+            <button onClick={() => { setMenuOpen(false); handleInstall(); }} style={{
+              width: '100%', padding: 13, borderRadius: 10, border: 'none',
+              background: 'linear-gradient(135deg,#3b82f6,#1d4ed8)',
+              color: '#fff', fontWeight: 700, fontSize: '1rem',
+              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+            }}>
+              <i className="bi bi-phone-fill" /> Instalar App en mi celular
+            </button>
+          )}
           <button className="nav-login" onClick={() => { setMenuOpen(false); navigate('/login'); }} style={{ width: '100%', padding: 13 }}>
             Iniciar Sesión
           </button>

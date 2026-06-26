@@ -1,5 +1,8 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { useAuth } from './context/AuthContext.jsx';
+import { Capacitor } from '@capacitor/core';
+
+const isApp = Capacitor.isNativePlatform();
 import Navbar from './components/Navbar.jsx';
 import Hero from './components/Hero.jsx';
 import Marcas from './components/Marcas.jsx';
@@ -124,11 +127,25 @@ function AppContent() {
       <Suspense fallback={<PageLoader />}>
       <Routes>
         {/* RUTAS PÚBLICAS */}
-        <Route path="/" element={!user ? <LandingLayout darkMode={darkMode} toggleTheme={handleThemeToggle} /> : <Navigate to="/dashboard" replace />}>
+        <Route path="/" element={
+          user
+            ? <Navigate to="/dashboard" replace />
+            : isApp
+              ? <Navigate to="/login" replace />
+              : <LandingLayout darkMode={darkMode} toggleTheme={handleThemeToggle} />
+        }>
           <Route path="login" element={<Login type="login" onLogin={handleLogin} darkMode={darkMode} />} />
           <Route path="register" element={<Register onLogin={handleLogin} />} />
           <Route path="forgot" element={<Login type="forgot" onLogin={handleLogin} darkMode={darkMode} />} />
         </Route>
+        {/* Rutas directas para la app nativa */}
+        {isApp && (
+          <>
+            <Route path="/login" element={!user ? <Login type="login" onLogin={handleLogin} darkMode={darkMode} /> : <Navigate to="/dashboard" replace />} />
+            <Route path="/register" element={!user ? <Register onLogin={handleLogin} /> : <Navigate to="/dashboard" replace />} />
+            <Route path="/forgot" element={!user ? <Login type="forgot" onLogin={handleLogin} darkMode={darkMode} /> : <Navigate to="/dashboard" replace />} />
+          </>
+        )}
         
         {/* RUTA MAESTRA DE DASHBOARD */}
         <Route path="/dashboard" element={

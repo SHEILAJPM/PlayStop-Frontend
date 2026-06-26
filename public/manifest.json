@@ -1,7 +1,7 @@
 {
-  "name": "PlayStop",
+  "name": "PlayStop - Reserva Canchas",
   "short_name": "PlayStop",
-  "description": "Reserva canchas deportivas en tiempo real. Fútbol, pádel, tenis y más.",
+  "description": "Reserva canchas deportivas en tiempo real. Fútbol, pádel, tenis y más en Perú.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -10,6 +10,8 @@
   "theme_color": "#00d084",
   "categories": ["sports", "lifestyle"],
   "lang": "es-PE",
+  "dir": "ltr",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/favicon.svg",
@@ -22,6 +24,15 @@
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "form_factor": "narrow",
+      "label": "PlayStop Dashboard"
     }
   ],
   "shortcuts": [
@@ -41,7 +52,7 @@
     },
     {
       "name": "Buscar Jugadores",
-      "short_name": "Matchmaking",
+      "short_name": "Partido",
       "description": "Únete a un partido y divide el costo",
       "url": "/matchmaking",
       "icons": [{ "src": "/favicon.svg", "sizes": "any" }]

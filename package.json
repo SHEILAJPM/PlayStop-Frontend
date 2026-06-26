@@ -12,6 +12,9 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@capacitor/android": "^8.4.1",
+    "@capacitor/cli": "^8.4.1",
+    "@capacitor/core": "^8.4.1",
     "@stomp/stompjs": "^7.3.0",
     "bootstrap": "^5.3.3",
     "firebase": "^12.15.0",
