@@ -18,39 +18,63 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const [serverMsg, setServerMsg] = useState('');
+
+  const fetchWithTimeout = (url, options, ms = 60000) => {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), ms);
+    return fetch(url, { ...options, signal: controller.signal }).finally(() => clearTimeout(id));
+  };
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     if (loading) return;
 
+    if (!navigator.onLine) {
+      alert("Sin conexión a internet. Conéctate e intenta de nuevo.");
+      return;
+    }
+
     setLoading(true);
+    setServerMsg('Conectando...');
+
+    const endpoint = role === 'Jugador'
+      ? `${API_URL}/api/auth/register/player`
+      : `${API_URL}/api/auth/register/owner`;
+
+    const body = { name, email, password, phone };
+    const options = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    };
+
+    const attemptRegister = async (isRetry = false) => {
+      if (isRetry) setServerMsg('El servidor tardó en responder. Reintentando...');
+      try {
+        const response = await fetchWithTimeout(endpoint, options, 60000);
+        const data = await response.json();
+        if (response.ok) {
+          alert("¡Cuenta creada con éxito! Por favor, inicia sesión.");
+          navigate('/login');
+        } else {
+          alert(data.message || "No se pudo registrar la cuenta. Verifica los datos.");
+        }
+      } catch (error) {
+        if (error.name === 'AbortError' && !isRetry) {
+          setServerMsg('El servidor está iniciando (plan gratuito). Esperando...');
+          await new Promise(r => setTimeout(r, 5000));
+          return attemptRegister(true);
+        }
+        alert("Error de red: No se pudo conectar con el servidor. Verifica tu conexión e intenta de nuevo.");
+      }
+    };
 
     try {
-      // Dependiendo de lo que seleccionó arriba, mandamos a la ruta correcta
-      const endpoint = role === 'Jugador'
-        ? `${API_URL}/api/auth/register/player`
-        : `${API_URL}/api/auth/register/owner`;
-
-      const registerRequest = { name, email, password, phone };
-
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(registerRequest)
-      });
-
-      const data = await response.json(); 
-
-      if (response.ok) {
-        alert("¡Cuenta creada con éxito! Por favor, inicia sesión.");
-        navigate('/login'); 
-      } else {
-        alert(data.message || "No se pudo registrar la cuenta. Verifica los datos.");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Error de red: No se pudo conectar con el servidor.");
+      await attemptRegister();
     } finally {
       setLoading(false);
+      setServerMsg('');
     }
   };
 
@@ -148,7 +172,7 @@ const Register = () => {
           </div>
           
           <button type="submit" disabled={loading} style={{ backgroundColor: '#00d084', color: '#0f172a', padding: '16px', borderRadius: '12px', border: 'none', fontWeight: '800', fontSize: '1.05rem', cursor: 'pointer', marginTop: '8px', transition: 'all 0.2s', boxShadow: '0 4px 6px -1px rgba(0, 208, 132, 0.3)' }}>
-            {loading ? 'Procesando...' : `Registrarme como ${role}`}
+            {loading ? (serverMsg || 'Procesando...') : `Registrarme como ${role}`}
           </button>
         </form>
 

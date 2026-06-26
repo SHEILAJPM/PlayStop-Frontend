@@ -13,6 +13,45 @@ let sessionExpired = false;
 
 export const resetSessionExpired = () => { sessionExpired = false; };
 
+// ── Offline cache helpers ─────────────────────────────────────────────────────
+
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutos
+
+function cacheSet(key, data) {
+  try {
+    localStorage.setItem(`_cache_${key}`, JSON.stringify({ ts: Date.now(), data }));
+  } catch { /* storage lleno */ }
+}
+
+function cacheGet(key) {
+  try {
+    const raw = localStorage.getItem(`_cache_${key}`);
+    if (!raw) return null;
+    const { ts, data } = JSON.parse(raw);
+    if (Date.now() - ts > CACHE_TTL_MS) return null;
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+function isOffline() {
+  return typeof navigator !== 'undefined' && !navigator.onLine;
+}
+
+// Fetch con timeout (evita colgar en Render cold-start)
+async function fetchWithTimeout(url, options = {}, ms = 60000) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), ms);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(id);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 async function handleResponse(res) {
   if (res.status === 204) return null;
   if ((res.status === 401 || res.status === 403) && !sessionExpired) {
@@ -27,25 +66,38 @@ async function handleResponse(res) {
   return data;
 }
 
+// GET con fallback a cache cuando está offline
+async function cachedGet(url, cacheKey, headers = {}) {
+  if (isOffline()) {
+    const cached = cacheGet(cacheKey);
+    if (cached) return cached;
+    throw new Error('Sin conexión. Datos no disponibles offline.');
+  }
+  const res = await fetchWithTimeout(url, { headers });
+  const data = await handleResponse(res);
+  cacheSet(cacheKey, data);
+  return data;
+}
+
 export const api = {
 
   // ── Canchas ──────────────────────────────────────────────────────────────
 
   async getAllCourts() {
-    return handleResponse(await fetch(`${BASE_URL}/api/courts`));
+    return cachedGet(`${BASE_URL}/api/courts`, 'all_courts');
   },
 
   async getMyCourts() {
-    return handleResponse(await fetch(`${BASE_URL}/api/courts/my`, { headers: jsonHeaders() }));
+    return handleResponse(await fetchWithTimeout(`${BASE_URL}/api/courts/my`, { headers: jsonHeaders() }));
   },
 
   async getCourtSlots(courtId, date) {
     const params = new URLSearchParams({ date });
-    return handleResponse(await fetch(`${BASE_URL}/api/courts/${courtId}/slots?${params}`));
+    return handleResponse(await fetchWithTimeout(`${BASE_URL}/api/courts/${courtId}/slots?${params}`));
   },
 
   async createCourt(data) {
-    return handleResponse(await fetch(`${BASE_URL}/api/courts`, {
+    return handleResponse(await fetchWithTimeout(`${BASE_URL}/api/courts`, {
       method: 'POST',
       headers: jsonHeaders(),
       body: JSON.stringify(data),
@@ -53,7 +105,7 @@ export const api = {
   },
 
   async updateCourt(id, data) {
-    return handleResponse(await fetch(`${BASE_URL}/api/courts/${id}`, {
+    return handleResponse(await fetchWithTimeout(`${BASE_URL}/api/courts/${id}`, {
       method: 'PUT',
       headers: jsonHeaders(),
       body: JSON.stringify(data),
@@ -61,7 +113,7 @@ export const api = {
   },
 
   async deleteCourt(id) {
-    return handleResponse(await fetch(`${BASE_URL}/api/courts/${id}`, {
+    return handleResponse(await fetchWithTimeout(`${BASE_URL}/api/courts/${id}`, {
       method: 'DELETE',
       headers: jsonHeaders(),
     }));
@@ -70,7 +122,7 @@ export const api = {
   async uploadImage(file) {
     const formData = new FormData();
     formData.append('file', file);
-    return handleResponse(await fetch(`${BASE_URL}/api/upload`, {
+    return handleResponse(await fetchWithTimeout(`${BASE_URL}/api/upload`, {
       method: 'POST',
       headers: authHeader(),
       body: formData,
@@ -189,7 +241,7 @@ export const api = {
   // ── Reseñas ───────────────────────────────────────────────────────────────
 
   async getCourtReviews(courtId) {
-    return handleResponse(await fetch(`${BASE_URL}/api/reviews/court/${courtId}`));
+    return cachedGet(`${BASE_URL}/api/reviews/court/${courtId}`, `reviews_${courtId}`);
   },
 
   async getMyReviews() {
@@ -250,13 +302,13 @@ export const api = {
   // ── Cancha por slug (página pública) ──────────────────────────────────────
 
   async getCourtBySlug(slug) {
-    return handleResponse(await fetch(`${BASE_URL}/api/courts/slug/${encodeURIComponent(slug)}`));
+    return cachedGet(`${BASE_URL}/api/courts/slug/${encodeURIComponent(slug)}`, `court_slug_${slug}`);
   },
 
   // ── Matchmaking ───────────────────────────────────────────────────────────
 
   async getOpenMatches() {
-    return handleResponse(await fetch(`${BASE_URL}/api/match`));
+    return cachedGet(`${BASE_URL}/api/match`, 'open_matches');
   },
 
   async createMatch(data) {
@@ -338,7 +390,7 @@ export const api = {
   // ── Torneos ───────────────────────────────────────────────────────────────
 
   async getTournaments() {
-    return handleResponse(await fetch(`${BASE_URL}/api/tournaments`));
+    return cachedGet(`${BASE_URL}/api/tournaments`, 'tournaments');
   },
 
   async createTournament(data) {
