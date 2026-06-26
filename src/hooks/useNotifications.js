@@ -1,11 +1,17 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { Client } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
+import { messaging, requestFCMToken, onMessage } from '../firebase';
+
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 let idSeq = 0;
 
-export function useNotifications() {
+export function useNotifications(userId = null) {
   const [notifications, setNotifications] = useState([]);
   const [toasts, setToasts] = useState([]);
   const esRef = useRef(null);
+  const stompRef = useRef(null);
 
   const addNotification = useCallback((notif) => {
     const id = ++idSeq;
@@ -48,6 +54,74 @@ export function useNotifications() {
 
     return () => { try { esRef.current?.close(); } catch {} };
   }, [addNotification]);
+
+  // FCM: push notifications (foreground)
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    // Solicitar permiso y registrar FCM token en el backend
+    requestFCMToken().then((fcmToken) => {
+      if (!fcmToken) return;
+      const saved = localStorage.getItem('fcm_token');
+      if (saved === fcmToken) return;
+      fetch(`${BASE_URL}/api/notifications/fcm-token`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ token: fcmToken }),
+      }).then(() => localStorage.setItem('fcm_token', fcmToken)).catch(() => {});
+    });
+
+    // Mensajes en primer plano
+    if (!messaging) return;
+    const unsub = onMessage(messaging, (payload) => {
+      const notif = payload.notification || {};
+      addNotification({
+        type: payload.data?.type || 'info',
+        icon: payload.data?.icon || 'bi-bell-fill',
+        title: notif.title || 'PlayStop',
+        body: notif.body || '',
+        url: payload.data?.url,
+      });
+    });
+
+    return () => unsub();
+  }, [addNotification]);
+
+  // WebSocket: notificaciones de chat en tiempo real
+  useEffect(() => {
+    if (!userId) return;
+    const token = localStorage.getItem('token') || '';
+
+    const client = new Client({
+      webSocketFactory: () => new SockJS(`${BASE_URL}/ws`),
+      connectHeaders: { Authorization: `Bearer ${token}` },
+      reconnectDelay: 8000,
+      onConnect: () => {
+        client.subscribe(`/topic/notifications/${userId}`, frame => {
+          try {
+            const data = JSON.parse(frame.body);
+            if (data.type === 'CHAT_MESSAGE') {
+              addNotification({
+                type: 'chat',
+                icon: 'bi-chat-dots-fill',
+                title: data.title,
+                body: data.preview,
+                courtName: data.courtName,
+                reservationId: data.reservationId,
+                senderName: data.senderName,
+                senderRole: data.senderRole,
+              });
+            }
+          } catch { /* ignore */ }
+        });
+      },
+    });
+
+    client.activate();
+    stompRef.current = client;
+    return () => { client.deactivate(); };
+  }, [userId, addNotification]);
 
   const markAllRead = useCallback(() => {
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));

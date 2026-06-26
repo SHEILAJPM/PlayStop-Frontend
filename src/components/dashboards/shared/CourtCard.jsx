@@ -126,21 +126,41 @@ const CourtCard = ({ cancha, isFavorito, onToggleFavorito, onReservar, onVerMapa
             {cancha.location}
           </p>
         )}
-        <button
-          onClick={onVerMapa}
-          style={{
-            display: 'flex', alignItems: 'center', gap: '6px',
-            background: 'transparent', border: `1px solid ${cardBorder}`,
-            borderRadius: 8, padding: '5px 10px', cursor: 'pointer',
-            fontSize: '.78rem', fontWeight: 700, color: '#3b82f6',
-            marginBottom: '10px', width: 'fit-content', transition: 'all .15s',
-          }}
-          onMouseOver={e => { e.currentTarget.style.background = '#eff6ff'; e.currentTarget.style.borderColor = '#3b82f6'; }}
-          onMouseOut={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = cardBorder; }}
-        >
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-          Cómo llegar
-        </button>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
+          <button
+            onClick={onVerMapa}
+            style={{
+              display: 'flex', alignItems: 'center', gap: '6px',
+              background: 'transparent', border: `1px solid ${cardBorder}`,
+              borderRadius: 8, padding: '5px 10px', cursor: 'pointer',
+              fontSize: '.78rem', fontWeight: 700, color: '#3b82f6',
+              width: 'fit-content', transition: 'all .15s',
+            }}
+            onMouseOver={e => { e.currentTarget.style.background = '#eff6ff'; e.currentTarget.style.borderColor = '#3b82f6'; }}
+            onMouseOut={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = cardBorder; }}
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+            Cómo llegar
+          </button>
+          {cancha.location && (
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(cancha.location)}`}
+              target="_blank" rel="noreferrer"
+              style={{
+                display: 'flex', alignItems: 'center', gap: '5px',
+                background: 'transparent', border: `1px solid ${cardBorder}`,
+                borderRadius: 8, padding: '5px 10px',
+                fontSize: '.78rem', fontWeight: 700, color: '#10b981',
+                width: 'fit-content', textDecoration: 'none', transition: 'all .15s',
+              }}
+              onMouseOver={e => { e.currentTarget.style.background = '#f0fdf4'; e.currentTarget.style.borderColor = '#10b981'; }}
+              onMouseOut={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = cardBorder; }}
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Google Maps
+            </a>
+          )}
+        </div>
         <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 14, borderTop: `1px solid ${dividerColor}` }}>
           <div>
             <span style={{ fontSize: '1.2rem', fontWeight: 900, color: textPrimary }}>{cancha.price}</span>

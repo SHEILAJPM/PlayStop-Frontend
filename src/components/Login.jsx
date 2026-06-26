@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
 const Login = ({ type, onLogin, darkMode = true }) => {
   const navigate = useNavigate();
+  const googleBtnRef = useRef(null);
   const [email, setEmail]           = useState('');
   const [password, setPassword]     = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -19,6 +21,50 @@ const Login = ({ type, onLogin, darkMode = true }) => {
     setEmail(''); setPassword(''); setCode(''); setNewPassword('');
     setStep(1); setShowPassword(false); setError('');
   }, [type]);
+
+  const handleGoogleCredential = useCallback(async (response) => {
+    setLoading(true);
+    setError('');
+    try {
+      const res = await fetch(`${API_URL}/api/auth/google`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken: response.credential }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        if (data.token) localStorage.setItem('token', data.token);
+        if (onLogin) onLogin(data);
+        const role = data.role?.toUpperCase();
+        if (role === 'ADMIN') navigate('/super-admin-dashboard');
+        else if (role === 'OWNER' || role === 'PROPIETARIO') navigate('/propietario-dashboard');
+        else navigate('/jugador-dashboard');
+      } else {
+        setError(data.message || 'Error al iniciar sesión con Google.');
+      }
+    } catch {
+      setError('Error de conexión con el servidor.');
+    } finally {
+      setLoading(false);
+    }
+  }, [navigate, onLogin]);
+
+  useEffect(() => {
+    if (type !== 'login' || !GOOGLE_CLIENT_ID || !window.google) return;
+    window.google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: handleGoogleCredential,
+    });
+    if (googleBtnRef.current) {
+      window.google.accounts.id.renderButton(googleBtnRef.current, {
+        theme: darkMode ? 'filled_black' : 'outline',
+        size: 'large',
+        width: googleBtnRef.current.offsetWidth || 348,
+        text: 'continue_with',
+        locale: 'es',
+      });
+    }
+  }, [type, darkMode, handleGoogleCredential]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -220,6 +266,17 @@ const Login = ({ type, onLogin, darkMode = true }) => {
             {loading ? 'Procesando...' : type === 'login' ? 'Iniciar Sesión' : 'Confirmar'}
           </button>
         </form>
+
+        {type === 'login' && GOOGLE_CLIENT_ID && (
+          <>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '18px 0 0' }}>
+              <div style={{ flex: 1, height: 1, background: dk ? 'rgba(255,255,255,.1)' : 'rgba(0,0,0,.1)' }} />
+              <span style={{ fontSize: '.78rem', color: dk ? 'rgba(255,255,255,.3)' : 'rgba(0,0,0,.35)', fontWeight: 600 }}>o continúa con</span>
+              <div style={{ flex: 1, height: 1, background: dk ? 'rgba(255,255,255,.1)' : 'rgba(0,0,0,.1)' }} />
+            </div>
+            <div ref={googleBtnRef} style={{ marginTop: 12, display: 'flex', justifyContent: 'center' }} />
+          </>
+        )}
 
         {type === 'login' && (
           <p style={{ textAlign: 'center', margin: '20px 0 0', color: dk ? 'rgba(255,255,255,.38)' : 'rgba(15,23,42,.5)', fontSize: '.88rem' }}>

@@ -175,6 +175,17 @@ export const api = {
     }));
   },
 
+  async getAdminChatModeration() {
+    return handleResponse(await fetch(`${BASE_URL}/api/admin/chat-moderation`, { headers: jsonHeaders() }));
+  },
+
+  async liftChatBan(id) {
+    return handleResponse(await fetch(`${BASE_URL}/api/admin/users/${id}/lift-chat-ban`, {
+      method: 'PATCH',
+      headers: jsonHeaders(),
+    }));
+  },
+
   // ── Reseñas ───────────────────────────────────────────────────────────────
 
   async getCourtReviews(courtId) {
@@ -286,6 +297,77 @@ export const api = {
 
   async getFriends() {
     return handleResponse(await fetch(`${BASE_URL}/api/friends`, { headers: jsonHeaders() }));
+  },
+
+  // ── Chat por reserva ──────────────────────────────────────────────────────
+
+  async getChatMessages(reservationId) {
+    return handleResponse(await fetch(`${BASE_URL}/api/chat/${reservationId}/messages`, { headers: jsonHeaders() }));
+  },
+
+  // ── Chat por partido (matchmaking) ────────────────────────────────────────
+
+  async getMatchChatMessages(matchId) {
+    return handleResponse(await fetch(`${BASE_URL}/api/match/${matchId}/messages`, { headers: jsonHeaders() }));
+  },
+
+  async sendMatchChatMessage(matchId, content) {
+    return handleResponse(await fetch(`${BASE_URL}/api/match/${matchId}/messages`, {
+      method: 'POST',
+      headers: jsonHeaders(),
+      body: JSON.stringify({ content }),
+    }));
+  },
+
+  // ── Auth social ──────────────────────────────────────────────────────────
+
+  async loginWithGoogle(idToken) {
+    return handleResponse(await fetch(`${BASE_URL}/api/auth/google`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ idToken }),
+    }));
+  },
+
+  // ── Recomendaciones IA ───────────────────────────────────────────────────
+
+  async getRecommendations() {
+    return handleResponse(await fetch(`${BASE_URL}/api/recommendations`, { headers: jsonHeaders() }));
+  },
+
+  // ── Torneos ───────────────────────────────────────────────────────────────
+
+  async getTournaments() {
+    return handleResponse(await fetch(`${BASE_URL}/api/tournaments`));
+  },
+
+  async createTournament(data) {
+    return handleResponse(await fetch(`${BASE_URL}/api/tournaments`, {
+      method: 'POST',
+      headers: jsonHeaders(),
+      body: JSON.stringify(data),
+    }));
+  },
+
+  async joinTournament(id, teamName) {
+    return handleResponse(await fetch(`${BASE_URL}/api/tournaments/${id}/join`, {
+      method: 'POST',
+      headers: jsonHeaders(),
+      body: JSON.stringify({ teamName }),
+    }));
+  },
+
+  async cancelTournament(id) {
+    return handleResponse(await fetch(`${BASE_URL}/api/tournaments/${id}`, {
+      method: 'DELETE',
+      headers: jsonHeaders(),
+    }));
+  },
+
+  // ── Analytics propietario ─────────────────────────────────────────────────
+
+  async getOwnerAnalytics() {
+    return handleResponse(await fetch(`${BASE_URL}/api/analytics/owner`, { headers: jsonHeaders() }));
   },
 
   // ── Referidos ─────────────────────────────────────────────────────────────

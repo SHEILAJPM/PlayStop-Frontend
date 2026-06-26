@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { api } from '../services/api.js';
 import { useAuth } from '../context/AuthContext.jsx';
+import MatchChat from '../components/chat/MatchChat.jsx';
 
 function JoinSuccessToast({ match, onClose }) {
   useEffect(() => { const t = setTimeout(onClose, 5000); return () => clearTimeout(t); }, [onClose]);
@@ -28,7 +29,119 @@ function fmtDate(iso) {
   return `${DAYS_ES[d.getDay()]} ${d.getDate()} ${MONTHS_ES[d.getMonth()]}`;
 }
 
-function MatchCard({ match, user, onJoin, onCancel }) {
+function SplitPaymentModal({ match, onConfirm, onClose, loading }) {
+  const [method, setMethod] = useState('yape');
+  const price = parseFloat(match.pricePerPlayer).toFixed(2);
+
+  const METHODS = [
+    { id: 'yape',   label: 'Yape',    icon: '📱', color: '#7c3aed' },
+    { id: 'plin',   label: 'Plin',    icon: '💙', color: '#3b82f6' },
+    { id: 'card',   label: 'Tarjeta', icon: '💳', color: '#0f172a' },
+    { id: 'cash',   label: 'Efectivo al llegar', icon: '💵', color: '#00d084' },
+  ];
+
+  return (
+    <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.8)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:9100, padding:20 }}>
+      <div style={{ background:'#0a1628', border:'1px solid #1e293b', borderRadius:22, padding:28, width:'100%', maxWidth:420, animation:'slideUp 0.3s ease' }}>
+        <style>{`@keyframes slideUp{from{transform:translateY(16px);opacity:0}to{transform:none;opacity:1}}`}</style>
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:22 }}>
+          <h2 style={{ margin:0, color:'#f1f5f9', fontWeight:900, fontSize:'1.2rem' }}>Pagar mi parte</h2>
+          <button onClick={onClose} style={{ background:'none', border:'none', color:'#64748b', cursor:'pointer', fontSize:'1.2rem' }}>✕</button>
+        </div>
+
+        {/* Match summary */}
+        <div style={{ background:'rgba(0,208,132,0.06)', border:'1px solid rgba(0,208,132,0.18)', borderRadius:14, padding:'14px 16px', marginBottom:22 }}>
+          <div style={{ display:'flex', justifyContent:'space-between', marginBottom:8 }}>
+            <span style={{ color:'#64748b', fontSize:'0.82rem' }}>Partido</span>
+            <span style={{ color:'#f1f5f9', fontWeight:700, fontSize:'0.82rem' }}>{match.sportType} · {match.courtName}</span>
+          </div>
+          <div style={{ display:'flex', justifyContent:'space-between', marginBottom:8 }}>
+            <span style={{ color:'#64748b', fontSize:'0.82rem' }}>Jugadores</span>
+            <span style={{ color:'#f1f5f9', fontWeight:700, fontSize:'0.82rem' }}>{match.currentPlayers + 1}/{match.totalPlayers}</span>
+          </div>
+          <div style={{ borderTop:'1px solid rgba(0,208,132,0.15)', paddingTop:10, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+            <span style={{ color:'#94a3b8', fontWeight:700, fontSize:'0.88rem' }}>Tu parte</span>
+            <span style={{ color:'#00d084', fontWeight:900, fontSize:'1.5rem' }}>S/ {price}</span>
+          </div>
+        </div>
+
+        {/* Payment method */}
+        <p style={{ margin:'0 0 10px', color:'#94a3b8', fontSize:'0.78rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.5px' }}>Método de pago</p>
+        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8, marginBottom:22 }}>
+          {METHODS.map(m => (
+            <button key={m.id} onClick={() => setMethod(m.id)}
+              style={{ padding:'11px 10px', background: method === m.id ? `${m.color}18` : '#030712', border:`1.5px solid ${method === m.id ? m.color : '#1e293b'}`, borderRadius:12, color: method === m.id ? '#f1f5f9' : '#64748b', fontWeight:700, fontSize:'0.85rem', cursor:'pointer', display:'flex', alignItems:'center', gap:7, transition:'all 0.15s' }}>
+              <span>{m.icon}</span>{m.label}
+            </button>
+          ))}
+        </div>
+
+        {method === 'cash' && (
+          <div style={{ background:'rgba(245,158,11,0.08)', border:'1px solid rgba(245,158,11,0.2)', borderRadius:10, padding:'10px 14px', marginBottom:18, fontSize:'0.8rem', color:'#fde68a' }}>
+            💡 El organizador confirmará tu pago al llegar a la cancha. Lleva el monto exacto.
+          </div>
+        )}
+
+        <button onClick={() => onConfirm(method)} disabled={loading}
+          style={{ width:'100%', padding:14, background: loading ? '#1e293b' : 'linear-gradient(135deg,#00d084,#00b875)', color: loading ? '#475569' : '#0a1628', border:'none', borderRadius:12, fontWeight:800, fontSize:'0.95rem', cursor: loading ? 'not-allowed' : 'pointer', boxShadow: loading ? 'none' : '0 6px 16px rgba(0,208,132,0.3)' }}>
+          {loading ? 'Procesando...' : `Confirmar y unirme · S/ ${price}`}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ShareButtons({ match }) {
+  const [copied, setCopied] = useState(false);
+  const url = `${window.location.origin}/matchmaking`;
+  const text = `⚽ ¡Únete a un partido de ${match.sportType} en ${match.courtName}!\n📅 ${fmtDate(match.date)} · ${String(match.slotHour).padStart(2,'0')}:00\n💰 S/ ${parseFloat(match.pricePerPlayer).toFixed(0)} por jugador\n👇 Reserva en PlayStop`;
+
+  const handleWA = () => window.open(`https://wa.me/?text=${encodeURIComponent(text + '\n' + url)}`, '_blank');
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(`${text}\n${url}`);
+    } catch {
+      const ta = document.createElement('textarea');
+      ta.value = `${text}\n${url}`;
+      document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2200);
+  };
+
+  const handleNative = () => {
+    navigator.share({ title: `Partido de ${match.sportType} — PlayStop`, text, url }).catch(() => {});
+  };
+
+  return (
+    <div style={{ display: 'flex', gap: 6, marginTop: 10 }}>
+      <button onClick={handleWA}
+        title="Compartir por WhatsApp"
+        style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, padding: '8px', background: 'rgba(37,211,102,0.1)', border: '1px solid rgba(37,211,102,0.25)', borderRadius: 9, color: '#25d366', fontWeight: 700, fontSize: '0.78rem', cursor: 'pointer' }}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.998 2C6.48 2 2 6.48 2 12c0 1.852.504 3.585 1.38 5.073L2 22l4.978-1.372A9.956 9.956 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 11.998 2zm.002 18a7.96 7.96 0 0 1-4.042-1.1l-.29-.173-2.955.815.825-3.022-.189-.31A7.972 7.972 0 0 1 4 12c0-4.418 3.582-8 8-8s8 3.582 8 8-3.582 8-8 8z"/></svg>
+        WhatsApp
+      </button>
+      <button onClick={handleCopy}
+        title="Copiar enlace"
+        style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, padding: '8px', background: copied ? 'rgba(0,208,132,0.12)' : 'rgba(100,116,139,0.1)', border: `1px solid ${copied ? 'rgba(0,208,132,0.3)' : '#1e293b'}`, borderRadius: 9, color: copied ? '#00d084' : '#64748b', fontWeight: 700, fontSize: '0.78rem', cursor: 'pointer', transition: 'all 0.2s' }}>
+        {copied
+          ? <><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg> ¡Copiado!</>
+          : <><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copiar</>
+        }
+      </button>
+      {'share' in navigator && (
+        <button onClick={handleNative}
+          title="Más opciones"
+          style={{ padding: '8px 10px', background: 'rgba(100,116,139,0.1)', border: '1px solid #1e293b', borderRadius: 9, color: '#64748b', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        </button>
+      )}
+    </div>
+  );
+}
+
+function MatchCard({ match, user, onJoin, onCancel, onChatOpen }) {
   const pct = (match.currentPlayers / match.totalPlayers) * 100;
   const isOrganizer = user?.id && match.organizerName === user?.name;
   const isFull = !match.open;
@@ -129,6 +242,16 @@ function MatchCard({ match, user, onJoin, onCancel }) {
           <Link to="/login" style={{ display: 'block', textAlign: 'center', padding: '10px', background: 'linear-gradient(135deg,#00d084,#00b875)', color: '#0a1628', borderRadius: 10, fontWeight: 800, fontSize: '0.9rem', textDecoration: 'none' }}>
             Iniciar sesión para unirme
           </Link>
+        )}
+
+        {!isFull && <ShareButtons match={match} />}
+
+        {user && (
+          <button onClick={() => onChatOpen(match)}
+            style={{ marginTop:8, width:'100%', padding:'8px', background:'rgba(59,130,246,0.08)', border:'1px solid rgba(59,130,246,0.2)', borderRadius:10, color:'#60a5fa', fontWeight:700, fontSize:'0.8rem', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:7 }}>
+            <i className="bi bi-chat-dots-fill" />
+            Chat del partido
+          </button>
         )}
       </div>
     </div>
@@ -238,6 +361,9 @@ export default function Matchmaking() {
   const [showCreate, setShowCreate] = useState(false);
   const [sportFilter, setSportFilter] = useState('Todos');
   const [joinedMatch, setJoinedMatch] = useState(null);
+  const [splitModal, setSplitModal] = useState(null); // match object awaiting payment
+  const [splitLoading, setSplitLoading] = useState(false);
+  const [chatMatch, setChatMatch] = useState(null); // match object for chat
 
   const sports = ['Todos', ...new Set(matches.map(m => m.sportType).filter(Boolean))];
 
@@ -248,13 +374,25 @@ export default function Matchmaking() {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleJoin = async (id) => {
+  const handleJoin = (id) => {
     if (!user) { navigate('/login'); return; }
+    const match = matches.find(m => m.id === id);
+    if (match) setSplitModal(match);
+  };
+
+  const handleSplitConfirm = async (_method) => {
+    if (!splitModal) return;
+    setSplitLoading(true);
     try {
-      const updated = await api.joinMatch(id);
-      setMatches(prev => prev.map(m => m.id === id ? updated : m));
+      const updated = await api.joinMatch(splitModal.id);
+      setMatches(prev => prev.map(m => m.id === splitModal.id ? updated : m));
       setJoinedMatch(updated);
-    } catch (err) { alert(err.message); }
+      setSplitModal(null);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setSplitLoading(false);
+    }
   };
 
   const handleCancel = async (id) => {
@@ -328,13 +466,31 @@ export default function Matchmaking() {
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 20 }}>
             {filtered.map(m => (
-              <MatchCard key={m.id} match={m} user={user} onJoin={handleJoin} onCancel={handleCancel} />
+              <MatchCard key={m.id} match={m} user={user} onJoin={handleJoin} onCancel={handleCancel} onChatOpen={setChatMatch} />
             ))}
           </div>
         )}
       </div>
 
       {joinedMatch && <JoinSuccessToast match={joinedMatch} onClose={() => setJoinedMatch(null)} />}
+
+      {splitModal && (
+        <SplitPaymentModal
+          match={splitModal}
+          loading={splitLoading}
+          onConfirm={handleSplitConfirm}
+          onClose={() => setSplitModal(null)}
+        />
+      )}
+
+      {chatMatch && (
+        <MatchChat
+          match={chatMatch}
+          currentUser={user}
+          onClose={() => setChatMatch(null)}
+          darkMode={true}
+        />
+      )}
 
       {showCreate && (
         <CreateMatchModal

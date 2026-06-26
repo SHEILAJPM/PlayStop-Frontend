@@ -6,6 +6,83 @@ import { useAuth } from '../context/AuthContext.jsx';
 
 const DEFAULT_IMG = 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=1200&q=80';
 
+function StarPicker({ value, onChange, size = 28 }) {
+  const [hovered, setHovered] = useState(0);
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+      {[1, 2, 3, 4, 5].map(i => (
+        <svg key={i} width={size} height={size} viewBox="0 0 24 24"
+          fill={i <= (hovered || value) ? '#f59e0b' : 'none'}
+          stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+          style={{ cursor: 'pointer', transition: 'transform 0.1s', transform: i <= (hovered || value) ? 'scale(1.15)' : 'scale(1)' }}
+          onMouseEnter={() => setHovered(i)}
+          onMouseLeave={() => setHovered(0)}
+          onClick={() => onChange(i)}>
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+        </svg>
+      ))}
+    </span>
+  );
+}
+
+function WriteReviewForm({ courtId, user, onSubmit }) {
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [done, setDone] = useState(false);
+  const [error, setError] = useState('');
+
+  if (done) return (
+    <div style={{ background: 'rgba(0,208,132,0.08)', border: '1px solid rgba(0,208,132,0.25)', borderRadius: 14, padding: '20px 18px', display: 'flex', alignItems: 'center', gap: 10 }}>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00d084" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      <span style={{ color: '#6ee7b7', fontWeight: 700, fontSize: '0.9rem' }}>¡Gracias! Tu reseña fue publicada.</span>
+    </div>
+  );
+
+  const handleSubmit = async () => {
+    if (rating === 0) { setError('Selecciona una calificación'); return; }
+    setSubmitting(true); setError('');
+    try {
+      const review = await api.createReview({ courtId, rating, comment });
+      onSubmit(review);
+      setDone(true);
+    } catch (err) {
+      setError(err.message || 'Error al publicar la reseña. Intenta de nuevo.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div style={{ background: '#0a1628', border: '1px solid #1e293b', borderRadius: 14, padding: '20px 18px', marginBottom: 12 }}>
+      <p style={{ margin: '0 0 14px', color: '#f1f5f9', fontWeight: 800, fontSize: '0.95rem' }}>Deja tu reseña</p>
+      <div style={{ marginBottom: 14 }}>
+        <StarPicker value={rating} onChange={setRating} />
+        {rating > 0 && (
+          <span style={{ marginLeft: 10, color: '#f59e0b', fontSize: '0.82rem', fontWeight: 700 }}>
+            {['', 'Muy malo', 'Malo', 'Regular', 'Bueno', 'Excelente'][rating]}
+          </span>
+        )}
+      </div>
+      <textarea
+        value={comment}
+        onChange={e => setComment(e.target.value)}
+        rows={3}
+        maxLength={500}
+        placeholder="Cuéntanos tu experiencia (opcional)..."
+        style={{ width: '100%', background: '#030712', border: '1px solid #1e293b', borderRadius: 10, color: '#f1f5f9', padding: '10px 12px', fontSize: '0.88rem', outline: 'none', resize: 'none', boxSizing: 'border-box', fontFamily: 'inherit' }}
+      />
+      {error && <p style={{ color: '#ef4444', fontSize: '0.8rem', margin: '6px 0 0', fontWeight: 600 }}>{error}</p>}
+      <button
+        onClick={handleSubmit}
+        disabled={submitting || rating === 0}
+        style={{ marginTop: 12, padding: '10px 24px', background: submitting || rating === 0 ? '#1e293b' : 'linear-gradient(135deg,#00d084,#00b875)', color: submitting || rating === 0 ? '#475569' : '#0a1628', border: 'none', borderRadius: 10, fontWeight: 800, fontSize: '0.88rem', cursor: submitting || rating === 0 ? 'not-allowed' : 'pointer', boxShadow: rating > 0 ? '0 4px 12px rgba(0,208,132,0.25)' : 'none', transition: 'all 0.2s' }}>
+        {submitting ? 'Publicando...' : 'Publicar reseña'}
+      </button>
+    </div>
+  );
+}
+
 function StarDisplay({ value, count, size = 14 }) {
   if (!value) return <span style={{ color: '#64748b', fontSize: size }}>Sin reseñas aún</span>;
   const full = Math.floor(value);
@@ -169,6 +246,15 @@ export default function CourtPublicPage() {
                 Reservar ahora →
               </button>
             </div>
+            {/* Cancellation policy badge */}
+            {(court.freeCancelHours != null || court.refundPercent != null) && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(0,208,132,0.08)', border: '1px solid rgba(0,208,132,0.2)', borderRadius: 10, padding: '9px 14px', marginBottom: 10 }}>
+                <i className="bi bi-shield-check-fill" style={{ color: '#00d084', fontSize: '0.9rem' }} />
+                <span style={{ color: '#94a3b8', fontSize: '0.8rem' }}>
+                  <strong style={{ color: '#00d084' }}>Cancelación gratis</strong> hasta {court.freeCancelHours ?? 24}h antes · {court.refundPercent ?? 50}% de reembolso después
+                </span>
+              </div>
+            )}
 
             {/* Info grid */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 14, marginBottom: 28 }}>
@@ -212,9 +298,27 @@ export default function CourtPublicPage() {
               <p style={{ margin: '0 0 16px', color: '#94a3b8', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                 Reseñas ({reviews.length})
               </p>
+
+              {user && (
+                <WriteReviewForm
+                  courtId={court.id}
+                  user={user}
+                  onSubmit={(newReview) => {
+                    setReviews(prev => [newReview, ...prev]);
+                    setCourt(prev => ({
+                      ...prev,
+                      reviewCount: (prev.reviewCount || 0) + 1,
+                      averageRating: prev.averageRating
+                        ? ((prev.averageRating * (prev.reviewCount || 0)) + newReview.rating) / ((prev.reviewCount || 0) + 1)
+                        : newReview.rating,
+                    }));
+                  }}
+                />
+              )}
+
               {reviews.length === 0 ? (
                 <div style={{ background: '#0a1628', border: '1px solid #1e293b', borderRadius: 14, padding: '32px', textAlign: 'center', color: '#475569' }}>
-                  Sé el primero en dejar una reseña
+                  {user ? 'Todavía no hay reseñas. ¡Sé el primero!' : 'Sé el primero en dejar una reseña'}
                 </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>

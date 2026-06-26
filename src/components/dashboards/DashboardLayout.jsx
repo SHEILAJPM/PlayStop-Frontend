@@ -203,11 +203,12 @@ const TOAST_COLORS = {
   error:   { bg: 'rgba(239,68,68,0.12)',   border: 'rgba(239,68,68,0.3)',   color: '#ef4444' },
 };
 
-const ToastStack = ({ toasts, onDismiss }) => (
+const ToastStack = ({ toasts, onDismiss, onOpenChat }) => (
   <div style={{ position:'fixed', bottom:96, right:24, zIndex:9988, display:'flex', flexDirection:'column', gap:10, pointerEvents:'none', maxWidth:340 }}>
     <AnimatePresence>
       {toasts.map(t => {
-        const c = TOAST_COLORS[t.type] || TOAST_COLORS.info;
+        const isChat = t.type === 'chat';
+        const c = TOAST_COLORS[isChat ? 'success' : t.type] || TOAST_COLORS.info;
         return (
           <motion.div
             key={t.id}
@@ -220,20 +221,30 @@ const ToastStack = ({ toasts, onDismiss }) => (
               border:`1px solid ${c.border}`,
               borderLeft:`3px solid ${c.color}`,
               borderRadius:14, padding:'12px 16px',
-              display:'flex', alignItems:'center', gap:10,
+              display:'flex', alignItems:'flex-start', gap:10,
               boxShadow:'0 8px 32px rgba(0,0,0,.4)',
-              pointerEvents:'auto', cursor:'pointer',
+              pointerEvents:'auto', cursor: isChat ? 'default' : 'pointer',
             }}
-            onClick={() => onDismiss(t.id)}
+            onClick={() => !isChat && onDismiss(t.id)}
           >
-            <i className={`bi ${t.icon}`} style={{ fontSize:'1.3rem', flexShrink:0, color:c.color }} />
+            <i className={`bi ${t.icon}`} style={{ fontSize:'1.3rem', flexShrink:0, color:c.color, marginTop:2 }} />
             <div style={{ flex:1, minWidth:0 }}>
               <p style={{ margin:0, color:'#f8fafc', fontWeight:800, fontSize:'.85rem' }}>{t.title}</p>
               {t.body && t.body !== t.title && (
                 <p style={{ margin:'2px 0 0', color:'#94a3b8', fontSize:'.78rem', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{t.body}</p>
               )}
+              {t.courtName && (
+                <p style={{ margin:'2px 0 0', color:'#64748b', fontSize:'.72rem' }}>🏟️ {t.courtName}</p>
+              )}
+              {isChat && onOpenChat && t.reservationId && (
+                <button
+                  onClick={() => { onOpenChat({ reservationId: t.reservationId, courtName: t.courtName }); onDismiss(t.id); }}
+                  style={{ marginTop:7, padding:'4px 11px', borderRadius:7, border:'none', background:'linear-gradient(135deg,#00d084,#00b875)', color:'#0f172a', fontSize:'.74rem', fontWeight:800, cursor:'pointer', display:'flex', alignItems:'center', gap:4 }}>
+                  <i className="bi bi-chat-dots-fill" /> Ver chat
+                </button>
+              )}
             </div>
-            <span style={{ color:'#475569', fontSize:'1rem', flexShrink:0 }}>×</span>
+            <span onClick={() => onDismiss(t.id)} style={{ color:'#475569', fontSize:'1rem', flexShrink:0, cursor:'pointer' }}>×</span>
           </motion.div>
         );
       })}
@@ -358,14 +369,26 @@ const UserAvatar = ({ name, size = 44, src }) => {
 export const DashboardLayout = ({
   user, onLogout, title, menuItems,
   activeTab, onTabChange, children, darkMode, toggleTheme,
-  tourHighlight, onRestartTour, avatarUrl,
+  tourHighlight, onRestartTour, avatarUrl, onOpenChat, onChatNotif,
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showNotifPanel, setShowNotifPanel] = useState(false);
   const notifRef = useRef(null);
+  const processedToastIds = useRef(new Set());
   const isDark = darkMode;
 
-  const { notifications, toasts, unreadCount, markAllRead, dismissToast, clearAll } = useNotifications();
+  const { notifications, toasts, unreadCount, markAllRead, dismissToast, clearAll } = useNotifications(user?.id);
+
+  // Notificar al padre cuando llega un mensaje de chat nuevo
+  useEffect(() => {
+    if (!onChatNotif) return;
+    toasts.forEach(t => {
+      if (t.type === 'chat' && t.reservationId && !processedToastIds.current.has(t.id)) {
+        processedToastIds.current.add(t.id);
+        onChatNotif({ reservationId: t.reservationId.toString(), courtName: t.courtName });
+      }
+    });
+  }, [toasts, onChatNotif]);
 
   // Close notification panel when clicking outside
   useEffect(() => {
@@ -759,7 +782,7 @@ export const DashboardLayout = ({
       <ChatbotWidget isDark={isDark} />
 
       {/* Toast stack */}
-      <ToastStack toasts={toasts} onDismiss={dismissToast} />
+      <ToastStack toasts={toasts} onDismiss={dismissToast} onOpenChat={onOpenChat} />
     </div>
   );
 };

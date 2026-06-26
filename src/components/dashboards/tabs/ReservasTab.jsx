@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import EmptyState from '../shared/EmptyState.jsx';
 import { SkeletonTable } from '../DashboardLayout.jsx';
+import ReservationChat from '../../chat/ReservationChat.jsx';
 
 const STATUS_FILTERS = [
   { label: 'Todas', value: 'ALL' },
@@ -9,9 +10,10 @@ const STATUS_FILTERS = [
   { label: 'Canceladas', value: 'CANCELLED' },
 ];
 
-const ReservasTab = ({ reservas, loadingReservas, openModal, openReview, reviewedIds, setQrModal, setMapModal, setActiveTab, darkMode, C }) => {
+const ReservasTab = ({ reservas, loadingReservas, openModal, openReview, reviewedIds, setQrModal, setMapModal, setActiveTab, darkMode, C, currentUser, unreadChats = new Set(), onChatOpen }) => {
   const [reservaSearch, setReservaSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
+  const [chatModal, setChatModal] = useState(null); // { reservationId, reservationInfo }
 
   const filtered = reservas.filter(r => {
     const matchStatus = statusFilter === 'ALL' || r.apiStatus === statusFilter;
@@ -21,6 +23,7 @@ const ReservasTab = ({ reservas, loadingReservas, openModal, openReview, reviewe
 
   return (
     <div>
+      {/* Estadísticas */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', marginBottom: '24px' }}>
         {[
           { label: 'Total reservas',  val: reservas.length,                                          icon: 'bi-calendar3',        color: '#3b82f6' },
@@ -39,6 +42,7 @@ const ReservasTab = ({ reservas, loadingReservas, openModal, openReview, reviewe
       </div>
 
       <div style={{ background: C.cardBg, border: `1px solid ${C.cardBorder}`, borderRadius: '20px', overflow: 'hidden' }}>
+        {/* Cabecera */}
         <div style={{ padding: '20px 24px', borderBottom: `1px solid ${C.cardBorder}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
           <h3 style={{ margin: 0, color: C.textPrimary, fontSize: '1.15rem', fontWeight: '800' }}>Historial de Reservas</h3>
           <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
@@ -57,7 +61,7 @@ const ReservasTab = ({ reservas, loadingReservas, openModal, openReview, reviewe
           </div>
         </div>
 
-        {/* Status filter chips */}
+        {/* Filtros de estado */}
         <div style={{ padding: '12px 24px', borderBottom: `1px solid ${C.cardBorder}`, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           {STATUS_FILTERS.map(f => (
             <button key={f.value} onClick={() => setStatusFilter(f.value)}
@@ -98,22 +102,32 @@ const ReservasTab = ({ reservas, loadingReservas, openModal, openReview, reviewe
                 onMouseOver={e => e.currentTarget.style.background = darkMode ? '#1a2236' : '#fafbff'}
                 onMouseOut={e => e.currentTarget.style.background = 'transparent'}
               >
+                {/* Ícono de estado */}
                 <div style={{ width: '44px', height: '44px', borderRadius: '12px', flexShrink: 0, background: row.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem' }}>
                   <i className={`bi ${row.apiStatus === 'CONFIRMED' ? 'bi-check-circle-fill' : row.apiStatus === 'CANCELLED' ? 'bi-x-circle-fill' : row.apiStatus === 'ATTENDED' ? 'bi-award-fill' : 'bi-hourglass-split'}`} style={{ color: row.color }} />
                 </div>
+
+                {/* Info */}
                 <div style={{ flex: 1, minWidth: '150px' }}>
                   <div style={{ fontWeight: '800', color: C.textPrimary, fontSize: '0.95rem', marginBottom: '2px' }}>{row.court}</div>
                   <div style={{ fontSize: '0.82rem', color: C.textMuted }}>{row.date}</div>
                 </div>
+
+                {/* Badge de estado */}
                 <span style={{ padding: '4px 12px', borderRadius: '99px', fontSize: '0.75rem', fontWeight: '800', color: row.color, background: row.bg, whiteSpace: 'nowrap', flexShrink: 0 }}>
                   {row.status}
                 </span>
+
+                {/* Acciones */}
                 <div style={{ display: 'flex', gap: '8px', flexShrink: 0, flexWrap: 'wrap' }}>
+                  {/* Mapa */}
                   <button
                     onClick={() => setMapModal({ show: true, cancha: { name: row.court, location: row.courtAddress, lat: row.courtLat, lng: row.courtLng, district: '', city: '' } })}
                     style={{ padding: '7px 13px', borderRadius: '9px', border: 'none', background: darkMode ? 'rgba(59,130,246,.15)' : '#eff6ff', color: '#3b82f6', fontWeight: '700', fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}>
                     <i className="bi bi-geo-alt-fill" /> Cómo llegar
                   </button>
+
+                  {/* QR */}
                   {(row.apiStatus === 'CONFIRMED' || row.apiStatus === 'PENDING') && (
                     <button
                       onClick={() => setQrModal({ show: true, reservationId: row.id, courtName: row.court, date: row.rawDate, slot: row.slotLabel, timestamp: Date.now() })}
@@ -121,6 +135,44 @@ const ReservasTab = ({ reservas, loadingReservas, openModal, openReview, reviewe
                       <i className="bi bi-qr-code-scan" /> Ver QR
                     </button>
                   )}
+
+                  {/* Chat — disponible en cualquier reserva no cancelada */}
+                  {row.apiStatus !== 'CANCELLED' && (
+                    <button
+                      onClick={() => {
+                        onChatOpen?.(row.id);
+                        setChatModal({ reservationId: row.id, reservationInfo: { court: row.court, date: row.date, slot: row.slotLabel || '' } });
+                      }}
+                      style={{ position: 'relative', padding: '7px 13px', borderRadius: '9px', border: 'none', background: darkMode ? 'rgba(0,208,132,0.12)' : '#f0fdf4', color: '#00d084', fontWeight: '700', fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <i className="bi bi-chat-dots-fill" /> Chat
+                      {unreadChats.has(row.id.toString()) && (
+                        <span style={{ position: 'absolute', top: -3, right: -3, width: 10, height: 10, borderRadius: '50%', background: '#ef4444', border: `2px solid ${darkMode ? '#0f172a' : '#fff'}` }} />
+                      )}
+                    </button>
+                  )}
+
+                  {/* Google Calendar */}
+                  {(row.apiStatus === 'CONFIRMED' || row.apiStatus === 'PENDING') && (() => {
+                    const hourMatch = (row.slotLabel || row.time || '').match(/^(\d+):/);
+                    if (!hourMatch) return null;
+                    const h = parseInt(hourMatch[1]);
+                    const dateStr = (row.rawDate || row.date || '').replace(/-/g, '');
+                    if (!dateStr || dateStr.length < 8) return null;
+                    const pad = n => String(n).padStart(2, '0');
+                    const calUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE`
+                      + `&text=${encodeURIComponent('Reserva en ' + row.court + ' — PlayStop')}`
+                      + `&dates=${dateStr}T${pad(h)}0000/${dateStr}T${pad(h + 1)}0000`
+                      + `&details=${encodeURIComponent('Reserva confirmada en PlayStop')}`
+                      + `&location=${encodeURIComponent(row.courtAddress || row.court)}`;
+                    return (
+                      <a key="gcal" href={calUrl} target="_blank" rel="noreferrer"
+                        style={{ padding: '7px 13px', borderRadius: '9px', border: 'none', background: 'rgba(66,133,244,0.15)', color: '#4285F4', fontWeight: '700', fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', textDecoration: 'none' }}>
+                        <i className="bi bi-calendar-plus-fill" /> Calendario
+                      </a>
+                    );
+                  })()}
+
+                  {/* Compartir por WhatsApp */}
                   {row.apiStatus === 'CONFIRMED' && (
                     <button
                       onClick={() => {
@@ -131,6 +183,8 @@ const ReservasTab = ({ reservas, loadingReservas, openModal, openReview, reviewe
                       <i className="bi bi-whatsapp" /> Compartir
                     </button>
                   )}
+
+                  {/* Dejar reseña */}
                   {row.apiStatus === 'ATTENDED' && !reviewedIds.has(row.id) && (
                     <button
                       onClick={() => openReview(row)}
@@ -143,6 +197,8 @@ const ReservasTab = ({ reservas, loadingReservas, openModal, openReview, reviewe
                       <i className="bi bi-star-fill" /> Reseñado
                     </span>
                   )}
+
+                  {/* Cancelar */}
                   {row.apiStatus !== 'CANCELLED' && row.apiStatus !== 'ATTENDED' && (
                     <button onClick={() => openModal('CANCELAR_RESERVA', row)}
                       style={{ padding: '7px 13px', borderRadius: '9px', border: 'none', background: darkMode ? 'rgba(239,68,68,.15)' : '#fee2e2', color: darkMode ? '#f87171' : '#ef4444', fontWeight: '700', fontSize: '0.8rem', cursor: 'pointer' }}>
@@ -155,6 +211,17 @@ const ReservasTab = ({ reservas, loadingReservas, openModal, openReview, reviewe
           </div>
         )}
       </div>
+
+      {/* Modal de chat */}
+      {chatModal && (
+        <ReservationChat
+          reservationId={chatModal.reservationId}
+          reservationInfo={chatModal.reservationInfo}
+          currentUser={currentUser}
+          onClose={() => setChatModal(null)}
+          darkMode={darkMode}
+        />
+      )}
     </div>
   );
 };

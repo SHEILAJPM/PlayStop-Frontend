@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import QRCode from 'react-qr-code';
 import { api } from '../services/api.js';
 import { useAuth } from '../context/AuthContext.jsx';
+import { useLocalReminders } from '../hooks/useLocalReminders.js';
 
 /* ── Confetti ── */
 const CONF_COLORS = ['#00d084','#3b82f6','#f59e0b','#8b5cf6','#ef4444','#06b6d4'];
@@ -541,6 +542,18 @@ function BookingSummary({ court, booking, onNext, onBack: _onBack }) {
         <StarRating value={court.averageRating ?? null} count={court.reviewCount ?? 0} size={13} />
       </div>
 
+      {/* Cancellation policy */}
+      <div style={{ background: 'rgba(0,208,132,0.06)', border: '1px solid rgba(0,208,132,0.2)', borderRadius: 14, padding: 14, marginBottom: 20 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+          <i className="bi bi-shield-check-fill" style={{ color: '#00d084', fontSize: '0.85rem' }} />
+          <span style={{ color: '#00d084', fontWeight: 800, fontSize: '0.85rem' }}>Política de cancelación</span>
+        </div>
+        <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.8rem', lineHeight: 1.6 }}>
+          ✓ <strong style={{ color: '#f1f5f9' }}>Gratis</strong> si cancelas {court.freeCancelHours ?? 24}h o más antes del partido.<br />
+          ✓ <strong style={{ color: '#f1f5f9' }}>{court.refundPercent ?? 50}% reembolso</strong> si cancelas con menos tiempo.
+        </p>
+      </div>
+
       <button onClick={onNext} style={{ width: '100%', padding: 16, background: 'linear-gradient(135deg,#00d084,#00b875)', color: '#0a1628', border: 'none', borderRadius: 14, fontWeight: 800, fontSize: '1rem', cursor: 'pointer', boxShadow: '0 8px 20px rgba(0,208,132,0.3)' }}>
         Continuar →
       </button>
@@ -676,7 +689,44 @@ function PaymentView({ court, booking, onPay, processing, payError }) {
 /* ── Step 5: Success ── */
 function BookingSuccess({ court, booking, reservationId, userEmail, onDone }) {
   const [showConf, setShowConf] = useState(true);
+  const [reminderState, setReminderState] = useState('idle'); // idle | requesting | set | denied
+  const { permission, requestPermission, scheduleReminder } = useLocalReminders();
+
   useEffect(() => { const t = setTimeout(() => setShowConf(false), 4000); return () => clearTimeout(t); }, []);
+
+  // If permission was already granted on a prior visit, auto-schedule
+  useEffect(() => {
+    if (permission === 'granted' && booking?.date && booking?.slot && reminderState === 'idle') {
+      scheduleBookingReminder();
+      setReminderState('set');
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const scheduleBookingReminder = () => {
+    if (!booking?.date || !booking?.slot) return;
+    const [hour] = booking.slot.split(':').map(Number);
+    const fireAt = new Date(`${booking.date}T${String(hour - 1).padStart(2, '0')}:00:00`);
+    if (isNaN(fireAt.getTime()) || fireAt <= new Date()) return;
+    scheduleReminder({
+      id: `booking-${reservationId || booking.date + booking.slot}`,
+      title: '⏰ Tu partido empieza en 1 hora',
+      body: `${court?.name} · ${booking.slot} — ¡No olvides tu QR!`,
+      fireAt,
+      url: '/dashboard',
+    });
+  };
+
+  const handleActivateReminder = async () => {
+    setReminderState('requesting');
+    const result = await requestPermission();
+    if (result === 'granted') {
+      scheduleBookingReminder();
+      setReminderState('set');
+    } else {
+      setReminderState('denied');
+    }
+  };
 
   return (
     <div style={{ padding: '40px 20px', textAlign: 'center' }}>
@@ -718,7 +768,7 @@ function BookingSuccess({ court, booking, reservationId, userEmail, onDone }) {
         Muestra este QR al llegar a la cancha
       </p>
 
-      {/* Notificaciones simuladas */}
+      {/* Notificaciones */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 24, textAlign: 'left' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 10, padding: '10px 14px' }}>
           <i className="bi bi-envelope-check-fill" style={{ color: '#3b82f6', fontSize: '0.95rem', flexShrink: 0 }} />
@@ -732,6 +782,31 @@ function BookingSuccess({ court, booking, reservationId, userEmail, onDone }) {
             El propietario ha sido notificado de tu reserva
           </span>
         </div>
+
+        {/* Recordatorio push */}
+        {reminderState === 'set' ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(0,208,132,0.1)', border: '1px solid rgba(0,208,132,0.3)', borderRadius: 10, padding: '10px 14px' }}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#00d084" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polyline points="20 6 9 17 4 12"/></svg>
+            <span style={{ color: '#6ee7b7', fontSize: '0.8rem', fontWeight: 600 }}>
+              Recordatorio activo — te avisamos 1 hora antes del partido
+            </span>
+          </div>
+        ) : reminderState === 'denied' ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '10px 14px' }}>
+            <i className="bi bi-bell-slash" style={{ color: '#f87171', fontSize: '0.9rem', flexShrink: 0 }} />
+            <span style={{ color: '#fca5a5', fontSize: '0.8rem' }}>Notificaciones bloqueadas. Actívalas desde la configuración del navegador.</span>
+          </div>
+        ) : (
+          <button
+            onClick={handleActivateReminder}
+            disabled={reminderState === 'requesting'}
+            style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.25)', borderRadius: 10, padding: '10px 14px', cursor: 'pointer', textAlign: 'left', width: '100%' }}>
+            <i className="bi bi-bell" style={{ color: '#fbbf24', fontSize: '0.95rem', flexShrink: 0 }} />
+            <span style={{ color: '#fde68a', fontSize: '0.8rem', fontWeight: 600 }}>
+              {reminderState === 'requesting' ? 'Solicitando permiso...' : '🔔 Activar recordatorio 1 hora antes'}
+            </span>
+          </button>
+        )}
       </div>
 
       <button onClick={onDone} style={{ width: '100%', padding: 16, background: 'linear-gradient(135deg,#00d084,#00b875)', color: '#0a1628', border: 'none', borderRadius: 14, fontWeight: 800, fontSize: '1rem', cursor: 'pointer', boxShadow: '0 8px 20px rgba(0,208,132,0.3)' }}>
@@ -779,7 +854,12 @@ export default function BookingFlow({ darkMode: _darkMode = true }) {
       setConfirmedId(reservation.id);
       setStep(5);
     } catch (err) {
-      setPayError(err.message || 'Error al crear la reserva. Intenta nuevamente.');
+      const msg = err.message || '';
+      if (msg.includes('bloqueada') || msg.includes('deshabilitada')) {
+        setError(msg);
+      } else {
+        setPayError(msg || 'Error al crear la reserva. Intenta nuevamente.');
+      }
     } finally {
       setProcessing(false);
     }
@@ -813,8 +893,32 @@ export default function BookingFlow({ darkMode: _darkMode = true }) {
           </div>
         )}
 
+        {/* Cuenta bloqueada */}
+        {user?.bannedFromReservations && (
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 28px', textAlign: 'center' }}>
+            <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'rgba(239,68,68,0.12)', border: '2px solid rgba(239,68,68,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', marginBottom: 22 }}>
+              ⛔
+            </div>
+            <h2 style={{ color: '#ef4444', fontWeight: 900, fontSize: '1.2rem', margin: '0 0 12px' }}>Cuenta bloqueada</h2>
+            <p style={{ color: '#94a3b8', lineHeight: 1.7, margin: '0 0 10px' }}>
+              Tu cuenta ha sido <strong style={{ color: '#f1f5f9' }}>bloqueada permanentemente</strong> por incumplimiento de las normas de la plataforma.
+            </p>
+            <p style={{ color: '#64748b', fontSize: '0.85rem', margin: '0 0 28px' }}>
+              No es posible realizar nuevas reservas. Si crees que esto es un error, contacta a soporte.
+            </p>
+            <a href="mailto:soporte@playstop.pe"
+              style={{ display: 'block', padding: '12px 24px', background: '#1e293b', color: '#94a3b8', borderRadius: 12, fontWeight: 700, fontSize: '0.9rem', textDecoration: 'none', marginBottom: 12, border: '1px solid #334155' }}>
+              📧 soporte@playstop.pe
+            </a>
+            <button onClick={() => navigate(-1)}
+              style={{ padding: '12px 24px', background: 'transparent', color: '#64748b', border: '1px solid #1e293b', borderRadius: 12, cursor: 'pointer', fontWeight: 700, fontSize: '0.9rem' }}>
+              Volver
+            </button>
+          </div>
+        )}
+
         {/* Content */}
-        {loading ? (
+        {!user?.bannedFromReservations && (loading ? (
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 16 }}>
             <div style={{ width: 44, height: 44, borderRadius: '50%', border: '3px solid #1e293b', borderTop: '3px solid #00d084', animation: 'spin 0.8s linear infinite' }} />
             <p style={{ color: '#64748b', fontWeight: 600 }}>Cargando cancha...</p>
@@ -834,7 +938,7 @@ export default function BookingFlow({ darkMode: _darkMode = true }) {
             {step === 4 && court && <PaymentView court={court} booking={booking} onPay={handlePay} processing={processing} payError={payError} />}
             {step === 5 && court && <BookingSuccess court={court} booking={booking} reservationId={confirmedId} userEmail={user?.email} onDone={() => navigate('/dashboard', { state: { tab: 'Mis Reservas' } })} />}
           </>
-        )}
+        ))}
       </div>
     </div>
   );

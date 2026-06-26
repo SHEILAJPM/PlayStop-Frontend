@@ -93,6 +93,8 @@ const Navbar = ({ darkMode, toggleTheme }) => {
           {links.map(l => (
             <a key={l.label} href={l.href} className="nav-link">{l.label}</a>
           ))}
+          <button className="nav-link" onClick={() => navigate('/matchmaking')} style={{ background:'none', border:'none', cursor:'pointer' }}>Matchmaking</button>
+          <button className="nav-link" onClick={() => navigate('/torneos')} style={{ background:'none', border:'none', cursor:'pointer', color:'#00d084', fontWeight:700 }}>🏆 Torneos</button>
         </nav>
 
         {/* Desktop actions */}
@@ -133,6 +135,8 @@ const Navbar = ({ darkMode, toggleTheme }) => {
               {l.label}
             </a>
           ))}
+          <button className="nav-link" onClick={() => { setMenuOpen(false); navigate('/matchmaking'); }} style={{ background:'none', border:'none', cursor:'pointer', textAlign:'left', fontSize:'1rem', padding:'12px 14px' }}>Matchmaking</button>
+          <button className="nav-link" onClick={() => { setMenuOpen(false); navigate('/torneos'); }} style={{ background:'none', border:'none', cursor:'pointer', textAlign:'left', fontSize:'1rem', padding:'12px 14px', color:'#00d084', fontWeight:700 }}>🏆 Torneos</button>
           <div style={{ height: 1, background: 'rgba(255,255,255,.08)', margin: '6px 0' }} />
           <button className="nav-login" onClick={() => { setMenuOpen(false); navigate('/login'); }} style={{ width: '100%', padding: 13 }}>
             Iniciar Sesión

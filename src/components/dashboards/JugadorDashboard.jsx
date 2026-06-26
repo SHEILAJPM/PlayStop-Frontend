@@ -5,6 +5,7 @@ import { DashboardLayout, SkeletonTable } from './DashboardLayout.jsx';
 import { api } from '../../services/api.js';
 import { useOnboarding } from '../../hooks/useOnboarding.js';
 import OnboardingTour from '../onboarding/OnboardingTour.jsx';
+import ReservationChat from '../chat/ReservationChat.jsx';
 
 import Confetti from './shared/Confetti.jsx';
 import MapModal from './shared/MapModal.jsx';
@@ -19,6 +20,7 @@ import ArmarEquipoTab from './tabs/ArmarEquipoTab.jsx';
 import FavoritasTab from './tabs/FavoritasTab.jsx';
 import ReferidosTab from './tabs/ReferidosTab.jsx';
 import PerfilTab from './tabs/PerfilTab.jsx';
+import EstadisticasTab from './tabs/EstadisticasTab.jsx';
 
 // ── Tour steps ────────────────────────────────────────────────────────────────
 const JUGADOR_TOUR_STEPS = [
@@ -109,6 +111,8 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
 
   const [activeTab, setActiveTab] = useState('Inicio');
   const { showTour, finishTour, retakeTour, tourHighlight, setTourHighlight } = useOnboarding('jugador');
+  const [chatFromNotif, setChatFromNotif] = useState(null);
+  const [unreadChats, setUnreadChats] = useState(new Set());
 
   // ── Shared data state ────────────────────────────────────────────────────────
   const [canchas, setCanchas] = useState([]);
@@ -283,10 +287,18 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
         activeTab={activeTab} onTabChange={setActiveTab}
         tourHighlight={tourHighlight} onRestartTour={retakeTour}
         avatarUrl={avatarUrl}
+        onOpenChat={({ reservationId, courtName }) => {
+          setUnreadChats(prev => { const next = new Set(prev); next.delete(reservationId.toString()); return next; });
+          setChatFromNotif({ reservationId, reservationInfo: { court: courtName, date: '', slot: '' } });
+        }}
+        onChatNotif={({ reservationId }) =>
+          setUnreadChats(prev => new Set([...prev, reservationId.toString()]))
+        }
         menuItems={[
           { icon: 'bi-house-fill',           label: 'Inicio' },
           { icon: 'bi-search',               label: 'Buscar Canchas' },
           { icon: 'bi-calendar2-check-fill', label: 'Mis Reservas' },
+          { icon: 'bi-bar-chart-fill',       label: 'Estadísticas' },
           { icon: 'bi-trophy-fill',          label: 'Logros' },
           { icon: 'bi-people-fill',          label: 'Mis Amigos' },
           { icon: 'bi-diagram-3-fill',       label: 'Armar Equipo' },
@@ -296,6 +308,36 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
         ]}>
 
         <ErrorBoundary C={C}>
+
+        {/* ── Banner de cuenta bloqueada ──────────────────────────────────── */}
+        {user?.bannedFromReservations && (
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(239,68,68,0.15), rgba(220,38,38,0.08))',
+            border: '1.5px solid rgba(239,68,68,0.4)',
+            borderRadius: '16px',
+            padding: '18px 24px',
+            marginBottom: '24px',
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '16px',
+          }}>
+            <span style={{ fontSize: '1.8rem', lineHeight: 1 }}>⛔</span>
+            <div>
+              <p style={{ margin: '0 0 6px', fontWeight: 800, fontSize: '1.05rem', color: '#ef4444' }}>
+                Cuenta bloqueada
+              </p>
+              <p style={{ margin: '0 0 10px', color: C.textSecondary, fontSize: '0.9rem', lineHeight: 1.55 }}>
+                Tu cuenta está bloqueada y no puedes realizar nuevas reservas. Si crees que es un
+                error, contacta a soporte.
+              </p>
+              <a href="mailto:soporte@playstop.pe"
+                style={{ color: '#ef4444', fontWeight: 700, fontSize: '0.88rem', textDecoration: 'underline' }}>
+                soporte@playstop.pe
+              </a>
+            </div>
+          </div>
+        )}
+
         {activeTab === 'Inicio' && (
           <InicioTab canchas={canchas} loadingCanchas={loadingCanchas} reservas={reservas} gamification={gamification} loadingGami={loadingGami} favoritosIds={favoritosIds} toggleFavorito={toggleFavorito} canchasFavoritas={canchasFavoritas} setActiveTab={setActiveTab} setMapModal={setMapModal} navigate={navigate} darkMode={darkMode} C={C} />
         )}
@@ -303,7 +345,10 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
           <BuscarCanchasTab canchas={canchas} loadingCanchas={loadingCanchas} errorCanchas={errorCanchas} favoritosIds={favoritosIds} toggleFavorito={toggleFavorito} setMapModal={setMapModal} navigate={navigate} darkMode={darkMode} C={C} />
         )}
         {activeTab === 'Mis Reservas' && (
-          <ReservasTab reservas={reservas} loadingReservas={loadingReservas} openModal={openModal} openReview={openReview} reviewedIds={reviewedIds} setQrModal={setQrModal} setMapModal={setMapModal} setActiveTab={setActiveTab} darkMode={darkMode} C={C} />
+          <ReservasTab reservas={reservas} loadingReservas={loadingReservas} openModal={openModal} openReview={openReview} reviewedIds={reviewedIds} setQrModal={setQrModal} setMapModal={setMapModal} setActiveTab={setActiveTab} darkMode={darkMode} C={C} currentUser={user} unreadChats={unreadChats} onChatOpen={reservationId => setUnreadChats(prev => { const next = new Set(prev); next.delete(reservationId.toString()); return next; })} />
+        )}
+        {activeTab === 'Estadísticas' && (
+          <EstadisticasTab reservas={reservas} gamification={gamification} loadingReservas={loadingReservas} darkMode={darkMode} C={C} />
         )}
         {activeTab === 'Logros' && (
           <LogrosTab gamification={gamification} loadingGami={loadingGami} darkMode={darkMode} C={C} />
@@ -625,6 +670,17 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
           />
         )}
       </AnimatePresence>
+
+      {/* ── Chat abierto desde notificación ───────────────────────────────────── */}
+      {chatFromNotif && (
+        <ReservationChat
+          reservationId={chatFromNotif.reservationId}
+          reservationInfo={chatFromNotif.reservationInfo}
+          currentUser={user}
+          onClose={() => setChatFromNotif(null)}
+          darkMode={darkMode}
+        />
+      )}
     </>
   );
 };

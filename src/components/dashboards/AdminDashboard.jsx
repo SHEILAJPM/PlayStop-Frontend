@@ -308,6 +308,7 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
   const [owners,       setOwners]       = useState([]);
   const [courts,       setCourts]       = useState([]);
   const [reservations, setReservations] = useState([]);
+  const [moderation,   setModeration]   = useState([]);
   const [loading,      setLoading]      = useState(false);
   const [toasts,       setToasts]       = useState([]);
   const [modal,        setModal]        = useState({ show:false, type:null, payload:null });
@@ -318,6 +319,7 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
   const [userSearch,  setUserSearch]  = useState('');
   const [ownerSearch, setOwnerSearch] = useState('');
   const [courtSearch, setCourtSearch] = useState('');
+  const [modSearch,   setModSearch]   = useState('');
   const [courtSport,  setCourtSport]  = useState('TODOS');
   const [courtStatus, setCourtStatus] = useState('TODOS');
   const [resSearch,   setResSearch]   = useState('');
@@ -350,6 +352,7 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
     if (activeTab === 'Propietarios') load(api.getAdminOwners,          setOwners);
     if (activeTab === 'Canchas')      load(api.getAdminCourts,          setCourts);
     if (activeTab === 'Reservas')     load(api.getAdminAllReservations, setReservations);
+    if (activeTab === 'Moderación')   load(api.getAdminChatModeration,  setModeration);
   }, [activeTab, load]);
 
   // ── modal ──
@@ -394,6 +397,17 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
     closeModal();
   };
 
+  const handleLiftChatBan = async (u) => {
+    try {
+      const res = await api.liftChatBan(u.id);
+      setModeration(p => p.map(x => x.id===u.id ? res : x).filter(x =>
+        x.chatWarningIssued || x.chatSuspensionCount > 0 || x.chatPermanentlyBanned || x.chatSuspendedUntil
+      ));
+      toast(`Sanción de chat levantada para ${u.name}`);
+    } catch(e) { toast(e.message,'error'); }
+    closeModal();
+  };
+
   // ── filtered lists ──
   const filteredUsers = useMemo(() => users.filter(u =>
     u.name.toLowerCase().includes(userSearch.toLowerCase()) ||
@@ -425,15 +439,22 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
     return txt && st && fr && to;
   }), [reservations, resSearch, resStatus, resDateFrom, resDateTo]);
 
+  const filteredMod = useMemo(() => moderation.filter(u =>
+    u.name.toLowerCase().includes(modSearch.toLowerCase()) ||
+    u.email.toLowerCase().includes(modSearch.toLowerCase())
+  ), [moderation, modSearch]);
+
   // ── sort + paginate ──
-  const uSort = useSortable(filteredUsers,  'name');
-  const oSort = useSortable(filteredOwners, 'name');
-  const cSort = useSortable(filteredCourts, 'name');
-  const rSort = useSortable(filteredRes,    'date');
-  const uPage = usePagination(uSort.sorted);
-  const oPage = usePagination(oSort.sorted);
-  const cPage = usePagination(cSort.sorted);
-  const rPage = usePagination(rSort.sorted);
+  const uSort  = useSortable(filteredUsers,  'name');
+  const oSort  = useSortable(filteredOwners, 'name');
+  const cSort  = useSortable(filteredCourts, 'name');
+  const rSort  = useSortable(filteredRes,    'date');
+  const mSort  = useSortable(filteredMod,    'name');
+  const uPage  = usePagination(uSort.sorted);
+  const oPage  = usePagination(oSort.sorted);
+  const cPage  = usePagination(cSort.sorted);
+  const rPage  = usePagination(rSort.sorted);
+  const mPage  = usePagination(mSort.sorted);
 
   // ── analytics data ──
   const statusSegments = useMemo(() =>
@@ -466,6 +487,7 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
         { icon:'bi-person-badge-fill',    label:'Propietarios'  },
         { icon:'bi-geo-alt-fill',         label:'Canchas'       },
         { icon:'bi-calendar-check-fill',  label:'Reservas'      },
+        { icon:'bi-shield-exclamation',   label:'Moderación'    },
         { icon:'bi-activity',             label:'Actividad'     },
         { icon:'bi-person-circle',        label:'Mi Perfil'     },
       ]}>
@@ -869,6 +891,128 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
         </div>
       )}
 
+      {/* ══════════ MODERACIÓN DE CHAT ════════════════════════════════════════ */}
+      {activeTab === 'Moderación' && (
+        <div style={card}>
+          {/* KPIs de moderación */}
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))', gap:14, marginBottom:24 }}>
+            {[
+              { label:'Total sancionados',  value: moderation.length,                                                    color:'#6366f1' },
+              { label:'Baneados perm.',     value: moderation.filter(u=>u.chatPermanentlyBanned).length,                 color:'#ef4444' },
+              { label:'Suspendidos',        value: moderation.filter(u=>u.chatSuspendedUntil && !u.chatPermanentlyBanned).length, color:'#f59e0b' },
+              { label:'Solo advertidos',    value: moderation.filter(u=>u.chatWarningIssued && !u.chatSuspensionCount).length,    color:'#3b82f6' },
+            ].map(({ label, value, color }) => (
+              <div key={label} style={{ padding:'16px', borderRadius:14, backgroundColor: isDark?'rgba(255,255,255,0.05)':'#f8fafc', border: isDark?'1px solid rgba(255,255,255,0.07)':'1px solid #f1f5f9', textAlign:'center' }}>
+                <div style={{ fontSize:'1.8rem', fontWeight:900, color }}>{value}</div>
+                <div style={{ fontSize:'0.74rem', fontWeight:700, color:'#64748b', marginTop:3 }}>{label}</div>
+              </div>
+            ))}
+          </div>
+
+          <SectionHeader
+            title="Moderación de Chat"
+            subtitle="usuarios con sanciones"
+            count={filteredMod.length}
+            isDark={isDark}
+          />
+
+          <div style={{ display:'flex', gap:10, marginBottom:16, flexWrap:'wrap' }}>
+            <SearchInput value={modSearch} onChange={setModSearch} placeholder="Buscar usuario..." dark={isDark} />
+            <button onClick={() => load(api.getAdminChatModeration, setModeration)}
+              style={{ ...btn(isDark?'rgba(0,208,132,0.12)':'#f0fff8','#00d084'), border:`1.5px solid ${isDark?'rgba(0,208,132,0.2)':'#a7f3d0'}` }}>
+              <i className="bi bi-arrow-clockwise" /> Refrescar
+            </button>
+          </div>
+
+          {!moderation.length && !loading && (
+            <div style={{ textAlign:'center', padding:'52px 0', color:'#94a3b8' }}>
+              <div style={{ fontSize:'3rem', marginBottom:12 }}><i className="bi bi-shield-check" /></div>
+              <p style={{ margin:0, fontWeight:700, fontSize:'1rem', color: isDark?'#f8fafc':'#0f172a' }}>Sin sanciones activas</p>
+              <p style={{ margin:'6px 0 0', fontSize:'0.83rem' }}>Todos los usuarios tienen buen comportamiento en el chat.</p>
+            </div>
+          )}
+
+          {moderation.length > 0 && (
+            <div style={{ overflowX:'auto' }}>
+              <table style={{ width:'100%', borderCollapse:'collapse' }}>
+                <thead>
+                  <tr>
+                    {[
+                      ['name','Usuario'],['email','Email'],['chatSuspensionCount','Suspensiones'],
+                      ['chatSuspendedUntil','Suspendido hasta'],['chatViolationCount','Palabras acum.'],
+                    ].map(([k, l]) => (
+                      <SortTh key={k} k={k} label={l} sortKey={mSort.sortKey} sortDir={mSort.sortDir} onToggle={mSort.toggle} thStyle={thSt} />
+                    ))}
+                    <th style={thSt}>Estado</th>
+                    <th style={thSt}>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <Skeletons loading={loading} cols={7} />
+                  {!loading && mPage.paged.map(u => {
+                    const isBanned    = u.chatPermanentlyBanned;
+                    const isSuspended = !isBanned && u.chatSuspendedUntil && new Date(u.chatSuspendedUntil) > new Date();
+                    const isWarned    = !isBanned && !isSuspended && u.chatWarningIssued;
+                    return (
+                      <tr key={u.id} className="adm-row">
+                        <td style={tdSt}>
+                          <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+                            <Avatar name={u.name} bg={isBanned?'ef4444':isSuspended?'f59e0b':'6366f1'} size={32} />
+                            <span style={{ fontWeight:700, color: isDark?'#f8fafc':'#0f172a', fontSize:'0.88rem' }}>{u.name}</span>
+                          </div>
+                        </td>
+                        <td style={{ ...tdSt, fontSize:'0.82rem' }}>{u.email}</td>
+                        <td style={{ ...tdSt, textAlign:'center', fontWeight:700, color: u.chatSuspensionCount>=2?'#ef4444':u.chatSuspensionCount===1?'#f59e0b':'#64748b' }}>
+                          {u.chatSuspensionCount}
+                        </td>
+                        <td style={{ ...tdSt, fontSize:'0.82rem', whiteSpace:'nowrap' }}>
+                          {u.chatSuspendedUntil
+                            ? <span style={{ color:'#ef4444', fontWeight:700 }}>{fmtDate(u.chatSuspendedUntil)}</span>
+                            : <span style={{ color:'#94a3b8' }}>—</span>}
+                        </td>
+                        <td style={{ ...tdSt, textAlign:'center' }}>
+                          <span style={{ fontWeight:700, color: u.chatViolationCount>0?'#f59e0b':'#94a3b8' }}>
+                            {u.chatViolationCount}
+                          </span>
+                        </td>
+                        <td style={tdSt}>
+                          {isBanned && (
+                            <span style={{ display:'inline-flex', alignItems:'center', gap:5, padding:'4px 10px', borderRadius:8, fontSize:'0.73rem', fontWeight:800, backgroundColor:'#fee2e2', color:'#dc2626' }}>
+                              <span style={{ width:6, height:6, borderRadius:'50%', backgroundColor:'#ef4444' }} />⛔ Bloqueado perm.
+                            </span>
+                          )}
+                          {isSuspended && (
+                            <span style={{ display:'inline-flex', alignItems:'center', gap:5, padding:'4px 10px', borderRadius:8, fontSize:'0.73rem', fontWeight:800, backgroundColor:'#fef3c7', color:'#b45309' }}>
+                              <span style={{ width:6, height:6, borderRadius:'50%', backgroundColor:'#f59e0b' }} />🚫 Suspendido
+                            </span>
+                          )}
+                          {isWarned && (
+                            <span style={{ display:'inline-flex', alignItems:'center', gap:5, padding:'4px 10px', borderRadius:8, fontSize:'0.73rem', fontWeight:800, backgroundColor:'#eff6ff', color:'#1d4ed8' }}>
+                              <span style={{ width:6, height:6, borderRadius:'50%', backgroundColor:'#3b82f6' }} />⚠️ Advertido
+                            </span>
+                          )}
+                        </td>
+                        <td style={tdSt}>
+                          <button
+                            onClick={() => openModal('LIFT_BAN', u)}
+                            style={{ ...btn('#dcfce7','#16a34a'), border:'1.5px solid #bbf7d0', fontSize:'0.76rem', display:'flex', alignItems:'center', gap:5 }}>
+                            <i className="bi bi-shield-check" /> Levantar
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  {!loading && !filteredMod.length && moderation.length > 0 && (
+                    <tr><td colSpan={7} style={{ textAlign:'center', color:'#94a3b8', padding:'36px' }}>Sin resultados para "{modSearch}"</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
+          <PaginationBar page={mPage.page} totalPages={mPage.totalPages} setPage={mPage.setPage} total={filteredMod.length} />
+        </div>
+      )}
+
       {/* ══════════ ACTIVIDAD ══════════════════════════════════════════════════ */}
       {activeTab === 'Actividad' && (
         <div style={card}>
@@ -1043,6 +1187,32 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
               <button onClick={() => handleToggleCourt(modal.payload)}
                 style={{ flex:1, padding:13, borderRadius:12, border:'none', backgroundColor:modal.payload.active?'#f59e0b':'#22c55e', color:'#fff', fontWeight:800, cursor:'pointer' }}>
                 {modal.payload.active?'Sí, desactivar':'Sí, activar'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Levantar sanción de chat */}
+        {modal.type === 'LIFT_BAN' && (
+          <div style={{ backgroundColor: isDark?'rgba(9,9,11,0.95)':'#fff', backdropFilter:'blur(20px)', border:`1px solid ${isDark?'rgba(255,255,255,0.08)':'#f1f5f9'}`, padding:36, borderRadius:22, width:'90%', maxWidth:420, boxShadow:'0 24px 60px rgba(0,0,0,0.5)', animation:'mUp 0.28s ease' }}>
+            <div style={{ width:52, height:52, borderRadius:14, backgroundColor:'#dcfce7', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.5rem', marginBottom:16 }}>🛡️</div>
+            <h3 style={{ margin:'0 0 8px', color: isDark?'#f8fafc':'#0f172a', fontSize:'1.15rem', fontWeight:800 }}>Levantar sanción de chat</h3>
+            <p style={{ margin:'0 0 20px', color:'#64748b', fontSize:'0.88rem', lineHeight:1.5 }}>
+              Esto limpiará completamente el historial de moderación de{' '}
+              <strong style={{ color: isDark?'#f8fafc':'#0f172a' }}>{modal.payload?.name}</strong>.
+              Su contador de palabras, advertencias y suspensiones se reiniciarán a cero.
+            </p>
+            <div style={{ backgroundColor: isDark?'rgba(245,158,11,0.08)':'#fffbeb', border:`1px solid ${isDark?'rgba(245,158,11,0.2)':'#fde68a'}`, borderRadius:10, padding:'10px 14px', marginBottom:20, fontSize:'0.8rem', color:'#b45309' }}>
+              ⚠️ Esta acción es irreversible. Asegúrate de que el usuario entienda las normas antes de levantarle la sanción.
+            </div>
+            <div style={{ display:'flex', gap:12 }}>
+              <button onClick={closeModal}
+                style={{ flex:1, padding:13, borderRadius:12, border:`1.5px solid ${isDark?'rgba(255,255,255,0.1)':'#e2e8f0'}`, backgroundColor:'transparent', color: isDark?'#94a3b8':'#475569', fontWeight:700, cursor:'pointer' }}>
+                Cancelar
+              </button>
+              <button onClick={() => handleLiftChatBan(modal.payload)}
+                style={{ flex:1, padding:13, borderRadius:12, border:'none', backgroundColor:'#16a34a', color:'#fff', fontWeight:800, cursor:'pointer' }}>
+                ✓ Sí, levantar sanción
               </button>
             </div>
           </div>

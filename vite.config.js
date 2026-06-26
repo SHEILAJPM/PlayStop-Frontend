@@ -6,6 +6,12 @@ export default defineConfig({
   plugins: [
     react(),
   ],
+  define: {
+    global: 'globalThis',
+  },
+  optimizeDeps: {
+    exclude: ['firebase/messaging'],
+  },
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
@@ -20,6 +26,7 @@ export default defineConfig({
     cors: true,
     proxy: {
       '/api': { target: 'http://localhost:8080', changeOrigin: true },
+      '/ws':  { target: 'http://localhost:8080', ws: true, changeOrigin: true },
     },
   },
   build: {

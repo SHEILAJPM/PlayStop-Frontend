@@ -28,6 +28,7 @@ const BookingFlow         = lazy(() => import('./pages/BookingFlow.jsx'));
 const CourtPublicPage     = lazy(() => import('./pages/CourtPublicPage.jsx'));
 const MapaCanchas         = lazy(() => import('./pages/MapaCanchas.jsx'));
 const Matchmaking         = lazy(() => import('./pages/Matchmaking.jsx'));
+const Torneos             = lazy(() => import('./pages/Torneos.jsx'));
 
 function PageLoader() {
   return (
@@ -156,6 +157,7 @@ function AppContent() {
         <Route path="/cancha/:slug" element={<CourtPublicPage />} />
         <Route path="/mapa" element={<MapaCanchas />} />
         <Route path="/matchmaking" element={<Matchmaking />} />
+        <Route path="/torneos" element={<Torneos />} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

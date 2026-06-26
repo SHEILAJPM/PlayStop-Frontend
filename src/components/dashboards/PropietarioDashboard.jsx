@@ -7,6 +7,8 @@ import CalendarioCancha from './CalendarioCancha.jsx';
 import { api } from '../../services/api.js';
 import { useOnboarding } from '../../hooks/useOnboarding.js';
 import OnboardingTour from '../onboarding/OnboardingTour.jsx';
+import ReservationChat from '../chat/ReservationChat.jsx';
+import PerfilTab from './tabs/PerfilTab.jsx';
 
 const PROPIETARIO_TOUR_STEPS = [
   {
@@ -87,6 +89,8 @@ const mapOwnerCourt = (c) => ({
   imageUrl: c.imageUrl,
   city: c.city || '',
   district: c.district || '',
+  freeCancelHours: c.freeCancelHours ?? 24,
+  refundPercent: c.refundPercent ?? 50,
 });
 
 const mapOwnerReservation = (r) => {
@@ -223,6 +227,22 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
   const scannerRef = useRef(null);
   const html5ScannerRef = useRef(null);
 
+  // Avatar / perfil
+  const [avatarUrl, setAvatarUrl] = useState(() => localStorage.getItem('playspot-avatar') || '');
+
+  // Chat modal state
+  const [chatModal, setChatModal] = useState(null); // { reservationId, reservationInfo }
+  const [chatFromNotif, setChatFromNotif] = useState(null);
+  // reservationIds con mensajes no leídos (en sesión)
+  const [unreadChats, setUnreadChats] = useState(new Set());
+
+  // Tournaments
+  const [tournaments, setTournaments] = useState([]);
+  const [loadingTournaments, setLoadingTournaments] = useState(false);
+  const [tournamentForm, setTournamentForm] = useState({ name:'', sportType:'', startDate:'', endDate:'', maxTeams:8, pricePerTeam:100, prize:'', courtId:'' });
+  const [creatingTournament, setCreatingTournament] = useState(false);
+  const [showTournamentForm, setShowTournamentForm] = useState(false);
+
   // Image upload state (cancha)
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
@@ -267,6 +287,36 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
   };
 
   useEffect(() => { loadData(); }, []);
+
+  const loadTournaments = async () => {
+    setLoadingTournaments(true);
+    try {
+      const data = await api.getTournaments();
+      setTournaments(Array.isArray(data) ? data : []);
+    } catch { setTournaments([]); }
+    finally { setLoadingTournaments(false); }
+  };
+
+  const handleCreateTournament = async (e) => {
+    e.preventDefault();
+    setCreatingTournament(true);
+    try {
+      const created = await api.createTournament({ ...tournamentForm, courtId: tournamentForm.courtId || (canchas[0]?.id ?? null) });
+      setTournaments(prev => [created, ...prev]);
+      setTournamentForm({ name:'', sportType:'', startDate:'', endDate:'', maxTeams:8, pricePerTeam:100, prize:'', courtId:'' });
+      setShowTournamentForm(false);
+    } catch (err) {
+      // Optimistic: add mock entry
+      setTournaments(prev => [{ id: Date.now(), ...tournamentForm, registeredTeams:0, status:'OPEN', organizerName: user?.name || 'Tú', courtName: canchas.find(c=>c.id===tournamentForm.courtId)?.name || '' }, ...prev]);
+      setShowTournamentForm(false);
+    } finally { setCreatingTournament(false); }
+  };
+
+  const handleCancelTournament = async (id) => {
+    if (!window.confirm('¿Cancelar este torneo?')) return;
+    try { await api.cancelTournament(id); } catch { /* optimistic */ }
+    setTournaments(prev => prev.filter(t => t.id !== id));
+  };
 
   const openModal = (action, payload = null) => {
     const isCancha = action?.includes('CANCHA');
@@ -319,6 +369,8 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
             city: fd.get('city') || null,
             district: fd.get('district') || null,
             imageUrl: finalImageUrl,
+            freeCancelHours: parseInt(fd.get('freeCancelHours') || '24', 10),
+            refundPercent: parseInt(fd.get('refundPercent') || '50', 10),
           });
           setCanchas(prev => [...prev, mapOwnerCourt(newCourt)]);
           break;
@@ -332,6 +384,8 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
             city: fd.get('city') || modal.payload.city || null,
             district: fd.get('district') || modal.payload.district || null,
             imageUrl: finalImageUrl,
+            freeCancelHours: parseInt(fd.get('freeCancelHours') || '24', 10),
+            refundPercent: parseInt(fd.get('refundPercent') || '50', 10),
           });
           setCanchas(prev => prev.map(c => c.id === modal.payload.id ? mapOwnerCourt(updated) : c));
           break;
@@ -436,9 +490,17 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
   return (
     <>
     <DashboardLayout user={user} onLogout={onLogout} darkMode={darkMode} toggleTheme={toggleTheme}
+      avatarUrl={avatarUrl}
       title={activeTab === 'Dashboard' ? 'Panel del Complejo' : activeTab}
       activeTab={activeTab} onTabChange={setActiveTab}
       tourHighlight={tourHighlight} onRestartTour={retakeTour}
+      onOpenChat={({ reservationId, courtName }) => {
+        setUnreadChats(prev => { const next = new Set(prev); next.delete(reservationId.toString()); return next; });
+        setChatFromNotif({ reservationId, reservationInfo: { court: courtName, date: '', slot: '' } });
+      }}
+      onChatNotif={({ reservationId }) =>
+        setUnreadChats(prev => new Set([...prev, reservationId.toString()]))
+      }
       menuItems={[
         { icon: 'bi-grid-fill',           label: 'Dashboard' },
         { icon: 'bi-calendar3',           label: 'Calendario de Reservas' },
@@ -447,6 +509,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
         { icon: 'bi-shop',                label: 'Tienda' },
         { icon: 'bi-cash-stack',          label: 'Finanzas' },
         { icon: 'bi-bar-chart-fill',      label: 'Analíticas' },
+        { icon: 'bi-trophy-fill',         label: 'Torneos' },
         { icon: 'bi-person-circle',       label: 'Mi Perfil' },
       ]}>
 
@@ -496,7 +559,20 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
                         <td style={{ color: C.textSecondary }}>{row.date}</td>
                         <td style={{ color: C.textPrimary, fontWeight: '700' }}>{row.amount}</td>
                         <td><span className="status-badge" style={{ color: row.color, backgroundColor: row.bg }}>{row.status}</span></td>
-                        <td>
+                        <td style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                          {row.status !== 'Cancelada' && (
+                            <button
+                              onClick={() => {
+                                setUnreadChats(prev => { const next = new Set(prev); next.delete(row.id.toString()); return next; });
+                                setChatModal({ reservationId: row.id, reservationInfo: { court: row.court, date: row.date, slot: row.time } });
+                              }}
+                              style={{ position: 'relative', padding: '6px 11px', borderRadius: '8px', border: 'none', background: darkMode ? 'rgba(0,208,132,0.12)' : '#f0fdf4', color: '#00d084', fontWeight: '700', fontSize: '0.78rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              <i className="bi bi-chat-dots-fill" /> Chat
+                              {unreadChats.has(row.id.toString()) && (
+                                <span style={{ position: 'absolute', top: -4, right: -4, width: 10, height: 10, borderRadius: '50%', background: '#ef4444', border: `2px solid ${darkMode ? '#0f172a' : '#fff'}` }} />
+                              )}
+                            </button>
+                          )}
                           {row.status !== 'Cancelada' && (
                             <button onClick={() => openModal('CANCELAR_RESERVA', row)} className="btn-delete-ps">Cancelar</button>
                           )}
@@ -585,6 +661,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
           setConfirmingAttendance={setConfirmingAttendance}
           attendanceConfirmed={attendanceConfirmed}
           setAttendanceConfirmed={setAttendanceConfirmed}
+          user={user}
           darkMode={darkMode}
         />
       )}
@@ -767,6 +844,33 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
         });
         const maxDay = Math.max(...last7.map(d=>d.value), 1);
 
+        // Revenue last 6 months
+        const MONTHS_ES_A = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+        const last6Months = Array.from({ length: 6 }, (_, i) => {
+          const d = new Date();
+          d.setMonth(d.getMonth() - (5 - i));
+          const y = d.getFullYear();
+          const m = d.getMonth();
+          const rev = paid.filter(r => {
+            if (!r.date) return false;
+            const rd = new Date(r.date + 'T12:00');
+            return rd.getFullYear() === y && rd.getMonth() === m;
+          }).reduce((s, r) => s + parseFloat(r.amount.replace('S/ ','') || 0), 0);
+          return { label: MONTHS_ES_A[m], rev };
+        });
+        const maxMonthRev = Math.max(...last6Months.map(d => d.rev), 1);
+
+        // CSV export helper
+        const exportCSV = () => {
+          const header = 'Fecha,Cancha,Cliente,Monto,Estado\n';
+          const rows = reservas.map(r => `${r.date},${r.court},${r.client},${r.amount},${r.status}`).join('\n');
+          const blob = new Blob([header + rows], { type: 'text/csv;charset=utf-8;' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = `playstop-reservas-${new Date().toISOString().split('T')[0]}.csv`;
+          a.click(); URL.revokeObjectURL(url);
+        };
+
         const barColor = '#00d084';
         const mutedColor = darkMode ? '#64748b' : '#94a3b8';
         const textColor = darkMode ? '#f8fafc' : '#0f172a';
@@ -792,6 +896,32 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Revenue last 6 months + export button */}
+            <div className="dashboard-card-ps">
+              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:20, flexWrap:'wrap', gap:10 }}>
+                <h3 style={{ margin:0, color:textColor, fontSize:'1.1rem', fontWeight:800 }}>Ingresos — últimos 6 meses</h3>
+                <button onClick={exportCSV}
+                  style={{ display:'flex', alignItems:'center', gap:6, padding:'7px 14px', background:'rgba(0,208,132,0.1)', border:'1px solid rgba(0,208,132,0.25)', borderRadius:9, color:barColor, fontWeight:700, fontSize:'0.8rem', cursor:'pointer' }}>
+                  <i className="bi bi-download" />
+                  Exportar CSV
+                </button>
+              </div>
+              <div style={{ display:'flex', alignItems:'flex-end', gap:10, height:140 }}>
+                {last6Months.map((d, i) => (
+                  <div key={i} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:5, height:'100%', justifyContent:'flex-end' }}>
+                    {d.rev > 0 && (
+                      <span style={{ fontSize:'0.68rem', fontWeight:800, color:barColor }}>S/{d.rev.toFixed(0)}</span>
+                    )}
+                    <div style={{ width:'100%', borderRadius:8, background: d.rev > 0 ? barColor : (darkMode ? '#1e293b' : '#e2e8f0'), height:`${Math.max((d.rev/maxMonthRev)*115, d.rev > 0 ? 10 : 4)}px`, transition:'height 0.6s ease', boxShadow: d.rev > 0 ? `0 0 12px ${barColor}40` : 'none' }} />
+                    <span style={{ fontSize:'0.72rem', color:mutedColor, fontWeight:700 }}>{d.label}</span>
+                  </div>
+                ))}
+              </div>
+              {paid.length === 0 && (
+                <p style={{ margin:'12px 0 0', textAlign:'center', color:mutedColor, fontSize:'0.85rem' }}>Aún no hay reservas pagadas.</p>
+              )}
             </div>
 
             {/* Revenue last 7 days bar chart */}
@@ -893,62 +1023,162 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
         );
       })()}
 
+      {/* ─── Torneos ──────────────────────────────────── */}
+      {activeTab === 'Torneos' && (() => {
+        if (loadingTournaments && !tournaments.length) {
+          // Trigger load on first visit
+          setTimeout(loadTournaments, 0);
+        }
+        const MONTHS_T = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+        const fmtD = (iso) => { if (!iso) return '—'; const d = new Date(iso+'T12:00'); return `${d.getDate()} ${MONTHS_T[d.getMonth()]} ${d.getFullYear()}`; };
+        const tf = tournamentForm;
+        const setTF = (k, v) => setTournamentForm(prev => ({ ...prev, [k]: v }));
+        const fieldStyle = { background: C.inputBg, border: `1.5px solid ${C.inputBorder}`, borderRadius: 10, color: C.textPrimary, padding: '10px 13px', fontSize: '0.9rem', outline: 'none', width: '100%', boxSizing: 'border-box' };
+        const labelStyle = { fontSize: '0.75rem', fontWeight: 700, color: C.textSecondary, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 6, display: 'block' };
+        return (
+          <div>
+            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:24 }}>
+              <div>
+                <h3 style={{ margin:'0 0 4px', color: C.textPrimary, fontSize:'1.3rem', fontWeight:900 }}>Torneos y Ligas</h3>
+                <p style={{ margin:0, color: C.textMuted, fontSize:'0.88rem' }}>Organiza competencias para tus canchas y atrae más jugadores.</p>
+              </div>
+              <div style={{ display:'flex', gap:8 }}>
+                <button onClick={loadTournaments} style={{ padding:'9px 14px', background: C.btnSecBg, color: C.btnSecColor, border:`1px solid ${C.cardBorder}`, borderRadius:10, cursor:'pointer', fontWeight:700, fontSize:'0.85rem' }}>
+                  <i className="bi bi-arrow-clockwise" /> Actualizar
+                </button>
+                <button onClick={() => setShowTournamentForm(v => !v)}
+                  style={{ padding:'9px 18px', background:'linear-gradient(135deg,#00d084,#00b875)', color:'#0a1628', border:'none', borderRadius:10, cursor:'pointer', fontWeight:800, fontSize:'0.88rem' }}>
+                  {showTournamentForm ? '✕ Cancelar' : '+ Nuevo Torneo'}
+                </button>
+              </div>
+            </div>
+
+            {/* Create form */}
+            {showTournamentForm && (
+              <div style={{ background: C.cardBg, border:`1px solid ${C.cardBorder}`, borderRadius:18, padding:24, marginBottom:28 }}>
+                <h4 style={{ margin:'0 0 20px', color: C.textPrimary, fontWeight:800 }}>Crear nuevo torneo</h4>
+                <form onSubmit={handleCreateTournament} style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(220px,1fr))', gap:16 }}>
+                  <div>
+                    <label style={labelStyle}>Nombre del torneo</label>
+                    <input required style={fieldStyle} value={tf.name} onChange={e => setTF('name', e.target.value)} placeholder="Copa Verano 2026" />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Deporte</label>
+                    <select required style={fieldStyle} value={tf.sportType} onChange={e => setTF('sportType', e.target.value)}>
+                      <option value="">Seleccionar...</option>
+                      {SPORT_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Cancha</label>
+                    <select style={fieldStyle} value={tf.courtId} onChange={e => setTF('courtId', e.target.value)}>
+                      <option value="">Primera disponible</option>
+                      {canchas.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Fecha de inicio</label>
+                    <input required type="date" style={fieldStyle} value={tf.startDate} onChange={e => setTF('startDate', e.target.value)} />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Fecha de fin</label>
+                    <input required type="date" style={fieldStyle} value={tf.endDate} onChange={e => setTF('endDate', e.target.value)} />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Máx. equipos</label>
+                    <input required type="number" min="2" max="64" style={fieldStyle} value={tf.maxTeams} onChange={e => setTF('maxTeams', parseInt(e.target.value))} />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Inscripción por equipo (S/)</label>
+                    <input required type="number" min="0" step="10" style={fieldStyle} value={tf.pricePerTeam} onChange={e => setTF('pricePerTeam', parseFloat(e.target.value))} />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Premio</label>
+                    <input style={fieldStyle} value={tf.prize} onChange={e => setTF('prize', e.target.value)} placeholder="S/ 1,000 + trofeo" />
+                  </div>
+                  <div style={{ gridColumn:'1/-1', display:'flex', justifyContent:'flex-end', gap:10, marginTop:4 }}>
+                    <button type="button" onClick={() => setShowTournamentForm(false)}
+                      style={{ padding:'10px 20px', background: C.btnSecBg, color: C.btnSecColor, border:`1px solid ${C.cardBorder}`, borderRadius:10, cursor:'pointer', fontWeight:700 }}>
+                      Cancelar
+                    </button>
+                    <button type="submit" disabled={creatingTournament}
+                      style={{ padding:'10px 24px', background: creatingTournament ? '#1e293b' : 'linear-gradient(135deg,#00d084,#00b875)', color: creatingTournament ? '#475569' : '#0a1628', border:'none', borderRadius:10, cursor: creatingTournament ? 'not-allowed' : 'pointer', fontWeight:800 }}>
+                      {creatingTournament ? 'Creando...' : 'Crear Torneo'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            {/* Tournament list */}
+            {loadingTournaments ? (
+              <div style={{ textAlign:'center', padding:'60px 0', color: C.textMuted }}>
+                <div style={{ width:36, height:36, border:'3px solid #1e293b', borderTop:'3px solid #00d084', borderRadius:'50%', animation:'spin 0.8s linear infinite', margin:'0 auto 14px' }} />
+                <p style={{ margin:0 }}>Cargando torneos...</p>
+              </div>
+            ) : tournaments.length === 0 ? (
+              <div style={{ textAlign:'center', padding:'60px 24px', background: C.cardBg, borderRadius:20, border:`1px solid ${C.cardBorder}` }}>
+                <div style={{ fontSize:'3rem', marginBottom:12 }}>🏆</div>
+                <h3 style={{ margin:'0 0 8px', color: C.textPrimary, fontWeight:800 }}>Sin torneos activos</h3>
+                <p style={{ margin:'0 0 20px', color: C.textMuted }}>Crea tu primer torneo para atraer nuevos equipos a tu complejo.</p>
+                <button onClick={() => setShowTournamentForm(true)}
+                  style={{ padding:'11px 24px', background:'linear-gradient(135deg,#00d084,#00b875)', color:'#0a1628', border:'none', borderRadius:12, cursor:'pointer', fontWeight:800 }}>
+                  + Crear mi primer torneo
+                </button>
+              </div>
+            ) : (
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))', gap:20 }}>
+                {tournaments.map(t => {
+                  const spotsLeft = (t.maxTeams || 0) - (t.registeredTeams || 0);
+                  const pct = t.maxTeams ? ((t.registeredTeams||0) / t.maxTeams) * 100 : 0;
+                  const isFull = t.status === 'FULL' || spotsLeft <= 0;
+                  return (
+                    <div key={t.id} style={{ background: C.cardBg, border:`1px solid ${C.cardBorder}`, borderRadius:18, overflow:'hidden' }}>
+                      <div style={{ padding:20 }}>
+                        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:10 }}>
+                          <h4 style={{ margin:0, color: C.textPrimary, fontWeight:900, fontSize:'1rem', lineHeight:1.3 }}>{t.name}</h4>
+                          <span style={{ background: isFull ? 'rgba(239,68,68,0.15)' : 'rgba(0,208,132,0.15)', color: isFull ? '#ef4444' : '#00d084', borderRadius:12, padding:'3px 10px', fontSize:'0.7rem', fontWeight:800, whiteSpace:'nowrap', marginLeft:8 }}>
+                            {isFull ? 'Completo' : 'Abierto'}
+                          </span>
+                        </div>
+                        <p style={{ margin:'0 0 12px', color: C.textMuted, fontSize:'0.82rem' }}>
+                          {t.sportType && <span style={{ marginRight:10 }}>⚽ {t.sportType}</span>}
+                          {t.courtName && <span>📍 {t.courtName}</span>}
+                        </p>
+                        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8, marginBottom:14 }}>
+                          {[
+                            { label:'Inicio', value: fmtD(t.startDate) },
+                            { label:'Fin',    value: fmtD(t.endDate) },
+                            { label:'Equipos', value: `${t.registeredTeams||0}/${t.maxTeams||'?'}` },
+                            { label:'Inscripción', value: `S/ ${t.pricePerTeam||0}` },
+                          ].map(({label,value}) => (
+                            <div key={label} style={{ background: darkMode ? '#030712' : '#f8fafc', borderRadius:8, padding:'8px 10px', border:`1px solid ${C.cardBorder}` }}>
+                              <p style={{ margin:'0 0 2px', color: C.textMuted, fontSize:'0.65rem', fontWeight:700, textTransform:'uppercase' }}>{label}</p>
+                              <p style={{ margin:0, color: C.textPrimary, fontWeight:700, fontSize:'0.82rem' }}>{value}</p>
+                            </div>
+                          ))}
+                        </div>
+                        {t.prize && <p style={{ margin:'0 0 12px', color:'#f59e0b', fontWeight:700, fontSize:'0.82rem' }}>🏆 Premio: {t.prize}</p>}
+                        <div style={{ height:5, background: C.cardBorder, borderRadius:5, overflow:'hidden', marginBottom:14 }}>
+                          <div style={{ height:'100%', width:`${pct}%`, background: isFull ? '#ef4444' : pct>=75 ? '#f59e0b' : '#00d084', borderRadius:5 }} />
+                        </div>
+                        <button onClick={() => handleCancelTournament(t.id)}
+                          style={{ width:'100%', padding:'9px', background:'rgba(239,68,68,0.12)', color:'#ef4444', border:'1px solid rgba(239,68,68,0.25)', borderRadius:10, cursor:'pointer', fontWeight:700, fontSize:'0.85rem' }}>
+                          Cancelar torneo
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        );
+      })()}
+
       {/* ─── Mi Perfil ────────────────────────────────── */}
       {activeTab === 'Mi Perfil' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '24px', alignItems: 'start' }}>
-          <div className="dashboard-card-ps" style={{ padding: 0, overflow: 'hidden' }}>
-            <div style={{ height: '120px', background: 'linear-gradient(135deg, rgba(0, 208, 132, 0.8) 0%, rgba(59, 130, 246, 0.8) 100%)' }}></div>
-            <div style={{ padding: '0 32px 32px 32px', marginTop: '-40px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
-                <div style={{ width: '100px', height: '100px', borderRadius: '50%', backgroundColor: '#e2e8f0', backgroundImage: `url(https://ui-avatars.com/api/?name=${user?.name || 'User'}&background=0f172a&color=fff&size=150)`, backgroundSize: 'cover', backgroundPosition: 'center', boxShadow: '0 4px 10px rgba(0,0,0,0.2)' }}></div>
-              </div>
-              <h3 style={{ margin: '0 0 4px 0', color: C.textPrimary, fontSize: '1.3rem', fontWeight: '800' }}>Información Personal</h3>
-              <p style={{ margin: '0 0 24px 0', color: C.textSecondary, fontSize: '0.92rem' }}>Actualiza tus datos de propietario.</p>
-              <form onSubmit={(e) => { e.preventDefault(); alert('Perfil actualizado con éxito'); }} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
-                  <div style={{ flex: 1, minWidth: '150px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <label style={{ fontSize: '0.85rem', fontWeight: '700', color: C.textSecondary }}>Nombre Completo</label>
-                    <input type="text" defaultValue={user?.name} className="modal-ps-input" required />
-                  </div>
-                  <div style={{ flex: 1, minWidth: '150px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <label style={{ fontSize: '0.85rem', fontWeight: '700', color: C.textSecondary }}>Teléfono</label>
-                    <input type="tel" defaultValue="+51 987 654 321" className="modal-ps-input" />
-                  </div>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <label style={{ fontSize: '0.85rem', fontWeight: '700', color: C.textSecondary }}>Correo Electrónico</label>
-                  <input type="email" defaultValue={user?.email} className="modal-ps-input" required />
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '6px' }}>
-                  <button type="submit" className="btn-primary-ps">Guardar Cambios</button>
-                </div>
-              </form>
-            </div>
-          </div>
-          <div className="dashboard-card-ps" style={{ padding: '28px' }}>
-            <h3 style={{ margin: '0 0 6px 0', color: C.textPrimary, fontSize: '1.3rem', fontWeight: '800' }}>Seguridad</h3>
-            <p style={{ margin: '0 0 20px 0', color: C.textSecondary, fontSize: '0.92rem' }}>Protege tu cuenta con una contraseña segura.</p>
-            <form onSubmit={(e) => { e.preventDefault(); alert('Contraseña actualizada con éxito'); e.target.reset(); }} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '0.85rem', fontWeight: '700', color: C.textSecondary }}>Contraseña Actual</label>
-                <input type="password" required className="modal-ps-input" placeholder="••••••••" />
-              </div>
-              <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
-                <div style={{ flex: 1, minWidth: '140px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <label style={{ fontSize: '0.85rem', fontWeight: '700', color: C.textSecondary }}>Nueva Contraseña</label>
-                  <input type="password" required minLength="6" className="modal-ps-input" placeholder="••••••••" />
-                </div>
-                <div style={{ flex: 1, minWidth: '140px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <label style={{ fontSize: '0.85rem', fontWeight: '700', color: C.textSecondary }}>Confirmar Nueva</label>
-                  <input type="password" required minLength="6" className="modal-ps-input" placeholder="••••••••" />
-                </div>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '6px' }}>
-                <button type="submit" className="btn-dark-ps">Actualizar Contraseña</button>
-              </div>
-            </form>
-          </div>
-        </div>
+        <PerfilTab user={user} avatarUrl={avatarUrl} setAvatarUrl={setAvatarUrl} darkMode={darkMode} C={C} />
       )}
     </DashboardLayout>
 
@@ -1003,6 +1233,22 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
                     <input name="district" className="modal-ps-input" placeholder="Ej. Miraflores" />
                   </div>
                 </div>
+                <div style={{ border: `1px solid ${C.inputBorder}`, borderRadius: 12, padding: '14px 16px' }}>
+                  <p style={{ margin: '0 0 10px', fontSize: '0.8rem', fontWeight: 800, color: C.textSecondary, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Política de Cancelación
+                  </p>
+                  <div style={{ display: 'flex', gap: 12 }}>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      <label style={{ fontSize: '0.8rem', fontWeight: 700, color: C.textSecondary }}>Cancelación gratis (horas antes)</label>
+                      <input name="freeCancelHours" type="number" min="0" max="72" step="1" className="modal-ps-input" placeholder="24" defaultValue={24} />
+                    </div>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      <label style={{ fontSize: '0.8rem', fontWeight: 700, color: C.textSecondary }}>% reembolso después</label>
+                      <input name="refundPercent" type="number" min="0" max="100" step="10" className="modal-ps-input" placeholder="50" defaultValue={50} />
+                    </div>
+                  </div>
+                  <p style={{ margin: '8px 0 0', color: C.textMuted, fontSize: '0.75rem' }}>Los jugadores ven esta política antes de confirmar.</p>
+                </div>
                 <ImageUploader
                   preview={imagePreview} dragOver={imageDragOver} uploading={uploadingImage}
                   onFile={handleImageSelect} isDark={darkMode}
@@ -1044,6 +1290,22 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
                     <label style={{ fontSize: '0.85rem', fontWeight: '700', color: C.textSecondary, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Distrito</label>
                     <input name="district" className="modal-ps-input" defaultValue={modal.payload?.district || ''} placeholder="Ej. Miraflores" />
                   </div>
+                </div>
+                <div style={{ border: `1px solid ${C.inputBorder}`, borderRadius: 12, padding: '14px 16px' }}>
+                  <p style={{ margin: '0 0 10px', fontSize: '0.8rem', fontWeight: 800, color: C.textSecondary, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Política de Cancelación
+                  </p>
+                  <div style={{ display: 'flex', gap: 12 }}>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      <label style={{ fontSize: '0.8rem', fontWeight: 700, color: C.textSecondary }}>Cancelación gratis (horas antes)</label>
+                      <input name="freeCancelHours" type="number" min="0" max="72" step="1" className="modal-ps-input" placeholder="24" defaultValue={modal.payload?.freeCancelHours ?? 24} />
+                    </div>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      <label style={{ fontSize: '0.8rem', fontWeight: 700, color: C.textSecondary }}>% reembolso después</label>
+                      <input name="refundPercent" type="number" min="0" max="100" step="10" className="modal-ps-input" placeholder="50" defaultValue={modal.payload?.refundPercent ?? 50} />
+                    </div>
+                  </div>
+                  <p style={{ margin: '8px 0 0', color: C.textMuted, fontSize: '0.75rem' }}>Los jugadores ven esta política antes de confirmar.</p>
                 </div>
                 <ImageUploader
                   preview={imagePreview} dragOver={imageDragOver} uploading={uploadingImage}
@@ -1185,6 +1447,26 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
         />
       )}
     </AnimatePresence>
+
+    {/* ─── CHAT MODALS ──────────────────────────────────── */}
+    {chatModal && (
+      <ReservationChat
+        reservationId={chatModal.reservationId}
+        reservationInfo={chatModal.reservationInfo}
+        currentUser={user}
+        onClose={() => setChatModal(null)}
+        darkMode={darkMode}
+      />
+    )}
+    {chatFromNotif && (
+      <ReservationChat
+        reservationId={chatFromNotif.reservationId}
+        reservationInfo={chatFromNotif.reservationInfo}
+        currentUser={user}
+        onClose={() => setChatFromNotif(null)}
+        darkMode={darkMode}
+      />
+    )}
     </>
   );
 };
@@ -1198,6 +1480,7 @@ const QrScannerSection = ({
   qrError, setQrError,
   confirmingAttendance, setConfirmingAttendance,
   attendanceConfirmed, setAttendanceConfirmed,
+  user,
   darkMode = false,
 }) => {
   const QC = {
