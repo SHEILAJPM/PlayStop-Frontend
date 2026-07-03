@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: playstop-frontend
+    runtime: docker
+    repo: https://github.com/SHEILAJPM/PlayStop-Frontend
+    branch: main
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    region: oregon
+    plan: free
+    envVars:
+      - key: VITE_API_URL
+        value: https://playstop-backend-1.onrender.com
+      - key: VITE_APP_NAME
+        value: PlayStop
+      - key: VITE_ENV
+        value: production
+      - key: VITE_DEBUG
+        value: "false"
+      - key: VITE_FIREBASE_VAPID_KEY
+        value: BPG1Uf4KhYog0xtgx5jMIFcsXk7ObZ9COUAObHA1i3k2eoncYr-aeuni9KcvdpY7BidgtZwWp18FY8XitnSjx1g
+    healthCheckPath: /
