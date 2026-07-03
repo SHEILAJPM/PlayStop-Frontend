@@ -2,7 +2,7 @@
 FROM node:20-alpine AS deps
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --frozen-lockfile
+RUN npm ci --legacy-peer-deps
 
 # ---- Stage 2: Build production bundle ----
 FROM node:20-alpine AS build
@@ -26,7 +26,7 @@ RUN npm run build
 FROM node:20-alpine AS development
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --frozen-lockfile
+RUN npm ci --legacy-peer-deps
 EXPOSE 5173
 CMD ["npm", "run", "dev"]
 
