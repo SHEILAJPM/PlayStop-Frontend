@@ -21,6 +21,7 @@ export default defineConfig({
     },
   },
   server: {
+    host: true,
     port: 5173,
     open: true,
     cors: true,
@@ -32,7 +33,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: false,
-    minify: 'rolldown-esbuild',
+    target: ['chrome85'],
     rollupOptions: {
       output: {
         manualChunks(id) {

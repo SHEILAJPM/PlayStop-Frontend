@@ -1,6 +1,7 @@
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect, lazy, Suspense, useCallback } from 'react';
 import { useAuth } from './context/AuthContext.jsx';
 import { Capacitor } from '@capacitor/core';
+import AppSplash from './components/AppSplash.jsx';
 
 const isApp = Capacitor.isNativePlatform();
 import Navbar from './components/Navbar.jsx';
@@ -70,6 +71,9 @@ function AppContent() {
   const { user, login, logout } = useAuth();
   const navigate = useNavigate();
 
+  const [splashDone, setSplashDone] = useState(!isApp);
+  const handleSplashFinish = useCallback(() => setSplashDone(true), []);
+
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('playspot-theme');
     return saved === null ? true : saved === 'dark';
@@ -122,6 +126,7 @@ function AppContent() {
 
   return (
     <div className={darkMode ? 'dark-mode' : ''} style={{ minHeight: '100vh' }}>
+      {!splashDone && <AppSplash onFinish={handleSplashFinish} />}
       <ChatBot darkMode={darkMode} />
       <ComparadorBar />
       <Suspense fallback={<PageLoader />}>
@@ -131,21 +136,14 @@ function AppContent() {
           user
             ? <Navigate to="/dashboard" replace />
             : isApp
-              ? <Navigate to="/login" replace />
+              ? <Outlet />
               : <LandingLayout darkMode={darkMode} toggleTheme={handleThemeToggle} />
         }>
+          {isApp && <Route index element={<Navigate to="/login" replace />} />}
           <Route path="login" element={<Login type="login" onLogin={handleLogin} darkMode={darkMode} />} />
           <Route path="register" element={<Register onLogin={handleLogin} />} />
           <Route path="forgot" element={<Login type="forgot" onLogin={handleLogin} darkMode={darkMode} />} />
         </Route>
-        {/* Rutas directas para la app nativa */}
-        {isApp && (
-          <>
-            <Route path="/login" element={!user ? <Login type="login" onLogin={handleLogin} darkMode={darkMode} /> : <Navigate to="/dashboard" replace />} />
-            <Route path="/register" element={!user ? <Register onLogin={handleLogin} /> : <Navigate to="/dashboard" replace />} />
-            <Route path="/forgot" element={!user ? <Login type="forgot" onLogin={handleLogin} darkMode={darkMode} /> : <Navigate to="/dashboard" replace />} />
-          </>
-        )}
         
         {/* RUTA MAESTRA DE DASHBOARD */}
         <Route path="/dashboard" element={

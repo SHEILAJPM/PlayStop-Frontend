@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Capacitor } from '@capacitor/core';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
+const isNative = Capacitor.isNativePlatform();
 
 const Login = ({ type, onLogin, darkMode = true }) => {
   const navigate = useNavigate();
@@ -177,19 +179,21 @@ const Login = ({ type, onLogin, darkMode = true }) => {
           ? '0 32px 64px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.06)'
           : '0 32px 64px rgba(0,0,0,.12), inset 0 1px 0 rgba(255,255,255,.9)',
       }}>
-        {/* Close */}
-        <button
-          onClick={() => navigate('/')}
-          style={{
-            position: 'absolute', top: 14, right: 14,
-            background: dk ? 'rgba(255,255,255,.06)' : 'rgba(0,0,0,.05)',
-            border: dk ? '1px solid rgba(255,255,255,.09)' : '1px solid rgba(0,0,0,.1)',
-            width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer', color: dk ? 'rgba(255,255,255,.45)' : 'rgba(0,0,0,.4)', fontSize: '1rem', transition: 'all .18s',
-          }}
-          onMouseOver={e => { e.currentTarget.style.background = dk ? 'rgba(255,255,255,.12)' : 'rgba(0,0,0,.1)'; e.currentTarget.style.color = dk ? '#fff' : '#0f172a'; }}
-          onMouseOut={e => { e.currentTarget.style.background = dk ? 'rgba(255,255,255,.06)' : 'rgba(0,0,0,.05)'; e.currentTarget.style.color = dk ? 'rgba(255,255,255,.45)' : 'rgba(0,0,0,.4)'; }}
-        >✕</button>
+        {/* Close — solo en web, no en app nativa */}
+        {!isNative && (
+          <button
+            onClick={() => navigate('/')}
+            style={{
+              position: 'absolute', top: 14, right: 14,
+              background: dk ? 'rgba(255,255,255,.06)' : 'rgba(0,0,0,.05)',
+              border: dk ? '1px solid rgba(255,255,255,.09)' : '1px solid rgba(0,0,0,.1)',
+              width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', color: dk ? 'rgba(255,255,255,.45)' : 'rgba(0,0,0,.4)', fontSize: '1rem', transition: 'all .18s',
+            }}
+            onMouseOver={e => { e.currentTarget.style.background = dk ? 'rgba(255,255,255,.12)' : 'rgba(0,0,0,.1)'; e.currentTarget.style.color = dk ? '#fff' : '#0f172a'; }}
+            onMouseOut={e => { e.currentTarget.style.background = dk ? 'rgba(255,255,255,.06)' : 'rgba(0,0,0,.05)'; e.currentTarget.style.color = dk ? 'rgba(255,255,255,.45)' : 'rgba(0,0,0,.4)'; }}
+          >✕</button>
+        )}
 
         {/* Brand */}
         <div style={{ textAlign: 'center', marginBottom: 30 }}>
@@ -282,6 +286,18 @@ const Login = ({ type, onLogin, darkMode = true }) => {
           <p style={{ textAlign: 'center', margin: '20px 0 0', color: dk ? 'rgba(255,255,255,.38)' : 'rgba(15,23,42,.5)', fontSize: '.88rem' }}>
             ¿No tienes cuenta?{' '}
             <button className="dk-link" onClick={() => navigate('/register')}>Crear cuenta gratis</button>
+          </p>
+        )}
+
+        {type === 'forgot' && (
+          <p style={{ textAlign: 'center', margin: '20px 0 0' }}>
+            <button
+              className="dk-link"
+              onClick={() => navigate('/login')}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+            >
+              ← Volver al inicio de sesión
+            </button>
           </p>
         )}
       </div>
