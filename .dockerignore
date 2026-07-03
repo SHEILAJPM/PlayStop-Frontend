@@ -1,0 +1,11 @@
+node_modules
+dist
+android
+.git
+.env.development
+.env.android
+.env.local
+.env.*.local
+*.log
+README.md
+start-frontend.bat

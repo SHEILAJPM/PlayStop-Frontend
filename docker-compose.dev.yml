@@ -1,0 +1,14 @@
+services:
+  playstop-frontend:
+    build:
+      context: .
+      target: development
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules   # preserves container's node_modules over the mount
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true   # required for hot reload on Windows/WSL
+    restart: unless-stopped

@@ -1,0 +1,20 @@
+services:
+  playstop-frontend:
+    build:
+      context: .
+      target: runtime
+      args:
+        VITE_API_URL: ${VITE_API_URL:-https://playstop-backend-1.onrender.com}
+        VITE_APP_NAME: ${VITE_APP_NAME:-PlayStop}
+        VITE_ENV: production
+        VITE_DEBUG: "false"
+        VITE_FIREBASE_VAPID_KEY: ${VITE_FIREBASE_VAPID_KEY:-BPG1Uf4KhYog0xtgx5jMIFcsXk7ObZ9COUAObHA1i3k2eoncYr-aeuni9KcvdpY7BidgtZwWp18FY8XitnSjx1g}
+    ports:
+      - "80:80"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
