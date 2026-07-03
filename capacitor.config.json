@@ -1,8 +1,5 @@
 {
   "appId": "com.playstop.app",
   "appName": "PlayStop",
-  "webDir": "dist",
-  "server": {
-    "cleartext": true
-  }
+  "webDir": "dist"
 }
