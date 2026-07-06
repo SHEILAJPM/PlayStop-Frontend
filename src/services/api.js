@@ -198,6 +198,20 @@ export const api = {
     }));
   },
 
+  // ── Suscripción (propietario) ────────────────────────────────────────────
+
+  async getMySubscription() {
+    return handleResponse(await fetch(`${BASE_URL}/api/subscriptions/me`, { headers: jsonHeaders() }));
+  },
+
+  async createSubscriptionCheckout(plan) {
+    return handleResponse(await fetch(`${BASE_URL}/api/subscriptions/checkout`, {
+      method: 'POST',
+      headers: jsonHeaders(),
+      body: JSON.stringify({ plan }),
+    }));
+  },
+
   async cancelReservation(id) {
     return handleResponse(await fetch(`${BASE_URL}/api/reservations/${id}/cancel`, {
       method: 'PATCH',

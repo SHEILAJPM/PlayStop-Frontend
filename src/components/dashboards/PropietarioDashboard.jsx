@@ -121,6 +121,7 @@ const mapOwnerReservation = (r) => {
 const SPORT_OPTIONS = ['Fútbol', 'Fútbol 5', 'Fútbol 7', 'Pádel', 'Tenis', 'Vóley', 'Básquet'];
 
 const PERU_CITIES = ['Lima', 'Arequipa', 'Trujillo', 'Chiclayo', 'Piura', 'Cusco', 'Iquitos', 'Huancayo', 'Tacna', 'Ica'];
+const PLAN_LABELS = { BASICO: 'Básico', PRO: 'Pro', ENTERPRISE: 'Enterprise' };
 
 const ImageUploader = ({ preview, dragOver, uploading, onFile, onDragOver, onDragLeave, isDark = false }) => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -229,6 +230,25 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
       .finally(() => setLoadingPayouts(false));
   };
 
+  const [subscription, setSubscription] = useState(null);
+  const [loadingSubscription, setLoadingSubscription] = useState(true);
+  const [upgradingPlan, setUpgradingPlan] = useState(null); // null | 'PRO' | 'ENTERPRISE'
+
+  const loadSubscription = () => {
+    setLoadingSubscription(true);
+    api.getMySubscription()
+      .then(setSubscription)
+      .catch(() => setSubscription(null))
+      .finally(() => setLoadingSubscription(false));
+  };
+
+  const handleUpgradePlan = (plan) => {
+    setUpgradingPlan(plan);
+    api.createSubscriptionCheckout(plan)
+      .then(({ url }) => { window.location.href = url; })
+      .catch((err) => { alert(err.message || 'No se pudo iniciar la suscripción'); setUpgradingPlan(null); });
+  };
+
   const [tiendaItems, setTiendaItems] = useState(TIENDA_DEFAULT);
   const [tiendaFiltro, setTiendaFiltro] = useState('Todos');
   const [tiendaSearch, setTiendaSearch] = useState('');
@@ -307,6 +327,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
 
   useEffect(() => { loadData(); }, []);
   useEffect(() => { loadPayouts(); }, []);
+  useEffect(() => { loadSubscription(); }, []);
 
   // Sincroniza el avatar con el backend al entrar (evita quedarse con una foto vieja/rota cacheada)
   useEffect(() => {
@@ -829,7 +850,44 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '24px', marginBottom: '30px' }}>
             <MetricCard title="Total Ingresos" value={`S/ ${reservas.filter(r => r.status === 'Pagado' || r.status === 'Asistió').reduce((sum, r) => sum + parseFloat(r.amount.replace('S/ ', '') || 0), 0).toFixed(2)}`} subtitle="Reservas confirmadas" color="#2563eb" />
             <MetricCard title="Reservas Totales" value={reservas.length} subtitle="Todas las reservas" color="#3b82f6" trend="up" />
-            <MetricCard title="Comisiones PlaySpot" value="S/ 0.00" subtitle="Plan Pro Activo" color="#f59e0b" />
+            <MetricCard title="Comisiones PlaySpot" value="S/ 0.00" subtitle={loadingSubscription ? 'Cargando plan...' : `Plan ${PLAN_LABELS[subscription?.plan] || 'Básico'} activo`} color="#f59e0b" />
+          </div>
+
+          {/* ─── Plan de suscripción ─── */}
+          <div className="dashboard-card-ps" style={{ marginBottom: 24 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, marginBottom: 20 }}>
+              <div>
+                <p style={{ margin: '0 0 4px', color: C.textMuted, fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Tu plan actual</p>
+                <p style={{ margin: 0, color: C.textPrimary, fontSize: '1.6rem', fontWeight: 900 }}>
+                  {loadingSubscription ? '...' : `Plan ${PLAN_LABELS[subscription?.plan] || 'Básico'}`}
+                </p>
+                {subscription?.renewsAt && (
+                  <p style={{ margin: '4px 0 0', color: C.textMuted, fontSize: '0.8rem' }}>
+                    Se renueva el {new Date(subscription.renewsAt).toLocaleDateString('es-PE')}
+                  </p>
+                )}
+              </div>
+              {canchas.length >= 2 && subscription?.plan === 'BASICO' && (
+                <span style={{ padding: '6px 14px', borderRadius: 99, fontSize: '0.78rem', fontWeight: 800, color: '#f59e0b', background: 'rgba(245,158,11,0.12)' }}>
+                  Límite de 2 canchas alcanzado
+                </span>
+              )}
+            </div>
+
+            {subscription?.plan !== 'ENTERPRISE' && (
+              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', paddingTop: 20, borderTop: `1px solid ${C.cardBorder}` }}>
+                {subscription?.plan === 'BASICO' && (
+                  <button onClick={() => handleUpgradePlan('PRO')} disabled={upgradingPlan === 'PRO'} className="btn-primary-ps">
+                    {upgradingPlan === 'PRO' ? 'Redirigiendo...' : 'Mejorar a Plan Pro — S/ 99/mes'}
+                  </button>
+                )}
+                <button onClick={() => handleUpgradePlan('ENTERPRISE')} disabled={upgradingPlan === 'ENTERPRISE'}
+                  style={{ padding: '10px 20px', borderRadius: 10, fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer',
+                    border: `1px solid ${C.cardBorder}`, background: 'transparent', color: C.textPrimary }}>
+                  {upgradingPlan === 'ENTERPRISE' ? 'Redirigiendo...' : 'Mejorar a Plan Enterprise — S/ 199/mes'}
+                </button>
+              </div>
+            )}
           </div>
 
           {/* ─── Retirar dinero ─── */}
