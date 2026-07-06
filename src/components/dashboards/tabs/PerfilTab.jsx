@@ -13,9 +13,11 @@ const PerfilTab = ({ user, avatarUrl, setAvatarUrl, darkMode, C }) => {
     api.getMe()
       .then(data => {
         setProfileData({ nombre: data.name || '', telefono: data.phone || data.telefono || data.phoneNumber || '' });
+        setAvatarUrl(data.profileImageUrl || '');
         if (data.profileImageUrl) {
-          setAvatarUrl(data.profileImageUrl);
           localStorage.setItem('playspot-avatar', data.profileImageUrl);
+        } else {
+          localStorage.removeItem('playspot-avatar');
         }
       })
       .catch(() => {});

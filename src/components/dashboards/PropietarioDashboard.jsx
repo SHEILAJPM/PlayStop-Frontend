@@ -288,6 +288,17 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
 
   useEffect(() => { loadData(); }, []);
 
+  // Sincroniza el avatar con el backend al entrar (evita quedarse con una foto vieja/rota cacheada)
+  useEffect(() => {
+    api.getMe()
+      .then(data => {
+        setAvatarUrl(data.profileImageUrl || '');
+        if (data.profileImageUrl) localStorage.setItem('playspot-avatar', data.profileImageUrl);
+        else localStorage.removeItem('playspot-avatar');
+      })
+      .catch(() => {});
+  }, []);
+
   const loadTournaments = async () => {
     setLoadingTournaments(true);
     try {

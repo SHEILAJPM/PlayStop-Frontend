@@ -163,6 +163,17 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
       .finally(() => setLoadingCanchas(false));
   }, []);
 
+  // Sincroniza el avatar con el backend al entrar (evita quedarse con una foto vieja/rota cacheada)
+  useEffect(() => {
+    api.getMe()
+      .then(data => {
+        setAvatarUrl(data.profileImageUrl || '');
+        if (data.profileImageUrl) localStorage.setItem('playspot-avatar', data.profileImageUrl);
+        else localStorage.removeItem('playspot-avatar');
+      })
+      .catch(() => {});
+  }, []);
+
   useEffect(() => {
     api.getMyReservations()
       .then(data => setReservas(Array.isArray(data) ? data.map(mapReservation) : []))
