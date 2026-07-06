@@ -14,6 +14,7 @@ const BuscarCanchasTab = ({ canchas, loadingCanchas, errorCanchas, favoritosIds,
   const [districtFilter, setDistrictFilter] = useState('');
   const [priceMin, setPriceMin] = useState(0);
   const [priceMax, setPriceMax] = useState(500);
+  const [hoursFilter, setHoursFilter] = useState(1);
   const [page, setPage] = useState(1);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
@@ -42,6 +43,7 @@ const BuscarCanchasTab = ({ canchas, loadingCanchas, errorCanchas, favoritosIds,
     setDistrictFilter('');
     setPriceMin(0);
     setPriceMax(500);
+    setHoursFilter(1);
     setPage(1);
   };
 
@@ -187,6 +189,21 @@ const BuscarCanchasTab = ({ canchas, loadingCanchas, errorCanchas, favoritosIds,
             </p>
           </div>
 
+          <div className="filter-card">
+            <span className="filter-label">¿Cuántas horas van a jugar?</span>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              {[1, 2, 3, 4].map(h => (
+                <button key={h} className={`sport-chip ${hoursFilter === h ? 'active' : 'inactive'}`}
+                  style={{ flex: 1 }} onClick={() => setHoursFilter(h)}>
+                  {h}h
+                </button>
+              ))}
+            </div>
+            <p style={{ margin: '10px 0 0', fontSize: '0.78rem', color: '#94a3b8' }}>
+              Ya viene elegido al momento de reservar.
+            </p>
+          </div>
+
           <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e3a5f)', borderRadius: '16px', padding: '16px', textAlign: 'center' }}>
             <div style={{ fontSize: '1.8rem', fontWeight: '900', color: '#2563eb' }}>{filteredCanchas.length}</div>
             <div style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.7)', fontWeight: '600' }}>canchas encontradas</div>
@@ -203,7 +220,7 @@ const BuscarCanchasTab = ({ canchas, loadingCanchas, errorCanchas, favoritosIds,
                   <CourtCard key={cancha.id || i} cancha={cancha}
                     isFavorito={favoritosIds.includes(cancha.id)}
                     onToggleFavorito={() => toggleFavorito(cancha.id)}
-                    onReservar={() => navigate(`/reservar/${cancha.id}`)}
+                    onReservar={() => navigate(`/reservar/${cancha.id}?hours=${hoursFilter}`)}
                     onVerMapa={() => setMapModal({ show: true, cancha })}
                     darkMode={darkMode} />
                 ))}

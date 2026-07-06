@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import QRCode from 'react-qr-code';
 import { api } from '../services/api.js';
 import { useAuth } from '../context/AuthContext.jsx';
@@ -319,13 +319,13 @@ function CourtDetail({ court, onNext, user }) {
 }
 
 /* ── Step 2: Date & Time ── */
-function DateTimePicker({ courtId, onNext, onBack: _onBack }) {
+function DateTimePicker({ courtId, initialHours = 1, onNext, onBack: _onBack }) {
   const [weekOffset, setWeekOffset] = useState(0);
   const [selectedDate, setSelectedDate] = useState('');
   const [slots, setSlots] = useState([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState(null);
-  const [duration, setDuration] = useState(1);
+  const [duration, setDuration] = useState(Math.min(4, Math.max(1, initialHours)));
   const [lastRefresh, setLastRefresh] = useState(null);
 
   const today = new Date(); today.setHours(0, 0, 0, 0);
@@ -781,6 +781,8 @@ export default function BookingFlow({ darkMode: _darkMode = true }) {
   const { courtId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [searchParams] = useSearchParams();
+  const initialHours = parseInt(searchParams.get('hours')) || 1;
 
   const [step, setStep] = useState(1);
   const [court, setCourt] = useState(null);
@@ -891,7 +893,7 @@ export default function BookingFlow({ darkMode: _darkMode = true }) {
         ) : (
           <>
             {step === 1 && court && <CourtDetail court={court} onNext={() => setStep(2)} user={user} />}
-            {step === 2 && <DateTimePicker courtId={courtId} onBack={goBack} onNext={(sel) => { setBooking(sel); setStep(3); }} />}
+            {step === 2 && <DateTimePicker courtId={courtId} initialHours={initialHours} onBack={goBack} onNext={(sel) => { setBooking(sel); setStep(3); }} />}
             {step === 3 && court && <BookingSummary court={court} booking={booking} onNext={() => setStep(4)} onBack={goBack} />}
             {step === 4 && court && <PaymentView court={court} booking={booking} onPay={handlePay} processing={processing} payError={payError} />}
           </>
