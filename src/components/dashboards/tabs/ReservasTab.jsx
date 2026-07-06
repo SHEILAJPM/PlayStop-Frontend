@@ -23,6 +23,12 @@ const ReservasTab = ({ reservas, loadingReservas, openModal, openReview, reviewe
 
   return (
     <div>
+      <style>{`
+        @media (max-width: 640px) {
+          .reserva-actions { flex-basis: 100%; }
+        }
+      `}</style>
+
       {/* Estadísticas */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', marginBottom: '24px' }}>
         {[
@@ -119,7 +125,7 @@ const ReservasTab = ({ reservas, loadingReservas, openModal, openReview, reviewe
                 </span>
 
                 {/* Acciones */}
-                <div style={{ display: 'flex', gap: '8px', flexShrink: 0, flexWrap: 'wrap' }}>
+                <div className="reserva-actions" style={{ display: 'flex', gap: '8px', flexShrink: 0, flexWrap: 'wrap' }}>
                   {/* Mapa */}
                   <button
                     onClick={() => setMapModal({ show: true, cancha: { name: row.court, location: row.courtAddress, lat: row.courtLat, lng: row.courtLng, district: '', city: '' } })}
