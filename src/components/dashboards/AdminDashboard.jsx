@@ -475,6 +475,28 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
       @keyframes slideInRight { from{opacity:0;transform:translateX(36px)} to{opacity:1;transform:translateX(0)} }
       @keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
       .adm-row:hover td { background-color:${isDark?'rgba(37, 99, 235, 0.04)':'#f8fafc'}; }
+
+      @media (max-width: 768px) {
+        .adm-table thead { display:none; }
+        .adm-table, .adm-table tbody, .adm-table tr { display:block; width:100%; }
+        .adm-table tr.adm-row {
+          margin-bottom:12px; border-radius:14px; overflow:hidden;
+          border:1px solid ${isDark?'rgba(255,255,255,0.08)':'#f1f5f9'};
+          background:${isDark?'rgba(255,255,255,0.02)':'#fff'};
+        }
+        .adm-table tr.adm-row:hover td { background-color:transparent; }
+        .adm-table td {
+          display:flex; justify-content:space-between; align-items:center; gap:12px;
+          width:100%; box-sizing:border-box; text-align:right;
+          padding:10px 14px; border-bottom:1px solid ${isDark?'rgba(255,255,255,0.05)':'#f8fafc'};
+        }
+        .adm-table td:last-child { border-bottom:none; }
+        .adm-table td::before {
+          content:attr(data-label); flex-shrink:0; text-align:left;
+          font-size:0.72rem; font-weight:800; text-transform:uppercase; letter-spacing:0.5px;
+          color:${isDark?'#64748b':'#94a3b8'};
+        }
+      }
     `}</style>
 
     <DashboardLayout user={user} onLogout={onLogout} darkMode={darkMode} toggleTheme={toggleTheme}
@@ -713,7 +735,7 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
             <SearchInput value={userSearch} onChange={setUserSearch} placeholder="Buscar jugador..." dark={isDark} />
           </div>
           <div style={{ overflowX:'auto' }}>
-            <table style={{ width:'100%', borderCollapse:'collapse' }}>
+            <table className="adm-table" style={{ width:'100%', borderCollapse:'collapse' }}>
               <thead><tr>
                 {[['name','Jugador'],['email','Email'],['phone','Teléfono'],['createdAt','Registro']].map(([k,l]) =>
                   <SortTh key={k} k={k} label={l} sortKey={uSort.sortKey} sortDir={uSort.sortDir} onToggle={uSort.toggle} thStyle={thSt} />)}
@@ -723,15 +745,15 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
                 <Skeletons cols={6} />
                 {!loading && uPage.paged.map(u => (
                   <tr key={u.id} className="adm-row">
-                    <td style={tdSt}><div style={{ display:'flex', alignItems:'center', gap:10 }}>
+                    <td style={tdSt} data-label="Jugador"><div style={{ display:'flex', alignItems:'center', gap:10 }}>
                       <Avatar name={u.name} bg="6366f1" size={32} />
                       <span style={{ fontWeight:700, color: isDark?'#f8fafc':'#0f172a', fontSize:'0.88rem' }}>{u.name}</span>
                     </div></td>
-                    <td style={{ ...tdSt, color:'#475569', fontSize:'0.85rem' }}>{u.email}</td>
-                    <td style={{ ...tdSt, color:'#64748b', fontSize:'0.85rem' }}>{u.phone||'—'}</td>
-                    <td style={{ ...tdSt, color:'#94a3b8', fontSize:'0.79rem', whiteSpace:'nowrap' }}>{fmtDate(u.createdAt)}</td>
-                    <td style={tdSt}><EnabledBadge enabled={u.enabled} /></td>
-                    <td style={tdSt}><div style={{ display:'flex', gap:5 }}>
+                    <td style={{ ...tdSt, color:'#475569', fontSize:'0.85rem' }} data-label="Email">{u.email}</td>
+                    <td style={{ ...tdSt, color:'#64748b', fontSize:'0.85rem' }} data-label="Teléfono">{u.phone||'—'}</td>
+                    <td style={{ ...tdSt, color:'#94a3b8', fontSize:'0.79rem', whiteSpace:'nowrap' }} data-label="Registro">{fmtDate(u.createdAt)}</td>
+                    <td style={tdSt} data-label="Estado"><EnabledBadge enabled={u.enabled} /></td>
+                    <td style={tdSt} data-label="Acciones"><div style={{ display:'flex', gap:5 }}>
                       <button onClick={() => openModal('TOGGLE_USER',u)} style={btn(u.enabled?'#fef3c7':'#d1fae5',u.enabled?'#b45309':'#047857')}>{u.enabled?'Suspender':'Activar'}</button>
                       <button onClick={() => openModal('DELETE_USER',u)} style={btn('#fee2e2','#dc2626')}>Eliminar</button>
                     </div></td>
@@ -754,7 +776,7 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
             <SearchInput value={ownerSearch} onChange={setOwnerSearch} placeholder="Buscar propietario..." dark={isDark} />
           </div>
           <div style={{ overflowX:'auto' }}>
-            <table style={{ width:'100%', borderCollapse:'collapse' }}>
+            <table className="adm-table" style={{ width:'100%', borderCollapse:'collapse' }}>
               <thead><tr>
                 {[['name','Propietario'],['email','Email'],['phone','Teléfono']].map(([k,l]) =>
                   <SortTh key={k} k={k} label={l} sortKey={oSort.sortKey} sortDir={oSort.sortDir} onToggle={oSort.toggle} thStyle={thSt} />)}
@@ -764,18 +786,18 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
                 <Skeletons cols={7} />
                 {!loading && oPage.paged.map(o => (
                   <tr key={o.id} className="adm-row">
-                    <td style={tdSt}><div style={{ display:'flex', alignItems:'center', gap:10 }}>
+                    <td style={tdSt} data-label="Propietario"><div style={{ display:'flex', alignItems:'center', gap:10 }}>
                       <Avatar name={o.name} bg="8b5cf6" size={32} />
                       <span style={{ fontWeight:700, color: isDark?'#f8fafc':'#0f172a', fontSize:'0.88rem' }}>{o.name}</span>
                     </div></td>
-                    <td style={{ ...tdSt, color:'#475569', fontSize:'0.85rem' }}>{o.email}</td>
-                    <td style={{ ...tdSt, color:'#64748b', fontSize:'0.85rem' }}>{o.phone||'—'}</td>
-                    <td style={tdSt}>
+                    <td style={{ ...tdSt, color:'#475569', fontSize:'0.85rem' }} data-label="Email">{o.email}</td>
+                    <td style={{ ...tdSt, color:'#64748b', fontSize:'0.85rem' }} data-label="Teléfono">{o.phone||'—'}</td>
+                    <td style={tdSt} data-label="Canchas">
                       <button onClick={() => openOwnerCourts(o)} style={{ ...btn('#ede9fe','#6d28d9'), display:'inline-flex', alignItems:'center', gap:4 }}><i className="bi bi-building" /> {o.courts}</button>
                     </td>
-                    <td style={{ ...tdSt, color:'#94a3b8', fontSize:'0.79rem', whiteSpace:'nowrap' }}>{fmtDate(o.createdAt)}</td>
-                    <td style={tdSt}><EnabledBadge enabled={o.enabled} /></td>
-                    <td style={tdSt}><div style={{ display:'flex', gap:5 }}>
+                    <td style={{ ...tdSt, color:'#94a3b8', fontSize:'0.79rem', whiteSpace:'nowrap' }} data-label="Registro">{fmtDate(o.createdAt)}</td>
+                    <td style={tdSt} data-label="Estado"><EnabledBadge enabled={o.enabled} /></td>
+                    <td style={tdSt} data-label="Acciones"><div style={{ display:'flex', gap:5 }}>
                       <button onClick={() => openModal('TOGGLE_USER',o)} style={btn(o.enabled?'#fef3c7':'#d1fae5',o.enabled?'#b45309':'#047857')}>{o.enabled?'Suspender':'Activar'}</button>
                       <button onClick={() => openModal('DELETE_USER',o)} style={btn('#fee2e2','#dc2626')}>Eliminar</button>
                     </div></td>
@@ -806,7 +828,7 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
             </select>
           </div>
           <div style={{ overflowX:'auto' }}>
-            <table style={{ width:'100%', borderCollapse:'collapse' }}>
+            <table className="adm-table" style={{ width:'100%', borderCollapse:'collapse' }}>
               <thead><tr>
                 {[['name','Cancha'],['sportType','Deporte'],['pricePerHour','Precio/h'],['ownerName','Propietario'],['city','Ciudad']].map(([k,l]) =>
                   <SortTh key={k} k={k} label={l} sortKey={cSort.sortKey} sortDir={cSort.sortDir} onToggle={cSort.toggle} thStyle={thSt} />)}
@@ -816,19 +838,19 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
                 <Skeletons cols={7} />
                 {!loading && cPage.paged.map(c => (
                   <tr key={c.id} className="adm-row">
-                    <td style={{ ...tdSt, fontWeight:700, color: isDark?'#f8fafc':'#0f172a', fontSize:'0.88rem' }}>{c.name}</td>
-                    <td style={tdSt}><span style={{ padding:'3px 8px', borderRadius:6, fontSize:'0.74rem', fontWeight:700, backgroundColor: isDark?'rgba(56,189,248,.1)':'#eff6ff', color: isDark?'#38bdf8':'#3b82f6' }}>{c.sportType}</span></td>
-                    <td style={{ ...tdSt, fontWeight:800, color: isDark?'#f8fafc':'#0f172a', whiteSpace:'nowrap' }}>S/ {Number(c.pricePerHour).toFixed(2)}</td>
-                    <td style={{ ...tdSt, color:'#475569', fontSize:'0.85rem' }}>{c.ownerName}</td>
-                    <td style={{ ...tdSt, color:'#64748b', fontSize:'0.85rem' }}>{c.city||'—'}</td>
-                    <td style={tdSt}>
+                    <td style={{ ...tdSt, fontWeight:700, color: isDark?'#f8fafc':'#0f172a', fontSize:'0.88rem' }} data-label="Cancha">{c.name}</td>
+                    <td style={tdSt} data-label="Deporte"><span style={{ padding:'3px 8px', borderRadius:6, fontSize:'0.74rem', fontWeight:700, backgroundColor: isDark?'rgba(56,189,248,.1)':'#eff6ff', color: isDark?'#38bdf8':'#3b82f6' }}>{c.sportType}</span></td>
+                    <td style={{ ...tdSt, fontWeight:800, color: isDark?'#f8fafc':'#0f172a', whiteSpace:'nowrap' }} data-label="Precio/h">S/ {Number(c.pricePerHour).toFixed(2)}</td>
+                    <td style={{ ...tdSt, color:'#475569', fontSize:'0.85rem' }} data-label="Propietario">{c.ownerName}</td>
+                    <td style={{ ...tdSt, color:'#64748b', fontSize:'0.85rem' }} data-label="Ciudad">{c.city||'—'}</td>
+                    <td style={tdSt} data-label="Estado">
                       <span style={{ display:'inline-flex', alignItems:'center', gap:5, padding:'4px 10px', borderRadius:8, fontSize:'0.74rem', fontWeight:700,
                         backgroundColor:c.active?'#d1fae5':'#fee2e2', color:c.active?'#047857':'#dc2626' }}>
                         <span style={{ width:6, height:6, borderRadius:'50%', backgroundColor:c.active?'#10b981':'#ef4444' }} />
                         {c.active?'Activa':'Inactiva'}
                       </span>
                     </td>
-                    <td style={tdSt}>
+                    <td style={tdSt} data-label="Acción">
                       <button onClick={() => openModal('TOGGLE_COURT',c)} style={btn(c.active?'#fef3c7':'#d1fae5',c.active?'#b45309':'#047857')}>
                         {c.active?'Desactivar':'Activar'}
                       </button>
@@ -861,7 +883,7 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
             )}
           </div>
           <div style={{ overflowX:'auto' }}>
-            <table style={{ width:'100%', borderCollapse:'collapse' }}>
+            <table className="adm-table" style={{ width:'100%', borderCollapse:'collapse' }}>
               <thead><tr>
                 {[['clientName','Cliente'],['courtName','Cancha'],['ownerName','Propietario'],['date','Fecha'],['slot','Horario']].map(([k,l]) =>
                   <SortTh key={k} k={k} label={l} sortKey={rSort.sortKey} sortDir={rSort.sortDir} onToggle={rSort.toggle} thStyle={thSt} />)}
@@ -871,16 +893,16 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
                 <Skeletons cols={7} />
                 {!loading && rPage.paged.map(r => (
                   <tr key={r.id} className="adm-row">
-                    <td style={tdSt}>
+                    <td style={tdSt} data-label="Cliente">
                       <div style={{ fontWeight:700, color: isDark?'#f8fafc':'#0f172a', fontSize:'0.88rem' }}>{r.clientName}</div>
                       <div style={{ fontSize:'0.72rem', color:'#94a3b8' }}>{r.clientEmail}</div>
                     </td>
-                    <td style={{ ...tdSt, fontWeight:600, color: isDark?'#f8fafc':'#0f172a', fontSize:'0.85rem' }}>{r.courtName}</td>
-                    <td style={{ ...tdSt, color:'#475569', fontSize:'0.85rem' }}>{r.ownerName}</td>
-                    <td style={{ ...tdSt, color:'#475569', whiteSpace:'nowrap', fontSize:'0.85rem' }}>{r.date}</td>
-                    <td style={{ ...tdSt, color:'#475569', whiteSpace:'nowrap', fontSize:'0.85rem' }}>{r.slot}</td>
-                    <td style={{ ...tdSt, fontWeight:800, color: isDark?'#f8fafc':'#0f172a', whiteSpace:'nowrap' }}>S/ {Number(r.amount).toFixed(2)}</td>
-                    <td style={tdSt}><StatusBadge status={r.status} /></td>
+                    <td style={{ ...tdSt, fontWeight:600, color: isDark?'#f8fafc':'#0f172a', fontSize:'0.85rem' }} data-label="Cancha">{r.courtName}</td>
+                    <td style={{ ...tdSt, color:'#475569', fontSize:'0.85rem' }} data-label="Propietario">{r.ownerName}</td>
+                    <td style={{ ...tdSt, color:'#475569', whiteSpace:'nowrap', fontSize:'0.85rem' }} data-label="Fecha">{r.date}</td>
+                    <td style={{ ...tdSt, color:'#475569', whiteSpace:'nowrap', fontSize:'0.85rem' }} data-label="Horario">{r.slot}</td>
+                    <td style={{ ...tdSt, fontWeight:800, color: isDark?'#f8fafc':'#0f172a', whiteSpace:'nowrap' }} data-label="Monto">S/ {Number(r.amount).toFixed(2)}</td>
+                    <td style={tdSt} data-label="Estado"><StatusBadge status={r.status} /></td>
                   </tr>
                 ))}
                 {!loading && !filteredRes.length && <tr><td colSpan={7} style={{ textAlign:'center', color:'#94a3b8', padding:'36px' }}>Sin resultados</td></tr>}
@@ -934,7 +956,7 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
 
           {moderation.length > 0 && (
             <div style={{ overflowX:'auto' }}>
-              <table style={{ width:'100%', borderCollapse:'collapse' }}>
+              <table className="adm-table" style={{ width:'100%', borderCollapse:'collapse' }}>
                 <thead>
                   <tr>
                     {[
@@ -955,27 +977,27 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
                     const isWarned    = !isBanned && !isSuspended && u.chatWarningIssued;
                     return (
                       <tr key={u.id} className="adm-row">
-                        <td style={tdSt}>
+                        <td style={tdSt} data-label="Usuario">
                           <div style={{ display:'flex', alignItems:'center', gap:10 }}>
                             <Avatar name={u.name} bg={isBanned?'ef4444':isSuspended?'f59e0b':'6366f1'} size={32} />
                             <span style={{ fontWeight:700, color: isDark?'#f8fafc':'#0f172a', fontSize:'0.88rem' }}>{u.name}</span>
                           </div>
                         </td>
-                        <td style={{ ...tdSt, fontSize:'0.82rem' }}>{u.email}</td>
-                        <td style={{ ...tdSt, textAlign:'center', fontWeight:700, color: u.chatSuspensionCount>=2?'#ef4444':u.chatSuspensionCount===1?'#f59e0b':'#64748b' }}>
+                        <td style={{ ...tdSt, fontSize:'0.82rem' }} data-label="Email">{u.email}</td>
+                        <td style={{ ...tdSt, textAlign:'center', fontWeight:700, color: u.chatSuspensionCount>=2?'#ef4444':u.chatSuspensionCount===1?'#f59e0b':'#64748b' }} data-label="Suspensiones">
                           {u.chatSuspensionCount}
                         </td>
-                        <td style={{ ...tdSt, fontSize:'0.82rem', whiteSpace:'nowrap' }}>
+                        <td style={{ ...tdSt, fontSize:'0.82rem', whiteSpace:'nowrap' }} data-label="Suspendido hasta">
                           {u.chatSuspendedUntil
                             ? <span style={{ color:'#ef4444', fontWeight:700 }}>{fmtDate(u.chatSuspendedUntil)}</span>
                             : <span style={{ color:'#94a3b8' }}>—</span>}
                         </td>
-                        <td style={{ ...tdSt, textAlign:'center' }}>
+                        <td style={{ ...tdSt, textAlign:'center' }} data-label="Palabras acum.">
                           <span style={{ fontWeight:700, color: u.chatViolationCount>0?'#f59e0b':'#94a3b8' }}>
                             {u.chatViolationCount}
                           </span>
                         </td>
-                        <td style={tdSt}>
+                        <td style={tdSt} data-label="Estado">
                           {isBanned && (
                             <span style={{ display:'inline-flex', alignItems:'center', gap:5, padding:'4px 10px', borderRadius:8, fontSize:'0.73rem', fontWeight:800, backgroundColor:'#fee2e2', color:'#dc2626' }}>
                               <span style={{ width:6, height:6, borderRadius:'50%', backgroundColor:'#ef4444' }} />⛔ Bloqueado perm.
@@ -992,7 +1014,7 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
                             </span>
                           )}
                         </td>
-                        <td style={tdSt}>
+                        <td style={tdSt} data-label="Acciones">
                           <button
                             onClick={() => openModal('LIFT_BAN', u)}
                             style={{ ...btn('#dcfce7','#16a34a'), border:'1.5px solid #bbf7d0', fontSize:'0.76rem', display:'flex', alignItems:'center', gap:5 }}>
