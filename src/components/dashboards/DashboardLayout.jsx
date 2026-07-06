@@ -349,23 +349,20 @@ const UserAvatar = ({ name, size = 44, src }) => {
   ];
   const idx = (name?.charCodeAt(0) || 0) % gradients.length;
   const initial = name?.charAt(0)?.toUpperCase() || 'U';
+  const [imgFailed, setImgFailed] = useState(false);
+  useEffect(() => { setImgFailed(false); }, [src]);
+  const showImg = src && !imgFailed;
   return (
     <div style={{
       width: size, height: size, borderRadius: 12,
-      background: src ? 'transparent' : gradients[idx],
+      background: showImg ? 'transparent' : gradients[idx],
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       color: '#fff', fontWeight: 800, fontSize: size * 0.42,
       flexShrink: 0, boxShadow: '0 4px 12px rgba(0,0,0,0.25)',
       overflow: 'hidden',
     }}>
-      {src
-        ? <img src={src} alt={initial} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => {
-            const parent = e.currentTarget.parentElement;
-            if (!parent) return;
-            e.currentTarget.style.display = 'none';
-            parent.style.background = gradients[idx];
-            parent.textContent = initial;
-          }} />
+      {showImg
+        ? <img src={src} alt={initial} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={() => setImgFailed(true)} />
         : initial}
     </div>
   );
