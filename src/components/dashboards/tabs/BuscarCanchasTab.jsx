@@ -15,6 +15,7 @@ const BuscarCanchasTab = ({ canchas, loadingCanchas, errorCanchas, favoritosIds,
   const [priceMin, setPriceMin] = useState(0);
   const [priceMax, setPriceMax] = useState(500);
   const [page, setPage] = useState(1);
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const filteredCanchas = useMemo(() => canchas.filter(c => {
     const q = canchaSearch.toLowerCase();
@@ -30,6 +31,7 @@ const BuscarCanchasTab = ({ canchas, loadingCanchas, errorCanchas, favoritosIds,
   const paginated = filteredCanchas.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const hasActiveFilters = canchaSearch || canchaSportFilter !== 'Todos' || cityFilter || districtFilter || priceMin > 0 || priceMax < 500;
+  const activeFilterCount = [canchaSportFilter !== 'Todos', !!cityFilter, !!districtFilter, priceMin > 0, priceMax < 500].filter(Boolean).length;
 
   const resetPage = () => setPage(1);
 
@@ -58,6 +60,26 @@ const BuscarCanchasTab = ({ canchas, loadingCanchas, errorCanchas, favoritosIds,
         .range-track { width:100%; height:4px; border-radius:2px; background: linear-gradient(to right, ${darkMode ? '#1e293b' : '#e2e8f0'} 0%, ${darkMode ? '#1e293b' : '#e2e8f0'} var(--min-pct), #2563eb var(--min-pct), #2563eb var(--max-pct), ${darkMode ? '#1e293b' : '#e2e8f0'} var(--max-pct), ${darkMode ? '#1e293b' : '#e2e8f0'} 100%); }
         input[type=range] { -webkit-appearance:none; appearance:none; width:100%; height:4px; background:transparent; outline:none; margin:0; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:${darkMode ? '#2563eb' : '#0f172a'}; cursor:pointer; border:2px solid ${darkMode ? '#020617' : '#fff'}; box-shadow:0 2px 6px rgba(0,0,0,0.2); }
+
+        .search-layout { display:grid; grid-template-columns:260px 1fr; gap:24px; align-items:start; }
+        .filter-sidebar { display:flex; flex-direction:column; gap:16px; position:sticky; top:20px; }
+        .mobile-filter-btn { display:none; }
+        .filter-backdrop { display:none; }
+        .filter-close { display:none; }
+        @media (max-width: 860px) {
+          .search-layout { grid-template-columns:1fr; }
+          .mobile-filter-btn { display:flex !important; }
+          .filter-sidebar {
+            position:fixed; top:0; left:0; bottom:0; width:min(320px, 86vw); z-index:200;
+            padding:20px; overflow-y:auto; box-sizing:border-box;
+            background:${darkMode ? '#0b1220' : '#f8fafc'};
+            transform:translateX(-105%); transition:transform 0.3s ease;
+            box-shadow:8px 0 30px rgba(0,0,0,0.35);
+          }
+          .filter-sidebar.open { transform:translateX(0); }
+          .filter-backdrop { display:block; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:190; }
+          .filter-close { display:flex; }
+        }
       `}</style>
 
       <div style={{ borderRadius: '24px', background: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f4c75 100%)', padding: '36px 32px', marginBottom: '28px', position: 'relative', overflow: 'hidden', animation: 'heroSlide 0.5s ease' }}>
@@ -85,6 +107,16 @@ const BuscarCanchasTab = ({ canchas, loadingCanchas, errorCanchas, favoritosIds,
                 style={{ width: '100%', padding: '14px 18px 14px 44px', borderRadius: '12px', border: '1.5px solid rgba(255,255,255,0.15)', fontSize: '0.95rem', outline: 'none', background: 'rgba(255,255,255,0.1)', color: '#fff', backdropFilter: 'blur(8px)', boxSizing: 'border-box' }}
               />
             </div>
+            <button className="mobile-filter-btn" onClick={() => setFiltersOpen(true)}
+              style={{ position: 'relative', padding: '14px 18px', borderRadius: '12px', border: '1.5px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.1)', color: '#fff', fontWeight: '700', cursor: 'pointer', fontSize: '0.88rem', whiteSpace: 'nowrap', backdropFilter: 'blur(8px)', alignItems: 'center', gap: '8px' }}>
+              <i className="bi bi-sliders" />
+              Filtros
+              {activeFilterCount > 0 && (
+                <span style={{ background: '#2563eb', color: '#fff', borderRadius: '99px', width: '20px', height: '20px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: '800' }}>
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
             {hasActiveFilters && (
               <button onClick={clearFilters} style={{ padding: '14px 20px', borderRadius: '12px', border: '1.5px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.1)', color: '#fff', fontWeight: '700', cursor: 'pointer', fontSize: '0.88rem', whiteSpace: 'nowrap', backdropFilter: 'blur(8px)' }}>
                 Limpiar
@@ -101,8 +133,14 @@ const BuscarCanchasTab = ({ canchas, loadingCanchas, errorCanchas, favoritosIds,
         </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: '24px', alignItems: 'start' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', position: 'sticky', top: '20px' }}>
+      {filtersOpen && <div className="filter-backdrop" onClick={() => setFiltersOpen(false)} />}
+
+      <div className="search-layout">
+        <div className={`filter-sidebar${filtersOpen ? ' open' : ''}`}>
+          <button className="filter-close" onClick={() => setFiltersOpen(false)}
+            style={{ alignSelf: 'flex-end', border: 'none', background: darkMode ? '#1e293b' : '#e2e8f0', color: darkMode ? '#f8fafc' : '#0f172a', width: '32px', height: '32px', borderRadius: '10px', cursor: 'pointer', alignItems: 'center', justifyContent: 'center', fontSize: '1rem' }}>
+            <i className="bi bi-x-lg" />
+          </button>
           <div className="filter-card">
             <span className="filter-label">Deporte</span>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
