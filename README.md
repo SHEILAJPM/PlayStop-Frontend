@@ -9,14 +9,32 @@ Soporta múltiples roles: Jugador, Propietario de Club, Administrador y Super Ad
 
 | Tecnología | Versión | Uso |
 |------------|---------|-----|
-| React | 19.2.5 | Framework UI |
-| Vite | 8.0 | Build tool |
+| JavaScript (JSX) | — | Lenguaje principal, sin TypeScript |
+| React | 19.2 | Framework UI |
+| Vite | 8.0 | Build tool y dev server |
 | Tailwind CSS | 3.4 | Estilos utilitarios |
-| Bootstrap | 5.3 | Componentes y grid |
+| Bootstrap Icons | 5.3 | Iconografía |
 | Framer Motion | 12.38 | Animaciones |
 | React Router DOM | 7.14 | Navegación SPA |
-| Axios | — | Cliente HTTP |
-| Leaflet | — | Mapas interactivos |
+| Fetch API nativo | — | Cliente HTTP (`src/services/api.js`, sin Axios) |
+| Leaflet / React Leaflet | — | Mapas interactivos |
+| Capacitor | 8.4 | Empaquetado a app Android |
+
+## Requisitos previos
+
+- **Node.js 18+** y **npm 9+**
+- Backend de PlayStop corriendo (local o desplegado) — ver el README de [PlayStop-Backend](https://github.com/SHEILAJPM/PlayStop-Backend)
+
+## Cómo clonar y ejecutar en local
+
+```bash
+git clone https://github.com/SHEILAJPM/PlayStop-Frontend.git
+cd PlayStop-Frontend
+npm install
+npm run dev
+```
+
+Abre `http://localhost:5173`. Por defecto usa las variables de `.env.development` (ver abajo).
 
 ## Scripts disponibles
 
@@ -79,7 +97,7 @@ src/
 ## Funcionalidades principales
 
 - **Búsqueda y filtros** — por deporte, ciudad, distrito, precio y disponibilidad
-- **Reserva en 2 minutos** — selección de horario, pago con Culqi y confirmación por QR
+- **Reserva en 2 minutos** — selección de horario, pago con Stripe Checkout y confirmación por QR
 - **Mapa interactivo** — canchas cercanas con geolocalización en tiempo real
 - **Matchmaking** — crea o únete a partidos abiertos por deporte y zona
 - **Comparador** — compara hasta 3 canchas lado a lado
@@ -99,10 +117,25 @@ src/
 
 ## Variables de entorno
 
-Crea un archivo `.env` en la raíz del proyecto:
+Vite carga automáticamente `.env.development` en `npm run dev` y `.env.production` en `npm run build`. Ya existen ambos archivos en el repo (no son secretos, apuntan a URLs públicas); normalmente no necesitas crear nada nuevo, solo editarlos si cambia la URL del backend.
+
+| Variable | Obligatoria | Para qué sirve | Dónde conseguirla |
+|---|---|---|---|
+| `VITE_API_URL` | Sí | URL del backend al que llama la app | La URL de tu `PlayStop-Backend` corriendo (local: `http://localhost:8080`, o la de Render en producción) |
+| `VITE_APP_NAME` | No | Nombre mostrado en la app | Texto libre |
+| `VITE_ENV` | No | `development` / `production`, solo informativo | — |
+| `VITE_DEBUG` | No | Muestra logs extra en consola | `true` / `false` |
+| `VITE_SSE_ENABLED` | No | Activa notificaciones en tiempo real (Server-Sent Events) | Solo si el backend ya expone `GET /api/notifications/stream` |
+| `VITE_FIREBASE_VAPID_KEY` | No | Notificaciones push del navegador | Firebase Console → tu proyecto → Configuración del proyecto → **Cloud Messaging** → "Certificados push web" |
+
+**Nota sobre pagos:** no hace falta ninguna clave de Stripe aquí — el frontend solo pide al backend una URL de Checkout y redirige (`window.location.href`), toda la integración con Stripe vive en `PlayStop-Backend`.
 
 ```env
+# .env.development (ejemplo)
 VITE_API_URL=http://localhost:8080
+VITE_APP_NAME=PlayStop
+VITE_ENV=development
+VITE_DEBUG=true
 ```
 
 ---
