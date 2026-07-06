@@ -359,7 +359,13 @@ const UserAvatar = ({ name, size = 44, src }) => {
       overflow: 'hidden',
     }}>
       {src
-        ? <img src={src} alt={initial} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement.style.background = gradients[idx]; e.currentTarget.parentElement.textContent = initial; }} />
+        ? <img src={src} alt={initial} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => {
+            const parent = e.currentTarget.parentElement;
+            if (!parent) return;
+            e.currentTarget.style.display = 'none';
+            parent.style.background = gradients[idx];
+            parent.textContent = initial;
+          }} />
         : initial}
     </div>
   );
