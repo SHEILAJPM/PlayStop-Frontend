@@ -1,3 +1,4 @@
+
 import { useState, useEffect, lazy, Suspense, useCallback } from 'react';
 import { useAuth } from './context/AuthContext.jsx';
 import { Capacitor } from '@capacitor/core';
@@ -29,6 +30,7 @@ const SuperAdminDashboard = lazy(() => import('./components/dashboards/SuperAdmi
 const Login               = lazy(() => import('./components/Login.jsx'));
 const Register            = lazy(() => import('./components/Register.jsx'));
 const BookingFlow         = lazy(() => import('./pages/BookingFlow.jsx'));
+const ReservationConfirmation = lazy(() => import('./pages/ReservationConfirmation.jsx'));
 const CourtPublicPage     = lazy(() => import('./pages/CourtPublicPage.jsx'));
 const MapaCanchas         = lazy(() => import('./pages/MapaCanchas.jsx'));
 const Matchmaking         = lazy(() => import('./pages/Matchmaking.jsx'));
@@ -166,6 +168,9 @@ function AppContent() {
         {/* FLUJO DE RESERVA */}
         <Route path="/reservar/:courtId" element={
           user ? <BookingFlow user={user} darkMode={darkMode} /> : <Navigate to="/login" replace />
+        } />
+        <Route path="/reservas/:id/confirmacion" element={
+          user ? <ReservationConfirmation /> : <Navigate to="/login" replace />
         } />
 
         {/* Paginas Publicas */}

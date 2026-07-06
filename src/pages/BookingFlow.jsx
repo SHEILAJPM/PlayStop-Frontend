@@ -7,7 +7,7 @@ import { useLocalReminders } from '../hooks/useLocalReminders.js';
 
 /* ── Confetti ── */
 const CONF_COLORS = ['#2563eb','#3b82f6','#f59e0b','#8b5cf6','#ef4444','#06b6d4'];
-function Confetti() {
+export function Confetti() {
   const pieces = Array.from({ length: 60 }, (_, i) => ({
     id: i, color: CONF_COLORS[i % CONF_COLORS.length],
     x: Math.random() * 100, delay: Math.random() * 1.5,
@@ -30,11 +30,11 @@ const DAYS_SHORT = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
 
 /* ── helpers ── */
 const fmtDate = (d) => d.toISOString().split('T')[0];
-const fmtDateLabel = (iso) => {
+export const fmtDateLabel = (iso) => {
   if (!iso) return '';
   return new Date(iso + 'T12:00').toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 };
-const fmtPrice = (n) => `S/ ${parseFloat(n || 0).toFixed(2)}`;
+export const fmtPrice = (n) => `S/ ${parseFloat(n || 0).toFixed(2)}`;
 
 /* ── sub-components ── */
 
@@ -563,62 +563,16 @@ function BookingSummary({ court, booking, onNext, onBack: _onBack }) {
 
 /* ── Step 4: Payment ── */
 function PaymentView({ court, booking, onPay, processing, payError }) {
-  const [method, setMethod] = useState('card');
-  const [cardNumber, setCardNumber] = useState('');
-  const [cardName, setCardName] = useState('');
-  const [expiry, setExpiry] = useState('');
-  const [cvv, setCvv] = useState('');
-  const [cardError, setCardError] = useState('');
   const total = parseFloat(court?.pricePerHour || 0);
 
-  const formatExpiry = (val) => {
-    const digits = val.replace(/\D/g, '').slice(0, 4);
-    return digits.length >= 3 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits;
-  };
-
-  const validateCard = () => {
-    if (method !== 'card') return true;
-    if (cardNumber.replace(/\s/g, '').length < 16) { setCardError('Número de tarjeta inválido'); return false; }
-    if (!cardName.trim()) { setCardError('Ingresa el nombre del titular'); return false; }
-    const [mm, yy] = expiry.split('/').map(Number);
-    if (!mm || !yy || mm < 1 || mm > 12) { setCardError('Fecha de expiración inválida'); return false; }
-    const now = new Date();
-    const cardYear = 2000 + yy;
-    const cardMonth = mm;
-    if (cardYear < now.getFullYear() || (cardYear === now.getFullYear() && cardMonth < now.getMonth() + 1)) {
-      setCardError('La tarjeta está vencida'); return false;
-    }
-    if (cvv.length < 3) { setCardError('CVV inválido'); return false; }
-    setCardError('');
-    return true;
-  };
-
-  const handlePay = () => {
-    if (!validateCard()) return;
-    onPay(method);
-  };
-
-  const inputStyle = { width: '100%', background: '#0f172a', border: '1px solid #1e293b', borderRadius: 10, color: '#f1f5f9', padding: '11px 14px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' };
-
-  const methods = [
-    { id: 'card', label: 'Tarjeta de crédito/débito',
-      extra: (
-        <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
-          {['VISA','MC','AMEX'].map(b => (
-            <span key={b} style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 6, padding: '2px 8px', color: '#94a3b8', fontSize: '0.7rem', fontWeight: 700 }}>{b}</span>
-          ))}
-        </div>
-      )},
-    { id: 'yape', label: 'Yape', badge: 'bi-phone-fill' },
-    { id: 'plin', label: 'Plin', badge: 'bi-phone-fill' },
-  ];
+  const handlePay = () => onPay('card');
 
   return (
     <div style={{ padding: '20px' }}>
-      {/* Simulation banner */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 10, padding: '10px 14px', marginBottom: 16 }}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span style={{ color: '#f59e0b', fontSize: '0.82rem', fontWeight: 700 }}>Modo simulación — no se realiza ningún cobro real</span>
+      {/* Redirect notice */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(37, 99, 235, 0.08)', border: '1px solid rgba(37, 99, 235, 0.25)', borderRadius: 10, padding: '10px 14px', marginBottom: 16 }}>
+        <i className="bi bi-shield-lock-fill" style={{ color: '#2563eb', fontSize: '0.95rem' }} />
+        <span style={{ color: '#93c5fd', fontSize: '0.82rem', fontWeight: 700 }}>Serás redirigido a Stripe para completar el pago de forma segura</span>
       </div>
 
       {/* Total */}
@@ -627,45 +581,6 @@ function PaymentView({ court, booking, onPay, processing, payError }) {
         <p style={{ margin: 0, color: '#f1f5f9', fontSize: '2rem', fontWeight: 900 }}>{fmtPrice(total)}</p>
         <p style={{ margin: '4px 0 0 0', color: '#475569', fontSize: '0.8rem' }}>1 hora • {booking.slot} – {String(parseInt(booking.slot) + 1).padStart(2,'0')}:00</p>
       </div>
-
-      {/* Methods */}
-      <p style={{ margin: '0 0 12px 0', color: '#94a3b8', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Método de pago</p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 24 }}>
-        {methods.map(m => (
-          <button key={m.id} onClick={() => setMethod(m.id)}
-            style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px', background: method === m.id ? 'rgba(37, 99, 235, 0.1)' : '#0f172a', border: `1.5px solid ${method === m.id ? '#2563eb' : '#1e293b'}`, borderRadius: 14, cursor: 'pointer', textAlign: 'left', transition: 'all 0.15s' }}>
-            {/* Radio circle */}
-            <div style={{ width: 20, height: 20, borderRadius: '50%', border: `2px solid ${method === m.id ? '#2563eb' : '#334155'}`, background: method === m.id ? '#2563eb' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              {method === m.id && <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#0a1628' }} />}
-            </div>
-            <div style={{ flex: 1 }}>
-              <span style={{ color: '#f1f5f9', fontWeight: 700, fontSize: '0.9rem' }}>{m.badge && <><i className={`bi ${m.badge}`} style={{ marginRight: 4 }} /></>}{m.label}</span>
-              {m.extra}
-            </div>
-          </button>
-        ))}
-      </div>
-
-      {/* Card form */}
-      {method === 'card' && (
-        <div style={{ background: '#0f172a', border: '1px solid #1e293b', borderRadius: 14, padding: 16, marginBottom: 20, display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <input style={inputStyle} placeholder="Número de tarjeta (16 dígitos)"
-            value={cardNumber} maxLength={19}
-            onChange={e => setCardNumber(e.target.value.replace(/\D/g,'').replace(/(.{4})/g,'$1 ').trim())} />
-          <input style={inputStyle} placeholder="Nombre del titular"
-            value={cardName} onChange={e => setCardName(e.target.value)} />
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-            <input style={inputStyle} placeholder="MM/AA"
-              value={expiry} maxLength={5}
-              onChange={e => setExpiry(formatExpiry(e.target.value))} />
-            <input style={inputStyle} placeholder="CVV"
-              value={cvv} maxLength={4} type="password"
-              onChange={e => setCvv(e.target.value.replace(/\D/g,''))} />
-          </div>
-          {cardError && <p style={{ color: '#ef4444', fontSize: '0.82rem', margin: 0, fontWeight: 600 }}>{cardError}</p>}
-          <p style={{ margin: 0, color: '#475569', fontSize: '0.75rem' }}>Puedes usar cualquier dato de prueba, ej: 4111 1111 1111 1111</p>
-        </div>
-      )}
 
       {/* Security note */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(37, 99, 235, 0.06)', border: '1px solid rgba(37, 99, 235, 0.15)', borderRadius: 10, padding: '10px 14px', marginBottom: 24 }}>
@@ -680,14 +595,14 @@ function PaymentView({ court, booking, onPay, processing, payError }) {
       )}
       <button onClick={handlePay} disabled={processing}
         style={{ width: '100%', padding: 16, background: processing ? '#1e293b' : 'linear-gradient(135deg,#2563eb,#1d4ed8)', color: processing ? '#475569' : '#0a1628', border: 'none', borderRadius: 14, fontWeight: 800, fontSize: '1rem', cursor: processing ? 'not-allowed' : 'pointer', boxShadow: processing ? 'none' : '0 8px 20px rgba(37, 99, 235, 0.3)', transition: 'all 0.2s' }}>
-        {processing ? 'Procesando...' : `Pagar y reservar ${fmtPrice(total)}`}
+        {processing ? 'Redirigiendo a Stripe...' : `Pagar y reservar ${fmtPrice(total)}`}
       </button>
     </div>
   );
 }
 
 /* ── Step 5: Success ── */
-function BookingSuccess({ court, booking, reservationId, userEmail, onDone }) {
+export function BookingSuccess({ court, booking, reservationId, userEmail, onDone }) {
   const [showConf, setShowConf] = useState(true);
   const [reminderState, setReminderState] = useState('idle'); // idle | requesting | set | denied
   const { permission, requestPermission, scheduleReminder } = useLocalReminders();
@@ -829,7 +744,6 @@ export default function BookingFlow({ darkMode: _darkMode = true }) {
   const [payError, setPayError] = useState('');
   const [booking, setBooking] = useState({ date: '', slot: null });
   const [processing, setProcessing] = useState(false);
-  const [confirmedId, setConfirmedId] = useState(null);
 
   useEffect(() => {
     if (!courtId) { setError('ID de cancha no especificado'); setLoading(false); return; }
@@ -851,8 +765,8 @@ export default function BookingFlow({ darkMode: _darkMode = true }) {
         date: booking.date,
         slotHour: parseInt(booking.slot),
       });
-      setConfirmedId(reservation.id);
-      setStep(5);
+      const { url } = await api.createCheckoutSession(reservation.id);
+      window.location.href = url;
     } catch (err) {
       const msg = err.message || '';
       if (msg.includes('bloqueada') || msg.includes('deshabilitada')) {
@@ -860,7 +774,6 @@ export default function BookingFlow({ darkMode: _darkMode = true }) {
       } else {
         setPayError(msg || 'Error al crear la reserva. Intenta nuevamente.');
       }
-    } finally {
       setProcessing(false);
     }
   };
@@ -870,7 +783,6 @@ export default function BookingFlow({ darkMode: _darkMode = true }) {
     2: 'Seleccionar fecha y hora',
     3: 'Resumen de tu reserva',
     4: 'Pago',
-    5: '¡Reserva lista!',
   };
 
   const goBack = () => {
@@ -936,7 +848,6 @@ export default function BookingFlow({ darkMode: _darkMode = true }) {
             {step === 2 && <DateTimePicker courtId={courtId} onBack={goBack} onNext={(sel) => { setBooking(sel); setStep(3); }} />}
             {step === 3 && court && <BookingSummary court={court} booking={booking} onNext={() => setStep(4)} onBack={goBack} />}
             {step === 4 && court && <PaymentView court={court} booking={booking} onPay={handlePay} processing={processing} payError={payError} />}
-            {step === 5 && court && <BookingSuccess court={court} booking={booking} reservationId={confirmedId} userEmail={user?.email} onDone={() => navigate('/dashboard', { state: { tab: 'Mis Reservas' } })} />}
           </>
         ))}
       </div>

@@ -7,7 +7,6 @@ import { useOnboarding } from '../../hooks/useOnboarding.js';
 import OnboardingTour from '../onboarding/OnboardingTour.jsx';
 import ReservationChat from '../chat/ReservationChat.jsx';
 
-import Confetti from './shared/Confetti.jsx';
 import MapModal from './shared/MapModal.jsx';
 import ErrorBoundary from './shared/ErrorBoundary.jsx';
 
@@ -127,7 +126,6 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
 
   const [favoritosIds, setFavoritosIds] = useState(loadFavoritos);
   const [avatarUrl, setAvatarUrl] = useState(() => localStorage.getItem('playspot-avatar') || '');
-  const [showConfetti, setShowConfetti] = useState(false);
 
   // ── Modal state ──────────────────────────────────────────────────────────────
   const [modal, setModal] = useState({ show: false, action: null, payload: null });
@@ -149,7 +147,6 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [paymentStage, setPaymentStage] = useState('form');
-  const [confirmedReservation, setConfirmedReservation] = useState(null);
   const [slots, setSlots] = useState([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [selectedDate, setSelectedDate] = useState('');
@@ -208,7 +205,6 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
     setSelectedSlot(null);
     setSlots([]);
     setPaymentStage('form');
-    setConfirmedReservation(null);
   };
 
   const openReview = (row) => {
@@ -267,13 +263,9 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
         closeModal();
       } else if (modal.action === 'PAGO_CULQI') {
         setPaymentStage('processing');
-        await new Promise(r => setTimeout(r, 2000));
         const newRes = await api.createReservation({ courtId: modal.payload.id, date: modal.payload.selectedDate, slotHour: modal.payload.selectedSlot });
-        setReservas(prev => [mapReservation(newRes), ...prev]);
-        setConfirmedReservation({ id: newRes.id, court: modal.payload.name, date: modal.payload.selectedDate, slot: modal.payload.slotLabel, amount: modal.payload.price });
-        setPaymentStage('success');
-        setShowConfetti(true);
-        setTimeout(() => setShowConfetti(false), 4000);
+        const { url } = await api.createCheckoutSession(newRes.id);
+        window.location.href = url;
       }
     } catch (err) {
       setPaymentStage('form');
@@ -291,7 +283,6 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
 
   return (
     <>
-      {showConfetti && <Confetti />}
       <DashboardLayout
         user={user} onLogout={onLogout} darkMode={darkMode} toggleTheme={toggleTheme}
         title={activeTab === 'Inicio' ? 'Mi Resumen Deportivo' : activeTab}
@@ -593,26 +584,9 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
                       <span style={{ fontSize: '1.1rem', fontWeight: '900', color: '#2563eb' }}>{modal.payload?.price}</span>
                     </div>
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <label style={{ fontSize: '0.85rem', fontWeight: '800', color: C.textSecondary }}>Número de Tarjeta</label>
-                    <input name="cardNumber" type="text" className="modal-ps-input" required placeholder="0000 0000 0000 0000" maxLength="19"
-                      onInput={e => { const d = e.target.value.replace(/\D/g,'').slice(0,16); e.target.value = d.replace(/(.{4})/g,'$1 ').trim(); }} />
-                  </div>
-                  <div style={{ display: 'flex', gap: '16px' }}>
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      <label style={{ fontSize: '0.85rem', fontWeight: '800', color: C.textSecondary }}>Vencimiento</label>
-                      <input name="exp" type="text" className="modal-ps-input" required placeholder="MM/AA" maxLength="5"
-                        onInput={e => { let d = e.target.value.replace(/\D/g,'').slice(0,4); if (d.length > 2) d = d.slice(0,2) + '/' + d.slice(2); e.target.value = d; }} />
-                    </div>
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      <label style={{ fontSize: '0.85rem', fontWeight: '800', color: C.textSecondary }}>CVC</label>
-                      <input name="cvc" type="password" className="modal-ps-input" required placeholder="•••" maxLength="3"
-                        onInput={e => { e.target.value = e.target.value.replace(/\D/g,'').slice(0,3); }} />
-                    </div>
-                  </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                    <span style={{ fontSize: '0.82rem', color: '#10b981', fontWeight: '700' }}>Pago 100% seguro y encriptado</span>
+                    <span style={{ fontSize: '0.82rem', color: '#10b981', fontWeight: '700' }}>Serás redirigido a Stripe para pagar de forma segura</span>
                   </div>
                 </div>
               )}
@@ -620,31 +594,8 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
               {modal.action === 'PAGO_CULQI' && paymentStage === 'processing' && (
                 <div style={{ textAlign: 'center', padding: '32px 0' }}>
                   <div style={{ width: '64px', height: '64px', borderRadius: '50%', border: '4px solid #e2e8f0', borderTopColor: '#2563eb', animation: 'spin 0.9s linear infinite', margin: '0 auto 24px' }} />
-                  <h3 style={{ margin: '0 0 8px', color: C.textPrimary, fontWeight: '900', fontSize: '1.3rem' }}>Procesando pago...</h3>
-                  <p style={{ margin: 0, color: C.textSecondary, fontSize: '0.9rem', animation: 'pulse 1.8s ease-in-out infinite' }}>Por favor espera, estamos verificando tu transacción.</p>
-                </div>
-              )}
-
-              {modal.action === 'PAGO_CULQI' && paymentStage === 'success' && confirmedReservation && (
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ width: '72px', height: '72px', borderRadius: '50%', backgroundColor: '#d1fae5', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', animation: 'popIn 0.4s cubic-bezier(0.34,1.56,0.64,1)' }}>
-                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                  </div>
-                  <h2 style={{ margin: '0 0 6px', color: C.textPrimary, fontWeight: '900', fontSize: '1.6rem' }}>¡Reserva confirmada!</h2>
-                  <p style={{ margin: '0 0 24px', color: C.textSecondary, fontSize: '0.95rem' }}>Revisa tu correo — te enviamos los detalles y tu código QR de entrada.</p>
-                  <div style={{ background: C.infoBg, borderRadius: '14px', padding: '18px', textAlign: 'left', marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    {[
-                      { icon: 'bi-building',      label: 'Cancha',  value: confirmedReservation.court },
-                      { icon: 'bi-calendar3',     label: 'Fecha',   value: confirmedReservation.date },
-                      { icon: 'bi-clock',         label: 'Horario', value: confirmedReservation.slot },
-                      { icon: 'bi-credit-card-fill', label: 'Pagado', value: confirmedReservation.amount },
-                    ].map(({ icon, label, value }) => (
-                      <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontSize: '0.88rem', color: C.textSecondary, fontWeight: '600' }}><i className={`bi ${icon}`} /> {label}</span>
-                        <span style={{ fontSize: '0.9rem', fontWeight: '800', color: C.textPrimary }}>{value}</span>
-                      </div>
-                    ))}
-                  </div>
+                  <h3 style={{ margin: '0 0 8px', color: C.textPrimary, fontWeight: '900', fontSize: '1.3rem' }}>Redirigiendo a Stripe...</h3>
+                  <p style={{ margin: 0, color: C.textSecondary, fontSize: '0.9rem', animation: 'pulse 1.8s ease-in-out infinite' }}>Espera un momento, no cierres esta ventana.</p>
                 </div>
               )}
 

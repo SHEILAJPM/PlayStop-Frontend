@@ -147,6 +147,17 @@ export const api = {
     }));
   },
 
+  async getReservationById(id) {
+    return handleResponse(await fetch(`${BASE_URL}/api/reservations/${id}`, { headers: jsonHeaders() }));
+  },
+
+  async createCheckoutSession(reservationId) {
+    return handleResponse(await fetch(`${BASE_URL}/api/payments/checkout/${reservationId}`, {
+      method: 'POST',
+      headers: jsonHeaders(),
+    }));
+  },
+
   async cancelReservation(id) {
     return handleResponse(await fetch(`${BASE_URL}/api/reservations/${id}/cancel`, {
       method: 'PATCH',
