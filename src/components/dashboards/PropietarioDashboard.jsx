@@ -210,6 +210,25 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
   const [reservas, setReservas] = useState([]);
   const [loadingReservas, setLoadingReservas] = useState(true);
 
+  const [payoutBalance, setPayoutBalance] = useState(0);
+  const [payoutHistory, setPayoutHistory] = useState([]);
+  const [loadingPayouts, setLoadingPayouts] = useState(true);
+  const [showPayoutForm, setShowPayoutForm] = useState(false);
+  const [payoutForm, setPayoutForm] = useState({ amount: '', method: 'YAPE_PLIN', holderName: '', phoneNumber: '', bankName: '', accountType: 'AHORROS', accountNumber: '' });
+  const [payoutSubmitting, setPayoutSubmitting] = useState(false);
+  const [payoutError, setPayoutError] = useState('');
+
+  const loadPayouts = () => {
+    setLoadingPayouts(true);
+    Promise.all([api.getPayoutBalance(), api.getMyPayoutRequests()])
+      .then(([balanceRes, history]) => {
+        setPayoutBalance(balanceRes.availableBalance || 0);
+        setPayoutHistory(Array.isArray(history) ? history : []);
+      })
+      .catch(() => { setPayoutBalance(0); setPayoutHistory([]); })
+      .finally(() => setLoadingPayouts(false));
+  };
+
   const [tiendaItems, setTiendaItems] = useState(TIENDA_DEFAULT);
   const [tiendaFiltro, setTiendaFiltro] = useState('Todos');
   const [tiendaSearch, setTiendaSearch] = useState('');
@@ -287,6 +306,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
   };
 
   useEffect(() => { loadData(); }, []);
+  useEffect(() => { loadPayouts(); }, []);
 
   // Sincroniza el avatar con el backend al entrar (evita quedarse con una foto vieja/rota cacheada)
   useEffect(() => {
@@ -327,6 +347,39 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
     if (!window.confirm('¿Cancelar este torneo?')) return;
     try { await api.cancelTournament(id); } catch { /* optimistic */ }
     setTournaments(prev => prev.filter(t => t.id !== id));
+  };
+
+  const handlePayoutSubmit = async (e) => {
+    e.preventDefault();
+    if (payoutSubmitting) return;
+    setPayoutError('');
+
+    const amount = parseFloat(payoutForm.amount);
+    if (!amount || amount <= 0) { setPayoutError('Ingresa un monto válido.'); return; }
+    if (amount > payoutBalance) { setPayoutError(`El monto supera tu saldo disponible (S/ ${payoutBalance.toFixed(2)}).`); return; }
+    if (!payoutForm.holderName.trim()) { setPayoutError('Ingresa el nombre del titular.'); return; }
+    if (payoutForm.method === 'YAPE_PLIN' && !payoutForm.phoneNumber.trim()) { setPayoutError('Ingresa el número de celular.'); return; }
+    if (payoutForm.method === 'BANK' && (!payoutForm.bankName.trim() || !payoutForm.accountNumber.trim())) { setPayoutError('Ingresa el banco y número de cuenta.'); return; }
+
+    setPayoutSubmitting(true);
+    try {
+      await api.createPayoutRequest({
+        amount,
+        method: payoutForm.method,
+        holderName: payoutForm.holderName,
+        phoneNumber: payoutForm.method === 'YAPE_PLIN' ? payoutForm.phoneNumber : null,
+        bankName: payoutForm.method === 'BANK' ? payoutForm.bankName : null,
+        accountType: payoutForm.method === 'BANK' ? payoutForm.accountType : null,
+        accountNumber: payoutForm.method === 'BANK' ? payoutForm.accountNumber : null,
+      });
+      setShowPayoutForm(false);
+      setPayoutForm({ amount: '', method: 'YAPE_PLIN', holderName: '', phoneNumber: '', bankName: '', accountType: 'AHORROS', accountNumber: '' });
+      loadPayouts();
+    } catch (err) {
+      setPayoutError(err.message || 'Error al enviar la solicitud.');
+    } finally {
+      setPayoutSubmitting(false);
+    }
   };
 
   const openModal = (action, payload = null) => {
@@ -778,6 +831,117 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
             <MetricCard title="Reservas Totales" value={reservas.length} subtitle="Todas las reservas" color="#3b82f6" trend="up" />
             <MetricCard title="Comisiones PlaySpot" value="S/ 0.00" subtitle="Plan Pro Activo" color="#f59e0b" />
           </div>
+
+          {/* ─── Retirar dinero ─── */}
+          <div className="dashboard-card-ps" style={{ marginBottom: 24 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, marginBottom: showPayoutForm ? 24 : 0 }}>
+              <div>
+                <p style={{ margin: '0 0 4px', color: C.textMuted, fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Saldo disponible para retirar</p>
+                <p style={{ margin: 0, color: C.textPrimary, fontSize: '2rem', fontWeight: 900 }}>
+                  {loadingPayouts ? '...' : `S/ ${payoutBalance.toFixed(2)}`}
+                </p>
+              </div>
+              <button onClick={() => setShowPayoutForm(s => !s)} className="btn-primary-ps" disabled={!loadingPayouts && payoutBalance <= 0 && !showPayoutForm}>
+                {showPayoutForm ? 'Cancelar' : '+ Solicitar retiro'}
+              </button>
+            </div>
+
+            {showPayoutForm && (
+              <form onSubmit={handlePayoutSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14, paddingTop: 24, borderTop: `1px solid ${C.cardBorder}` }}>
+                <div>
+                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: C.textSecondary, display: 'block', marginBottom: 6 }}>Monto a retirar (S/)</label>
+                  <input type="number" step="0.01" min="1" max={payoutBalance} className="modal-ps-input"
+                    value={payoutForm.amount} onChange={e => setPayoutForm(f => ({ ...f, amount: e.target.value }))}
+                    placeholder={`Máximo S/ ${payoutBalance.toFixed(2)}`} />
+                </div>
+                <div>
+                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: C.textSecondary, display: 'block', marginBottom: 6 }}>Nombre del titular</label>
+                  <input type="text" className="modal-ps-input"
+                    value={payoutForm.holderName} onChange={e => setPayoutForm(f => ({ ...f, holderName: e.target.value }))} />
+                </div>
+                <div>
+                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: C.textSecondary, display: 'block', marginBottom: 6 }}>Método de pago</label>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    {[['YAPE_PLIN', 'Yape / Plin'], ['BANK', 'Cuenta bancaria']].map(([val, label]) => (
+                      <button type="button" key={val} onClick={() => setPayoutForm(f => ({ ...f, method: val }))}
+                        style={{ flex: 1, padding: '10px 0', borderRadius: 10, cursor: 'pointer', fontWeight: 700, fontSize: '0.88rem',
+                          border: payoutForm.method === val ? '2px solid #2563eb' : `1px solid ${C.cardBorder}`,
+                          background: payoutForm.method === val ? 'rgba(37,99,235,0.1)' : 'transparent',
+                          color: payoutForm.method === val ? '#2563eb' : C.textSecondary }}>
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {payoutForm.method === 'YAPE_PLIN' ? (
+                  <div>
+                    <label style={{ fontSize: '0.82rem', fontWeight: 700, color: C.textSecondary, display: 'block', marginBottom: 6 }}>Número de celular (Yape/Plin)</label>
+                    <input type="tel" className="modal-ps-input"
+                      value={payoutForm.phoneNumber} onChange={e => setPayoutForm(f => ({ ...f, phoneNumber: e.target.value }))} placeholder="9XXXXXXXX" />
+                  </div>
+                ) : (
+                  <>
+                    <div>
+                      <label style={{ fontSize: '0.82rem', fontWeight: 700, color: C.textSecondary, display: 'block', marginBottom: 6 }}>Banco</label>
+                      <input type="text" className="modal-ps-input"
+                        value={payoutForm.bankName} onChange={e => setPayoutForm(f => ({ ...f, bankName: e.target.value }))} placeholder="Ej. BCP, Interbank..." />
+                    </div>
+                    <div style={{ display: 'flex', gap: 14 }}>
+                      <div style={{ flex: 1 }}>
+                        <label style={{ fontSize: '0.82rem', fontWeight: 700, color: C.textSecondary, display: 'block', marginBottom: 6 }}>Tipo de cuenta</label>
+                        <select className="modal-ps-input" value={payoutForm.accountType} onChange={e => setPayoutForm(f => ({ ...f, accountType: e.target.value }))}>
+                          <option value="AHORROS">Ahorros</option>
+                          <option value="CORRIENTE">Corriente</option>
+                        </select>
+                      </div>
+                      <div style={{ flex: 2 }}>
+                        <label style={{ fontSize: '0.82rem', fontWeight: 700, color: C.textSecondary, display: 'block', marginBottom: 6 }}>Número de cuenta</label>
+                        <input type="text" className="modal-ps-input"
+                          value={payoutForm.accountNumber} onChange={e => setPayoutForm(f => ({ ...f, accountNumber: e.target.value }))} />
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {payoutError && <p style={{ margin: 0, color: '#ef4444', fontSize: '0.85rem', fontWeight: 600 }}>{payoutError}</p>}
+
+                <button type="submit" disabled={payoutSubmitting} className="btn-primary-ps" style={{ alignSelf: 'flex-start' }}>
+                  {payoutSubmitting ? 'Enviando...' : 'Enviar solicitud'}
+                </button>
+              </form>
+            )}
+
+            {payoutHistory.length > 0 && (
+              <div style={{ marginTop: 24, paddingTop: 24, borderTop: `1px solid ${C.cardBorder}` }}>
+                <h4 style={{ margin: '0 0 14px', color: C.textPrimary, fontSize: '1rem', fontWeight: 800 }}>Historial de retiros</h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {payoutHistory.map(p => {
+                    const meta = {
+                      PENDING: { label: 'Pendiente', color: '#f59e0b', bg: 'rgba(245,158,11,0.12)' },
+                      PAID: { label: 'Pagado', color: '#22c55e', bg: 'rgba(34,197,94,0.12)' },
+                      REJECTED: { label: 'Rechazado', color: '#ef4444', bg: 'rgba(239,68,68,0.12)' },
+                    }[p.status] || { label: p.status, color: C.textMuted, bg: 'transparent' };
+                    return (
+                      <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', borderRadius: 12, background: C.rowHover ?? 'transparent', border: `1px solid ${C.cardBorder}`, flexWrap: 'wrap', gap: 10 }}>
+                        <div>
+                          <p style={{ margin: 0, color: C.textPrimary, fontWeight: 800, fontSize: '0.95rem' }}>S/ {parseFloat(p.amount).toFixed(2)}</p>
+                          <p style={{ margin: 0, color: C.textMuted, fontSize: '0.78rem' }}>
+                            {p.method === 'YAPE_PLIN' ? `Yape/Plin · ${p.phoneNumber}` : `${p.bankName} · ${p.accountNumber}`} · {new Date(p.requestedAt).toLocaleDateString('es-PE')}
+                          </p>
+                          {p.status === 'REJECTED' && p.adminNotes && (
+                            <p style={{ margin: '4px 0 0', color: '#ef4444', fontSize: '0.78rem' }}>Motivo: {p.adminNotes}</p>
+                          )}
+                        </div>
+                        <span style={{ padding: '4px 12px', borderRadius: 99, fontSize: '0.78rem', fontWeight: 800, color: meta.color, background: meta.bg }}>{meta.label}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+
           <div className="dashboard-card-ps">
             <h3 style={{ margin: '0 0 20px 0', color: C.textPrimary, fontSize: '1.2rem', fontWeight: '800' }}>Historial de Reservas Pagadas</h3>
             {loadingReservas ? (

@@ -158,6 +158,46 @@ export const api = {
     }));
   },
 
+  // ── Retiros (propietario) ───────────────────────────────────────────────
+
+  async getPayoutBalance() {
+    return handleResponse(await fetch(`${BASE_URL}/api/payouts/balance`, { headers: jsonHeaders() }));
+  },
+
+  async getMyPayoutRequests() {
+    return handleResponse(await fetch(`${BASE_URL}/api/payouts/my`, { headers: jsonHeaders() }));
+  },
+
+  async createPayoutRequest(data) {
+    return handleResponse(await fetch(`${BASE_URL}/api/payouts`, {
+      method: 'POST',
+      headers: jsonHeaders(),
+      body: JSON.stringify(data),
+    }));
+  },
+
+  // ── Retiros (admin) ──────────────────────────────────────────────────────
+
+  async getAllPayoutRequests(status) {
+    const qs = status ? `?status=${status}` : '';
+    return handleResponse(await fetch(`${BASE_URL}/api/admin/payouts${qs}`, { headers: jsonHeaders() }));
+  },
+
+  async markPayoutAsPaid(id) {
+    return handleResponse(await fetch(`${BASE_URL}/api/admin/payouts/${id}/pay`, {
+      method: 'PATCH',
+      headers: jsonHeaders(),
+    }));
+  },
+
+  async rejectPayout(id, reason) {
+    return handleResponse(await fetch(`${BASE_URL}/api/admin/payouts/${id}/reject`, {
+      method: 'PATCH',
+      headers: jsonHeaders(),
+      body: JSON.stringify({ reason }),
+    }));
+  },
+
   async cancelReservation(id) {
     return handleResponse(await fetch(`${BASE_URL}/api/reservations/${id}/cancel`, {
       method: 'PATCH',

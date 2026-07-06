@@ -309,6 +309,8 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
   const [courts,       setCourts]       = useState([]);
   const [reservations, setReservations] = useState([]);
   const [moderation,   setModeration]   = useState([]);
+  const [payouts,      setPayouts]      = useState([]);
+  const [rejectReason, setRejectReason] = useState('');
   const [loading,      setLoading]      = useState(false);
   const [toasts,       setToasts]       = useState([]);
   const [modal,        setModal]        = useState({ show:false, type:null, payload:null });
@@ -353,6 +355,7 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
     if (activeTab === 'Canchas')      load(api.getAdminCourts,          setCourts);
     if (activeTab === 'Reservas')     load(api.getAdminAllReservations, setReservations);
     if (activeTab === 'Moderación')   load(api.getAdminChatModeration,  setModeration);
+    if (activeTab === 'Retiros')      load(() => api.getAllPayoutRequests(), setPayouts);
   }, [activeTab, load]);
 
   // ── modal ──
@@ -405,6 +408,25 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
       ));
       toast(`Sanción de chat levantada para ${u.name}`);
     } catch(e) { toast(e.message,'error'); }
+    closeModal();
+  };
+
+  const handlePayoutPay = async (p) => {
+    try {
+      const res = await api.markPayoutAsPaid(p.id);
+      setPayouts(prev => prev.map(x => x.id === p.id ? res : x));
+      toast(`Retiro de ${p.ownerName} marcado como pagado`);
+    } catch (e) { toast(e.message, 'error'); }
+    closeModal();
+  };
+
+  const handlePayoutReject = async (p) => {
+    try {
+      const res = await api.rejectPayout(p.id, rejectReason || 'No especificado');
+      setPayouts(prev => prev.map(x => x.id === p.id ? res : x));
+      toast(`Retiro de ${p.ownerName} rechazado`);
+    } catch (e) { toast(e.message, 'error'); }
+    setRejectReason('');
     closeModal();
   };
 
@@ -509,6 +531,7 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
         { icon:'bi-person-badge-fill',    label:'Propietarios'  },
         { icon:'bi-geo-alt-fill',         label:'Canchas'       },
         { icon:'bi-calendar-check-fill',  label:'Reservas'      },
+        { icon:'bi-cash-coin',            label:'Retiros'       },
         { icon:'bi-shield-exclamation',   label:'Moderación'    },
         { icon:'bi-activity',             label:'Actividad'     },
         { icon:'bi-person-circle',        label:'Mi Perfil'     },
@@ -913,6 +936,66 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
         </div>
       )}
 
+      {/* ══════════ RETIROS DE PROPIETARIOS ══════════════════════════════════ */}
+      {activeTab === 'Retiros' && (() => {
+        const pending = payouts.filter(p => p.status === 'PENDING');
+        const PAYOUT_META = {
+          PENDING:  { label:'Pendiente', color:'#b45309', bg:'#fef3c7' },
+          PAID:     { label:'Pagado',    color:'#047857', bg:'#d1fae5' },
+          REJECTED: { label:'Rechazado', color:'#dc2626', bg:'#fee2e2' },
+        };
+        return (
+          <div style={card}>
+            <SectionHeader title="Solicitudes de Retiro" subtitle="solicitudes" count={payouts.length} isDark={isDark} />
+            {pending.length > 0 && (
+              <div style={{ padding:'12px 16px', marginBottom:18, borderRadius:12, backgroundColor: isDark?'rgba(245,158,11,0.08)':'#fffbeb', border:`1px solid ${isDark?'rgba(245,158,11,0.2)':'#fde68a'}`, color:'#b45309', fontWeight:700, fontSize:'0.85rem' }}>
+                <i className="bi bi-hourglass-split" /> {pending.length} solicitud{pending.length!==1?'es':''} pendiente{pending.length!==1?'s':''} de procesar
+              </div>
+            )}
+            <div style={{ overflowX:'auto' }}>
+              <table className="adm-table" style={{ width:'100%', borderCollapse:'collapse' }}>
+                <thead><tr>
+                  <th style={thSt}>Propietario</th><th style={thSt}>Monto</th><th style={thSt}>Método</th>
+                  <th style={thSt}>Datos</th><th style={thSt}>Fecha</th><th style={thSt}>Estado</th><th style={thSt}>Acciones</th>
+                </tr></thead>
+                <tbody>
+                  <Skeletons cols={7} />
+                  {!loading && payouts.map(p => (
+                    <tr key={p.id} className="adm-row">
+                      <td style={tdSt} data-label="Propietario">
+                        <div style={{ fontWeight:700, color: isDark?'#f8fafc':'#0f172a', fontSize:'0.88rem' }}>{p.ownerName}</div>
+                        <div style={{ fontSize:'0.72rem', color:'#94a3b8' }}>{p.ownerEmail}</div>
+                      </td>
+                      <td style={{ ...tdSt, fontWeight:800, color: isDark?'#f8fafc':'#0f172a' }} data-label="Monto">S/ {Number(p.amount).toFixed(2)}</td>
+                      <td style={{ ...tdSt, color:'#475569', fontSize:'0.85rem' }} data-label="Método">{p.method === 'YAPE_PLIN' ? 'Yape/Plin' : 'Cuenta bancaria'}</td>
+                      <td style={{ ...tdSt, color:'#475569', fontSize:'0.82rem' }} data-label="Datos">
+                        {p.holderName}<br />
+                        {p.method === 'YAPE_PLIN' ? p.phoneNumber : `${p.bankName} · ${p.accountType} · ${p.accountNumber}`}
+                      </td>
+                      <td style={{ ...tdSt, color:'#94a3b8', fontSize:'0.79rem', whiteSpace:'nowrap' }} data-label="Fecha">{new Date(p.requestedAt).toLocaleDateString('es-PE')}</td>
+                      <td style={tdSt} data-label="Estado">
+                        <span style={{ padding:'4px 10px', borderRadius:8, fontSize:'0.74rem', fontWeight:700, backgroundColor:PAYOUT_META[p.status]?.bg, color:PAYOUT_META[p.status]?.color }}>
+                          {PAYOUT_META[p.status]?.label || p.status}
+                        </span>
+                      </td>
+                      <td style={tdSt} data-label="Acciones">
+                        {p.status === 'PENDING' ? (
+                          <div style={{ display:'flex', gap:6 }}>
+                            <button onClick={() => openModal('PAY_PAYOUT', p)} style={btn('#d1fae5','#047857')}>Marcar pagado</button>
+                            <button onClick={() => openModal('REJECT_PAYOUT', p)} style={btn('#fee2e2','#dc2626')}>Rechazar</button>
+                          </div>
+                        ) : <span style={{ color:'#94a3b8', fontSize:'0.8rem' }}>—</span>}
+                      </td>
+                    </tr>
+                  ))}
+                  {!loading && !payouts.length && <tr><td colSpan={7} style={{ textAlign:'center', color:'#94a3b8', padding:'36px' }}>Sin solicitudes de retiro</td></tr>}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        );
+      })()}
+
       {/* ══════════ MODERACIÓN DE CHAT ════════════════════════════════════════ */}
       {activeTab === 'Moderación' && (
         <div style={card}>
@@ -1209,6 +1292,50 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
               <button onClick={() => handleToggleCourt(modal.payload)}
                 style={{ flex:1, padding:13, borderRadius:12, border:'none', backgroundColor:modal.payload.active?'#f59e0b':'#22c55e', color:'#fff', fontWeight:800, cursor:'pointer' }}>
                 {modal.payload.active?'Sí, desactivar':'Sí, activar'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Marcar retiro como pagado */}
+        {modal.type === 'PAY_PAYOUT' && (
+          <div style={{ backgroundColor: isDark?'rgba(9,9,11,0.95)':'#fff', backdropFilter:'blur(20px)', border:`1px solid ${isDark?'rgba(255,255,255,0.08)':'#f1f5f9'}`, padding:36, borderRadius:22, width:'90%', maxWidth:420, boxShadow:'0 24px 60px rgba(0,0,0,0.5)', animation:'mUp 0.28s ease' }}>
+            <div style={{ width:52, height:52, borderRadius:14, backgroundColor:'#d1fae5', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.5rem', marginBottom:16 }}>
+              <i className="bi bi-cash-coin" style={{ color:'#047857' }} />
+            </div>
+            <h2 style={{ margin:'0 0 8px', color: isDark?'#f8fafc':'#0f172a', fontSize:'1.3rem', fontWeight:900 }}>Marcar retiro como pagado</h2>
+            <p style={{ margin:'0 0 24px', color:'#94a3b8', lineHeight:1.65, fontSize:'0.92rem' }}>
+              Confirma que ya transferiste <strong>S/ {Number(modal.payload.amount).toFixed(2)}</strong> a <strong>{modal.payload.ownerName}</strong> por
+              {' '}{modal.payload.method === 'YAPE_PLIN' ? `Yape/Plin (${modal.payload.phoneNumber})` : `transferencia bancaria (${modal.payload.bankName})`}.
+              Se le notificará por correo.
+            </p>
+            <div style={{ display:'flex', gap:10 }}>
+              <button onClick={closeModal} style={{ flex:1, padding:13, borderRadius:12, border:`1.5px solid ${isDark?'rgba(255,255,255,.1)':'#e2e8f0'}`, backgroundColor: isDark?'rgba(255,255,255,.05)':'#f8fafc', color: isDark?'#94a3b8':'#64748b', fontWeight:800, cursor:'pointer' }}>Cancelar</button>
+              <button onClick={() => handlePayoutPay(modal.payload)}
+                style={{ flex:1, padding:13, borderRadius:12, border:'none', backgroundColor:'#22c55e', color:'#fff', fontWeight:800, cursor:'pointer' }}>
+                Sí, ya lo pagué
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Rechazar retiro */}
+        {modal.type === 'REJECT_PAYOUT' && (
+          <div style={{ backgroundColor: isDark?'rgba(9,9,11,0.95)':'#fff', backdropFilter:'blur(20px)', border:`1px solid ${isDark?'rgba(255,255,255,0.08)':'#f1f5f9'}`, padding:36, borderRadius:22, width:'90%', maxWidth:420, boxShadow:'0 24px 60px rgba(0,0,0,0.5)', animation:'mUp 0.28s ease' }}>
+            <div style={{ width:52, height:52, borderRadius:14, backgroundColor:'#fee2e2', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.5rem', marginBottom:16 }}>
+              <i className="bi bi-x-circle-fill" style={{ color:'#dc2626' }} />
+            </div>
+            <h2 style={{ margin:'0 0 8px', color: isDark?'#f8fafc':'#0f172a', fontSize:'1.3rem', fontWeight:900 }}>Rechazar solicitud de retiro</h2>
+            <p style={{ margin:'0 0 14px', color:'#94a3b8', lineHeight:1.65, fontSize:'0.92rem' }}>
+              El monto de <strong>S/ {Number(modal.payload.amount).toFixed(2)}</strong> de <strong>{modal.payload.ownerName}</strong> volverá a estar disponible para retirar.
+            </p>
+            <textarea value={rejectReason} onChange={e => setRejectReason(e.target.value)} placeholder="Motivo del rechazo (ej. datos bancarios incorrectos)..."
+              style={{ width:'100%', minHeight:80, padding:'10px 14px', borderRadius:10, border:`1.5px solid ${isDark?'rgba(255,255,255,.1)':'#e2e8f0'}`, backgroundColor: isDark?'#020617':'#f8fafc', color: isDark?'#f8fafc':'#0f172a', fontSize:'0.88rem', marginBottom:20, boxSizing:'border-box', resize:'vertical', fontFamily:'inherit' }} />
+            <div style={{ display:'flex', gap:10 }}>
+              <button onClick={() => { setRejectReason(''); closeModal(); }} style={{ flex:1, padding:13, borderRadius:12, border:`1.5px solid ${isDark?'rgba(255,255,255,.1)':'#e2e8f0'}`, backgroundColor: isDark?'rgba(255,255,255,.05)':'#f8fafc', color: isDark?'#94a3b8':'#64748b', fontWeight:800, cursor:'pointer' }}>Cancelar</button>
+              <button onClick={() => handlePayoutReject(modal.payload)}
+                style={{ flex:1, padding:13, borderRadius:12, border:'none', backgroundColor:'#ef4444', color:'#fff', fontWeight:800, cursor:'pointer' }}>
+                Rechazar
               </button>
             </div>
           </div>
