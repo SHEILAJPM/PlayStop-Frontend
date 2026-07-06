@@ -28,14 +28,10 @@ const ReservasTab = ({ reservas, loadingReservas, openModal, openReview, reviewe
         @media (max-width: 640px) {
           .reserva-actions {
             flex-basis: 100%;
-            flex-wrap: nowrap;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-            padding-bottom: 2px;
+            flex-direction: column;
+            align-items: stretch;
           }
-          .reserva-actions::-webkit-scrollbar { display: none; }
-          .reserva-actions > * { flex-shrink: 0; }
+          .reserva-actions > * { width: 100%; justify-content: center; box-sizing: border-box; }
         }
       `}</style>
 
