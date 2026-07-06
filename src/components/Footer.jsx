@@ -18,7 +18,7 @@ const Footer = () => {
           <div style={{ flex: '1 1 300px', maxWidth: '400px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
               <img src="/favicon.svg" alt="PlayStop" style={{ width: '32px', height: '32px' }} />
-              <span style={{ fontSize: '1.5rem', color: '#ffffff', fontWeight: '900', letterSpacing: '-0.5px' }}>Play<span style={{ color: '#00d084' }}>Stop</span></span>
+              <span style={{ fontSize: '1.5rem', color: '#ffffff', fontWeight: '900', letterSpacing: '-0.5px' }}>Play<span style={{ color: '#2563eb' }}>Stop</span></span>
             </div>
             <p style={{ lineHeight: '1.7', fontSize: '0.95rem', marginBottom: '24px' }}>
               El ecosistema digital definitivo para el deporte amateur. Conectamos a jugadores apasionados con las mejores infraestructuras deportivas, erradicando la informalidad.
@@ -40,30 +40,30 @@ const Footer = () => {
           <div style={{ flex: '1 1 150px' }}>
             <h4 style={{ color: '#ffffff', fontSize: '1.05rem', fontWeight: '700', marginBottom: '20px' }}>Producto</h4>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <li><a href="#como-funciona" style={{ color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s', fontSize: '0.95rem' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#94a3b8'}>Cómo funciona</a></li>
-              <li><a href="#jugadores" style={{ color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s', fontSize: '0.95rem' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#94a3b8'}>Para Jugadores</a></li>
-              <li><a href="#clubes" style={{ color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s', fontSize: '0.95rem' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#94a3b8'}>Para Clubes</a></li>
-              <li><a href="#precios" style={{ color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s', fontSize: '0.95rem' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#94a3b8'}>Planes y Precios</a></li>
+              <li><a href="#como-funciona" style={{ color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s', fontSize: '0.95rem' }} onMouseOver={(e) => e.currentTarget.style.color='#2563eb'} onMouseOut={(e) => e.currentTarget.style.color='#94a3b8'}>Cómo funciona</a></li>
+              <li><a href="#jugadores" style={{ color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s', fontSize: '0.95rem' }} onMouseOver={(e) => e.currentTarget.style.color='#2563eb'} onMouseOut={(e) => e.currentTarget.style.color='#94a3b8'}>Para Jugadores</a></li>
+              <li><a href="#clubes" style={{ color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s', fontSize: '0.95rem' }} onMouseOver={(e) => e.currentTarget.style.color='#2563eb'} onMouseOut={(e) => e.currentTarget.style.color='#94a3b8'}>Para Clubes</a></li>
+              <li><a href="#precios" style={{ color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s', fontSize: '0.95rem' }} onMouseOver={(e) => e.currentTarget.style.color='#2563eb'} onMouseOut={(e) => e.currentTarget.style.color='#94a3b8'}>Planes y Precios</a></li>
             </ul>
           </div>
 
           <div style={{ flex: '1 1 150px' }}>
             <h4 style={{ color: '#ffffff', fontSize: '1.05rem', fontWeight: '700', marginBottom: '20px' }}>Soporte</h4>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <li><a href="#faq" style={{ color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s', fontSize: '0.95rem' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#94a3b8'}>Preguntas Frecuentes</a></li>
-              <li><a href="#contacto" style={{ color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s', fontSize: '0.95rem' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#94a3b8'}>Centro de Ayuda</a></li>
-              <li><a href="#contacto" style={{ color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s', fontSize: '0.95rem' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#94a3b8'}>Contacto</a></li>
-              <li><a href="#blog" style={{ color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s', fontSize: '0.95rem' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#94a3b8'}>Blog</a></li>
+              <li><a href="#faq" style={{ color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s', fontSize: '0.95rem' }} onMouseOver={(e) => e.currentTarget.style.color='#2563eb'} onMouseOut={(e) => e.currentTarget.style.color='#94a3b8'}>Preguntas Frecuentes</a></li>
+              <li><a href="#contacto" style={{ color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s', fontSize: '0.95rem' }} onMouseOver={(e) => e.currentTarget.style.color='#2563eb'} onMouseOut={(e) => e.currentTarget.style.color='#94a3b8'}>Centro de Ayuda</a></li>
+              <li><a href="#contacto" style={{ color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s', fontSize: '0.95rem' }} onMouseOver={(e) => e.currentTarget.style.color='#2563eb'} onMouseOut={(e) => e.currentTarget.style.color='#94a3b8'}>Contacto</a></li>
+              <li><a href="#blog" style={{ color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s', fontSize: '0.95rem' }} onMouseOver={(e) => e.currentTarget.style.color='#2563eb'} onMouseOut={(e) => e.currentTarget.style.color='#94a3b8'}>Blog</a></li>
             </ul>
           </div>
 
           <div style={{ flex: '1 1 150px' }}>
             <h4 style={{ color: '#ffffff', fontSize: '1.05rem', fontWeight: '700', marginBottom: '20px' }}>Legal</h4>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <li><a href="#legal" style={{ color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s', fontSize: '0.95rem' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#94a3b8'}>Términos de Servicio</a></li>
-              <li><a href="#legal" style={{ color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s', fontSize: '0.95rem' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#94a3b8'}>Política de Privacidad</a></li>
-              <li><a href="#legal" style={{ color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s', fontSize: '0.95rem' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#94a3b8'}>Política de Cookies</a></li>
-              <li><a href="#legal" style={{ color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s', fontSize: '0.95rem' }} onMouseOver={(e) => e.currentTarget.style.color='#00d084'} onMouseOut={(e) => e.currentTarget.style.color='#94a3b8'}>Aviso Legal</a></li>
+              <li><a href="#legal" style={{ color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s', fontSize: '0.95rem' }} onMouseOver={(e) => e.currentTarget.style.color='#2563eb'} onMouseOut={(e) => e.currentTarget.style.color='#94a3b8'}>Términos de Servicio</a></li>
+              <li><a href="#legal" style={{ color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s', fontSize: '0.95rem' }} onMouseOver={(e) => e.currentTarget.style.color='#2563eb'} onMouseOut={(e) => e.currentTarget.style.color='#94a3b8'}>Política de Privacidad</a></li>
+              <li><a href="#legal" style={{ color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s', fontSize: '0.95rem' }} onMouseOver={(e) => e.currentTarget.style.color='#2563eb'} onMouseOut={(e) => e.currentTarget.style.color='#94a3b8'}>Política de Cookies</a></li>
+              <li><a href="#legal" style={{ color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s', fontSize: '0.95rem' }} onMouseOver={(e) => e.currentTarget.style.color='#2563eb'} onMouseOut={(e) => e.currentTarget.style.color='#94a3b8'}>Aviso Legal</a></li>
             </ul>
           </div>
 
@@ -74,7 +74,7 @@ const Footer = () => {
           <p style={{ margin: 0, fontSize: '0.85rem' }}>&copy; {new Date().getFullYear()} PlayStop Inc. Todos los derechos reservados.</p>
           <div style={{ display: 'flex', gap: '20px', fontSize: '0.85rem' }}>
              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-               <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#00d084' }}></span> Sistemas Operativos
+               <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#2563eb' }}></span> Sistemas Operativos
              </span>
              <span style={{ color: '#cbd5e1' }}>Español (PE)</span>
           </div>

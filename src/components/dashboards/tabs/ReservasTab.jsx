@@ -27,7 +27,7 @@ const ReservasTab = ({ reservas, loadingReservas, openModal, openReview, reviewe
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', marginBottom: '24px' }}>
         {[
           { label: 'Total reservas',  val: reservas.length,                                          icon: 'bi-calendar3',        color: '#3b82f6' },
-          { label: 'Confirmadas',     val: reservas.filter(r => r.apiStatus === 'CONFIRMED').length,  icon: 'bi-check-circle-fill', color: '#00d084' },
+          { label: 'Confirmadas',     val: reservas.filter(r => r.apiStatus === 'CONFIRMED').length,  icon: 'bi-check-circle-fill', color: '#2563eb' },
           { label: 'Completadas',     val: reservas.filter(r => r.apiStatus === 'ATTENDED').length,   icon: 'bi-award-fill',        color: '#8b5cf6' },
           { label: 'Canceladas',      val: reservas.filter(r => r.apiStatus === 'CANCELLED').length,  icon: 'bi-x-circle-fill',     color: '#ef4444' },
         ].map(stat => (
@@ -67,7 +67,7 @@ const ReservasTab = ({ reservas, loadingReservas, openModal, openReview, reviewe
             <button key={f.value} onClick={() => setStatusFilter(f.value)}
               style={{
                 padding: '6px 14px', borderRadius: 99, border: 'none', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', transition: 'all 0.15s',
-                background: statusFilter === f.value ? (darkMode ? '#00d084' : '#0f172a') : (darkMode ? '#1e293b' : '#f1f5f9'),
+                background: statusFilter === f.value ? (darkMode ? '#2563eb' : '#0f172a') : (darkMode ? '#1e293b' : '#f1f5f9'),
                 color: statusFilter === f.value ? (darkMode ? '#0f172a' : '#fff') : C.textSecondary,
               }}>
               {f.label}
@@ -131,7 +131,7 @@ const ReservasTab = ({ reservas, loadingReservas, openModal, openReview, reviewe
                   {(row.apiStatus === 'CONFIRMED' || row.apiStatus === 'PENDING') && (
                     <button
                       onClick={() => setQrModal({ show: true, reservationId: row.id, courtName: row.court, date: row.rawDate, slot: row.slotLabel, timestamp: Date.now() })}
-                      style={{ padding: '7px 13px', borderRadius: '9px', border: 'none', background: darkMode ? '#1e293b' : '#0f172a', color: '#00d084', fontWeight: '700', fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      style={{ padding: '7px 13px', borderRadius: '9px', border: 'none', background: darkMode ? '#1e293b' : '#0f172a', color: '#2563eb', fontWeight: '700', fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}>
                       <i className="bi bi-qr-code-scan" /> Ver QR
                     </button>
                   )}
@@ -143,7 +143,7 @@ const ReservasTab = ({ reservas, loadingReservas, openModal, openReview, reviewe
                         onChatOpen?.(row.id);
                         setChatModal({ reservationId: row.id, reservationInfo: { court: row.court, date: row.date, slot: row.slotLabel || '' } });
                       }}
-                      style={{ position: 'relative', padding: '7px 13px', borderRadius: '9px', border: 'none', background: darkMode ? 'rgba(0,208,132,0.12)' : '#f0fdf4', color: '#00d084', fontWeight: '700', fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      style={{ position: 'relative', padding: '7px 13px', borderRadius: '9px', border: 'none', background: darkMode ? 'rgba(37, 99, 235, 0.12)' : '#f0fdf4', color: '#2563eb', fontWeight: '700', fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}>
                       <i className="bi bi-chat-dots-fill" /> Chat
                       {unreadChats.has(row.id.toString()) && (
                         <span style={{ position: 'absolute', top: -3, right: -3, width: 10, height: 10, borderRadius: '50%', background: '#ef4444', border: `2px solid ${darkMode ? '#0f172a' : '#fff'}` }} />

@@ -82,18 +82,18 @@ const ParaJugadores = () => (
           14%, 100% { background-color: #2563eb; transform: scale(1); }
         }
         @keyframes btnPressPay {
-          0%, 32% { background-color: #00d084; opacity: 0.5; transform: scale(1); }
-          33% { background-color: #00d084; opacity: 1; transform: scale(0.95); }
-          34%, 100% { background-color: #00d084; opacity: 1; transform: scale(1); }
+          0%, 32% { background-color: #2563eb; opacity: 0.5; transform: scale(1); }
+          33% { background-color: #2563eb; opacity: 1; transform: scale(0.95); }
+          34%, 100% { background-color: #2563eb; opacity: 1; transform: scale(1); }
         }
         @keyframes btnPressProcesar {
-          0%, 46% { background-color: #00d084; transform: scale(1); }
-          47% { background-color: #059669; transform: scale(0.95); }
-          48%, 100% { background-color: #00d084; transform: scale(1); }
+          0%, 46% { background-color: #2563eb; transform: scale(1); }
+          47% { background-color: #1d4ed8; transform: scale(0.95); }
+          48%, 100% { background-color: #2563eb; transform: scale(1); }
         }
         @keyframes termsCheckAnim {
           0%, 23% { background-color: transparent; border-color: #cbd5e1; }
-          24%, 100% { background-color: #00d084; border-color: #00d084; }
+          24%, 100% { background-color: #2563eb; border-color: #2563eb; }
         }
         @keyframes termsCheckMarkAnim {
           0%, 23% { opacity: 0; }
@@ -121,7 +121,7 @@ const ParaJugadores = () => (
           
           {/* Toast de Confirmación (Dinámico) */}
           <div style={{ position: 'absolute', top: 0, left: '50%', backgroundColor: '#ffffff', borderRadius: '20px', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: '8px', zIndex: 30, boxShadow: '0 10px 25px -5px rgba(0,0,0,0.2)', border: '1px solid #e2e8f0', animation: 'toastMobile 14s infinite cubic-bezier(0.16, 1, 0.3, 1)', whiteSpace: 'nowrap' }}>
-            <div style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: '#00d084', color: '#fff', display: 'flex', justifyContent: 'center', alignItems: 'center' }}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+            <div style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: '#2563eb', color: '#fff', display: 'flex', justifyContent: 'center', alignItems: 'center' }}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
             <span style={{ fontSize: '0.8rem', fontWeight: '800', color: '#0f172a' }}>Reserva confirmada</span>
           </div>
 
@@ -210,7 +210,7 @@ const ParaJugadores = () => (
                  <input type="password" placeholder="123" disabled style={{ flex: 1, padding: '12px 14px', borderRadius: '10px', border: '2px solid #e2e8f0', backgroundColor: '#f8fafc', fontSize: '0.9rem', color: '#0f172a', fontWeight: '600' }} />
                </div>
             </div>
-            <button style={{ width: '100%', backgroundColor: '#00d084', color: '#ffffff', border: 'none', padding: '14px', borderRadius: '12px', fontWeight: '800', fontSize: '1.05rem', animation: 'btnPressProcesar 14s infinite ease-in-out' }}>Procesar S/ 80.00</button>
+            <button style={{ width: '100%', backgroundColor: '#2563eb', color: '#ffffff', border: 'none', padding: '14px', borderRadius: '12px', fontWeight: '800', fontSize: '1.05rem', animation: 'btnPressProcesar 14s infinite ease-in-out' }}>Procesar S/ 80.00</button>
           </div>
 
           {/* Indicador Táctil (Dedo) */}
@@ -234,9 +234,9 @@ const ParaJugadores = () => (
        </div>
        
        {/* Tarjeta Flotante superpuesta */}
-       <div style={{ position: 'absolute', top: '150px', right: '-40px', backgroundColor: '#ffffff', padding: '14px 20px', borderRadius: '16px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,208,132,0.2)', display: 'flex', alignItems: 'center', gap: '14px', zIndex: 30, animation: 'floatingCardShow 14s infinite ease-in-out' }}>
+       <div style={{ position: 'absolute', top: '150px', right: '-40px', backgroundColor: '#ffffff', padding: '14px 20px', borderRadius: '16px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.15), 0 0 0 1px rgba(37, 99, 235, 0.2)', display: 'flex', alignItems: 'center', gap: '14px', zIndex: 30, animation: 'floatingCardShow 14s infinite ease-in-out' }}>
          <div style={{ width: '36px', height: '36px', backgroundColor: '#d1fae5', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00d084" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
          </div>
          <div>
            <p style={{ margin: 0, fontSize: '0.75rem', color: '#64748b', fontWeight: '700', textTransform: 'uppercase' }}>Pago dividido</p>
@@ -248,10 +248,10 @@ const ParaJugadores = () => (
     {/* Textos y Beneficios */}
     <div style={{ flex: '1 1 450px', maxWidth: '600px', zIndex: 10, position: 'relative' }} className="jugadores-text">
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-        <div style={{ width: '36px', height: '3px', borderRadius: '2px', background: 'linear-gradient(90deg, #00d084, transparent)' }} />
-        <span style={{ color: '#00d084', fontWeight: '700', fontSize: '0.8rem', letterSpacing: '2.5px', textTransform: 'uppercase' }}>Para Jugadores</span>
+        <div style={{ width: '36px', height: '3px', borderRadius: '2px', background: 'linear-gradient(90deg, #2563eb, transparent)' }} />
+        <span style={{ color: '#2563eb', fontWeight: '700', fontSize: '0.8rem', letterSpacing: '2.5px', textTransform: 'uppercase' }}>Para Jugadores</span>
       </div>
-      <h2 className="jugadores-title" style={{ fontSize: '3.5rem', color: '#0f172a', fontWeight: '900', marginBottom: '20px', lineHeight: '1.1', letterSpacing: '-1.5px' }}>Tu partido, <span style={{ background: 'linear-gradient(90deg, #2563eb, #06b6d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>sin estrés.</span></h2>
+      <h2 className="jugadores-title" style={{ fontSize: '3.5rem', color: '#ffffff', fontWeight: '900', marginBottom: '20px', lineHeight: '1.1', letterSpacing: '-1.5px' }}>Tu partido, <span style={{ background: 'linear-gradient(90deg, #2563eb, #06b6d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>sin estrés.</span></h2>
       <p style={{ color: '#4b5563', fontSize: '1.15rem', lineHeight: '1.7', marginBottom: '40px' }}>Olvídate de perseguir a tus amigos para que paguen o de llamar a 10 complejos distintos buscando un horario libre. PlaySpot hace el trabajo duro por ti.</p>
       
       <div className="jugadores-features" style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
@@ -265,7 +265,7 @@ const ParaJugadores = () => (
            </div>
         </div>
         <div style={{ display: 'flex', gap: '20px' }}>
-           <div style={{ width: '60px', height: '60px', backgroundColor: '#ffffff', border: '1px solid #d1fae5', color: '#00d084', borderRadius: '16px', display: 'flex', justifyContent: 'center', alignItems: 'center', flexShrink: 0, boxShadow: '0 8px 16px -4px rgba(0,208,132,0.2)' }}>
+           <div style={{ width: '60px', height: '60px', backgroundColor: '#ffffff', border: '1px solid #d1fae5', color: '#2563eb', borderRadius: '16px', display: 'flex', justifyContent: 'center', alignItems: 'center', flexShrink: 0, boxShadow: '0 8px 16px -4px rgba(37, 99, 235, 0.2)' }}>
              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg>
            </div>
            <div>

@@ -72,7 +72,7 @@ const SearchInput = memo(({ value, onChange, placeholder, dark = false }) => {
       <i className="bi bi-search" style={{ position:'absolute', left:10, color:'#94a3b8', fontSize:'0.85rem', pointerEvents:'none' }} />
       <input type="text" value={value} onChange={e => onChange(e.target.value)}
         placeholder={placeholder} style={inputSt}
-        onFocus={e => e.target.style.borderColor='#00d084'}
+        onFocus={e => e.target.style.borderColor='#2563eb'}
         onBlur={e  => e.target.style.borderColor = dark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'} />
     </div>
   );
@@ -82,7 +82,7 @@ const SortTh = memo(({ k, label, sortKey, sortDir, onToggle, thStyle }) => (
   <th onClick={() => onToggle(k)} style={{ ...thStyle, cursor:'pointer' }}>
     <span style={{ display:'inline-flex', alignItems:'center', gap:4 }}>
       {label}
-      <span style={{ fontSize:'0.6rem', color:sortKey===k?'#00d084':'#475569' }}>
+      <span style={{ fontSize:'0.6rem', color:sortKey===k?'#2563eb':'#475569' }}>
         {sortKey===k ? (sortDir==='asc'?'▲':'▼') : '⇅'}
       </span>
     </span>
@@ -101,7 +101,7 @@ const SkeletonRow = ({ cols }) => (
 );
 
 // ── SVG Bar Chart ─────────────────────────────────────────────────────────────
-const BarChart = memo(({ data, valueKey, labelKey, color = '#00d084', height = 200, dark = false }) => {
+const BarChart = memo(({ data, valueKey, labelKey, color = '#2563eb', height = 200, dark = false }) => {
   if (!data?.length) return (
     <div style={{ height, display:'flex', alignItems:'center', justifyContent:'center', color: dark ? '#475569' : '#cbd5e1', fontSize:'0.85rem' }}>
       Sin datos aún
@@ -474,7 +474,7 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
       @keyframes adminPulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
       @keyframes slideInRight { from{opacity:0;transform:translateX(36px)} to{opacity:1;transform:translateX(0)} }
       @keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
-      .adm-row:hover td { background-color:${isDark?'rgba(0,208,132,0.04)':'#f8fafc'}; }
+      .adm-row:hover td { background-color:${isDark?'rgba(37, 99, 235, 0.04)':'#f8fafc'}; }
     `}</style>
 
     <DashboardLayout user={user} onLogout={onLogout} darkMode={darkMode} toggleTheme={toggleTheme}
@@ -543,9 +543,9 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
                   <div style={{ flex:1 }}>
                     <div style={{ fontWeight:700, color: isDark?'#f8fafc':'#0f172a', fontSize:'0.87rem', marginBottom:4 }}>{c.name}</div>
                     <div style={{ height:5, borderRadius:4, backgroundColor: isDark?'rgba(255,255,255,0.07)':'#f1f5f9', overflow:'hidden' }}>
-                      <div style={{ height:'100%', borderRadius:4, backgroundColor:'#00d084',
+                      <div style={{ height:'100%', borderRadius:4, backgroundColor:'#2563eb',
                         width:`${Math.round(c.count/(stats.topCourts[0]?.count||1)*100)}%`, transition:'width 0.7s',
-                        boxShadow: isDark ? '0 0 8px rgba(0,208,132,0.4)' : 'none' }} />
+                        boxShadow: isDark ? '0 0 8px rgba(37, 99, 235, 0.4)' : 'none' }} />
                     </div>
                   </div>
                   <span style={{ fontWeight:800, color: isDark?'#f8fafc':'#0f172a', fontSize:'0.87rem', minWidth:24, textAlign:'right' }}>{c.count}</span>
@@ -557,7 +557,7 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
             <div style={card}>
               <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:18 }}>
                 <h3 style={{ margin:0, color: isDark?'#f8fafc':'#0f172a', fontSize:'1rem', fontWeight:800 }}>Nuevos Jugadores</h3>
-                <button onClick={() => setActiveTab('Jugadores')} style={{ ...btn(isDark?'rgba(0,208,132,.1)':'#f0fff8','#00d084'), fontSize:'0.74rem' }}>Ver todos →</button>
+                <button onClick={() => setActiveTab('Jugadores')} style={{ ...btn(isDark?'rgba(37, 99, 235, .1)':'#eff6ff','#2563eb'), fontSize:'0.74rem' }}>Ver todos →</button>
               </div>
               {!(stats?.recentUsers?.length) ? <p style={{ color:'#94a3b8', fontSize:'0.85rem' }}>Sin datos</p>
               : stats.recentUsers.map((u,i) => (
@@ -576,7 +576,7 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
             <div style={card}>
               <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:18 }}>
                 <h3 style={{ margin:0, color: isDark?'#f8fafc':'#0f172a', fontSize:'1rem', fontWeight:800 }}>Actividad Reciente</h3>
-                <button onClick={() => setActiveTab('Actividad')} style={{ ...btn(isDark?'rgba(0,208,132,.1)':'#f0fff8','#00d084'), fontSize:'0.74rem' }}>Ver todo →</button>
+                <button onClick={() => setActiveTab('Actividad')} style={{ ...btn(isDark?'rgba(37, 99, 235, .1)':'#eff6ff','#2563eb'), fontSize:'0.74rem' }}>Ver todo →</button>
               </div>
               {!(analytics?.recentActivity?.length) ? <p style={{ color:'#94a3b8', fontSize:'0.85rem' }}>Sin actividad</p>
               : analytics.recentActivity.slice(0,5).map((r,i) => (
@@ -599,9 +599,9 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
                 <h3 style={{ margin:'0 0 3px', color: isDark?'#f8fafc':'#0f172a', fontSize:'1rem', fontWeight:800 }}>Reservas — Últimos 6 meses</h3>
                 <p style={{ margin:0, color:'#94a3b8', fontSize:'0.77rem' }}>Tendencia de actividad mensual</p>
               </div>
-              <button onClick={() => setActiveTab('Analíticas')} style={{ ...btn(isDark?'rgba(0,208,132,.1)':'#f0fff8','#00d084'), fontSize:'0.74rem' }}>Ver analíticas →</button>
+              <button onClick={() => setActiveTab('Analíticas')} style={{ ...btn(isDark?'rgba(37, 99, 235, .1)':'#eff6ff','#2563eb'), fontSize:'0.74rem' }}>Ver analíticas →</button>
             </div>
-            <BarChart data={analytics?.monthly||[]} valueKey="count" labelKey="label" color="#00d084" height={170} dark={isDark} />
+            <BarChart data={analytics?.monthly||[]} valueKey="count" labelKey="label" color="#2563eb" height={170} dark={isDark} />
           </div>
         </>
       )}
@@ -636,7 +636,7 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
             <div style={card}>
               <h3 style={{ margin:'0 0 3px', color: isDark?'#f8fafc':'#0f172a', fontSize:'1rem', fontWeight:800 }}>Reservas por mes</h3>
               <p style={{ margin:'0 0 16px', color:'#94a3b8', fontSize:'0.77rem' }}>Últimos 6 meses</p>
-              <BarChart data={analytics?.monthly||[]} valueKey="count" labelKey="label" color="#00d084" height={200} dark={isDark} />
+              <BarChart data={analytics?.monthly||[]} valueKey="count" labelKey="label" color="#2563eb" height={200} dark={isDark} />
             </div>
             <div style={card}>
               <h3 style={{ margin:'0 0 3px', color: isDark?'#f8fafc':'#0f172a', fontSize:'1rem', fontWeight:800 }}>Ingresos por mes (S/)</h3>
@@ -919,7 +919,7 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
           <div style={{ display:'flex', gap:10, marginBottom:16, flexWrap:'wrap' }}>
             <SearchInput value={modSearch} onChange={setModSearch} placeholder="Buscar usuario..." dark={isDark} />
             <button onClick={() => load(api.getAdminChatModeration, setModeration)}
-              style={{ ...btn(isDark?'rgba(0,208,132,0.12)':'#f0fff8','#00d084'), border:`1.5px solid ${isDark?'rgba(0,208,132,0.2)':'#a7f3d0'}` }}>
+              style={{ ...btn(isDark?'rgba(37, 99, 235, 0.12)':'#eff6ff','#2563eb'), border:`1.5px solid ${isDark?'rgba(37, 99, 235, 0.2)':'#93c5fd'}` }}>
               <i className="bi bi-arrow-clockwise" /> Refrescar
             </button>
           </div>
@@ -1100,8 +1100,8 @@ const AdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
                 </div>
               ))}
             </div>
-            <div style={{ padding:'14px 16px', borderRadius:12, backgroundColor: isDark?'rgba(0,208,132,0.08)':'#f0fff8', border: isDark?'1px solid rgba(0,208,132,0.15)':'1px solid #a7f3d0' }}>
-              <p style={{ margin:0, fontSize:'0.83rem', color: isDark?'#00d084':'#047857', fontWeight:600 }}>
+            <div style={{ padding:'14px 16px', borderRadius:12, backgroundColor: isDark?'rgba(37, 99, 235, 0.08)':'#eff6ff', border: isDark?'1px solid rgba(37, 99, 235, 0.15)':'1px solid #93c5fd' }}>
+              <p style={{ margin:0, fontSize:'0.83rem', color: isDark?'#2563eb':'#1d4ed8', fontWeight:600 }}>
                 <i className="bi bi-cash-coin" /> Ingreso total: <strong>{fmtCurrency(analytics?.totalRevenue)}</strong>
               </p>
             </div>

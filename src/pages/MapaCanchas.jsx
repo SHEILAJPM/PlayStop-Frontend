@@ -17,9 +17,9 @@ L.Icon.Default.mergeOptions({
 const greenIcon = new L.Icon({
   iconUrl: 'data:image/svg+xml;base64,' + btoa(`
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 42" width="32" height="42">
-      <path d="M16 0C7.163 0 0 7.163 0 16c0 11.314 16 26 16 26S32 27.314 32 16C32 7.163 24.837 0 16 0z" fill="#00d084" stroke="#009f65" stroke-width="1.5"/>
+      <path d="M16 0C7.163 0 0 7.163 0 16c0 11.314 16 26 16 26S32 27.314 32 16C32 7.163 24.837 0 16 0z" fill="#2563eb" stroke="#009f65" stroke-width="1.5"/>
       <circle cx="16" cy="16" r="7" fill="white"/>
-      <circle cx="16" cy="16" r="4" fill="#00d084"/>
+      <circle cx="16" cy="16" r="4" fill="#2563eb"/>
     </svg>`),
   iconSize: [32, 42],
   iconAnchor: [16, 42],
@@ -97,12 +97,12 @@ export default function MapaCanchas() {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#030712' }}>
       {/* Top bar */}
       <div style={{ background: '#0a1628', borderBottom: '1px solid #1e293b', padding: '12px 20px', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', zIndex: 1000 }}>
-        <Link to="/" style={{ color: '#00d084', fontWeight: 900, fontSize: '1.1rem', textDecoration: 'none', marginRight: 8 }}>PlayStop</Link>
+        <Link to="/" style={{ color: '#2563eb', fontWeight: 900, fontSize: '1.1rem', textDecoration: 'none', marginRight: 8 }}>PlayStop</Link>
         <span style={{ color: '#475569', fontSize: '0.85rem' }}>/ Mapa de Canchas</span>
         <div style={{ flex: 1 }} />
         <span style={{ color: '#64748b', fontSize: '0.8rem', fontWeight: 600 }}>{filtered.length} canchas</span>
         <button onClick={locateMe} disabled={locating}
-          style={{ background: locating ? '#1e293b' : 'rgba(0,208,132,0.15)', border: '1px solid rgba(0,208,132,0.3)', color: '#00d084', borderRadius: 10, padding: '7px 14px', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
+          style={{ background: locating ? '#1e293b' : 'rgba(37, 99, 235, 0.15)', border: '1px solid rgba(37, 99, 235, 0.3)', color: '#2563eb', borderRadius: 10, padding: '7px 14px', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
           <i className="bi bi-geo-alt-fill" />
           {locating ? 'Localizando...' : 'Mi ubicación'}
         </button>
@@ -114,7 +114,7 @@ export default function MapaCanchas() {
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
           {SPORT_FILTERS.map(s => (
             <button key={s} onClick={() => setSportFilter(s)}
-              style={{ padding: '5px 12px', borderRadius: 20, border: sportFilter === s ? '1px solid #00d084' : '1px solid #1e293b', background: sportFilter === s ? 'rgba(0,208,132,0.15)' : 'transparent', color: sportFilter === s ? '#00d084' : '#64748b', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer', transition: 'all 0.15s' }}>
+              style={{ padding: '5px 12px', borderRadius: 20, border: sportFilter === s ? '1px solid #2563eb' : '1px solid #1e293b', background: sportFilter === s ? 'rgba(37, 99, 235, 0.15)' : 'transparent', color: sportFilter === s ? '#2563eb' : '#64748b', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer', transition: 'all 0.15s' }}>
               {s}
             </button>
           ))}
@@ -127,7 +127,7 @@ export default function MapaCanchas() {
           <span style={{ color: '#64748b', fontSize: '0.78rem', fontWeight: 700, whiteSpace: 'nowrap' }}>Hasta S/ {maxPrice}</span>
           <input type="range" min={20} max={300} step={10} value={maxPrice}
             onChange={e => setMaxPrice(+e.target.value)}
-            style={{ width: 100, accentColor: '#00d084' }} />
+            style={{ width: 100, accentColor: '#2563eb' }} />
         </div>
 
         <div style={{ width: 1, height: 24, background: '#1e293b' }} />
@@ -151,7 +151,7 @@ export default function MapaCanchas() {
         <div style={{ flex: 1, position: 'relative' }}>
           {loading ? (
             <div style={{ position: 'absolute', inset: 0, background: '#0a1628', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 12 }}>
-              <div style={{ width: 40, height: 40, border: '3px solid #1e293b', borderTop: '3px solid #00d084', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+              <div style={{ width: 40, height: 40, border: '3px solid #1e293b', borderTop: '3px solid #2563eb', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
               <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
               <p style={{ color: '#64748b', margin: 0 }}>Cargando canchas...</p>
             </div>
@@ -189,11 +189,11 @@ export default function MapaCanchas() {
                       {c.imageUrl && <img src={c.imageUrl} alt={c.name} style={{ width: '100%', height: 90, objectFit: 'cover', borderRadius: 6, marginBottom: 8 }} />}
                       <strong>{c.name}</strong><br />
                       <span style={{ color: '#64748b', fontSize: '0.8rem' }}>{c.sportType} · {c.district}</span><br />
-                      <span style={{ fontWeight: 700, color: '#00d084' }}>S/ {parseFloat(c.pricePerHour).toFixed(0)}/hr</span>
+                      <span style={{ fontWeight: 700, color: '#2563eb' }}>S/ {parseFloat(c.pricePerHour).toFixed(0)}/hr</span>
                       {c.averageRating && <span style={{ marginLeft: 8, color: '#f59e0b' }}>⭐ {c.averageRating.toFixed(1)}</span>}
                       <div style={{ marginTop: 8 }}>
                         <button onClick={() => navigate(user ? `/reservar/${c.id}` : '/login')}
-                          style={{ background: '#00d084', color: '#0a1628', border: 'none', borderRadius: 6, padding: '5px 12px', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', marginRight: 6 }}>
+                          style={{ background: '#2563eb', color: '#ffffff', border: 'none', borderRadius: 6, padding: '5px 12px', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', marginRight: 6 }}>
                           Reservar
                         </button>
                         {c.slug && (
@@ -220,7 +220,7 @@ export default function MapaCanchas() {
             <img src={selected.imageUrl || 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=400&q=60'}
               alt={selected.name} style={{ width: '100%', height: 140, objectFit: 'cover', borderRadius: 12 }} />
             <div>
-              <span style={{ background: 'rgba(0,208,132,0.15)', border: '1px solid rgba(0,208,132,0.3)', color: '#00d084', borderRadius: 20, padding: '3px 10px', fontSize: '0.72rem', fontWeight: 700 }}>
+              <span style={{ background: 'rgba(37, 99, 235, 0.15)', border: '1px solid rgba(37, 99, 235, 0.3)', color: '#2563eb', borderRadius: 20, padding: '3px 10px', fontSize: '0.72rem', fontWeight: 700 }}>
                 {selected.sportType}
               </span>
               <h3 style={{ margin: '10px 0 4px', color: '#f1f5f9', fontWeight: 800, fontSize: '1.1rem' }}>{selected.name}</h3>
@@ -242,7 +242,7 @@ export default function MapaCanchas() {
               )}
             </div>
             <button onClick={() => navigate(user ? `/reservar/${selected.id}` : '/login')}
-              style={{ background: 'linear-gradient(135deg,#00d084,#00b875)', color: '#0a1628', border: 'none', borderRadius: 12, padding: '14px', fontWeight: 800, fontSize: '0.95rem', cursor: 'pointer', boxShadow: '0 6px 16px rgba(0,208,132,0.3)' }}>
+              style={{ background: 'linear-gradient(135deg,#2563eb,#1d4ed8)', color: '#ffffff', border: 'none', borderRadius: 12, padding: '14px', fontWeight: 800, fontSize: '0.95rem', cursor: 'pointer', boxShadow: '0 6px 16px rgba(37, 99, 235, 0.3)' }}>
               Reservar →
             </button>
             {selected.slug && (

@@ -42,7 +42,7 @@ const ArmarEquipoTab = ({ user, darkMode, C }) => {
           {equipoSessions.map((s, i) => {
             const spotsLeft = s.totalPlayers - s.confirmed;
             const isFull = spotsLeft === 0;
-            const spotColor = isFull ? '#ef4444' : spotsLeft <= 2 ? '#f59e0b' : '#00d084';
+            const spotColor = isFull ? '#ef4444' : spotsLeft <= 2 ? '#f59e0b' : '#2563eb';
             return (
               <div key={s.id} className="card-hover" style={{ background:C.cardBg, border:`1px solid ${C.cardBorder}`, borderRadius:20, overflow:'hidden', animation:`sessionPop 0.3s ease ${i*0.05}s both` }}>
                 <div style={{ height:6, background:`linear-gradient(90deg,${spotColor},${spotColor}80)` }} />
@@ -52,7 +52,7 @@ const ArmarEquipoTab = ({ user, darkMode, C }) => {
                       <div style={{ fontSize:'.72rem', fontWeight:800, color:'#8b5cf6', textTransform:'uppercase', letterSpacing:'.4px', marginBottom:4 }}>{s.sport}</div>
                       <h4 style={{ margin:0, color:C.textPrimary, fontSize:'1rem', fontWeight:800 }}>{s.court || 'Cancha por definir'}</h4>
                     </div>
-                    <span style={{ padding:'4px 10px', borderRadius:99, background:isFull?'rgba(239,68,68,0.12)':spotsLeft<=2?'rgba(245,158,11,0.12)':'rgba(0,208,132,0.12)', color:spotColor, fontSize:'.75rem', fontWeight:800, whiteSpace:'nowrap' }}>
+                    <span style={{ padding:'4px 10px', borderRadius:99, background:isFull?'rgba(239,68,68,0.12)':spotsLeft<=2?'rgba(245,158,11,0.12)':'rgba(37, 99, 235, 0.12)', color:spotColor, fontSize:'.75rem', fontWeight:800, whiteSpace:'nowrap' }}>
                       {isFull ? 'Completo' : `${spotsLeft} cupos`}
                     </span>
                   </div>

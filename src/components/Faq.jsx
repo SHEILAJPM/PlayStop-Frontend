@@ -6,15 +6,15 @@ const Faq = () => {
   const faqs = [
     {
       target: 'Jugadores',
-      color: '#00d084',
-      bg: 'rgba(0, 208, 132, 0.05)',
+      color: '#2563eb',
+      bg: 'rgba(37, 99, 235, 0.05)',
       question: "¿Cómo funciona el pago dividido?",
       answer: "Es muy fácil. Al hacer una reserva, pagas solo tu parte de la cuota. PlaySpot generará un enlace único que podrás enviar a tus amigos por WhatsApp. Ellos tendrán hasta 2 horas antes del partido para entrar al enlace y pagar su parte correspondiente. ¡Adiós a perseguir a los deudores!"
     },
     {
       target: 'Jugadores',
-      color: '#00d084',
-      bg: 'rgba(0, 208, 132, 0.05)',
+      color: '#2563eb',
+      bg: 'rgba(37, 99, 235, 0.05)',
       question: "¿Qué pasa si llueve o no podemos ir?",
       answer: "Puedes cancelar o reprogramar tu reserva desde la app sin ninguna penalidad hasta 12 horas antes del partido. Si el complejo deportivo cancela la reserva por motivos de fuerza mayor (como clima extremo), recibirás un reembolso automático del 100%."
     },
@@ -61,7 +61,7 @@ const Faq = () => {
             Preguntas Frecuentes
           </div>
           <h2 className="faq-title" style={{ fontSize: '3rem', color: '#0f172a', fontWeight: '900', margin: '0 0 16px 0', letterSpacing: '-1px' }}>
-            Resolvemos tus <span style={{ color: '#00d084' }}>dudas</span>
+            Resolvemos tus <span style={{ color: '#2563eb' }}>dudas</span>
           </h2>
           <p style={{ color: '#64748b', fontSize: '1.15rem', lineHeight: '1.6' }}>
             Todo lo que necesitas saber sobre PlaySpot, ya seas un jugador buscando cancha o un club optimizando sus reservas.

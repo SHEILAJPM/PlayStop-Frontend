@@ -144,27 +144,27 @@ const Login = ({ type, onLogin, darkMode = true }) => {
         }
         .dk-input::placeholder { color: ${dk ? 'rgba(255,255,255,.28)' : 'rgba(0,0,0,.35)'}; }
         .dk-input:focus {
-          border-color: #00d084;
-          background: rgba(0,208,132,.04);
-          box-shadow: 0 0 0 3px rgba(0,208,132,.12);
+          border-color: #2563eb;
+          background: rgba(37, 99, 235, .04);
+          box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
         }
         .dk-btn {
           width: 100%; padding: 14px;
-          background: linear-gradient(135deg,#00d084,#00b875);
+          background: linear-gradient(135deg,#2563eb,#1d4ed8);
           color: #0a1628; font-weight: 800; font-size: .97rem;
           border: none; border-radius: 12px; cursor: pointer;
-          transition: all .2s; box-shadow: 0 4px 20px rgba(0,208,132,.28);
+          transition: all .2s; box-shadow: 0 4px 20px rgba(37, 99, 235, .28);
           font-family: inherit;
         }
-        .dk-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(0,208,132,.42); }
+        .dk-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(37, 99, 235, .42); }
         .dk-btn:disabled { opacity: .5; cursor: wait; }
-        .dk-link { color: #00d084; font-size: .85rem; font-weight: 600; cursor: pointer; background: none; border: none; font-family: inherit; transition: opacity .15s; padding: 0; }
+        .dk-link { color: #2563eb; font-size: .85rem; font-weight: 600; cursor: pointer; background: none; border: none; font-family: inherit; transition: opacity .15s; padding: 0; }
         .dk-link:hover { opacity: .75; }
         .dk-label { color: ${dk ? 'rgba(255,255,255,.55)' : '#475569'}; font-size: .82rem; font-weight: 600; }
       `}</style>
 
       {/* Ambient glows */}
-      <div style={{ position: 'absolute', top: '8%', left: '15%', width: 480, height: 480, background: 'radial-gradient(circle, rgba(0,208,132,.07) 0%, transparent 70%)', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', top: '8%', left: '15%', width: 480, height: 480, background: 'radial-gradient(circle, rgba(37, 99, 235, .07) 0%, transparent 70%)', pointerEvents: 'none' }} />
       <div style={{ position: 'absolute', bottom: '10%', right: '12%', width: 360, height: 360, background: `radial-gradient(circle, ${dk ? 'rgba(59,130,246,.05)' : 'rgba(59,130,246,.08)'} 0%, transparent 70%)`, pointerEvents: 'none' }} />
 
       <div className="login-card" style={{
@@ -199,10 +199,10 @@ const Login = ({ type, onLogin, darkMode = true }) => {
         <div style={{ textAlign: 'center', marginBottom: 30 }}>
           <div style={{
             width: 50, height: 50, borderRadius: 14, margin: '0 auto 14px',
-            background: 'linear-gradient(135deg,#00d084,#00b875)',
+            background: 'linear-gradient(135deg,#2563eb,#1d4ed8)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontWeight: 900, fontSize: '1.35rem', color: '#0a1628',
-            boxShadow: '0 0 28px rgba(0,208,132,.4)',
+            boxShadow: '0 0 28px rgba(37, 99, 235, .4)',
           }}>P</div>
           <h2 style={{ margin: '0 0 6px', color: dk ? '#f1f5f9' : '#0f172a', fontSize: '1.5rem', fontWeight: 900, letterSpacing: '-.5px' }}>{title}</h2>
           <p style={{ margin: 0, color: dk ? 'rgba(255,255,255,.4)' : 'rgba(15,23,42,.55)', fontSize: '.88rem' }}>{subtitle}</p>

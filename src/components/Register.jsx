@@ -85,7 +85,7 @@ const Register = () => {
           @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
           @keyframes slideUp { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
           .auth-input { width: 100%; padding: 14px 18px; border-radius: 12px; border: 1px solid #cbd5e1; font-size: 1rem; transition: all 0.2s; box-sizing: border-box; }
-          .auth-input:focus { border-color: #00d084; box-shadow: 0 0 0 4px rgba(0, 208, 132, 0.1); outline: none; }
+          .auth-input:focus { border-color: #2563eb; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); outline: none; }
           
           /* Estilos para el selector de roles */
           .role-toggle-btn { flex: 1; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
@@ -98,7 +98,7 @@ const Register = () => {
       <div className="modal-container" style={{ backgroundColor: '#ffffff', padding: '48px 40px', borderRadius: '28px', width: '90%', maxWidth: '460px', position: 'relative', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)', animation: 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)', overflowY: 'auto', maxHeight: '90vh' }}>
         
         {/* Borde superior degradado */}
-        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '6px', background: 'linear-gradient(90deg, #00d084, #3b82f6)' }}></div>
+        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '6px', background: 'linear-gradient(90deg, #2563eb, #3b82f6)' }}></div>
         
         {/* Botón Cerrar */}
         <button onClick={() => navigate('/')} style={{ position: 'absolute', top: '24px', right: '24px', background: '#f1f5f9', border: 'none', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', color: '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s' }}>✖</button>
@@ -171,13 +171,13 @@ const Register = () => {
             </div>
           </div>
           
-          <button type="submit" disabled={loading} style={{ backgroundColor: '#00d084', color: '#0f172a', padding: '16px', borderRadius: '12px', border: 'none', fontWeight: '800', fontSize: '1.05rem', cursor: 'pointer', marginTop: '8px', transition: 'all 0.2s', boxShadow: '0 4px 6px -1px rgba(0, 208, 132, 0.3)' }}>
+          <button type="submit" disabled={loading} style={{ backgroundColor: '#2563eb', color: '#ffffff', padding: '16px', borderRadius: '12px', border: 'none', fontWeight: '800', fontSize: '1.05rem', cursor: 'pointer', marginTop: '8px', transition: 'all 0.2s', boxShadow: '0 4px 6px -1px rgba(37, 99, 235, 0.3)' }}>
             {loading ? (serverMsg || 'Procesando...') : `Registrarme como ${role}`}
           </button>
         </form>
 
         <p style={{ textAlign: 'center', marginTop: '24px', color: '#64748b', fontSize: '0.95rem' }}>
-          ¿Ya tienes una cuenta? <span onClick={() => navigate('/login')} style={{ color: '#00d084', fontWeight: '700', cursor: 'pointer' }}>Inicia sesión</span>
+          ¿Ya tienes una cuenta? <span onClick={() => navigate('/login')} style={{ color: '#2563eb', fontWeight: '700', cursor: 'pointer' }}>Inicia sesión</span>
         </p>
 
       </div>

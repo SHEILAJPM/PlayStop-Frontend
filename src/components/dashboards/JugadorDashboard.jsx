@@ -26,17 +26,17 @@ import EstadisticasTab from './tabs/EstadisticasTab.jsx';
 const JUGADOR_TOUR_STEPS = [
   { icon: 'bi-emoji-smile-fill', gradient: 'linear-gradient(135deg,#667eea,#764ba2)', shadowColor: 'rgba(102,126,234,0.4)', title: '¡Bienvenido a PlayStop!', description: 'Eres parte de la comunidad deportiva más grande del Perú. En menos de un minuto te mostramos todo lo que puedes hacer.', highlight: null },
   { icon: 'bi-search', gradient: 'linear-gradient(135deg,#3b82f6,#1d4ed8)', shadowColor: 'rgba(59,130,246,0.4)', title: 'Buscar Canchas', description: 'Encuentra canchas cerca de ti filtrando por deporte, ciudad y precio. Fútbol, tenis, pádel y más.', highlight: 'Buscar Canchas', tip: 'Haz clic en "Ver en mapa" para ver la ubicación exacta antes de reservar.' },
-  { icon: 'bi-calendar2-check-fill', gradient: 'linear-gradient(135deg,#00d084,#00b875)', shadowColor: 'rgba(0,208,132,0.4)', title: 'Mis Reservas', description: 'Consulta todas tus reservas activas. Desde aquí accedes al código QR de entrada y puedes cancelar con anticipación.', highlight: 'Mis Reservas', tip: 'Cancelas sin costo si lo haces con más de 24 horas de anticipación.' },
+  { icon: 'bi-calendar2-check-fill', gradient: 'linear-gradient(135deg,#2563eb,#1d4ed8)', shadowColor: 'rgba(37, 99, 235, 0.4)', title: 'Mis Reservas', description: 'Consulta todas tus reservas activas. Desde aquí accedes al código QR de entrada y puedes cancelar con anticipación.', highlight: 'Mis Reservas', tip: 'Cancelas sin costo si lo haces con más de 24 horas de anticipación.' },
   { icon: 'bi-trophy-fill', gradient: 'linear-gradient(135deg,#f59e0b,#d97706)', shadowColor: 'rgba(245,158,11,0.4)', title: 'Logros y Puntos', description: 'Cada partido que juegas te da puntos PlayStop. Sube de nivel y desbloquea recompensas exclusivas.', highlight: 'Logros' },
   { icon: 'bi-people-fill', gradient: 'linear-gradient(135deg,#8b5cf6,#6d28d9)', shadowColor: 'rgba(139,92,246,0.4)', title: 'Mis Amigos', description: 'Conecta con tus compañeros de equipo buscándolos por email. Organiza partidos y arma tu once titular.', highlight: 'Mis Amigos' },
-  { icon: 'bi-rocket-takeoff-fill', gradient: 'linear-gradient(135deg,#00d084,#3b82f6)', shadowColor: 'rgba(0,208,132,0.4)', title: '¡Todo listo para jugar!', description: 'Ya conoces PlayStop. Busca tu primera cancha y reserva en menos de 2 minutos. ¡Nos vemos en la cancha!', highlight: null },
+  { icon: 'bi-rocket-takeoff-fill', gradient: 'linear-gradient(135deg,#2563eb,#3b82f6)', shadowColor: 'rgba(37, 99, 235, 0.4)', title: '¡Todo listo para jugar!', description: 'Ya conoces PlayStop. Busca tu primera cancha y reserva en menos de 2 minutos. ¡Nos vemos en la cancha!', highlight: null },
 ];
 
 // ── Data helpers ──────────────────────────────────────────────────────────────
 const DEFAULT_IMG = 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=500&q=80';
 
 const STATUS_MAP = {
-  CONFIRMED: { label: 'Confirmada', color: '#00d084', bg: '#d1fae5' },
+  CONFIRMED: { label: 'Confirmada', color: '#2563eb', bg: '#d1fae5' },
   PENDING:   { label: 'Pendiente',  color: '#f59e0b', bg: '#fef3c7' },
   CANCELLED: { label: 'Cancelada',  color: '#ef4444', bg: '#fee2e2' },
   ATTENDED:  { label: 'Asistió',    color: '#8b5cf6', bg: '#ede9fe' },
@@ -402,8 +402,8 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
                 <span style={{ fontSize: '0.8rem', fontWeight: '600' }}>No se pudo cargar el QR</span>
               </div>
             </div>
-            <div style={{ background: 'linear-gradient(135deg,rgba(0,208,132,0.1),rgba(0,208,132,0.05))', border: '1px solid rgba(0,208,132,0.25)', borderRadius: '12px', padding: '12px 16px', marginBottom: '20px' }}>
-              <p style={{ margin: 0, fontSize: '0.82rem', color: '#065f46', fontWeight: '700' }}>
+            <div style={{ background: 'linear-gradient(135deg,rgba(37, 99, 235, 0.1),rgba(37, 99, 235, 0.05))', border: '1px solid rgba(37, 99, 235, 0.25)', borderRadius: '12px', padding: '12px 16px', marginBottom: '20px' }}>
+              <p style={{ margin: 0, fontSize: '0.82rem', color: '#1d4ed8', fontWeight: '700' }}>
                 <i className="bi bi-phone-fill" /> El propietario escaneará este código para confirmar tu asistencia
               </p>
             </div>
@@ -429,7 +429,7 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
                 <p style={{ margin: '0 0 10px', fontSize: '0.9rem', fontWeight: '800', color: C.textSecondary }}>¿Cómo fue tu experiencia?</p>
                 <StarRating value={reviewRating} onChange={setReviewRating} />
                 {reviewRating > 0 && (
-                  <p style={{ margin: '8px 0 0', fontSize: '0.82rem', color: ['','#ef4444','#f59e0b','#f59e0b','#00d084','#00d084'][reviewRating], fontWeight: 700 }}>
+                  <p style={{ margin: '8px 0 0', fontSize: '0.82rem', color: ['','#ef4444','#f59e0b','#f59e0b','#2563eb','#2563eb'][reviewRating], fontWeight: 700 }}>
                     {['','Muy malo','Regular','Bueno','Muy bueno','Excelente'][reviewRating]}
                   </p>
                 )}
@@ -446,7 +446,7 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
               </div>
 
               {reviewMsg && (
-                <div style={{ padding: '12px 16px', borderRadius: 12, background: reviewMsg.type === 'success' ? 'rgba(0,208,132,0.12)' : 'rgba(239,68,68,0.1)', border: `1px solid ${reviewMsg.type === 'success' ? 'rgba(0,208,132,0.35)' : 'rgba(239,68,68,0.3)'}`, color: reviewMsg.type === 'success' ? '#00d084' : '#ef4444', fontWeight: 700, fontSize: '0.88rem', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ padding: '12px 16px', borderRadius: 12, background: reviewMsg.type === 'success' ? 'rgba(37, 99, 235, 0.12)' : 'rgba(239,68,68,0.1)', border: `1px solid ${reviewMsg.type === 'success' ? 'rgba(37, 99, 235, 0.35)' : 'rgba(239,68,68,0.3)'}`, color: reviewMsg.type === 'success' ? '#2563eb' : '#ef4444', fontWeight: 700, fontSize: '0.88rem', display: 'flex', alignItems: 'center', gap: 8 }}>
                   <i className={`bi ${reviewMsg.type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill'}`} />
                   {reviewMsg.text}
                 </div>
@@ -500,7 +500,7 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
                       Se cancelará tu reserva en <strong style={{ color: '#7f1d1d' }}>{modal.payload?.court}</strong>.
                     </p>
                     {info && (
-                      <div style={{ padding: '10px 14px', borderRadius: 10, background: info.free ? 'rgba(0,208,132,0.12)' : 'rgba(245,158,11,0.12)', border: `1px solid ${info.free ? 'rgba(0,208,132,0.3)' : 'rgba(245,158,11,0.3)'}`, fontSize: '0.88rem', fontWeight: 700, color: info.free ? '#065f46' : '#92400e', display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <div style={{ padding: '10px 14px', borderRadius: 10, background: info.free ? 'rgba(37, 99, 235, 0.12)' : 'rgba(245,158,11,0.12)', border: `1px solid ${info.free ? 'rgba(37, 99, 235, 0.3)' : 'rgba(245,158,11,0.3)'}`, fontSize: '0.88rem', fontWeight: 700, color: info.free ? '#1d4ed8' : '#92400e', display: 'flex', alignItems: 'center', gap: 8 }}>
                         <i className={`bi ${info.free ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'}`} />
                         {info.free
                           ? `Cancelas gratis — faltan ${info.hours} horas para tu reserva`
@@ -542,7 +542,7 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
                             const isSelected = selectedSlot === s.hour;
                             return (
                               <button key={s.hour} type="button" disabled={!s.available} onClick={() => s.available && setSelectedSlot(s.hour)}
-                                style={{ padding: '10px 6px', borderRadius: '10px', border: isSelected ? '2px solid #00d084' : '2px solid transparent', background: isSelected ? 'linear-gradient(135deg,#0f172a,#1e3a5f)' : s.available ? '#f1f5f9' : '#f8fafc', color: isSelected ? '#00d084' : s.available ? '#334155' : '#cbd5e1', fontWeight: isSelected ? '800' : '700', fontSize: '0.82rem', cursor: s.available ? 'pointer' : 'not-allowed', transition: 'all 0.15s', textDecoration: !s.available ? 'line-through' : 'none', boxShadow: isSelected ? '0 4px 12px rgba(0,208,132,0.25)' : 'none' }}>
+                                style={{ padding: '10px 6px', borderRadius: '10px', border: isSelected ? '2px solid #2563eb' : '2px solid transparent', background: isSelected ? 'linear-gradient(135deg,#0f172a,#1e3a5f)' : s.available ? '#f1f5f9' : '#f8fafc', color: isSelected ? '#2563eb' : s.available ? '#334155' : '#cbd5e1', fontWeight: isSelected ? '800' : '700', fontSize: '0.82rem', cursor: s.available ? 'pointer' : 'not-allowed', transition: 'all 0.15s', textDecoration: !s.available ? 'line-through' : 'none', boxShadow: isSelected ? '0 4px 12px rgba(37, 99, 235, 0.25)' : 'none' }}>
                                 {`${String(s.hour).padStart(2,'0')}:00`}
                               </button>
                             );
@@ -556,7 +556,7 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
                     <span style={{ fontWeight: '900', color: C.textPrimary, fontSize: '1.1rem' }}>{modal.payload?.price}/hora</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <input type="checkbox" id="terms" checked={acceptedTerms} onChange={(e) => setAcceptedTerms(e.target.checked)} style={{ width: '20px', height: '20px', cursor: 'pointer', accentColor: '#00d084' }} />
+                    <input type="checkbox" id="terms" checked={acceptedTerms} onChange={(e) => setAcceptedTerms(e.target.checked)} style={{ width: '20px', height: '20px', cursor: 'pointer', accentColor: '#2563eb' }} />
                     <label htmlFor="terms" style={{ fontSize: '0.85rem', color: '#64748b', cursor: 'pointer' }}>
                       Acepto los <span style={{ color: '#3b82f6', textDecoration: 'underline' }}>Términos y Condiciones</span>.
                     </label>
@@ -579,7 +579,7 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
                     ))}
                     <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: `1px solid ${C.cardBorder}`, paddingTop: '8px', marginTop: '4px' }}>
                       <span style={{ fontSize: '0.95rem', fontWeight: '800', color: C.textPrimary }}>Total</span>
-                      <span style={{ fontSize: '1.1rem', fontWeight: '900', color: '#00d084' }}>{modal.payload?.price}</span>
+                      <span style={{ fontSize: '1.1rem', fontWeight: '900', color: '#2563eb' }}>{modal.payload?.price}</span>
                     </div>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -608,7 +608,7 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
 
               {modal.action === 'PAGO_CULQI' && paymentStage === 'processing' && (
                 <div style={{ textAlign: 'center', padding: '32px 0' }}>
-                  <div style={{ width: '64px', height: '64px', borderRadius: '50%', border: '4px solid #e2e8f0', borderTopColor: '#00d084', animation: 'spin 0.9s linear infinite', margin: '0 auto 24px' }} />
+                  <div style={{ width: '64px', height: '64px', borderRadius: '50%', border: '4px solid #e2e8f0', borderTopColor: '#2563eb', animation: 'spin 0.9s linear infinite', margin: '0 auto 24px' }} />
                   <h3 style={{ margin: '0 0 8px', color: C.textPrimary, fontWeight: '900', fontSize: '1.3rem' }}>Procesando pago...</h3>
                   <p style={{ margin: 0, color: C.textSecondary, fontSize: '0.9rem', animation: 'pulse 1.8s ease-in-out infinite' }}>Por favor espera, estamos verificando tu transacción.</p>
                 </div>
@@ -617,7 +617,7 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
               {modal.action === 'PAGO_CULQI' && paymentStage === 'success' && confirmedReservation && (
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ width: '72px', height: '72px', borderRadius: '50%', backgroundColor: '#d1fae5', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', animation: 'popIn 0.4s cubic-bezier(0.34,1.56,0.64,1)' }}>
-                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#00d084" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                   </div>
                   <h2 style={{ margin: '0 0 6px', color: C.textPrimary, fontWeight: '900', fontSize: '1.6rem' }}>¡Reserva confirmada!</h2>
                   <p style={{ margin: '0 0 24px', color: C.textSecondary, fontSize: '0.95rem' }}>Revisa tu correo — te enviamos los detalles y tu código QR de entrada.</p>

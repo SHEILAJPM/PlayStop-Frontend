@@ -50,22 +50,22 @@ const BuscarCanchasTab = ({ canchas, loadingCanchas, errorCanchas, favoritosIds,
         .filter-card { background:${darkMode ? '#0f172a' : '#fff'}; border-radius:20px; padding:24px; border:1px solid ${darkMode ? '#1e293b' : '#e2e8f0'}; box-shadow:0 1px 3px rgba(0,0,0,0.05); }
         .filter-label { font-size:0.78rem; font-weight:800; color:${darkMode ? '#94a3b8' : '#64748b'}; text-transform:uppercase; letter-spacing:0.6px; margin-bottom:8px; display:block; }
         .filter-input { width:100%; padding:11px 14px; border-radius:10px; border:1.5px solid ${darkMode ? '#1e293b' : '#e2e8f0'}; font-size:0.95rem; outline:none; background:${darkMode ? '#020617' : '#f8fafc'}; color:${darkMode ? '#f8fafc' : '#0f172a'}; box-sizing:border-box; transition:border-color 0.2s; }
-        .filter-input:focus { border-color:#00d084; background:${darkMode ? '#0f172a' : '#fff'}; }
+        .filter-input:focus { border-color:#2563eb; background:${darkMode ? '#0f172a' : '#fff'}; }
         .sport-chip { padding:8px 16px; border-radius:99px; border:none; font-size:0.82rem; font-weight:700; cursor:pointer; transition:all 0.18s; white-space:nowrap; }
-        .sport-chip.active { background:${darkMode ? '#00d084' : '#0f172a'}; color:${darkMode ? '#0f172a' : '#fff'}; box-shadow:0 4px 12px rgba(15,23,42,0.25); }
+        .sport-chip.active { background:${darkMode ? '#2563eb' : '#0f172a'}; color:${darkMode ? '#0f172a' : '#fff'}; box-shadow:0 4px 12px rgba(15,23,42,0.25); }
         .sport-chip.inactive { background:${darkMode ? '#1e293b' : '#f1f5f9'}; color:${darkMode ? '#94a3b8' : '#475569'}; }
         .sport-chip.inactive:hover { background:${darkMode ? '#334155' : '#e2e8f0'}; color:${darkMode ? '#f8fafc' : '#0f172a'}; }
-        .range-track { width:100%; height:4px; border-radius:2px; background: linear-gradient(to right, ${darkMode ? '#1e293b' : '#e2e8f0'} 0%, ${darkMode ? '#1e293b' : '#e2e8f0'} var(--min-pct), #00d084 var(--min-pct), #00d084 var(--max-pct), ${darkMode ? '#1e293b' : '#e2e8f0'} var(--max-pct), ${darkMode ? '#1e293b' : '#e2e8f0'} 100%); }
+        .range-track { width:100%; height:4px; border-radius:2px; background: linear-gradient(to right, ${darkMode ? '#1e293b' : '#e2e8f0'} 0%, ${darkMode ? '#1e293b' : '#e2e8f0'} var(--min-pct), #2563eb var(--min-pct), #2563eb var(--max-pct), ${darkMode ? '#1e293b' : '#e2e8f0'} var(--max-pct), ${darkMode ? '#1e293b' : '#e2e8f0'} 100%); }
         input[type=range] { -webkit-appearance:none; appearance:none; width:100%; height:4px; background:transparent; outline:none; margin:0; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:${darkMode ? '#00d084' : '#0f172a'}; cursor:pointer; border:2px solid ${darkMode ? '#020617' : '#fff'}; box-shadow:0 2px 6px rgba(0,0,0,0.2); }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:${darkMode ? '#2563eb' : '#0f172a'}; cursor:pointer; border:2px solid ${darkMode ? '#020617' : '#fff'}; box-shadow:0 2px 6px rgba(0,0,0,0.2); }
       `}</style>
 
       <div style={{ borderRadius: '24px', background: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f4c75 100%)', padding: '36px 32px', marginBottom: '28px', position: 'relative', overflow: 'hidden', animation: 'heroSlide 0.5s ease' }}>
-        <div style={{ position: 'absolute', top: '-40px', right: '-40px', width: '200px', height: '200px', borderRadius: '50%', background: 'rgba(0,208,132,0.08)' }} />
+        <div style={{ position: 'absolute', top: '-40px', right: '-40px', width: '200px', height: '200px', borderRadius: '50%', background: 'rgba(37, 99, 235, 0.08)' }} />
         <div style={{ position: 'absolute', bottom: '-60px', right: '80px', width: '150px', height: '150px', borderRadius: '50%', background: 'rgba(59,130,246,0.08)' }} />
         <div style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-            <span style={{ background: 'rgba(0,208,132,0.2)', color: '#00d084', padding: '4px 12px', borderRadius: '99px', fontSize: '0.78rem', fontWeight: '800', letterSpacing: '0.5px' }}>
+            <span style={{ background: 'rgba(37, 99, 235, 0.2)', color: '#2563eb', padding: '4px 12px', borderRadius: '99px', fontSize: '0.78rem', fontWeight: '800', letterSpacing: '0.5px' }}>
               {canchas.length} canchas disponibles
             </span>
           </div>
@@ -150,7 +150,7 @@ const BuscarCanchasTab = ({ canchas, loadingCanchas, errorCanchas, favoritosIds,
           </div>
 
           <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e3a5f)', borderRadius: '16px', padding: '16px', textAlign: 'center' }}>
-            <div style={{ fontSize: '1.8rem', fontWeight: '900', color: '#00d084' }}>{filteredCanchas.length}</div>
+            <div style={{ fontSize: '1.8rem', fontWeight: '900', color: '#2563eb' }}>{filteredCanchas.length}</div>
             <div style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.7)', fontWeight: '600' }}>canchas encontradas</div>
           </div>
         </div>
@@ -173,17 +173,17 @@ const BuscarCanchasTab = ({ canchas, loadingCanchas, errorCanchas, favoritosIds,
               {totalPages > 1 && (
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', marginTop: '28px', flexWrap: 'wrap' }}>
                   <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-                    style={{ padding: '8px 14px', borderRadius: '10px', border: '1.5px solid', borderColor: page === 1 ? (darkMode ? '#1e293b' : '#e2e8f0') : '#00d084', background: 'transparent', color: page === 1 ? '#475569' : '#00d084', fontWeight: '700', cursor: page === 1 ? 'not-allowed' : 'pointer', fontSize: '0.85rem' }}>
+                    style={{ padding: '8px 14px', borderRadius: '10px', border: '1.5px solid', borderColor: page === 1 ? (darkMode ? '#1e293b' : '#e2e8f0') : '#2563eb', background: 'transparent', color: page === 1 ? '#475569' : '#2563eb', fontWeight: '700', cursor: page === 1 ? 'not-allowed' : 'pointer', fontSize: '0.85rem' }}>
                     ← Anterior
                   </button>
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
                     <button key={n} onClick={() => setPage(n)}
-                      style={{ width: '36px', height: '36px', borderRadius: '10px', border: '1.5px solid', borderColor: n === page ? '#00d084' : (darkMode ? '#1e293b' : '#e2e8f0'), background: n === page ? '#00d084' : 'transparent', color: n === page ? '#0f172a' : (darkMode ? '#94a3b8' : '#64748b'), fontWeight: '800', cursor: 'pointer', fontSize: '0.85rem' }}>
+                      style={{ width: '36px', height: '36px', borderRadius: '10px', border: '1.5px solid', borderColor: n === page ? '#2563eb' : (darkMode ? '#1e293b' : '#e2e8f0'), background: n === page ? '#2563eb' : 'transparent', color: n === page ? '#0f172a' : (darkMode ? '#94a3b8' : '#64748b'), fontWeight: '800', cursor: 'pointer', fontSize: '0.85rem' }}>
                       {n}
                     </button>
                   ))}
                   <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-                    style={{ padding: '8px 14px', borderRadius: '10px', border: '1.5px solid', borderColor: page === totalPages ? (darkMode ? '#1e293b' : '#e2e8f0') : '#00d084', background: 'transparent', color: page === totalPages ? '#475569' : '#00d084', fontWeight: '700', cursor: page === totalPages ? 'not-allowed' : 'pointer', fontSize: '0.85rem' }}>
+                    style={{ padding: '8px 14px', borderRadius: '10px', border: '1.5px solid', borderColor: page === totalPages ? (darkMode ? '#1e293b' : '#e2e8f0') : '#2563eb', background: 'transparent', color: page === totalPages ? '#475569' : '#2563eb', fontWeight: '700', cursor: page === totalPages ? 'not-allowed' : 'pointer', fontSize: '0.85rem' }}>
                     Siguiente →
                   </button>
                 </div>

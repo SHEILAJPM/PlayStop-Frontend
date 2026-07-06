@@ -48,13 +48,13 @@ const Navbar = ({ darkMode, toggleTheme }) => {
         body.dark  .nav-link:hover { color: #fff; background: rgba(255,255,255,.07); }
         body.light .nav-link:hover { color: #0f172a; background: rgba(0,0,0,.05); }
         .nav-cta {
-          background: linear-gradient(135deg,#00d084,#00b875);
-          color: #0a1628; font-weight: 800; font-size: .88rem;
+          background: linear-gradient(135deg,#2563eb,#1d4ed8);
+          color: #ffffff; font-weight: 800; font-size: .88rem;
           padding: 9px 20px; border-radius: 10px; border: none;
           cursor: pointer; transition: all .2s;
-          box-shadow: 0 0 20px rgba(0,208,132,.25); font-family: inherit;
+          box-shadow: 0 0 20px rgba(37, 99, 235, .25); font-family: inherit;
         }
-        .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(0,208,132,.4); }
+        .nav-cta:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 8px 28px rgba(37, 99, 235, .5); }
         body.dark  .nav-login { color: rgba(255,255,255,.7); background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); }
         body.light .nav-login { color: #334155; background: rgba(0,0,0,.04); border: 1px solid rgba(0,0,0,.1); }
         .nav-login {
@@ -101,13 +101,13 @@ const Navbar = ({ darkMode, toggleTheme }) => {
         >
           <div style={{
             width: 34, height: 34, borderRadius: 9, flexShrink: 0,
-            background: 'linear-gradient(135deg,#00d084,#00b875)',
+            background: 'linear-gradient(135deg,#2563eb,#1d4ed8)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontWeight: 900, color: '#0a1628', fontSize: '.95rem',
-            boxShadow: '0 0 16px rgba(0,208,132,.4)',
+            fontWeight: 900, color: '#ffffff', fontSize: '.95rem',
+            boxShadow: '0 0 16px rgba(37, 99, 235, .4)',
           }}>P</div>
           <span style={{ color: darkMode ? '#fff' : '#0f172a', fontWeight: 900, fontSize: '1.2rem', letterSpacing: '-.5px', transition: 'color .3s' }}>
-            Play<span style={{ color: '#00d084' }}>Stop</span>
+            Play<span style={{ color: '#2563eb' }}>Stop</span>
           </span>
         </div>
 
@@ -117,7 +117,7 @@ const Navbar = ({ darkMode, toggleTheme }) => {
             <a key={l.label} href={l.href} className="nav-link">{l.label}</a>
           ))}
           <button className="nav-link" onClick={() => navigate('/matchmaking')} style={{ background:'none', border:'none', cursor:'pointer' }}>Matchmaking</button>
-          <button className="nav-link" onClick={() => navigate('/torneos')} style={{ background:'none', border:'none', cursor:'pointer', color:'#00d084', fontWeight:700 }}>🏆 Torneos</button>
+          <button className="nav-link" onClick={() => navigate('/torneos')} style={{ background:'none', border:'none', cursor:'pointer', color:'#2563eb', fontWeight:700 }}>🏆 Torneos</button>
         </nav>
 
         {/* Desktop actions */}
@@ -172,7 +172,7 @@ const Navbar = ({ darkMode, toggleTheme }) => {
             </a>
           ))}
           <button className="nav-link" onClick={() => { setMenuOpen(false); navigate('/matchmaking'); }} style={{ background:'none', border:'none', cursor:'pointer', textAlign:'left', fontSize:'1rem', padding:'12px 14px' }}>Matchmaking</button>
-          <button className="nav-link" onClick={() => { setMenuOpen(false); navigate('/torneos'); }} style={{ background:'none', border:'none', cursor:'pointer', textAlign:'left', fontSize:'1rem', padding:'12px 14px', color:'#00d084', fontWeight:700 }}>🏆 Torneos</button>
+          <button className="nav-link" onClick={() => { setMenuOpen(false); navigate('/torneos'); }} style={{ background:'none', border:'none', cursor:'pointer', textAlign:'left', fontSize:'1rem', padding:'12px 14px', color:'#2563eb', fontWeight:700 }}>🏆 Torneos</button>
           <div style={{ height: 1, background: 'rgba(255,255,255,.08)', margin: '6px 0' }} />
           {installPrompt && !installed && (
             <button onClick={() => { setMenuOpen(false); handleInstall(); }} style={{

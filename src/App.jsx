@@ -37,7 +37,7 @@ const Torneos             = lazy(() => import('./pages/Torneos.jsx'));
 function PageLoader() {
   return (
     <div style={{ minHeight: '100vh', background: '#030712', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 16 }}>
-      <div style={{ width: 44, height: 44, borderRadius: '50%', border: '3px solid #1e293b', borderTop: '3px solid #00d084', animation: 'spin 0.8s linear infinite' }} />
+      <div style={{ width: 44, height: 44, borderRadius: '50%', border: '3px solid #1e293b', borderTop: '3px solid #2563eb', animation: 'spin 0.8s linear infinite' }} />
       <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
       <p style={{ color: '#475569', fontWeight: 600, margin: 0 }}>Cargando...</p>
     </div>

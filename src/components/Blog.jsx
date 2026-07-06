@@ -16,7 +16,7 @@ const Blog = () => (
             <div style={{ padding: '24px' }}>
               <p style={{ margin: '0 0 8px 0', fontSize: '0.85rem', color: '#64748b', fontWeight: '600' }}>{post.date}</p>
               <h3 style={{ margin: '0 0 16px 0', fontSize: '1.2rem', color: '#0f172a', fontWeight: '800' }}>{post.title}</h3>
-              <span style={{ color: '#00d084', fontWeight: '700', fontSize: '0.95rem' }}>Leer artículo →</span>
+              <span style={{ color: '#2563eb', fontWeight: '700', fontSize: '0.95rem' }}>Leer artículo →</span>
             </div>
           </div>
         ))}

@@ -129,7 +129,7 @@ function ComparadorModal({ courts, onClose, onBook }) {
                       <div style={{ padding: '10px 12px 14px' }}>
                         <p style={{ margin: '0 0 4px', color: '#f1f5f9', fontWeight: 800, fontSize: '0.9rem', lineHeight: 1.2 }}>{c.name}</p>
                         <button onClick={() => onBook(c.id)}
-                          style={{ marginTop: 6, padding: '7px 14px', background: 'linear-gradient(135deg,#00d084,#00b875)', color: '#0a1628', border: 'none', borderRadius: 8, fontWeight: 800, fontSize: '0.78rem', cursor: 'pointer', width: '100%' }}>
+                          style={{ marginTop: 6, padding: '7px 14px', background: 'linear-gradient(135deg,#2563eb,#1d4ed8)', color: '#ffffff', border: 'none', borderRadius: 8, fontWeight: 800, fontSize: '0.78rem', cursor: 'pointer', width: '100%' }}>
                           Reservar →
                         </button>
                       </div>

@@ -35,9 +35,9 @@ const PerfilTab = ({ user, avatarUrl, setAvatarUrl, darkMode, C }) => {
 
   const msgStyle = (msg) => ({
     padding: '12px 16px', borderRadius: '12px',
-    background: msg.type === 'success' ? 'rgba(0,208,132,0.12)' : 'rgba(239,68,68,0.1)',
-    border: `1px solid ${msg.type === 'success' ? 'rgba(0,208,132,0.35)' : 'rgba(239,68,68,0.3)'}`,
-    color: msg.type === 'success' ? '#00d084' : '#ef4444',
+    background: msg.type === 'success' ? 'rgba(37, 99, 235, 0.12)' : 'rgba(239,68,68,0.1)',
+    border: `1px solid ${msg.type === 'success' ? 'rgba(37, 99, 235, 0.35)' : 'rgba(239,68,68,0.3)'}`,
+    color: msg.type === 'success' ? '#2563eb' : '#ef4444',
     fontWeight: '700', fontSize: '0.88rem', display: 'flex', alignItems: 'center', gap: 8, animation: 'slideUp 0.3s ease',
   });
 
@@ -45,14 +45,14 @@ const PerfilTab = ({ user, avatarUrl, setAvatarUrl, darkMode, C }) => {
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '24px', alignItems: 'start' }}>
       {/* Personal info card */}
       <div className="dashboard-card-ps" style={{ padding: 0, overflow: 'hidden' }}>
-        <div style={{ height: '120px', background: 'linear-gradient(135deg, rgba(0,208,132,0.8) 0%, rgba(59,130,246,0.8) 100%)' }} />
+        <div style={{ height: '120px', background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.8) 0%, rgba(59,130,246,0.8) 100%)' }} />
         <div style={{ padding: '0 32px 32px 32px', marginTop: '-40px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
             <div style={{
               width: '100px', height: '100px', borderRadius: '50%', backgroundColor: '#0f172a',
               backgroundImage: `url(${avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.nombre || user?.name || 'U')}&background=0f172a&color=fff&size=150`})`,
               backgroundSize: 'cover', backgroundPosition: 'center',
-              boxShadow: '0 4px 10px rgba(0,0,0,0.2)', border: '3px solid #00d084',
+              boxShadow: '0 4px 10px rgba(0,0,0,0.2)', border: '3px solid #2563eb',
             }} />
             <div>
               <label htmlFor="profile-pic" className="btn-secondary-ps" style={{ padding: '8px 16px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem' }}>
@@ -147,8 +147,8 @@ const PerfilTab = ({ user, avatarUrl, setAvatarUrl, darkMode, C }) => {
             </div>
             {pwdMsg && <div style={msgStyle(pwdMsg)}><i className={`bi ${pwdMsg.type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill'}`} />{pwdMsg.text}</div>}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', backgroundColor: C.infoBg, padding: '16px', borderRadius: '12px', border: `1px dashed ${C.infoBorder}` }}>
-              <span style={{ fontSize: '0.85rem', color: C.textSecondary, display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600' }}><span style={{ color: '#00d084', fontSize: '1.2rem' }}>✓</span> Mínimo 8 caracteres</span>
-              <span style={{ fontSize: '0.85rem', color: C.textSecondary, display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600' }}><span style={{ color: '#00d084', fontSize: '1.2rem' }}>✓</span> Al menos un número y un símbolo especial</span>
+              <span style={{ fontSize: '0.85rem', color: C.textSecondary, display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600' }}><span style={{ color: '#2563eb', fontSize: '1.2rem' }}>✓</span> Mínimo 8 caracteres</span>
+              <span style={{ fontSize: '0.85rem', color: C.textSecondary, display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600' }}><span style={{ color: '#2563eb', fontSize: '1.2rem' }}>✓</span> Al menos un número y un símbolo especial</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
               <button type="submit" className="btn-dark-ps" style={{ padding: '12px 24px' }} disabled={pwdSaving}>

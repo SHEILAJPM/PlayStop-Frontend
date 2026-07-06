@@ -63,9 +63,9 @@ const Testimonios = () => {
       
       <div style={{ textAlign: 'center', maxWidth: '750px', margin: '0 auto 60px auto', padding: '0 5%' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '20px' }}>
-          <div style={{ width: '36px', height: '3px', borderRadius: '2px', background: 'linear-gradient(90deg, transparent, #00d084)' }} />
-          <span style={{ color: '#00d084', fontWeight: '700', fontSize: '0.8rem', letterSpacing: '2.5px', textTransform: 'uppercase' }}>Comunidad PlayStop</span>
-          <div style={{ width: '36px', height: '3px', borderRadius: '2px', background: 'linear-gradient(90deg, #00d084, transparent)' }} />
+          <div style={{ width: '36px', height: '3px', borderRadius: '2px', background: 'linear-gradient(90deg, transparent, #2563eb)' }} />
+          <span style={{ color: '#2563eb', fontWeight: '700', fontSize: '0.8rem', letterSpacing: '2.5px', textTransform: 'uppercase' }}>Comunidad PlayStop</span>
+          <div style={{ width: '36px', height: '3px', borderRadius: '2px', background: 'linear-gradient(90deg, #2563eb, transparent)' }} />
         </div>
         <h2 style={{ fontSize: '3.5rem', color: '#ffffff', fontWeight: '900', marginBottom: '20px', letterSpacing: '-1.5px', lineHeight: '1.1' }}>Lo que dicen <span style={{ color: '#f59e0b' }}>nuestros usuarios</span></h2>
         <p style={{ color: '#94a3b8', fontSize: '1.15rem', lineHeight: '1.7' }}>Miles de jugadores y administradores ya están revolucionando su forma de vivir y gestionar el deporte.</p>
@@ -84,7 +84,7 @@ const Testimonios = () => {
             <div 
               key={index} 
               style={{ width: '380px', padding: '40px', background: 'linear-gradient(145deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.5) 100%)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', borderRadius: '24px', border: '1px solid rgba(255, 255, 255, 0.05)', borderTop: '1px solid rgba(255, 255, 255, 0.15)', boxShadow: '0 20px 40px -10px rgba(0,0,0,0.5)', flexShrink: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)', cursor: 'pointer', position: 'relative', overflow: 'hidden' }} 
-              onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-12px)'; e.currentTarget.style.background = 'linear-gradient(145deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.8) 100%)'; e.currentTarget.style.borderColor = 'rgba(0, 208, 132, 0.4)'; e.currentTarget.style.boxShadow = '0 30px 60px -15px rgba(0, 208, 132, 0.25)'; }} 
+              onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-12px)'; e.currentTarget.style.background = 'linear-gradient(145deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.8) 100%)'; e.currentTarget.style.borderColor = 'rgba(37, 99, 235, 0.4)'; e.currentTarget.style.boxShadow = '0 30px 60px -15px rgba(37, 99, 235, 0.25)'; }} 
               onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.background = 'linear-gradient(145deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.5) 100%)'; e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.05)'; e.currentTarget.style.borderTopColor = 'rgba(255, 255, 255, 0.15)'; e.currentTarget.style.boxShadow = '0 20px 40px -10px rgba(0,0,0,0.5)'; }}
             >
               {/* Comilla Decorativa de Marca de Agua */}
@@ -101,7 +101,7 @@ const Testimonios = () => {
               
               {/* Información del Usuario */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px', position: 'relative', zIndex: 1 }}>
-                <img src={testimonio.image} alt={testimonio.author} style={{ width: '52px', height: '52px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #00d084', boxShadow: '0 0 12px rgba(0, 208, 132, 0.4)' }} />
+                <img src={testimonio.image} alt={testimonio.author} style={{ width: '52px', height: '52px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #2563eb', boxShadow: '0 0 12px rgba(37, 99, 235, 0.4)' }} />
                 <div>
                   <h4 style={{ margin: '0 0 4px 0', fontSize: '1.05rem', color: '#ffffff', fontWeight: '800', letterSpacing: '-0.3px' }}>{testimonio.author}</h4>
                   <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{testimonio.role}</p>

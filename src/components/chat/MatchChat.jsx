@@ -125,7 +125,7 @@ export default function MatchChat({ match, currentUser, onClose, darkMode = true
 
         {/* Header */}
         <div style={{ background:C.header, borderBottom:`1px solid ${C.border}`, padding:'14px 18px', display:'flex', alignItems:'center', gap:12 }}>
-          <div style={{ width:42, height:42, borderRadius:'50%', background:'linear-gradient(135deg,#00d084,#3b82f6)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.1rem', flexShrink:0 }}>
+          <div style={{ width:42, height:42, borderRadius:'50%', background:'linear-gradient(135deg,#2563eb,#3b82f6)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.1rem', flexShrink:0 }}>
             ⚽
           </div>
           <div style={{ flex:1, minWidth:0 }}>
@@ -142,9 +142,9 @@ export default function MatchChat({ match, currentUser, onClose, darkMode = true
         </div>
 
         {/* Banner */}
-        <div style={{ background: darkMode ? 'rgba(0,208,132,0.06)' : '#f0fdf4', borderBottom:`1px solid ${C.border}`, padding:'5px 18px', display:'flex', alignItems:'center', gap:6 }}>
-          <i className="bi bi-chat-dots-fill" style={{ color:'#00d084', fontSize:'0.75rem' }} />
-          <span style={{ fontSize:'0.7rem', color: darkMode ? '#6ee7b7' : '#059669' }}>
+        <div style={{ background: darkMode ? 'rgba(37, 99, 235, 0.06)' : '#eff6ff', borderBottom:`1px solid ${C.border}`, padding:'5px 18px', display:'flex', alignItems:'center', gap:6 }}>
+          <i className="bi bi-chat-dots-fill" style={{ color:'#2563eb', fontSize:'0.75rem' }} />
+          <span style={{ fontSize:'0.7rem', color: darkMode ? '#93c5fd' : '#1d4ed8' }}>
             Chat del equipo · visible para todos los participantes del partido
           </span>
         </div>
@@ -155,7 +155,7 @@ export default function MatchChat({ match, currentUser, onClose, darkMode = true
             <div style={{ textAlign:'center', color:C.muted, paddingTop:40 }}>
               <div style={{ display:'flex', justifyContent:'center', gap:5, marginBottom:8 }}>
                 {[0,160,320].map(d => (
-                  <span key={d} style={{ width:8, height:8, borderRadius:'50%', background:'#00d084', display:'inline-block', animation:`mcDot 1s ease ${d}ms infinite` }} />
+                  <span key={d} style={{ width:8, height:8, borderRadius:'50%', background:'#2563eb', display:'inline-block', animation:`mcDot 1s ease ${d}ms infinite` }} />
                 ))}
               </div>
               <span style={{ fontSize:'0.82rem' }}>Cargando mensajes...</span>
@@ -189,7 +189,7 @@ export default function MatchChat({ match, currentUser, onClose, darkMode = true
                 )}
                 <div style={{ maxWidth:'72%', display:'flex', flexDirection:'column', alignItems: mine ? 'flex-end' : 'flex-start' }}>
                   {!mine && <span style={{ fontSize:'0.68rem', color:C.muted, marginBottom:3, fontWeight:700 }}>{msg.senderName}</span>}
-                  <div style={{ padding:'9px 13px', borderRadius: mine ? '16px 16px 4px 16px' : '16px 16px 16px 4px', background: mine ? 'linear-gradient(135deg,#00d084,#00b875)' : C.their, color: mine ? '#0f172a' : C.theirTxt, fontSize:'0.87rem', lineHeight:1.45, wordBreak:'break-word', opacity: msg.optimistic ? 0.7 : 1, boxShadow: mine ? '0 3px 10px rgba(0,208,132,0.25)' : 'none' }}>
+                  <div style={{ padding:'9px 13px', borderRadius: mine ? '16px 16px 4px 16px' : '16px 16px 16px 4px', background: mine ? 'linear-gradient(135deg,#2563eb,#1d4ed8)' : C.their, color: mine ? '#0f172a' : C.theirTxt, fontSize:'0.87rem', lineHeight:1.45, wordBreak:'break-word', opacity: msg.optimistic ? 0.7 : 1, boxShadow: mine ? '0 3px 10px rgba(37, 99, 235, 0.25)' : 'none' }}>
                     {msg.content}
                   </div>
                   <span style={{ fontSize:'0.62rem', color:C.muted, marginTop:3 }}>{fmtTime(msg.sentAt)}</span>
@@ -218,11 +218,11 @@ export default function MatchChat({ match, currentUser, onClose, darkMode = true
               rows={1}
               placeholder="Escribe un mensaje... (Enter para enviar)"
               style={{ flex:1, resize:'none', padding:'9px 12px', borderRadius:12, border:`1.5px solid ${C.border}`, background:C.input, color:C.text, fontSize:'0.87rem', outline:'none', lineHeight:1.4, maxHeight:80, overflowY:'auto', fontFamily:'inherit', boxSizing:'border-box' }}
-              onFocus={e => { e.target.style.borderColor = '#00d084'; }}
+              onFocus={e => { e.target.style.borderColor = '#2563eb'; }}
               onBlur={e => { e.target.style.borderColor = C.border; }}
             />
             <button onClick={handleSend} disabled={!input.trim() || sending}
-              style={{ width:40, height:40, borderRadius:'50%', border:'none', background: input.trim() && !sending ? 'linear-gradient(135deg,#00d084,#00b875)' : (darkMode ? '#1e293b' : '#e2e8f0'), color: input.trim() && !sending ? '#0f172a' : C.muted, cursor: input.trim() && !sending ? 'pointer' : 'not-allowed', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1rem', flexShrink:0, boxShadow: input.trim() ? '0 4px 12px rgba(0,208,132,0.3)' : 'none', transition:'all 0.18s' }}>
+              style={{ width:40, height:40, borderRadius:'50%', border:'none', background: input.trim() && !sending ? 'linear-gradient(135deg,#2563eb,#1d4ed8)' : (darkMode ? '#1e293b' : '#e2e8f0'), color: input.trim() && !sending ? '#0f172a' : C.muted, cursor: input.trim() && !sending ? 'pointer' : 'not-allowed', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1rem', flexShrink:0, boxShadow: input.trim() ? '0 4px 12px rgba(37, 99, 235, 0.3)' : 'none', transition:'all 0.18s' }}>
               <i className="bi bi-send-fill" />
             </button>
           </div>

@@ -7,12 +7,12 @@ import MatchChat from '../components/chat/MatchChat.jsx';
 function JoinSuccessToast({ match, onClose }) {
   useEffect(() => { const t = setTimeout(onClose, 5000); return () => clearTimeout(t); }, [onClose]);
   return (
-    <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 9999, background: '#0f172a', border: '1px solid #00d084', borderRadius: 16, padding: '16px 20px', boxShadow: '0 8px 32px rgba(0,208,132,0.25)', maxWidth: 340, animation: 'slideUp 0.3s ease' }}>
+    <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 9999, background: '#0f172a', border: '1px solid #2563eb', borderRadius: 16, padding: '16px 20px', boxShadow: '0 8px 32px rgba(37, 99, 235, 0.25)', maxWidth: 340, animation: 'slideUp 0.3s ease' }}>
       <style>{`@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}`}</style>
-      <p style={{ margin: '0 0 4px', color: '#00d084', fontWeight: 800, fontSize: '0.95rem' }}>✓ ¡Te uniste al partido!</p>
+      <p style={{ margin: '0 0 4px', color: '#2563eb', fontWeight: 800, fontSize: '0.95rem' }}>✓ ¡Te uniste al partido!</p>
       <p style={{ margin: '0 0 12px', color: '#94a3b8', fontSize: '0.82rem' }}>{match?.courtName} · {match?.date}</p>
       <div style={{ display: 'flex', gap: 8 }}>
-        <Link to="/dashboard" style={{ flex: 1, textAlign: 'center', padding: '8px', background: 'rgba(0,208,132,0.15)', color: '#00d084', borderRadius: 8, fontWeight: 700, fontSize: '0.82rem', textDecoration: 'none' }}>
+        <Link to="/dashboard" style={{ flex: 1, textAlign: 'center', padding: '8px', background: 'rgba(37, 99, 235, 0.15)', color: '#2563eb', borderRadius: 8, fontWeight: 700, fontSize: '0.82rem', textDecoration: 'none' }}>
           Ver mis reservas →
         </Link>
         <button onClick={onClose} style={{ padding: '8px 12px', background: 'transparent', border: '1px solid #1e293b', borderRadius: 8, color: '#475569', cursor: 'pointer', fontSize: '0.82rem' }}>✕</button>
@@ -37,7 +37,7 @@ function SplitPaymentModal({ match, onConfirm, onClose, loading }) {
     { id: 'yape',   label: 'Yape',    icon: '📱', color: '#7c3aed' },
     { id: 'plin',   label: 'Plin',    icon: '💙', color: '#3b82f6' },
     { id: 'card',   label: 'Tarjeta', icon: '💳', color: '#0f172a' },
-    { id: 'cash',   label: 'Efectivo al llegar', icon: '💵', color: '#00d084' },
+    { id: 'cash',   label: 'Efectivo al llegar', icon: '💵', color: '#2563eb' },
   ];
 
   return (
@@ -50,7 +50,7 @@ function SplitPaymentModal({ match, onConfirm, onClose, loading }) {
         </div>
 
         {/* Match summary */}
-        <div style={{ background:'rgba(0,208,132,0.06)', border:'1px solid rgba(0,208,132,0.18)', borderRadius:14, padding:'14px 16px', marginBottom:22 }}>
+        <div style={{ background:'rgba(37, 99, 235, 0.06)', border:'1px solid rgba(37, 99, 235, 0.18)', borderRadius:14, padding:'14px 16px', marginBottom:22 }}>
           <div style={{ display:'flex', justifyContent:'space-between', marginBottom:8 }}>
             <span style={{ color:'#64748b', fontSize:'0.82rem' }}>Partido</span>
             <span style={{ color:'#f1f5f9', fontWeight:700, fontSize:'0.82rem' }}>{match.sportType} · {match.courtName}</span>
@@ -59,9 +59,9 @@ function SplitPaymentModal({ match, onConfirm, onClose, loading }) {
             <span style={{ color:'#64748b', fontSize:'0.82rem' }}>Jugadores</span>
             <span style={{ color:'#f1f5f9', fontWeight:700, fontSize:'0.82rem' }}>{match.currentPlayers + 1}/{match.totalPlayers}</span>
           </div>
-          <div style={{ borderTop:'1px solid rgba(0,208,132,0.15)', paddingTop:10, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+          <div style={{ borderTop:'1px solid rgba(37, 99, 235, 0.15)', paddingTop:10, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
             <span style={{ color:'#94a3b8', fontWeight:700, fontSize:'0.88rem' }}>Tu parte</span>
-            <span style={{ color:'#00d084', fontWeight:900, fontSize:'1.5rem' }}>S/ {price}</span>
+            <span style={{ color:'#2563eb', fontWeight:900, fontSize:'1.5rem' }}>S/ {price}</span>
           </div>
         </div>
 
@@ -83,7 +83,7 @@ function SplitPaymentModal({ match, onConfirm, onClose, loading }) {
         )}
 
         <button onClick={() => onConfirm(method)} disabled={loading}
-          style={{ width:'100%', padding:14, background: loading ? '#1e293b' : 'linear-gradient(135deg,#00d084,#00b875)', color: loading ? '#475569' : '#0a1628', border:'none', borderRadius:12, fontWeight:800, fontSize:'0.95rem', cursor: loading ? 'not-allowed' : 'pointer', boxShadow: loading ? 'none' : '0 6px 16px rgba(0,208,132,0.3)' }}>
+          style={{ width:'100%', padding:14, background: loading ? '#1e293b' : 'linear-gradient(135deg,#2563eb,#1d4ed8)', color: loading ? '#475569' : '#0a1628', border:'none', borderRadius:12, fontWeight:800, fontSize:'0.95rem', cursor: loading ? 'not-allowed' : 'pointer', boxShadow: loading ? 'none' : '0 6px 16px rgba(37, 99, 235, 0.3)' }}>
           {loading ? 'Procesando...' : `Confirmar y unirme · S/ ${price}`}
         </button>
       </div>
@@ -124,7 +124,7 @@ function ShareButtons({ match }) {
       </button>
       <button onClick={handleCopy}
         title="Copiar enlace"
-        style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, padding: '8px', background: copied ? 'rgba(0,208,132,0.12)' : 'rgba(100,116,139,0.1)', border: `1px solid ${copied ? 'rgba(0,208,132,0.3)' : '#1e293b'}`, borderRadius: 9, color: copied ? '#00d084' : '#64748b', fontWeight: 700, fontSize: '0.78rem', cursor: 'pointer', transition: 'all 0.2s' }}>
+        style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, padding: '8px', background: copied ? 'rgba(37, 99, 235, 0.12)' : 'rgba(100,116,139,0.1)', border: `1px solid ${copied ? 'rgba(37, 99, 235, 0.3)' : '#1e293b'}`, borderRadius: 9, color: copied ? '#2563eb' : '#64748b', fontWeight: 700, fontSize: '0.78rem', cursor: 'pointer', transition: 'all 0.2s' }}>
         {copied
           ? <><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg> ¡Copiado!</>
           : <><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copiar</>
@@ -154,11 +154,11 @@ function MatchCard({ match, user, onJoin, onCancel, onChatOpen }) {
       {/* Court image strip */}
       <div style={{ height: 110, backgroundImage: `url(${match.courtImageUrl || 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=400&q=60'})`, backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}>
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top,rgba(10,22,40,1) 0%,transparent 60%)' }} />
-        <div style={{ position: 'absolute', top: 10, right: 10, background: isFull ? 'rgba(239,68,68,0.9)' : 'rgba(0,208,132,0.9)', color: isFull ? '#fff' : '#0a1628', borderRadius: 20, padding: '4px 10px', fontSize: '0.72rem', fontWeight: 800 }}>
+        <div style={{ position: 'absolute', top: 10, right: 10, background: isFull ? 'rgba(239,68,68,0.9)' : 'rgba(37, 99, 235, 0.9)', color: isFull ? '#fff' : '#0a1628', borderRadius: 20, padding: '4px 10px', fontSize: '0.72rem', fontWeight: 800 }}>
           {isFull ? 'Completo' : `${match.spotsLeft} lugar${match.spotsLeft !== 1 ? 'es' : ''} libre${match.spotsLeft !== 1 ? 's' : ''}`}
         </div>
         <div style={{ position: 'absolute', bottom: 10, left: 14 }}>
-          <span style={{ background: 'rgba(0,208,132,0.2)', border: '1px solid rgba(0,208,132,0.4)', color: '#00d084', borderRadius: 12, padding: '3px 10px', fontSize: '0.72rem', fontWeight: 700 }}>
+          <span style={{ background: 'rgba(37, 99, 235, 0.2)', border: '1px solid rgba(37, 99, 235, 0.4)', color: '#2563eb', borderRadius: 12, padding: '3px 10px', fontSize: '0.72rem', fontWeight: 700 }}>
             {match.sportType}
           </span>
         </div>
@@ -189,11 +189,11 @@ function MatchCard({ match, user, onJoin, onCancel, onChatOpen }) {
             <span style={{ color: '#f1f5f9', fontSize: '0.75rem', fontWeight: 700 }}>{match.currentPlayers}/{match.totalPlayers}</span>
           </div>
           <div style={{ height: 6, background: '#1e293b', borderRadius: 6, overflow: 'hidden' }}>
-            <div style={{ height: '100%', width: `${pct}%`, background: isFull ? '#ef4444' : pct >= 75 ? '#f59e0b' : '#00d084', borderRadius: 6, transition: 'width 0.3s' }} />
+            <div style={{ height: '100%', width: `${pct}%`, background: isFull ? '#ef4444' : pct >= 75 ? '#f59e0b' : '#2563eb', borderRadius: 6, transition: 'width 0.3s' }} />
           </div>
           <div style={{ display: 'flex', gap: 6, marginTop: 8, flexWrap: 'wrap' }}>
             {Array.from({ length: match.totalPlayers }).map((_, i) => (
-              <div key={i} style={{ width: 26, height: 26, borderRadius: '50%', background: i < match.currentPlayers ? '#00d084' : '#1e293b', border: `2px solid ${i < match.currentPlayers ? '#00d084' : '#334155'}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div key={i} style={{ width: 26, height: 26, borderRadius: '50%', background: i < match.currentPlayers ? '#2563eb' : '#1e293b', border: `2px solid ${i < match.currentPlayers ? '#2563eb' : '#334155'}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {i < match.currentPlayers && <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0a1628" strokeWidth="3" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>}
               </div>
             ))}
@@ -204,7 +204,7 @@ function MatchCard({ match, user, onJoin, onCancel, onChatOpen }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
           <div>
             <p style={{ margin: '0 0 2px', color: '#475569', fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase' }}>Precio p/ jugador</p>
-            <p style={{ margin: 0, color: '#00d084', fontWeight: 900, fontSize: '1.1rem' }}>S/ {parseFloat(match.pricePerPlayer).toFixed(0)}</p>
+            <p style={{ margin: 0, color: '#2563eb', fontWeight: 900, fontSize: '1.1rem' }}>S/ {parseFloat(match.pricePerPlayer).toFixed(0)}</p>
           </div>
           <div style={{ textAlign: 'right' }}>
             <p style={{ margin: '0 0 2px', color: '#475569', fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase' }}>Organizador</p>
@@ -231,7 +231,7 @@ function MatchCard({ match, user, onJoin, onCancel, onChatOpen }) {
             </button>
           ) : !isFull ? (
             <button onClick={() => onJoin(match.id)}
-              style={{ width: '100%', padding: '10px', background: 'linear-gradient(135deg,#00d084,#00b875)', color: '#0a1628', border: 'none', borderRadius: 10, fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,208,132,0.3)' }}>
+              style={{ width: '100%', padding: '10px', background: 'linear-gradient(135deg,#2563eb,#1d4ed8)', color: '#ffffff', border: 'none', borderRadius: 10, fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer', boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)' }}>
               Unirme al partido →
             </button>
           ) : (
@@ -239,7 +239,7 @@ function MatchCard({ match, user, onJoin, onCancel, onChatOpen }) {
           )
         )}
         {!user && !isFull && (
-          <Link to="/login" style={{ display: 'block', textAlign: 'center', padding: '10px', background: 'linear-gradient(135deg,#00d084,#00b875)', color: '#0a1628', borderRadius: 10, fontWeight: 800, fontSize: '0.9rem', textDecoration: 'none' }}>
+          <Link to="/login" style={{ display: 'block', textAlign: 'center', padding: '10px', background: 'linear-gradient(135deg,#2563eb,#1d4ed8)', color: '#ffffff', borderRadius: 10, fontWeight: 800, fontSize: '0.9rem', textDecoration: 'none' }}>
             Iniciar sesión para unirme
           </Link>
         )}
@@ -343,7 +343,7 @@ function CreateMatchModal({ courts, onClose, onCreate }) {
           {error && <p style={{ color: '#ef4444', fontSize: '0.82rem', margin: 0 }}>{error}</p>}
 
           <button type="submit" disabled={submitting}
-            style={{ padding: '14px', background: 'linear-gradient(135deg,#00d084,#00b875)', color: '#0a1628', border: 'none', borderRadius: 12, fontWeight: 800, fontSize: '0.95rem', cursor: submitting ? 'not-allowed' : 'pointer', boxShadow: '0 6px 16px rgba(0,208,132,0.3)', opacity: submitting ? 0.7 : 1 }}>
+            style={{ padding: '14px', background: 'linear-gradient(135deg,#2563eb,#1d4ed8)', color: '#ffffff', border: 'none', borderRadius: 12, fontWeight: 800, fontSize: '0.95rem', cursor: submitting ? 'not-allowed' : 'pointer', boxShadow: '0 6px 16px rgba(37, 99, 235, 0.3)', opacity: submitting ? 0.7 : 1 }}>
             {submitting ? 'Publicando...' : 'Publicar partido ⚽'}
           </button>
         </form>
@@ -409,13 +409,13 @@ export default function Matchmaking() {
     <div style={{ minHeight: '100vh', background: '#030712', color: '#f1f5f9' }}>
       {/* Header */}
       <div style={{ background: '#0a1628', borderBottom: '1px solid #1e293b', padding: '14px 24px', display: 'flex', alignItems: 'center', gap: 12 }}>
-        <Link to="/" style={{ color: '#00d084', fontWeight: 900, fontSize: '1.2rem', textDecoration: 'none' }}>PlayStop</Link>
+        <Link to="/" style={{ color: '#2563eb', fontWeight: 900, fontSize: '1.2rem', textDecoration: 'none' }}>PlayStop</Link>
         <span style={{ color: '#475569' }}>/</span>
         <span style={{ color: '#f1f5f9', fontWeight: 700 }}>Buscar Jugadores</span>
         <div style={{ flex: 1 }} />
         {user?.role === 'USER' && (
           <button onClick={() => setShowCreate(true)}
-            style={{ background: 'linear-gradient(135deg,#00d084,#00b875)', color: '#0a1628', border: 'none', borderRadius: 10, padding: '9px 18px', fontWeight: 800, fontSize: '0.88rem', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,208,132,0.3)' }}>
+            style={{ background: 'linear-gradient(135deg,#2563eb,#1d4ed8)', color: '#ffffff', border: 'none', borderRadius: 10, padding: '9px 18px', fontWeight: 800, fontSize: '0.88rem', cursor: 'pointer', boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)' }}>
             + Publicar partido
           </button>
         )}
@@ -424,11 +424,11 @@ export default function Matchmaking() {
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 24px' }}>
         {/* Hero text */}
         <div style={{ textAlign: 'center', marginBottom: 40 }}>
-          <div style={{ display: 'inline-block', background: 'rgba(0,208,132,0.1)', border: '1px solid rgba(0,208,132,0.25)', color: '#00d084', borderRadius: 20, padding: '5px 16px', fontSize: '0.8rem', fontWeight: 700, marginBottom: 14, textTransform: 'uppercase', letterSpacing: '1px' }}>
+          <div style={{ display: 'inline-block', background: 'rgba(37, 99, 235, 0.1)', border: '1px solid rgba(37, 99, 235, 0.25)', color: '#2563eb', borderRadius: 20, padding: '5px 16px', fontSize: '0.8rem', fontWeight: 700, marginBottom: 14, textTransform: 'uppercase', letterSpacing: '1px' }}>
             Matchmaking
           </div>
           <h1 style={{ margin: '0 0 12px', fontSize: '2.5rem', fontWeight: 900, letterSpacing: '-1px' }}>
-            Únete a un <span style={{ color: '#00d084' }}>partido</span>
+            Únete a un <span style={{ color: '#2563eb' }}>partido</span>
           </h1>
           <p style={{ margin: 0, color: '#64748b', fontSize: '1rem', maxWidth: 500, marginLeft: 'auto', marginRight: 'auto' }}>
             Jugadores buscando completar su equipo. Únete y divide el costo de la cancha.
@@ -439,7 +439,7 @@ export default function Matchmaking() {
         <div style={{ display: 'flex', gap: 8, marginBottom: 28, flexWrap: 'wrap', justifyContent: 'center' }}>
           {sports.map(s => (
             <button key={s} onClick={() => setSportFilter(s)}
-              style={{ padding: '7px 16px', borderRadius: 20, border: sportFilter === s ? '1px solid #00d084' : '1px solid #1e293b', background: sportFilter === s ? 'rgba(0,208,132,0.15)' : '#0a1628', color: sportFilter === s ? '#00d084' : '#64748b', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer', transition: 'all 0.15s' }}>
+              style={{ padding: '7px 16px', borderRadius: 20, border: sportFilter === s ? '1px solid #2563eb' : '1px solid #1e293b', background: sportFilter === s ? 'rgba(37, 99, 235, 0.15)' : '#0a1628', color: sportFilter === s ? '#2563eb' : '#64748b', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer', transition: 'all 0.15s' }}>
               {s}
             </button>
           ))}
@@ -447,7 +447,7 @@ export default function Matchmaking() {
 
         {loading ? (
           <div style={{ textAlign: 'center', padding: '60px 0' }}>
-            <div style={{ width: 40, height: 40, border: '3px solid #1e293b', borderTop: '3px solid #00d084', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 16px' }} />
+            <div style={{ width: 40, height: 40, border: '3px solid #1e293b', borderTop: '3px solid #2563eb', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 16px' }} />
             <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
             <p style={{ color: '#64748b' }}>Cargando partidos...</p>
           </div>
@@ -458,7 +458,7 @@ export default function Matchmaking() {
             <p style={{ color: '#64748b', margin: '0 0 24px' }}>Sé el primero en publicar un partido para este deporte</p>
             {user?.role === 'USER' && (
               <button onClick={() => setShowCreate(true)}
-                style={{ background: 'linear-gradient(135deg,#00d084,#00b875)', color: '#0a1628', border: 'none', borderRadius: 12, padding: '12px 24px', fontWeight: 800, cursor: 'pointer' }}>
+                style={{ background: 'linear-gradient(135deg,#2563eb,#1d4ed8)', color: '#ffffff', border: 'none', borderRadius: 12, padding: '12px 24px', fontWeight: 800, cursor: 'pointer' }}>
                 Publicar partido
               </button>
             )}

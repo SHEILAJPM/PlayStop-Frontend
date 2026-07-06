@@ -79,7 +79,7 @@ const ToastItem = ({ toast, onDismiss, onOpenChat, bg, border, text, muted, dark
         transform: visible ? 'translateX(0)' : 'translateX(360px)',
         opacity: visible ? 1 : 0,
         transition: 'transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease',
-        borderLeft: `4px solid #00d084`,
+        borderLeft: `4px solid #2563eb`,
       }}
     >
       {/* Avatar / ícono */}
@@ -98,7 +98,7 @@ const ToastItem = ({ toast, onDismiss, onOpenChat, bg, border, text, muted, dark
           {toast.title}
         </div>
         {isChat && toast.senderRole && (
-          <div style={{ fontSize: '0.68rem', color: '#00d084', fontWeight: 700, marginBottom: 4 }}>
+          <div style={{ fontSize: '0.68rem', color: '#2563eb', fontWeight: 700, marginBottom: 4 }}>
             {roleInfo.label}
           </div>
         )}
@@ -127,7 +127,7 @@ const ToastItem = ({ toast, onDismiss, onOpenChat, bg, border, text, muted, dark
               padding: '5px 12px',
               borderRadius: 8,
               border: 'none',
-              background: 'linear-gradient(135deg,#00d084,#00b875)',
+              background: 'linear-gradient(135deg,#2563eb,#1d4ed8)',
               color: '#0f172a',
               fontSize: '0.75rem',
               fontWeight: 800,

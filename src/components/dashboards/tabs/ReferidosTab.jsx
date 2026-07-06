@@ -41,9 +41,9 @@ const ReferidosTab = ({ user }) => {
 
   return (
     <div style={{ maxWidth: 640, margin: '0 auto' }}>
-      <div style={{ background: 'linear-gradient(135deg,rgba(59,130,246,0.15),rgba(0,208,132,0.1))', border: '1px solid rgba(59,130,246,0.25)', borderRadius: 20, padding: '28px 24px', marginBottom: 24 }}>
+      <div style={{ background: 'linear-gradient(135deg,rgba(59,130,246,0.15),rgba(37, 99, 235, 0.1))', border: '1px solid rgba(59,130,246,0.25)', borderRadius: 20, padding: '28px 24px', marginBottom: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 16 }}>
-          <div style={{ width: 52, height: 52, borderRadius: '50%', background: 'linear-gradient(135deg,#3b82f6,#00d084)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <div style={{ width: 52, height: 52, borderRadius: '50%', background: 'linear-gradient(135deg,#3b82f6,#2563eb)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <i className="bi bi-gift-fill" style={{ color: '#fff', fontSize: '1.4rem' }} />
           </div>
           <div>
@@ -58,7 +58,7 @@ const ReferidosTab = ({ user }) => {
             { icon: 'bi-trophy-fill',       value: 'S/ 10',                                            label: 'Por cada reserva' },
           ].map(({ icon, value, label }) => (
             <div key={label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: '14px', textAlign: 'center' }}>
-              <i className={`bi ${icon}`} style={{ color: '#00d084', fontSize: '1.3rem', display: 'block', marginBottom: 6 }} />
+              <i className={`bi ${icon}`} style={{ color: '#2563eb', fontSize: '1.3rem', display: 'block', marginBottom: 6 }} />
               <p style={{ margin: '0 0 2px', fontWeight: 900, fontSize: '1.2rem' }}>{value}</p>
               <p style={{ margin: 0, color: '#64748b', fontSize: '0.72rem', fontWeight: 700 }}>{label}</p>
             </div>
@@ -69,11 +69,11 @@ const ReferidosTab = ({ user }) => {
       <div style={{ background: 'rgba(15,23,42,0.8)', border: '1px solid #1e293b', borderRadius: 18, padding: '22px', marginBottom: 20 }}>
         <p style={{ margin: '0 0 10px', color: '#94a3b8', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Tu código de referido</p>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-          <div style={{ flex: 1, background: '#030712', border: '1px solid #334155', borderRadius: 12, padding: '14px 18px', fontFamily: 'monospace', fontSize: '1.4rem', fontWeight: 900, letterSpacing: '0.2em', color: '#00d084', textAlign: 'center' }}>
+          <div style={{ flex: 1, background: '#030712', border: '1px solid #334155', borderRadius: 12, padding: '14px 18px', fontFamily: 'monospace', fontSize: '1.4rem', fontWeight: 900, letterSpacing: '0.2em', color: '#2563eb', textAlign: 'center' }}>
             {loading ? '...' : info?.referralCode ?? '—'}
           </div>
           <button onClick={copyCode} aria-label="Copiar código"
-            style={{ background: copied ? 'rgba(0,208,132,0.2)' : '#1e293b', border: `1px solid ${copied ? '#00d084' : '#334155'}`, color: copied ? '#00d084' : '#94a3b8', borderRadius: 12, padding: '14px 16px', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700, fontSize: '0.85rem', whiteSpace: 'nowrap' }}>
+            style={{ background: copied ? 'rgba(37, 99, 235, 0.2)' : '#1e293b', border: `1px solid ${copied ? '#2563eb' : '#334155'}`, color: copied ? '#2563eb' : '#94a3b8', borderRadius: 12, padding: '14px 16px', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700, fontSize: '0.85rem', whiteSpace: 'nowrap' }}>
             <i className={`bi ${copied ? 'bi-check-lg' : 'bi-clipboard'}`} />
             {copied ? 'Copiado!' : 'Copiar'}
           </button>
@@ -98,7 +98,7 @@ const ReferidosTab = ({ user }) => {
           <input value={code} onChange={e => setCode(e.target.value.toUpperCase())} placeholder="XXXXXXXX"
             maxLength={12} style={{ flex: 1, background: '#030712', border: '1px solid #1e293b', borderRadius: 10, color: '#f1f5f9', padding: '11px 14px', fontSize: '1rem', fontFamily: 'monospace', letterSpacing: '0.1em', outline: 'none', boxSizing: 'border-box', fontWeight: 700 }} />
           <button type="submit" disabled={applying || !code.trim()}
-            style={{ background: code.trim() ? 'linear-gradient(135deg,#00d084,#00b875)' : '#1e293b', color: code.trim() ? '#0a1628' : '#475569', border: 'none', borderRadius: 10, padding: '11px 18px', fontWeight: 800, cursor: code.trim() ? 'pointer' : 'not-allowed', fontSize: '0.88rem' }}>
+            style={{ background: code.trim() ? 'linear-gradient(135deg,#2563eb,#1d4ed8)' : '#1e293b', color: code.trim() ? '#0a1628' : '#475569', border: 'none', borderRadius: 10, padding: '11px 18px', fontWeight: 800, cursor: code.trim() ? 'pointer' : 'not-allowed', fontSize: '0.88rem' }}>
             {applying ? 'Aplicando...' : 'Aplicar'}
           </button>
         </form>

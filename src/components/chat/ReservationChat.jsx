@@ -111,7 +111,7 @@ const ReservationChat = ({ reservationId, reservationInfo, currentUser, onClose,
     textPrimary: darkMode ? '#f8fafc' : '#0f172a',
     textMuted:   darkMode ? '#64748b' : '#94a3b8',
     inputBg:     darkMode ? '#020617' : '#f1f5f9',
-    myBubble:    'linear-gradient(135deg,#00d084,#00b875)',
+    myBubble:    'linear-gradient(135deg,#2563eb,#1d4ed8)',
     theirBubble: darkMode ? '#1e293b' : '#f1f5f9',
     theirText:   darkMode ? '#f8fafc' : '#0f172a',
     quickBg:     darkMode ? '#1e293b' : '#f8fafc',
@@ -391,7 +391,7 @@ const ReservationChat = ({ reservationId, reservationInfo, currentUser, onClose,
             fontSize: '0.88rem',
             lineHeight: '1.45',
             wordBreak: 'break-word',
-            boxShadow: mine ? '0 3px 10px rgba(0,208,132,0.28)' : darkMode ? '0 2px 6px rgba(0,0,0,0.3)' : '0 1px 4px rgba(0,0,0,0.07)',
+            boxShadow: mine ? '0 3px 10px rgba(37, 99, 235, 0.28)' : darkMode ? '0 2px 6px rgba(0,0,0,0.3)' : '0 1px 4px rgba(0,0,0,0.07)',
             transition: 'box-shadow 0.2s',
           }}>
             {msg.content}
@@ -451,10 +451,10 @@ const ReservationChat = ({ reservationId, reservationInfo, currentUser, onClose,
         }}>
           <div style={{
             width: 42, height: 42, borderRadius: '50%', flexShrink: 0,
-            background: 'linear-gradient(135deg,#00d084,#3b82f6)',
+            background: 'linear-gradient(135deg,#2563eb,#3b82f6)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: '1.15rem',
-            boxShadow: '0 3px 10px rgba(0,208,132,0.3)',
+            boxShadow: '0 3px 10px rgba(37, 99, 235, 0.3)',
           }}>
             <i className="bi bi-chat-dots-fill" style={{ color: '#fff' }} />
           </div>
@@ -469,9 +469,9 @@ const ReservationChat = ({ reservationId, reservationInfo, currentUser, onClose,
           <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
             <span style={{
               width: 9, height: 9, borderRadius: '50%',
-              background: connected ? '#00d084' : '#ef4444',
+              background: connected ? '#2563eb' : '#ef4444',
               display: 'inline-block',
-              boxShadow: connected ? '0 0 6px rgba(0,208,132,0.6)' : 'none',
+              boxShadow: connected ? '0 0 6px rgba(37, 99, 235, 0.6)' : 'none',
               transition: 'background 0.3s',
             }} />
             <span style={{ fontSize: '0.7rem', color: C.textMuted }}>
@@ -520,7 +520,7 @@ const ReservationChat = ({ reservationId, reservationInfo, currentUser, onClose,
 
           {!loading && messages.length === 0 && (
             <div style={{ textAlign: 'center', color: C.textMuted, paddingTop: 40 }}>
-              <div style={{ fontSize: '2.8rem', color: '#00d084', animation: 'fadeInScale 0.5s ease' }}>
+              <div style={{ fontSize: '2.8rem', color: '#2563eb', animation: 'fadeInScale 0.5s ease' }}>
                 <i className="bi bi-chat-heart" />
               </div>
               <div style={{ fontWeight: 800, fontSize: '0.96rem', marginTop: 12, color: C.textPrimary }}>
@@ -599,7 +599,7 @@ const ReservationChat = ({ reservationId, reservationInfo, currentUser, onClose,
                   transition: 'all 0.15s',
                   whiteSpace: 'nowrap',
                 }}
-                onMouseOver={e => { e.currentTarget.style.borderColor = '#00d084'; e.currentTarget.style.color = '#00d084'; e.currentTarget.style.background = 'rgba(0,208,132,0.06)'; }}
+                onMouseOver={e => { e.currentTarget.style.borderColor = '#2563eb'; e.currentTarget.style.color = '#2563eb'; e.currentTarget.style.background = 'rgba(37, 99, 235, 0.06)'; }}
                 onMouseOut={e => { e.currentTarget.style.borderColor = C.quickBorder; e.currentTarget.style.color = C.textPrimary; e.currentTarget.style.background = 'transparent'; }}>
                 {reply}
               </button>
@@ -653,9 +653,9 @@ const ReservationChat = ({ reservationId, reservationInfo, currentUser, onClose,
             title="Respuestas rápidas"
             style={{
               width: 38, height: 38, borderRadius: '50%',
-              border: `1.5px solid ${showQuickReplies ? '#00d084' : C.border}`,
-              background: showQuickReplies ? 'rgba(0,208,132,0.1)' : 'transparent',
-              color: showQuickReplies ? '#00d084' : C.textMuted,
+              border: `1.5px solid ${showQuickReplies ? '#2563eb' : C.border}`,
+              background: showQuickReplies ? 'rgba(37, 99, 235, 0.1)' : 'transparent',
+              color: showQuickReplies ? '#2563eb' : C.textMuted,
               cursor: isSuspendedOrBanned ? 'not-allowed' : 'pointer',
               flexShrink: 0,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -693,7 +693,7 @@ const ReservationChat = ({ reservationId, reservationInfo, currentUser, onClose,
                 cursor: isSuspendedOrBanned ? 'not-allowed' : 'text',
                 transition: 'border-color 0.15s',
               }}
-              onFocus={e => { if (!isSuspendedOrBanned) e.target.style.borderColor = '#00d084'; }}
+              onFocus={e => { if (!isSuspendedOrBanned) e.target.style.borderColor = '#2563eb'; }}
               onBlur={e => { e.target.style.borderColor = C.border; }}
             />
             {input.length > MAX_CHARS * 0.8 && (
@@ -714,7 +714,7 @@ const ReservationChat = ({ reservationId, reservationInfo, currentUser, onClose,
               width: 42, height: 42, borderRadius: '50%',
               border: 'none', flexShrink: 0,
               background: input.trim() && connected && !isSuspendedOrBanned
-                ? 'linear-gradient(135deg,#00d084,#00b875)'
+                ? 'linear-gradient(135deg,#2563eb,#1d4ed8)'
                 : (darkMode ? '#1e293b' : '#e2e8f0'),
               color: input.trim() && connected && !isSuspendedOrBanned
                 ? '#0f172a' : C.textMuted,
@@ -723,7 +723,7 @@ const ReservationChat = ({ reservationId, reservationInfo, currentUser, onClose,
               fontSize: '1.1rem',
               transition: 'all 0.18s',
               boxShadow: input.trim() && connected && !isSuspendedOrBanned
-                ? '0 4px 14px rgba(0,208,132,0.35)' : 'none',
+                ? '0 4px 14px rgba(37, 99, 235, 0.35)' : 'none',
               animation: sendingAnim ? 'sendPop 0.3s ease' : 'none',
               transform: 'translateZ(0)',
             }}>

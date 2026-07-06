@@ -47,12 +47,12 @@ const CanchasDestacadas = () => {
         }
         .cancha-card:hover {
           transform: translateY(-10px);
-          border-color: rgba(0,208,132,0.35);
-          box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,208,132,0.15), 0 0 40px -10px rgba(0,208,132,0.2);
+          border-color: rgba(37, 99, 235, 0.35);
+          box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(37, 99, 235, 0.15), 0 0 40px -10px rgba(37, 99, 235, 0.2);
           background: rgba(255,255,255,0.07);
         }
         .cancha-btn {
-          background: linear-gradient(135deg, #00d084 0%, #00b875 100%);
+          background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
           color: #0a1628;
           border: none;
           padding: 11px 22px;
@@ -60,12 +60,12 @@ const CanchasDestacadas = () => {
           font-weight: 700;
           cursor: pointer;
           transition: all 0.25s ease;
-          box-shadow: 0 4px 14px rgba(0,208,132,0.35);
+          box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
           font-size: 0.9rem;
         }
         .cancha-btn:hover {
           transform: translateY(-2px);
-          box-shadow: 0 10px 24px rgba(0,208,132,0.5);
+          box-shadow: 0 10px 24px rgba(37, 99, 235, 0.5);
         }
         .ver-todas-btn {
           padding: 12px 24px;
@@ -80,15 +80,15 @@ const CanchasDestacadas = () => {
         }
         .ver-todas-btn:hover {
           background: rgba(255,255,255,0.1);
-          border-color: rgba(0,208,132,0.4);
-          color: #00d084;
+          border-color: rgba(37, 99, 235, 0.4);
+          color: #2563eb;
         }
       `}</style>
 
       {/* Orbs de fondo decorativos */}
       <div style={{
         position: 'absolute', top: '10%', left: '5%', width: '400px', height: '400px',
-        background: 'radial-gradient(circle, rgba(0,208,132,0.06) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(37, 99, 235, 0.06) 0%, transparent 70%)',
         borderRadius: '50%', pointerEvents: 'none'
       }} />
       <div style={{
@@ -102,14 +102,14 @@ const CanchasDestacadas = () => {
           <div>
             {/* Label decorativo con línea verde */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
-              <div style={{ width: '36px', height: '3px', borderRadius: '2px', background: 'linear-gradient(90deg, #00d084, transparent)' }} />
-              <span style={{ color: '#00d084', fontWeight: '700', fontSize: '0.8rem', letterSpacing: '2.5px', textTransform: 'uppercase' }}>
+              <div style={{ width: '36px', height: '3px', borderRadius: '2px', background: 'linear-gradient(90deg, #2563eb, transparent)' }} />
+              <span style={{ color: '#2563eb', fontWeight: '700', fontSize: '0.8rem', letterSpacing: '2.5px', textTransform: 'uppercase' }}>
                 Top Valoradas
               </span>
             </div>
             <h2 style={{ fontSize: '3rem', color: '#f1f5f9', fontWeight: '900', margin: 0, letterSpacing: '-1.5px', lineHeight: 1.1 }}>
               Canchas <span style={{
-                background: 'linear-gradient(90deg, #00d084 0%, #34d399 100%)',
+                background: 'linear-gradient(90deg, #2563eb 0%, #38bdf8 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text'
@@ -139,7 +139,7 @@ const CanchasDestacadas = () => {
                 </div>
               </div>
               <div style={{ padding: '22px' }}>
-                <p style={{ margin: '0 0 6px 0', fontSize: '0.78rem', color: '#00d084', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.8px' }}>{cancha.type}</p>
+                <p style={{ margin: '0 0 6px 0', fontSize: '0.78rem', color: '#2563eb', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.8px' }}>{cancha.type}</p>
                 <h3 style={{ margin: '0 0 18px 0', fontSize: '1.2rem', fontWeight: '800', color: '#f1f5f9', letterSpacing: '-0.3px' }}>{cancha.name}</h3>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>

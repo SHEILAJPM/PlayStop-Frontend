@@ -60,12 +60,12 @@ function JoinModal({ tournament, onClose, onConfirm, loading }) {
           <button onClick={onClose} style={{ background:'none', border:'none', color:'#64748b', cursor:'pointer', fontSize:'1.2rem' }}>✕</button>
         </div>
 
-        <div style={{ background:'rgba(0,208,132,0.06)', border:'1px solid rgba(0,208,132,0.18)', borderRadius:14, padding:'14px 16px', marginBottom:22 }}>
+        <div style={{ background:'rgba(37, 99, 235, 0.06)', border:'1px solid rgba(37, 99, 235, 0.18)', borderRadius:14, padding:'14px 16px', marginBottom:22 }}>
           <div style={{ fontSize:'1.1rem', fontWeight:900, color:'#f1f5f9', marginBottom:6 }}>{SPORT_ICONS[tournament.sportType] || '🏆'} {tournament.name}</div>
           <div style={{ display:'flex', gap:16, flexWrap:'wrap' }}>
             <span style={{ color:'#64748b', fontSize:'0.82rem' }}>📅 {fmtDate(tournament.startDate)}</span>
             <span style={{ color:'#64748b', fontSize:'0.82rem' }}>📍 {tournament.courtDistrict}</span>
-            <span style={{ color:'#00d084', fontSize:'0.82rem', fontWeight:800 }}>S/ {tournament.pricePerTeam}/equipo</span>
+            <span style={{ color:'#2563eb', fontSize:'0.82rem', fontWeight:800 }}>S/ {tournament.pricePerTeam}/equipo</span>
           </div>
         </div>
 
@@ -78,14 +78,14 @@ function JoinModal({ tournament, onClose, onConfirm, loading }) {
           placeholder="Ej: Los Tigres FC"
           maxLength={40}
           style={{ width:'100%', background:'#030712', border:`1.5px solid ${error ? '#ef4444' : '#1e293b'}`, borderRadius:10, color:'#f1f5f9', padding:'11px 14px', fontSize:'0.9rem', outline:'none', boxSizing:'border-box', marginBottom:error ? 6 : 20 }}
-          onFocus={e => { e.target.style.borderColor = '#00d084'; }}
+          onFocus={e => { e.target.style.borderColor = '#2563eb'; }}
           onBlur={e => { e.target.style.borderColor = error ? '#ef4444' : '#1e293b'; }}
           onKeyDown={e => e.key === 'Enter' && handleSubmit()}
         />
         {error && <p style={{ color:'#ef4444', fontSize:'0.8rem', margin:'0 0 16px', fontWeight:600 }}>{error}</p>}
 
         <button onClick={handleSubmit} disabled={loading}
-          style={{ width:'100%', padding:14, background: loading ? '#1e293b' : 'linear-gradient(135deg,#00d084,#00b875)', color: loading ? '#475569' : '#0a1628', border:'none', borderRadius:12, fontWeight:800, fontSize:'0.95rem', cursor: loading ? 'not-allowed' : 'pointer', boxShadow: loading ? 'none' : '0 6px 16px rgba(0,208,132,0.3)' }}>
+          style={{ width:'100%', padding:14, background: loading ? '#1e293b' : 'linear-gradient(135deg,#2563eb,#1d4ed8)', color: loading ? '#475569' : '#0a1628', border:'none', borderRadius:12, fontWeight:800, fontSize:'0.95rem', cursor: loading ? 'not-allowed' : 'pointer', boxShadow: loading ? 'none' : '0 6px 16px rgba(37, 99, 235, 0.3)' }}>
           {loading ? 'Inscribiendo...' : `Inscribir equipo · S/ ${tournament.pricePerTeam}`}
         </button>
       </div>
@@ -106,11 +106,11 @@ function TournamentCard({ tournament, user, onJoin }) {
       {/* Image */}
       <div style={{ height:130, backgroundImage:`url(${tournament.imageUrl})`, backgroundSize:'cover', backgroundPosition:'center', position:'relative' }}>
         <div style={{ position:'absolute', inset:0, background:'linear-gradient(to top,rgba(10,22,40,1) 0%,transparent 60%)' }} />
-        <div style={{ position:'absolute', top:10, right:10, background: isFull ? 'rgba(239,68,68,0.9)' : 'rgba(0,208,132,0.9)', color: isFull ? '#fff' : '#0a1628', borderRadius:20, padding:'4px 10px', fontSize:'0.72rem', fontWeight:800 }}>
+        <div style={{ position:'absolute', top:10, right:10, background: isFull ? 'rgba(239,68,68,0.9)' : 'rgba(37, 99, 235, 0.9)', color: isFull ? '#fff' : '#0a1628', borderRadius:20, padding:'4px 10px', fontSize:'0.72rem', fontWeight:800 }}>
           {isFull ? 'Completo' : `${spotsLeft} lugar${spotsLeft !== 1 ? 'es' : ''} libre${spotsLeft !== 1 ? 's' : ''}`}
         </div>
         <div style={{ position:'absolute', bottom:10, left:14, display:'flex', gap:6, alignItems:'center' }}>
-          <span style={{ background:'rgba(0,208,132,0.2)', border:'1px solid rgba(0,208,132,0.4)', color:'#00d084', borderRadius:12, padding:'3px 10px', fontSize:'0.72rem', fontWeight:700 }}>
+          <span style={{ background:'rgba(37, 99, 235, 0.2)', border:'1px solid rgba(37, 99, 235, 0.4)', color:'#2563eb', borderRadius:12, padding:'3px 10px', fontSize:'0.72rem', fontWeight:700 }}>
             {SPORT_ICONS[tournament.sportType] || '🏆'} {tournament.sportType}
           </span>
         </div>
@@ -139,7 +139,7 @@ function TournamentCard({ tournament, user, onJoin }) {
         {/* Teams progress bar */}
         <div style={{ marginBottom:14 }}>
           <div style={{ height:6, background:'#1e293b', borderRadius:6, overflow:'hidden' }}>
-            <div style={{ height:'100%', width:`${pct}%`, background: isFull ? '#ef4444' : pct >= 75 ? '#f59e0b' : '#00d084', borderRadius:6, transition:'width 0.4s' }} />
+            <div style={{ height:'100%', width:`${pct}%`, background: isFull ? '#ef4444' : pct >= 75 ? '#f59e0b' : '#2563eb', borderRadius:6, transition:'width 0.4s' }} />
           </div>
         </div>
 
@@ -152,7 +152,7 @@ function TournamentCard({ tournament, user, onJoin }) {
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12 }}>
           <div>
             <p style={{ margin:'0 0 2px', color:'#475569', fontSize:'0.68rem', fontWeight:700, textTransform:'uppercase' }}>Inscripción</p>
-            <p style={{ margin:0, color:'#00d084', fontWeight:900, fontSize:'1.1rem' }}>S/ {tournament.pricePerTeam}<span style={{ color:'#475569', fontWeight:500, fontSize:'0.8rem' }}>/equipo</span></p>
+            <p style={{ margin:0, color:'#2563eb', fontWeight:900, fontSize:'1.1rem' }}>S/ {tournament.pricePerTeam}<span style={{ color:'#475569', fontWeight:500, fontSize:'0.8rem' }}>/equipo</span></p>
           </div>
           <div style={{ textAlign:'right' }}>
             <p style={{ margin:'0 0 2px', color:'#475569', fontSize:'0.68rem', fontWeight:700, textTransform:'uppercase' }}>Organizador</p>
@@ -162,11 +162,11 @@ function TournamentCard({ tournament, user, onJoin }) {
 
         {!isFull && user ? (
           <button onClick={() => onJoin(tournament)}
-            style={{ width:'100%', padding:'10px', background:'linear-gradient(135deg,#00d084,#00b875)', color:'#0a1628', border:'none', borderRadius:10, fontWeight:800, fontSize:'0.9rem', cursor:'pointer', boxShadow:'0 4px 12px rgba(0,208,132,0.3)' }}>
+            style={{ width:'100%', padding:'10px', background:'linear-gradient(135deg,#2563eb,#1d4ed8)', color: '#ffffff', border:'none', borderRadius:10, fontWeight:800, fontSize:'0.9rem', cursor:'pointer', boxShadow:'0 4px 12px rgba(37, 99, 235, 0.3)' }}>
             Inscribir mi equipo →
           </button>
         ) : !isFull && !user ? (
-          <Link to="/login" style={{ display:'block', textAlign:'center', padding:'10px', background:'linear-gradient(135deg,#00d084,#00b875)', color:'#0a1628', borderRadius:10, fontWeight:800, fontSize:'0.9rem', textDecoration:'none' }}>
+          <Link to="/login" style={{ display:'block', textAlign:'center', padding:'10px', background:'linear-gradient(135deg,#2563eb,#1d4ed8)', color: '#ffffff', borderRadius:10, fontWeight:800, fontSize:'0.9rem', textDecoration:'none' }}>
             Inicia sesión para inscribirte
           </Link>
         ) : (
@@ -180,11 +180,11 @@ function TournamentCard({ tournament, user, onJoin }) {
 function SuccessToast({ tournament, teamName, onClose }) {
   useEffect(() => { const t = setTimeout(onClose, 6000); return () => clearTimeout(t); }, [onClose]);
   return (
-    <div style={{ position:'fixed', bottom:24, right:24, zIndex:9999, background:'#0f172a', border:'1px solid #00d084', borderRadius:16, padding:'16px 20px', boxShadow:'0 8px 32px rgba(0,208,132,0.25)', maxWidth:340, animation:'slideUp 0.3s ease' }}>
+    <div style={{ position:'fixed', bottom:24, right:24, zIndex:9999, background:'#0f172a', border:'1px solid #2563eb', borderRadius:16, padding:'16px 20px', boxShadow:'0 8px 32px rgba(37, 99, 235, 0.25)', maxWidth:340, animation:'slideUp 0.3s ease' }}>
       <style>{`@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:none;opacity:1}}`}</style>
-      <p style={{ margin:'0 0 4px', color:'#00d084', fontWeight:800, fontSize:'0.95rem' }}>🏆 ¡Equipo inscrito!</p>
+      <p style={{ margin:'0 0 4px', color:'#2563eb', fontWeight:800, fontSize:'0.95rem' }}>🏆 ¡Equipo inscrito!</p>
       <p style={{ margin:'0 0 10px', color:'#94a3b8', fontSize:'0.82rem' }}><strong style={{ color:'#f1f5f9' }}>{teamName}</strong> en {tournament.name}</p>
-      <button onClick={onClose} style={{ padding:'7px 14px', background:'rgba(0,208,132,0.15)', color:'#00d084', border:'none', borderRadius:8, fontWeight:700, fontSize:'0.82rem', cursor:'pointer' }}>
+      <button onClick={onClose} style={{ padding:'7px 14px', background:'rgba(37, 99, 235, 0.15)', color:'#2563eb', border:'none', borderRadius:8, fontWeight:700, fontSize:'0.82rem', cursor:'pointer' }}>
         Entendido ✓
       </button>
     </div>
@@ -238,7 +238,7 @@ export default function Torneos() {
     <div style={{ minHeight:'100vh', background:'#030712', color:'#f1f5f9' }}>
       {/* Header */}
       <nav style={{ background:'#0a1628', borderBottom:'1px solid #1e293b', padding:'14px 24px', display:'flex', alignItems:'center', gap:12 }}>
-        <Link to="/" style={{ color:'#00d084', fontWeight:900, fontSize:'1.2rem', textDecoration:'none' }}>PlayStop</Link>
+        <Link to="/" style={{ color:'#2563eb', fontWeight:900, fontSize:'1.2rem', textDecoration:'none' }}>PlayStop</Link>
         <span style={{ color:'#475569' }}>/</span>
         <span style={{ color:'#f1f5f9', fontWeight:700 }}>Torneos y Ligas</span>
         <div style={{ flex:1 }} />
@@ -250,11 +250,11 @@ export default function Torneos() {
       <div style={{ maxWidth:1100, margin:'0 auto', padding:'40px 24px' }}>
         {/* Hero */}
         <div style={{ textAlign:'center', marginBottom:42 }}>
-          <div style={{ display:'inline-block', background:'rgba(0,208,132,0.1)', border:'1px solid rgba(0,208,132,0.25)', color:'#00d084', borderRadius:20, padding:'5px 16px', fontSize:'0.8rem', fontWeight:700, marginBottom:14, textTransform:'uppercase', letterSpacing:'1px' }}>
+          <div style={{ display:'inline-block', background:'rgba(37, 99, 235, 0.1)', border:'1px solid rgba(37, 99, 235, 0.25)', color:'#2563eb', borderRadius:20, padding:'5px 16px', fontSize:'0.8rem', fontWeight:700, marginBottom:14, textTransform:'uppercase', letterSpacing:'1px' }}>
             🏆 Torneos y Ligas
           </div>
           <h1 style={{ margin:'0 0 12px', fontSize:'2.5rem', fontWeight:900, letterSpacing:'-1px' }}>
-            Compite en <span style={{ color:'#00d084' }}>torneos</span> reales
+            Compite en <span style={{ color:'#2563eb' }}>torneos</span> reales
           </h1>
           <p style={{ margin:0, color:'#64748b', fontSize:'1rem', maxWidth:500, marginLeft:'auto', marginRight:'auto', lineHeight:1.6 }}>
             Inscribe tu equipo en torneos organizados por los mejores complejos deportivos de Lima.
@@ -265,7 +265,7 @@ export default function Torneos() {
         <div style={{ display:'flex', gap:8, marginBottom:28, flexWrap:'wrap', justifyContent:'center' }}>
           {sports.map(s => (
             <button key={s} onClick={() => setSportFilter(s)}
-              style={{ padding:'7px 16px', borderRadius:20, border: sportFilter === s ? '1px solid #00d084' : '1px solid #1e293b', background: sportFilter === s ? 'rgba(0,208,132,0.15)' : '#0a1628', color: sportFilter === s ? '#00d084' : '#64748b', fontSize:'0.82rem', fontWeight:700, cursor:'pointer', transition:'all 0.15s' }}>
+              style={{ padding:'7px 16px', borderRadius:20, border: sportFilter === s ? '1px solid #2563eb' : '1px solid #1e293b', background: sportFilter === s ? 'rgba(37, 99, 235, 0.15)' : '#0a1628', color: sportFilter === s ? '#2563eb' : '#64748b', fontSize:'0.82rem', fontWeight:700, cursor:'pointer', transition:'all 0.15s' }}>
               {s}
             </button>
           ))}
@@ -273,7 +273,7 @@ export default function Torneos() {
 
         {loading ? (
           <div style={{ textAlign:'center', padding:'60px 0' }}>
-            <div style={{ width:40, height:40, border:'3px solid #1e293b', borderTop:'3px solid #00d084', borderRadius:'50%', animation:'spin 0.8s linear infinite', margin:'0 auto 16px' }} />
+            <div style={{ width:40, height:40, border:'3px solid #1e293b', borderTop:'3px solid #2563eb', borderRadius:'50%', animation:'spin 0.8s linear infinite', margin:'0 auto 16px' }} />
             <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
             <p style={{ color:'#64748b' }}>Cargando torneos...</p>
           </div>

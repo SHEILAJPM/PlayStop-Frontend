@@ -2,15 +2,15 @@
   <defs>
     <!-- Fondo oscuro con resplandor moderno -->
     <radialGradient id="glow" cx="0%" cy="0%" r="120%">
-      <stop offset="0%" stop-color="#00d084" stop-opacity="0.4"/>
+      <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.4"/>
       <stop offset="100%" stop-color="#0f172a" stop-opacity="1"/>
     </radialGradient>
-    
+
     <!-- Borde con luz de neón combinando colores de la marca -->
     <linearGradient id="borderGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#00d084" stop-opacity="0.8" />
+      <stop offset="0%" stop-color="#2563eb" stop-opacity="0.8" />
       <stop offset="50%" stop-color="#ffffff" stop-opacity="0.1" />
-      <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.5" />
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.5" />
     </linearGradient>
 
     <!-- Textura cristalina para los símbolos blancos -->
@@ -19,10 +19,10 @@
       <stop offset="100%" stop-color="#cbd5e1" />
     </linearGradient>
 
-    <!-- Sombra profunda + aura verde neón -->
+    <!-- Sombra profunda + aura azul neón -->
     <filter id="neonGlow" x="-30%" y="-30%" width="160%" height="160%">
       <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.6" />
-      <feDropShadow dx="0" dy="0" stdDeviation="24" flood-color="#00d084" flood-opacity="0.4" />
+      <feDropShadow dx="0" dy="0" stdDeviation="24" flood-color="#2563eb" flood-opacity="0.4" />
     </filter>
   </defs>
 

@@ -30,8 +30,8 @@ const PROPIETARIO_TOUR_STEPS = [
   },
   {
     icon: 'bi-calendar3',
-    gradient: 'linear-gradient(135deg,#00d084,#00b875)',
-    shadowColor: 'rgba(0,208,132,0.4)',
+    gradient: 'linear-gradient(135deg,#2563eb,#1d4ed8)',
+    shadowColor: 'rgba(37, 99, 235, 0.4)',
     title: 'Calendario de Reservas',
     description: 'Visualiza todas las reservas en un calendario claro. Filtra por cancha, fecha y estado. Sin sorpresas.',
     highlight: 'Calendario de Reservas',
@@ -47,16 +47,16 @@ const PROPIETARIO_TOUR_STEPS = [
   },
   {
     icon: 'bi-cash-coin',
-    gradient: 'linear-gradient(135deg,#00d084,#065f46)',
-    shadowColor: 'rgba(0,208,132,0.35)',
+    gradient: 'linear-gradient(135deg,#0ea5e9,#0369a1)',
+    shadowColor: 'rgba(14,165,233,0.35)',
     title: 'Control de Finanzas',
     description: 'Sigue tus ingresos en tiempo real, analiza el rendimiento de cada cancha y exporta reportes.',
     highlight: 'Finanzas',
   },
   {
     icon: 'bi-check-circle-fill',
-    gradient: 'linear-gradient(135deg,#00d084,#3b82f6)',
-    shadowColor: 'rgba(0,208,132,0.4)',
+    gradient: 'linear-gradient(135deg,#2563eb,#3b82f6)',
+    shadowColor: 'rgba(37, 99, 235, 0.4)',
     title: '¡Tu complejo está listo!',
     description: 'Empieza agregando tu primera cancha en "Mis Canchas" para que los jugadores puedan encontrarla y reservarla.',
     highlight: null,
@@ -82,7 +82,7 @@ const mapOwnerCourt = (c) => ({
   price: `S/ ${c.pricePerHour}`,
   pricePerHour: c.pricePerHour,
   status: c.active ? 'Operativa' : 'Inactiva',
-  color: c.active ? '#00d084' : '#f59e0b',
+  color: c.active ? '#2563eb' : '#f59e0b',
   location: c.address || '',
   sportType: c.sportType,
   address: c.address,
@@ -100,7 +100,7 @@ const mapOwnerReservation = (r) => {
   const isActive    = r.status === 'PENDING' || r.status === 'CONFIRMED';
 
   const status = isCancelled ? 'Cancelada' : isAttended ? 'Asistió' : isActive ? 'Pagado' : 'Pendiente';
-  const color  = isCancelled ? '#ef4444'   : isAttended ? '#8b5cf6' : '#00d084';
+  const color  = isCancelled ? '#ef4444'   : isAttended ? '#8b5cf6' : '#2563eb';
   const bg     = isCancelled ? '#fee2e2'   : isAttended ? '#ede9fe' : '#d1fae5';
 
   return {
@@ -133,9 +133,9 @@ const ImageUploader = ({ preview, dragOver, uploading, onFile, onDragOver, onDra
       onDrop={(e) => { e.preventDefault(); onDragLeave(); const f = e.dataTransfer.files[0]; if (f) onFile(f); }}
       style={{
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-        border: `2px dashed ${dragOver ? '#00d084' : preview ? '#00d084' : (isDark ? '#334155' : '#cbd5e1')}`,
+        border: `2px dashed ${dragOver ? '#2563eb' : preview ? '#2563eb' : (isDark ? '#334155' : '#cbd5e1')}`,
         borderRadius: '16px', padding: preview ? '0' : '28px 20px',
-        backgroundColor: dragOver ? 'rgba(0,208,132,0.05)' : (isDark ? '#020617' : '#f8fafc'),
+        backgroundColor: dragOver ? 'rgba(37, 99, 235, 0.05)' : (isDark ? '#020617' : '#f8fafc'),
         cursor: uploading ? 'wait' : 'pointer',
         overflow: 'hidden', transition: 'all 0.2s', minHeight: '140px', position: 'relative',
       }}
@@ -151,7 +151,7 @@ const ImageUploader = ({ preview, dragOver, uploading, onFile, onDragOver, onDra
         </>
       ) : (
         <>
-          <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: 'rgba(0,208,132,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px', fontSize: '1.5rem' }}>
+          <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: 'rgba(37, 99, 235, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px', fontSize: '1.5rem' }}>
             <i className={`bi ${uploading ? 'bi-hourglass-split' : 'bi-camera-fill'}`} />
           </div>
           <p style={{ margin: 0, fontWeight: '700', color: isDark ? '#94a3b8' : '#334155', fontSize: '0.95rem' }}>
@@ -521,7 +521,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
               <><SkeletonCard /><SkeletonCard /><SkeletonCard /></>
             ) : (
               <>
-                <MetricCard title="Ingresos de Hoy" value={ingresosHoy > 0 ? `S/ ${ingresosHoy.toFixed(2)}` : 'S/ 0.00'} subtitle="Reservas pagadas hoy" color="#00d084" trend="up" />
+                <MetricCard title="Ingresos de Hoy" value={ingresosHoy > 0 ? `S/ ${ingresosHoy.toFixed(2)}` : 'S/ 0.00'} subtitle="Reservas pagadas hoy" color="#2563eb" trend="up" />
                 <MetricCard title="Reservas Activas" value={reservasActivas} subtitle={`${canchas.length} canchas registradas`} color="#f59e0b" />
                 <MetricCard title="Ocupación" value={`${ocupacion}%`} subtitle="Basado en reservas activas" color="#3b82f6" trend={ocupacion > 50 ? 'up' : 'down'} />
               </>
@@ -566,7 +566,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
                                 setUnreadChats(prev => { const next = new Set(prev); next.delete(row.id.toString()); return next; });
                                 setChatModal({ reservationId: row.id, reservationInfo: { court: row.court, date: row.date, slot: row.time } });
                               }}
-                              style={{ position: 'relative', padding: '6px 11px', borderRadius: '8px', border: 'none', background: darkMode ? 'rgba(0,208,132,0.12)' : '#f0fdf4', color: '#00d084', fontWeight: '700', fontSize: '0.78rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              style={{ position: 'relative', padding: '6px 11px', borderRadius: '8px', border: 'none', background: darkMode ? 'rgba(37, 99, 235, 0.12)' : '#f0fdf4', color: '#2563eb', fontWeight: '700', fontSize: '0.78rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
                               <i className="bi bi-chat-dots-fill" /> Chat
                               {unreadChats.has(row.id.toString()) && (
                                 <span style={{ position: 'absolute', top: -4, right: -4, width: 10, height: 10, borderRadius: '50%', background: '#ef4444', border: `2px solid ${darkMode ? '#0f172a' : '#fff'}` }} />
@@ -672,7 +672,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
           {/* Métricas de tienda */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '24px', marginBottom: '30px' }}>
             <MetricCard title="Productos en Tienda" value={tiendaItems.length} subtitle="En catálogo activo" color="#3b82f6" />
-            <MetricCard title="Artículos Deportivos" value={tiendaItems.filter(p => p.category === 'Deportivos').length} subtitle="Equipamiento y accesorios" color="#00d084" />
+            <MetricCard title="Artículos Deportivos" value={tiendaItems.filter(p => p.category === 'Deportivos').length} subtitle="Equipamiento y accesorios" color="#2563eb" />
             <MetricCard title="Abarrotes" value={tiendaItems.filter(p => p.category === 'Abarrotes').length} subtitle="Bebidas y snacks" color="#f59e0b" />
           </div>
 
@@ -763,7 +763,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
       {activeTab === 'Finanzas' && (
         <div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '24px', marginBottom: '30px' }}>
-            <MetricCard title="Total Ingresos" value={`S/ ${reservas.filter(r => r.status === 'Pagado' || r.status === 'Asistió').reduce((sum, r) => sum + parseFloat(r.amount.replace('S/ ', '') || 0), 0).toFixed(2)}`} subtitle="Reservas confirmadas" color="#00d084" />
+            <MetricCard title="Total Ingresos" value={`S/ ${reservas.filter(r => r.status === 'Pagado' || r.status === 'Asistió').reduce((sum, r) => sum + parseFloat(r.amount.replace('S/ ', '') || 0), 0).toFixed(2)}`} subtitle="Reservas confirmadas" color="#2563eb" />
             <MetricCard title="Reservas Totales" value={reservas.length} subtitle="Todas las reservas" color="#3b82f6" trend="up" />
             <MetricCard title="Comisiones PlaySpot" value="S/ 0.00" subtitle="Plan Pro Activo" color="#f59e0b" />
           </div>
@@ -871,7 +871,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
           a.click(); URL.revokeObjectURL(url);
         };
 
-        const barColor = '#00d084';
+        const barColor = '#2563eb';
         const mutedColor = darkMode ? '#64748b' : '#94a3b8';
         const textColor = darkMode ? '#f8fafc' : '#0f172a';
         const borderColor = darkMode ? '#1e293b' : '#e2e8f0';
@@ -883,7 +883,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
             {/* KPIs row */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 20 }}>
               {[
-                { label: 'Total Ingresos', value: `S/ ${totalIngresos.toFixed(2)}`, color: '#00d084', icon: 'bi-cash-coin' },
+                { label: 'Total Ingresos', value: `S/ ${totalIngresos.toFixed(2)}`, color: '#2563eb', icon: 'bi-cash-coin' },
                 { label: 'Reservas totales', value: reservas.length, color: '#3b82f6', icon: 'bi-calendar3' },
                 { label: 'Tasa de cancelación', value: reservas.length > 0 ? `${Math.round((statusCount.Cancelada/reservas.length)*100)}%` : '0%', color: '#ef4444', icon: 'bi-x-circle-fill' },
                 { label: 'Canchas activas', value: canchas.filter(c=>c.status==='Operativa').length, color: '#f59e0b', icon: 'bi-building' },
@@ -903,7 +903,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
               <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:20, flexWrap:'wrap', gap:10 }}>
                 <h3 style={{ margin:0, color:textColor, fontSize:'1.1rem', fontWeight:800 }}>Ingresos — últimos 6 meses</h3>
                 <button onClick={exportCSV}
-                  style={{ display:'flex', alignItems:'center', gap:6, padding:'7px 14px', background:'rgba(0,208,132,0.1)', border:'1px solid rgba(0,208,132,0.25)', borderRadius:9, color:barColor, fontWeight:700, fontSize:'0.8rem', cursor:'pointer' }}>
+                  style={{ display:'flex', alignItems:'center', gap:6, padding:'7px 14px', background:'rgba(37, 99, 235, 0.1)', border:'1px solid rgba(37, 99, 235, 0.25)', borderRadius:9, color:barColor, fontWeight:700, fontSize:'0.8rem', cursor:'pointer' }}>
                   <i className="bi bi-download" />
                   Exportar CSV
                 </button>
@@ -971,7 +971,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
                 <h3 style={{ margin: '0 0 16px', color: textColor, fontSize: '1.1rem', fontWeight: 800 }}>Estado de reservas</h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   {[
-                    { label: 'Pagadas / Confirmadas', count: statusCount.Pagado,   color: '#00d084' },
+                    { label: 'Pagadas / Confirmadas', count: statusCount.Pagado,   color: '#2563eb' },
                     { label: 'Asistidas',              count: statusCount['Asistió'], color: '#8b5cf6' },
                     { label: 'Pendientes',             count: statusCount.Pendiente, color: '#f59e0b' },
                     { label: 'Canceladas',             count: statusCount.Cancelada, color: '#ef4444' },
@@ -1000,7 +1000,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
                 {hours.map(h => {
                   const cnt = hourCounts[h] || 0;
                   const pct = cnt / maxHour;
-                  const heatColor = pct > 0.7 ? '#ef4444' : pct > 0.4 ? '#f59e0b' : pct > 0 ? '#00d084' : (darkMode ? '#1e293b' : '#e2e8f0');
+                  const heatColor = pct > 0.7 ? '#ef4444' : pct > 0.4 ? '#f59e0b' : pct > 0 ? '#2563eb' : (darkMode ? '#1e293b' : '#e2e8f0');
                   return (
                     <div key={h} style={{ flex: '0 0 auto', width: 32, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5, height: '100%', justifyContent: 'flex-end' }}>
                       {cnt > 0 && <span style={{ fontSize: '.65rem', fontWeight: 700, color: heatColor }}>{cnt}</span>}
@@ -1011,7 +1011,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
                 })}
               </div>
               <div style={{ display: 'flex', gap: 16, marginTop: 14 }}>
-                {[{ color: '#00d084', label: 'Baja demanda' }, { color: '#f59e0b', label: 'Media' }, { color: '#ef4444', label: 'Alta demanda' }].map(l => (
+                {[{ color: '#2563eb', label: 'Baja demanda' }, { color: '#f59e0b', label: 'Media' }, { color: '#ef4444', label: 'Alta demanda' }].map(l => (
                   <span key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: '.75rem', color: mutedColor }}>
                     <span style={{ width: 10, height: 10, borderRadius: 3, background: l.color, display: 'inline-block' }} />{l.label}
                   </span>
@@ -1047,7 +1047,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
                   <i className="bi bi-arrow-clockwise" /> Actualizar
                 </button>
                 <button onClick={() => setShowTournamentForm(v => !v)}
-                  style={{ padding:'9px 18px', background:'linear-gradient(135deg,#00d084,#00b875)', color:'#0a1628', border:'none', borderRadius:10, cursor:'pointer', fontWeight:800, fontSize:'0.88rem' }}>
+                  style={{ padding:'9px 18px', background:'linear-gradient(135deg,#2563eb,#1d4ed8)', color: '#ffffff', border:'none', borderRadius:10, cursor:'pointer', fontWeight:800, fontSize:'0.88rem' }}>
                   {showTournamentForm ? '✕ Cancelar' : '+ Nuevo Torneo'}
                 </button>
               </div>
@@ -1102,7 +1102,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
                       Cancelar
                     </button>
                     <button type="submit" disabled={creatingTournament}
-                      style={{ padding:'10px 24px', background: creatingTournament ? '#1e293b' : 'linear-gradient(135deg,#00d084,#00b875)', color: creatingTournament ? '#475569' : '#0a1628', border:'none', borderRadius:10, cursor: creatingTournament ? 'not-allowed' : 'pointer', fontWeight:800 }}>
+                      style={{ padding:'10px 24px', background: creatingTournament ? '#1e293b' : 'linear-gradient(135deg,#2563eb,#1d4ed8)', color: creatingTournament ? '#475569' : '#0a1628', border:'none', borderRadius:10, cursor: creatingTournament ? 'not-allowed' : 'pointer', fontWeight:800 }}>
                       {creatingTournament ? 'Creando...' : 'Crear Torneo'}
                     </button>
                   </div>
@@ -1113,7 +1113,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
             {/* Tournament list */}
             {loadingTournaments ? (
               <div style={{ textAlign:'center', padding:'60px 0', color: C.textMuted }}>
-                <div style={{ width:36, height:36, border:'3px solid #1e293b', borderTop:'3px solid #00d084', borderRadius:'50%', animation:'spin 0.8s linear infinite', margin:'0 auto 14px' }} />
+                <div style={{ width:36, height:36, border:'3px solid #1e293b', borderTop:'3px solid #2563eb', borderRadius:'50%', animation:'spin 0.8s linear infinite', margin:'0 auto 14px' }} />
                 <p style={{ margin:0 }}>Cargando torneos...</p>
               </div>
             ) : tournaments.length === 0 ? (
@@ -1122,7 +1122,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
                 <h3 style={{ margin:'0 0 8px', color: C.textPrimary, fontWeight:800 }}>Sin torneos activos</h3>
                 <p style={{ margin:'0 0 20px', color: C.textMuted }}>Crea tu primer torneo para atraer nuevos equipos a tu complejo.</p>
                 <button onClick={() => setShowTournamentForm(true)}
-                  style={{ padding:'11px 24px', background:'linear-gradient(135deg,#00d084,#00b875)', color:'#0a1628', border:'none', borderRadius:12, cursor:'pointer', fontWeight:800 }}>
+                  style={{ padding:'11px 24px', background:'linear-gradient(135deg,#2563eb,#1d4ed8)', color: '#ffffff', border:'none', borderRadius:12, cursor:'pointer', fontWeight:800 }}>
                   + Crear mi primer torneo
                 </button>
               </div>
@@ -1137,7 +1137,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
                       <div style={{ padding:20 }}>
                         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:10 }}>
                           <h4 style={{ margin:0, color: C.textPrimary, fontWeight:900, fontSize:'1rem', lineHeight:1.3 }}>{t.name}</h4>
-                          <span style={{ background: isFull ? 'rgba(239,68,68,0.15)' : 'rgba(0,208,132,0.15)', color: isFull ? '#ef4444' : '#00d084', borderRadius:12, padding:'3px 10px', fontSize:'0.7rem', fontWeight:800, whiteSpace:'nowrap', marginLeft:8 }}>
+                          <span style={{ background: isFull ? 'rgba(239,68,68,0.15)' : 'rgba(37, 99, 235, 0.15)', color: isFull ? '#ef4444' : '#2563eb', borderRadius:12, padding:'3px 10px', fontSize:'0.7rem', fontWeight:800, whiteSpace:'nowrap', marginLeft:8 }}>
                             {isFull ? 'Completo' : 'Abierto'}
                           </span>
                         </div>
@@ -1160,7 +1160,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
                         </div>
                         {t.prize && <p style={{ margin:'0 0 12px', color:'#f59e0b', fontWeight:700, fontSize:'0.82rem' }}>🏆 Premio: {t.prize}</p>}
                         <div style={{ height:5, background: C.cardBorder, borderRadius:5, overflow:'hidden', marginBottom:14 }}>
-                          <div style={{ height:'100%', width:`${pct}%`, background: isFull ? '#ef4444' : pct>=75 ? '#f59e0b' : '#00d084', borderRadius:5 }} />
+                          <div style={{ height:'100%', width:`${pct}%`, background: isFull ? '#ef4444' : pct>=75 ? '#f59e0b' : '#2563eb', borderRadius:5 }} />
                         </div>
                         <button onClick={() => handleCancelTournament(t.id)}
                           style={{ width:'100%', padding:'9px', background:'rgba(239,68,68,0.12)', color:'#ef4444', border:'1px solid rgba(239,68,68,0.25)', borderRadius:10, cursor:'pointer', fontWeight:700, fontSize:'0.85rem' }}>
@@ -1353,9 +1353,9 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
                     onDrop={(e) => { e.preventDefault(); setProductImageDragOver(false); const f = e.dataTransfer.files[0]; if (f) { setProductImageFile(f); const r = new FileReader(); r.onload = ev => setProductImagePreview(ev.target.result); r.readAsDataURL(f); } }}
                     style={{
                       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                      border: `2px dashed ${productImageDragOver ? '#00d084' : productImagePreview ? '#00d084' : C.inputBorder}`,
+                      border: `2px dashed ${productImageDragOver ? '#2563eb' : productImagePreview ? '#2563eb' : C.inputBorder}`,
                       borderRadius: '14px', padding: productImagePreview ? '0' : '24px 16px',
-                      backgroundColor: productImageDragOver ? 'rgba(0,208,132,0.05)' : C.inputBg,
+                      backgroundColor: productImageDragOver ? 'rgba(37, 99, 235, 0.05)' : C.inputBg,
                       cursor: uploadingProductImage ? 'wait' : 'pointer',
                       overflow: 'hidden', transition: 'all 0.2s', minHeight: '120px', position: 'relative',
                     }}
@@ -1575,7 +1575,7 @@ const QrScannerSection = ({
   };
 
   const statusColors = {
-    CONFIRMED: { label: 'Confirmada', color: '#00d084', bg: '#d1fae5' },
+    CONFIRMED: { label: 'Confirmada', color: '#2563eb', bg: '#d1fae5' },
     PENDING:   { label: 'Pendiente',  color: '#f59e0b', bg: '#fef3c7' },
     CANCELLED: { label: 'Cancelada',  color: '#ef4444', bg: '#fee2e2' },
     ATTENDED:  { label: 'Asistió',    color: '#8b5cf6', bg: '#ede9fe' },
@@ -1639,7 +1639,7 @@ const QrScannerSection = ({
           <div style={{ padding: '0 28px 28px', display: 'flex', gap: '12px' }}>
             {!attendanceConfirmed && qrVerified.status !== 'CANCELLED' && qrVerified.status !== 'ATTENDED' && (
               <button onClick={confirmAttendance} disabled={confirmingAttendance}
-                style={{ flex: 1, padding: '16px', borderRadius: '14px', border: 'none', background: 'linear-gradient(135deg, #00d084, #00b875)', color: '#fff', fontWeight: '800', fontSize: '1rem', cursor: confirmingAttendance ? 'wait' : 'pointer', opacity: confirmingAttendance ? 0.7 : 1 }}>
+                style={{ flex: 1, padding: '16px', borderRadius: '14px', border: 'none', background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', color: '#fff', fontWeight: '800', fontSize: '1rem', cursor: confirmingAttendance ? 'wait' : 'pointer', opacity: confirmingAttendance ? 0.7 : 1 }}>
                 {confirmingAttendance ? 'Confirmando...' : 'Confirmar Asistencia'}
               </button>
             )}
@@ -1658,7 +1658,7 @@ const QrScannerSection = ({
       {/* Estado: cargando */}
       {qrVerified === 'loading' && (
         <div style={{ background: QC.bg, borderRadius: '20px', border: `1px solid ${QC.border}`, padding: '40px', textAlign: 'center', marginBottom: '20px' }}>
-          <div style={{ width: '48px', height: '48px', border: `4px solid ${QC.border}`, borderTopColor: '#00d084', borderRadius: '50%', animation: 'spin 0.9s linear infinite', margin: '0 auto 16px' }} />
+          <div style={{ width: '48px', height: '48px', border: `4px solid ${QC.border}`, borderTopColor: '#2563eb', borderRadius: '50%', animation: 'spin 0.9s linear infinite', margin: '0 auto 16px' }} />
           <p style={{ margin: 0, color: QC.textSecondary, fontWeight: '600' }}>Verificando reserva...</p>
         </div>
       )}
@@ -1692,7 +1692,7 @@ const QrScannerSection = ({
             ) : (
               <button onClick={startScanner}
                 style={{ width: '100%', padding: '20px', borderRadius: '16px', border: `2px dashed ${darkMode ? '#334155' : '#cbd5e1'}`, background: QC.infoBg, cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', transition: 'all 0.2s' }}
-                onMouseOver={e => { e.currentTarget.style.borderColor = '#00d084'; e.currentTarget.style.background = 'rgba(0,208,132,0.04)'; }}
+                onMouseOver={e => { e.currentTarget.style.borderColor = '#2563eb'; e.currentTarget.style.background = 'rgba(37, 99, 235, 0.04)'; }}
                 onMouseOut={e => { e.currentTarget.style.borderColor = darkMode ? '#334155' : '#cbd5e1'; e.currentTarget.style.background = QC.infoBg; }}>
                 <i className="bi bi-camera-fill" style={{ fontSize: '2.5rem', color: '#64748b' }} />
                 <span style={{ fontWeight: '700', color: QC.textPrimary, fontSize: '1rem' }}>Abrir cámara</span>
@@ -1715,7 +1715,7 @@ const QrScannerSection = ({
               onKeyDown={e => e.key === 'Enter' && qrManualId.trim() && verifyId(qrManualId)}
               placeholder="Ej. 3f8a1b2c-4d5e-6f7a-8b9c-0d1e2f3a4b5c"
               style={{ flex: 1, padding: '13px 16px', borderRadius: '12px', border: `2px solid ${QC.inputBorder}`, background: QC.inputBg, color: QC.textPrimary, fontSize: '0.9rem', outline: 'none', fontFamily: 'monospace' }}
-              onFocus={e => e.target.style.borderColor = '#00d084'}
+              onFocus={e => e.target.style.borderColor = '#2563eb'}
               onBlur={e => e.target.style.borderColor = QC.inputBorder}
             />
             <button onClick={() => qrManualId.trim() && verifyId(qrManualId)}

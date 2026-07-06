@@ -14,7 +14,7 @@ const InicioTab = ({ canchas, loadingCanchas, reservas, gamification, loadingGam
         title="Puntos PlayStop"
         value={loadingGami ? '...' : `${gamification?.totalPoints ?? 0} pts`}
         subtitle={loadingGami ? '' : `Nivel ${gamification?.level ?? 1} • ${gamification?.levelName ?? 'Principiante'}`}
-        color="#00d084" trend="up"
+        color="#2563eb" trend="up"
       />
       <MetricCard
         title="Partidos Jugados"

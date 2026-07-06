@@ -34,8 +34,8 @@ export default function AppSplash({ onFinish }) {
           to   { opacity: 1; transform: translateY(0); }
         }
         @keyframes splashPulse {
-          0%, 100% { box-shadow: 0 0 30px rgba(0,208,132,.45); }
-          50%       { box-shadow: 0 0 55px rgba(0,208,132,.75); }
+          0%, 100% { box-shadow: 0 0 30px rgba(37, 99, 235, .45); }
+          50%       { box-shadow: 0 0 55px rgba(37, 99, 235, .75); }
         }
         @keyframes splashDot {
           0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
@@ -46,7 +46,7 @@ export default function AppSplash({ onFinish }) {
       {/* Logo */}
       <div style={{
         width: 96, height: 96, borderRadius: 26,
-        background: 'linear-gradient(135deg, #00d084, #00b875)',
+        background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         fontWeight: 900, fontSize: '2.8rem', color: '#0a1628',
         animation: 'splashPop 0.6s cubic-bezier(.16,1,.3,1) forwards, splashPulse 2s ease-in-out 0.6s infinite',
@@ -64,7 +64,7 @@ export default function AppSplash({ onFinish }) {
           fontSize: '2rem', fontWeight: 900, letterSpacing: '-1px',
           color: '#f1f5f9', fontFamily: "'Inter', system-ui, sans-serif",
         }}>
-          Play<span style={{ color: '#00d084' }}>Stop</span>
+          Play<span style={{ color: '#2563eb' }}>Stop</span>
         </div>
         <div style={{
           fontSize: '0.88rem', color: 'rgba(255,255,255,.4)',
@@ -84,7 +84,7 @@ export default function AppSplash({ onFinish }) {
         {[0, 1, 2].map(i => (
           <div key={i} style={{
             width: 7, height: 7, borderRadius: '50%',
-            background: '#00d084',
+            background: '#2563eb',
             animation: `splashDot 1.2s ease-in-out ${i * 0.2}s infinite`,
           }} />
         ))}

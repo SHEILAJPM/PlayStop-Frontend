@@ -3,7 +3,7 @@ const ParaClubes = () => (
   <section id="clubes" className="clubes-section reveal" style={{ scrollMarginTop: '80px', padding: '120px 5%', backgroundColor: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '60px', position: 'relative', overflow: 'hidden', width: '100%', boxSizing: 'border-box' }}>
     
     {/* Background Glows */}
-    <div style={{ position: 'absolute', top: '10%', right: '5%', width: '500px', height: '500px', backgroundColor: '#00d084', borderRadius: '50%', filter: 'blur(180px)', opacity: 0.15, zIndex: 0 }}></div>
+    <div style={{ position: 'absolute', top: '10%', right: '5%', width: '500px', height: '500px', backgroundColor: '#2563eb', borderRadius: '50%', filter: 'blur(180px)', opacity: 0.15, zIndex: 0 }}></div>
     <div style={{ position: 'absolute', bottom: '-10%', left: '-5%', width: '400px', height: '400px', backgroundColor: '#3b82f6', borderRadius: '50%', filter: 'blur(150px)', opacity: 0.15, zIndex: 0 }}></div>
 
     <style>
@@ -60,7 +60,7 @@ const ParaClubes = () => (
         }
         @keyframes pulseMetric {
           0%, 57% { background-color: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.05); box-shadow: none; }
-          60% { background-color: rgba(0,208,132,0.15); border-color: #00d084; transform: scale(1.05); box-shadow: 0 10px 25px -5px rgba(0,208,132,0.3); }
+          60% { background-color: rgba(37, 99, 235, 0.15); border-color: #2563eb; transform: scale(1.05); box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3); }
           75%, 100% { background-color: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.05); transform: scale(1); box-shadow: none; }
         }
         @keyframes updateBar {
@@ -90,15 +90,15 @@ const ParaClubes = () => (
 
     <div style={{ flex: '1 1 400px', maxWidth: '600px', zIndex: 10 }} className="clubes-text">
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-        <div style={{ width: '36px', height: '3px', borderRadius: '2px', background: 'linear-gradient(90deg, #00d084, transparent)' }} />
-        <span style={{ color: '#00d084', fontWeight: '700', fontSize: '0.8rem', letterSpacing: '2.5px', textTransform: 'uppercase' }}>Para Clubes</span>
+        <div style={{ width: '36px', height: '3px', borderRadius: '2px', background: 'linear-gradient(90deg, #2563eb, transparent)' }} />
+        <span style={{ color: '#2563eb', fontWeight: '700', fontSize: '0.8rem', letterSpacing: '2.5px', textTransform: 'uppercase' }}>Para Clubes</span>
       </div>
-      <h2 className="clubes-title" style={{ fontSize: '3.8rem', color: '#ffffff', fontWeight: '900', marginBottom: '20px', letterSpacing: '-1.5px', lineHeight: '1.1' }}>El software que tu complejo <span style={{ background: 'linear-gradient(90deg, #34d399, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>necesita</span></h2>
+      <h2 className="clubes-title" style={{ fontSize: '3.8rem', color: '#ffffff', fontWeight: '900', marginBottom: '20px', letterSpacing: '-1.5px', lineHeight: '1.1' }}>El software que tu complejo <span style={{ background: 'linear-gradient(90deg, #60a5fa, #2563eb)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>necesita</span></h2>
       <p style={{ color: '#94a3b8', fontSize: '1.15rem', lineHeight: '1.7', marginBottom: '40px' }}>Automatiza tus reservas, cobra por adelantado y reduce el ausentismo al 0%. PlaySpot te da las herramientas de una gran empresa, fáciles de usar desde cualquier dispositivo.</p>
       
       <div className="clubes-features" style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '45px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'linear-gradient(135deg, #00d084 0%, #059669 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#fff', boxShadow: '0 4px 10px rgba(0,208,132,0.3)' }}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+          <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#fff', boxShadow: '0 4px 10px rgba(37, 99, 235, 0.3)' }}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
           <span style={{ color: '#f8fafc', fontWeight: '600', fontSize: '1.15rem' }}>Panel de control en tiempo real</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -112,7 +112,7 @@ const ParaClubes = () => (
       </div>
 
       <div className="clubes-buttons" style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-        <button onClick={() => document.getElementById('contacto').scrollIntoView()} style={{ backgroundColor: '#00d084', color: '#0f172a', border: 'none', padding: '16px 32px', borderRadius: '12px', fontSize: '1.05rem', fontWeight: '800', cursor: 'pointer', boxShadow: '0 10px 25px -5px rgba(0,208,132,0.4)', transition: 'all 0.3s ease' }} onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 15px 35px -5px rgba(0,208,132,0.5)'; }} onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 10px 25px -5px rgba(0,208,132,0.4)'; }}>
+        <button onClick={() => document.getElementById('contacto').scrollIntoView()} style={{ backgroundColor: '#2563eb', color: '#ffffff', border: 'none', padding: '16px 32px', borderRadius: '12px', fontSize: '1.05rem', fontWeight: '800', cursor: 'pointer', boxShadow: '0 10px 25px -5px rgba(37, 99, 235, 0.4)', transition: 'all 0.3s ease' }} onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 15px 35px -5px rgba(37, 99, 235, 0.5)'; }} onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 10px 25px -5px rgba(37, 99, 235, 0.4)'; }}>
           Agendar demostración
         </button>
         <button onClick={() => document.getElementById('precios').scrollIntoView()} style={{ backgroundColor: 'rgba(255,255,255,0.05)', color: '#ffffff', border: '1px solid rgba(255,255,255,0.1)', padding: '16px 32px', borderRadius: '12px', fontSize: '1.05rem', fontWeight: '700', cursor: 'pointer', transition: 'all 0.3s ease', backdropFilter: 'blur(10px)' }} onMouseOver={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)'; }} onMouseOut={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'; }}>
@@ -128,11 +128,11 @@ const ParaClubes = () => (
           {/* Sidebar Realista */}
           <div style={{ width: '160px', backgroundColor: '#0f172a', padding: '20px 12px', display: 'flex', flexDirection: 'column', zIndex: 10 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px', paddingLeft: '8px' }}>
-               <div style={{ width: '18px', height: '18px', backgroundColor: '#00d084', borderRadius: '4px' }}></div>
+               <div style={{ width: '18px', height: '18px', backgroundColor: '#2563eb', borderRadius: '4px' }}></div>
                <span style={{ color: '#fff', fontWeight: '900', fontSize: '1rem', letterSpacing: '-0.5px' }}>PlaySpot</span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-               <div style={{ backgroundColor: '#00d084', color: '#0f172a', padding: '8px 12px', borderRadius: '8px', fontSize: '0.7rem', fontWeight: '700' }}>Dashboard</div>
+               <div style={{ backgroundColor: '#2563eb', color: '#ffffff', padding: '8px 12px', borderRadius: '8px', fontSize: '0.7rem', fontWeight: '700' }}>Dashboard</div>
                <div style={{ color: '#94a3b8', padding: '8px 12px', fontSize: '0.7rem', fontWeight: '600' }}>Calendario</div>
                <div style={{ color: '#94a3b8', padding: '8px 12px', fontSize: '0.7rem', fontWeight: '600' }}>Mis Canchas</div>
                <div style={{ color: '#94a3b8', padding: '8px 12px', fontSize: '0.7rem', fontWeight: '600' }}>Finanzas</div>
@@ -162,7 +162,7 @@ const ParaClubes = () => (
               
               {/* Toast Confirmación */}
               <div style={{ position: 'absolute', top: '16px', right: '16px', backgroundColor: '#ffffff', padding: '10px 16px', borderRadius: '10px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '10px', zIndex: 60, animation: 'toastShow 9s infinite ease-in-out' }}>
-                 <div style={{ width: '18px', height: '18px', borderRadius: '50%', backgroundColor: '#00d084', color: '#fff', display: 'flex', justifyContent: 'center', alignItems: 'center' }}><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                 <div style={{ width: '18px', height: '18px', borderRadius: '50%', backgroundColor: '#2563eb', color: '#fff', display: 'flex', justifyContent: 'center', alignItems: 'center' }}><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
                  <span style={{ fontSize: '0.75rem', fontWeight: '700', color: '#0f172a' }}>Reserva guardada</span>
               </div>
 
@@ -225,7 +225,7 @@ const ParaClubes = () => (
                  <div style={{ width: '100%', height: '32px', border: '2px solid #e2e8f0', borderRadius: '8px', backgroundColor: '#f8fafc', marginBottom: '20px' }}></div>
                  <div style={{ display: 'flex', gap: '10px' }}>
                    <div style={{ flex: 1, height: '32px', backgroundColor: '#f8fafc', border: '2px solid #e2e8f0', borderRadius: '8px' }}></div>
-                   <div style={{ flex: 1, height: '32px', backgroundColor: '#00d084', color: '#ffffff', display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '8px', fontSize: '0.75rem', fontWeight: '800', animation: 'btnClickStyle 9s infinite ease-in-out' }}>Guardar</div>
+                   <div style={{ flex: 1, height: '32px', backgroundColor: '#2563eb', color: '#ffffff', display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '8px', fontSize: '0.75rem', fontWeight: '800', animation: 'btnClickStyle 9s infinite ease-in-out' }}>Guardar</div>
                  </div>
               </div>
 

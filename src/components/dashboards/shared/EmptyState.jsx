@@ -12,7 +12,7 @@ const EmptyState = ({ icon, title, message, darkMode = false, cta }) => (
       border: `2px dashed ${darkMode ? '#1e293b' : '#e2e8f0'}`,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       fontSize: '2.6rem', marginBottom: 20,
-      boxShadow: darkMode ? '0 0 40px rgba(0,208,132,0.04)' : '0 4px 20px rgba(0,0,0,0.04)',
+      boxShadow: darkMode ? '0 0 40px rgba(37, 99, 235, 0.04)' : '0 4px 20px rgba(0,0,0,0.04)',
     }}>
       <i className={`bi ${icon}`} />
     </div>
@@ -21,7 +21,7 @@ const EmptyState = ({ icon, title, message, darkMode = false, cta }) => (
     {cta && (
       <button
         onClick={cta.onClick}
-        style={{ marginTop: 20, padding: '10px 22px', borderRadius: 12, border: 'none', background: 'linear-gradient(135deg,#00d084,#00b875)', color: '#0f172a', fontWeight: 800, fontSize: '.9rem', cursor: 'pointer', boxShadow: '0 4px 16px rgba(0,208,132,0.25)' }}
+        style={{ marginTop: 20, padding: '10px 22px', borderRadius: 12, border: 'none', background: 'linear-gradient(135deg,#2563eb,#1d4ed8)', color: '#ffffff', fontWeight: 800, fontSize: '.9rem', cursor: 'pointer', boxShadow: '0 4px 16px rgba(37, 99, 235, 0.25)' }}
       >
         {cta.label}
       </button>

@@ -55,7 +55,7 @@ const Marcas = () => {
           {/* Duplicamos el array para que el scroll sea infinito sin cortes bruscos */}
           {[...marcas, ...marcas].map((marca, index) => (
             <div key={index} className="trust-logo">
-              <div style={{ color: '#00d084' }}>{marca.icon}</div>
+              <div style={{ color: '#2563eb' }}>{marca.icon}</div>
               {marca.name}
             </div>
           ))}

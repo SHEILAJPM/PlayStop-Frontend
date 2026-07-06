@@ -1,5 +1,5 @@
 const SPORT_COLORS = {
-  fútbol: '#00d084', padel: '#3b82f6', pádel: '#3b82f6',
+  fútbol: '#2563eb', padel: '#3b82f6', pádel: '#3b82f6',
   tenis: '#f59e0b', vóley: '#8b5cf6', voley: '#8b5cf6',
   básquet: '#ef4444', basquet: '#ef4444',
 };
@@ -150,10 +150,10 @@ const CourtCard = ({ cancha, isFavorito, onToggleFavorito, onReservar, onVerMapa
                 display: 'flex', alignItems: 'center', gap: '5px',
                 background: 'transparent', border: `1px solid ${cardBorder}`,
                 borderRadius: 8, padding: '5px 10px',
-                fontSize: '.78rem', fontWeight: 700, color: '#10b981',
+                fontSize: '.78rem', fontWeight: 700, color: '#2563eb',
                 width: 'fit-content', textDecoration: 'none', transition: 'all .15s',
               }}
-              onMouseOver={e => { e.currentTarget.style.background = '#f0fdf4'; e.currentTarget.style.borderColor = '#10b981'; }}
+              onMouseOver={e => { e.currentTarget.style.background = '#eff6ff'; e.currentTarget.style.borderColor = '#2563eb'; }}
               onMouseOut={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = cardBorder; }}
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>

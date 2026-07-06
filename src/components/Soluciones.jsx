@@ -15,11 +15,11 @@ const Soluciones = () => {
         <div style={{ textAlign: 'center', marginBottom: '60px' }}>
           {/* Label decorativo con línea verde centrada */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '16px' }}>
-            <div style={{ width: '36px', height: '3px', borderRadius: '2px', background: 'linear-gradient(90deg, transparent, #00d084)' }} />
-            <span style={{ color: '#00d084', fontWeight: '700', fontSize: '0.8rem', letterSpacing: '2.5px', textTransform: 'uppercase' }}>
+            <div style={{ width: '36px', height: '3px', borderRadius: '2px', background: 'linear-gradient(90deg, transparent, #2563eb)' }} />
+            <span style={{ color: '#2563eb', fontWeight: '700', fontSize: '0.8rem', letterSpacing: '2.5px', textTransform: 'uppercase' }}>
               Doble Beneficio
             </span>
-            <div style={{ width: '36px', height: '3px', borderRadius: '2px', background: 'linear-gradient(90deg, #00d084, transparent)' }} />
+            <div style={{ width: '36px', height: '3px', borderRadius: '2px', background: 'linear-gradient(90deg, #2563eb, transparent)' }} />
           </div>
           <h2 className="soluciones-title" style={{ fontSize: '3rem', color: '#0f172a', fontWeight: '900', margin: '0 0 16px 0', letterSpacing: '-1px' }}>
             Una plataforma, <span style={{
@@ -38,9 +38,9 @@ const Soluciones = () => {
           
           {/* Tarjeta para Jugadores */}
           <div className="soluciones-card" id="solucion-jugadores" style={{ scrollMarginTop: '100px', backgroundColor: '#ffffff', borderRadius: '32px', padding: '48px 40px', border: '1px solid #e2e8f0', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.05)', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '6px', background: 'linear-gradient(90deg, #00d084, #3b82f6)' }}></div>
+            <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '6px', background: 'linear-gradient(90deg, #2563eb, #3b82f6)' }}></div>
             
-            <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'rgba(0, 208, 132, 0.1)', color: '#00d084', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', marginBottom: '24px' }}>
+            <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'rgba(37, 99, 235, 0.1)', color: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', marginBottom: '24px' }}>
               <i className="bi bi-person-walking" />
             </div>
             
@@ -57,7 +57,7 @@ const Soluciones = () => {
                 'Gana puntos, sube de nivel y obtén descuentos.'
               ].map((item, i) => (
                 <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                  <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#00d084', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: '2px' }}>
+                  <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#2563eb', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: '2px' }}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                   </div>
                   <span style={{ color: '#334155', fontWeight: '600', fontSize: '1rem', lineHeight: '1.5' }}>{item}</span>

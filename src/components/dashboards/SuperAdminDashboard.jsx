@@ -91,9 +91,9 @@ const SuperAdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
       {activeTab === 'Global' && (
         <>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '24px', marginBottom: '30px' }}>
-            <MetricCard title="MRR (Ingreso Mensual)" value="$ 45,200" subtitle="24% vs mes anterior" color="#00d084" trend="up" />
+            <MetricCard title="MRR (Ingreso Mensual)" value="$ 45,200" subtitle="24% vs mes anterior" color="#2563eb" trend="up" />
             <MetricCard title="Estado del Servidor" value="99.9%" subtitle="Todo funcionando" color="#3b82f6" trend="up" />
-            <MetricCard title="Transacciones Fallidas" value="0.02%" subtitle="Salud óptima" color="#00d084" trend="down" />
+            <MetricCard title="Transacciones Fallidas" value="0.02%" subtitle="Salud óptima" color="#2563eb" trend="down" />
             <MetricCard title="Clubes Totales" value="342" subtitle="Activos en 4 países" color="#8b5cf6" trend="up" />
           </div>
           
@@ -108,15 +108,15 @@ const SuperAdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
               <div style={{ flex: 1, minHeight: '250px', position: 'relative', borderBottom: '1px dashed #e2e8f0', borderLeft: '1px dashed #e2e8f0' }}>
                 {/* Custom Tooltip simulado */}
                 <div style={{ position: 'absolute', top: '15px', right: '30px', backgroundColor: '#0f172a', color: '#fff', padding: '8px 12px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', zIndex: 10 }}>
-                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#00d084' }}></span>
+                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#2563eb' }}></span>
                   Octubre: $ 45,200
                 </div>
                 
                 <svg viewBox="0 0 500 150" style={{ width: '100%', height: '100%', position: 'absolute', bottom: 0, left: 0 }} preserveAspectRatio="none">
                     <defs>
                       <linearGradient id="mrrGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="rgba(0, 208, 132, 0.4)"/>
-                        <stop offset="100%" stopColor="rgba(0, 208, 132, 0)"/>
+                        <stop offset="0%" stopColor="rgba(37, 99, 235, 0.4)"/>
+                        <stop offset="100%" stopColor="rgba(37, 99, 235, 0)"/>
                       </linearGradient>
                     </defs>
                     {/* Líneas de cuadrícula (Grid) */}
@@ -125,26 +125,26 @@ const SuperAdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
                     <line x1="0" y1="110" x2="500" y2="110" stroke="currentColor" strokeOpacity="0.1" strokeWidth="1" strokeDasharray="4 4" />
                     
                     <path d="M0,150 L0,110 C50,120 100,70 150,90 C200,110 250,50 300,60 C350,70 400,30 500,20 L500,150 Z" fill="url(#mrrGrad)" />
-                    <path d="M0,110 C50,120 100,70 150,90 C200,110 250,50 300,60 C350,70 400,30 500,20" fill="none" stroke="#00d084" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M0,110 C50,120 100,70 150,90 C200,110 250,50 300,60 C350,70 400,30 500,20" fill="none" stroke="#2563eb" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
                     
                     {/* Puntos de datos */}
-                    <circle cx="150" cy="90" r="4" fill="#ffffff" stroke="#00d084" strokeWidth="3" />
-                    <circle cx="300" cy="60" r="4" fill="#ffffff" stroke="#00d084" strokeWidth="3" />
-                    <circle cx="500" cy="20" r="6" fill="#00d084" stroke="#ffffff" strokeWidth="2" style={{ filter: 'drop-shadow(0 0 4px rgba(0,208,132,0.8))' }} />
+                    <circle cx="150" cy="90" r="4" fill="#ffffff" stroke="#2563eb" strokeWidth="3" />
+                    <circle cx="300" cy="60" r="4" fill="#ffffff" stroke="#2563eb" strokeWidth="3" />
+                    <circle cx="500" cy="20" r="6" fill="#2563eb" stroke="#ffffff" strokeWidth="2" style={{ filter: 'drop-shadow(0 0 4px rgba(37, 99, 235, 0.8))' }} />
                 </svg>
               </div>
             </div>
             
             {/* Terminal de Logs */}
             <div style={{ flex: '1 1 300px', backgroundColor: '#020617', borderRadius: '24px', padding: '28px', border: '1px solid #1e293b', boxShadow: 'inset 0 4px 20px rgba(0,0,0,0.5)', position: 'relative', overflow: 'hidden' }}>
-              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '4px', background: 'linear-gradient(90deg, #3b82f6, #00d084)' }}></div>
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '4px', background: 'linear-gradient(90deg, #3b82f6, #2563eb)' }}></div>
               <h3 style={{ margin: '0 0 20px 0', color: '#f8fafc', fontSize: '1.2rem', fontWeight: '800' }}>System Logs</h3>
-              <div style={{ fontFamily: 'monospace', color: '#34d399', fontSize: '0.85rem', lineHeight: '1.6' }}>
+              <div style={{ fontFamily: 'monospace', color: '#93c5fd', fontSize: '0.85rem', lineHeight: '1.6' }}>
                 <p style={{ margin: '0 0 8px 0' }}>[10:45:21] <span style={{ color: '#60a5fa' }}>INFO:</span> Database backup completed.</p>
                 <p style={{ margin: '0 0 8px 0', color: '#94a3b8' }}>[10:48:02] <span style={{ color: '#f87171' }}>ERR:</span> Payment gateway timeout.</p>
                 <p style={{ margin: '0 0 8px 0' }}>[10:50:11] <span style={{ color: '#60a5fa' }}>INFO:</span> New deployment v2.4.1 OK.</p>
                 <p style={{ margin: '0 0 8px 0', color: '#94a3b8' }}>[10:55:09] <span style={{ color: '#facc15' }}>WARN:</span> High memory usage node-3.</p>
-                <p style={{ margin: 0 }}>[11:01:23] <span style={{ color: '#60a5fa' }}>INFO:</span> 45 new users registered.<span className="cursor-blink" style={{ display: 'inline-block', width: '8px', height: '14px', backgroundColor: '#00d084', marginLeft: '6px', verticalAlign: 'middle' }}></span></p>
+                <p style={{ margin: 0 }}>[11:01:23] <span style={{ color: '#60a5fa' }}>INFO:</span> 45 new users registered.<span className="cursor-blink" style={{ display: 'inline-block', width: '8px', height: '14px', backgroundColor: '#2563eb', marginLeft: '6px', verticalAlign: 'middle' }}></span></p>
               </div>
             </div>
           </div>
@@ -154,7 +154,7 @@ const SuperAdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
       {activeTab === 'Métricas Financieras' && (
         <>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '24px', marginBottom: '30px' }}>
-            <MetricCard title="Ingresos Totales (Mes)" value="$ 128,450" subtitle="15% más que mes anterior" color="#00d084" trend="up" />
+            <MetricCard title="Ingresos Totales (Mes)" value="$ 128,450" subtitle="15% más que mes anterior" color="#2563eb" trend="up" />
             <MetricCard title="Comisiones Generadas" value="$ 14,200" subtitle="Basado en 2.5% de fee" color="#3b82f6" trend="up" />
             <MetricCard title="Suscripciones PRO" value="842" subtitle="24 nuevas esta semana" color="#8b5cf6" trend="up" />
           </div>
@@ -253,7 +253,7 @@ const SuperAdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
                   <tr key={p.id} className="table-row">
                     <td style={{ fontWeight: '900', color: '#0f172a', letterSpacing: '1px' }}>{p.code}</td>
                     <td style={{ color: '#64748b' }}>{p.type}</td>
-                    <td style={{ fontWeight: '800', color: '#00d084' }}>{p.value}</td>
+                    <td style={{ fontWeight: '800', color: '#2563eb' }}>{p.value}</td>
                     <td style={{ color: '#475569' }}>{p.usage}</td>
                     <td><span style={{ padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '700', backgroundColor: p.status === 'Activo' ? '#d1fae5' : '#fee2e2', color: p.status === 'Activo' ? '#047857' : '#ef4444' }}>{p.status}</span></td>
                     <td>
@@ -351,7 +351,7 @@ const SuperAdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
                 <label htmlFor="maintenance" style={{ fontWeight: '700', color: '#991b1b', cursor: 'pointer', fontSize: '1.05rem' }}>Activar Modo Mantenimiento <span style={{ fontWeight: '500', fontSize: '0.9rem', display: 'block', color: '#b91c1c' }}>(Desactiva temporalmente el acceso a jugadores y clubes)</span></label>
               </div>
               <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
-                <button type="submit" className="action-btn btn-primary-dark" style={{ backgroundColor: '#00d084', color: '#0f172a', border: 'none', padding: '14px 28px', borderRadius: '12px', fontWeight: '800', cursor: 'pointer' }}>Guardar Configuración</button>
+                <button type="submit" className="action-btn btn-primary-dark" style={{ backgroundColor: '#2563eb', color: '#ffffff', border: 'none', padding: '14px 28px', borderRadius: '12px', fontWeight: '800', cursor: 'pointer' }}>Guardar Configuración</button>
               </div>
           </form>
         </div>
@@ -395,7 +395,7 @@ const SuperAdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
       {activeTab === 'Mi Perfil' && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '24px', alignItems: 'start' }}>
           <div className="dashboard-card" style={{ padding: 0, overflow: 'hidden' }}>
-            <div style={{ height: '120px', background: 'linear-gradient(135deg, rgba(0, 208, 132, 0.8) 0%, rgba(59, 130, 246, 0.8) 100%)' }}></div>
+            <div style={{ height: '120px', background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.8) 0%, rgba(59, 130, 246, 0.8) 100%)' }}></div>
             <div style={{ padding: '0 32px 32px 32px', marginTop: '-40px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
                 <div style={{ width: '100px', height: '100px', borderRadius: '50%', backgroundColor: '#e2e8f0', backgroundImage: `url(https://ui-avatars.com/api/?name=${user?.name || 'User'}&background=0f172a&color=fff&size=150)`, backgroundSize: 'cover', backgroundPosition: 'center', boxShadow: '0 4px 10px rgba(0,0,0,0.2)' }}></div>
@@ -426,7 +426,7 @@ const SuperAdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
                   <input type="email" defaultValue={user?.email} className="modal-input" required style={{ padding: '12px 16px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
-                  <button type="submit" className="action-btn btn-primary-dark" style={{ backgroundColor: '#00d084', color: '#0f172a', border: 'none', padding: '12px 24px', borderRadius: '10px', fontWeight: '800', cursor: 'pointer' }}>Guardar Cambios</button>
+                  <button type="submit" className="action-btn btn-primary-dark" style={{ backgroundColor: '#2563eb', color: '#ffffff', border: 'none', padding: '12px 24px', borderRadius: '10px', fontWeight: '800', cursor: 'pointer' }}>Guardar Cambios</button>
                 </div>
               </form>
             </div>
@@ -459,8 +459,8 @@ const SuperAdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
                 </div>
                 
                 <div className="modal-info-box" style={{ display: 'flex', flexDirection: 'column', gap: '8px', backgroundColor: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px dashed #cbd5e1' }}>
-                  <span style={{ fontSize: '0.85rem', color: '#475569', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600' }}><span style={{ color: '#00d084', fontSize: '1.2rem' }}>✓</span> Mínimo 8 caracteres</span>
-                  <span style={{ fontSize: '0.85rem', color: '#475569', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600' }}><span style={{ color: '#00d084', fontSize: '1.2rem' }}>✓</span> Al menos un número y un símbolo especial</span>
+                  <span style={{ fontSize: '0.85rem', color: '#475569', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600' }}><span style={{ color: '#2563eb', fontSize: '1.2rem' }}>✓</span> Mínimo 8 caracteres</span>
+                  <span style={{ fontSize: '0.85rem', color: '#475569', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600' }}><span style={{ color: '#2563eb', fontSize: '1.2rem' }}>✓</span> Al menos un número y un símbolo especial</span>
                 </div>
 
                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
@@ -480,9 +480,9 @@ const SuperAdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
           {`
             @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
             @keyframes slideUp { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
-            .modal-input:focus { border-color: #00d084 !important; box-shadow: 0 0 0 4px rgba(0, 208, 132, 0.15) !important; outline: none; background-color: #ffffff !important; }
+            .modal-input:focus { border-color: #2563eb !important; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15) !important; outline: none; background-color: #ffffff !important; }
             .modal-btn-cancel:hover { background-color: #e2e8f0 !important; color: #0f172a !important; }
-            .modal-btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 208, 132, 0.3); background-color: #00b875 !important; }
+            .modal-btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3); background-color: #1d4ed8 !important; }
             .modal-close:hover { background-color: #f1f5f9; color: #ef4444 !important; }
           `}
         </style>
@@ -563,7 +563,7 @@ const SuperAdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
               <button type="button" onClick={closeModal} className="modal-btn-cancel" style={{ flex: 1, padding: '16px', borderRadius: '14px', border: '2px solid #e2e8f0', backgroundColor: '#f8fafc', color: '#64748b', fontWeight: '800', fontSize: '1.05rem', cursor: 'pointer', transition: 'all 0.2s' }}>
                 Cancelar
               </button>
-              <button type="submit" className="modal-btn-submit" style={{ flex: 1, padding: '16px', borderRadius: '14px', border: 'none', backgroundColor: '#00d084', color: '#fff', fontWeight: '800', fontSize: '1.05rem', cursor: 'pointer', transition: 'all 0.2s' }}>
+              <button type="submit" className="modal-btn-submit" style={{ flex: 1, padding: '16px', borderRadius: '14px', border: 'none', backgroundColor: '#2563eb', color: '#fff', fontWeight: '800', fontSize: '1.05rem', cursor: 'pointer', transition: 'all 0.2s' }}>
                 {modal.action === 'GUARDAR_CONFIG' ? 'Aplicar Cambios' : modal.action === 'NUEVO_PLAN' || modal.action === 'EDITAR_PLAN' || modal.action === 'CONFIGURAR_API' || modal.action?.includes('PROMO') ? 'Guardar Cambios' : modal.action === 'NUEVO_ARTICULO' ? 'Crear Borrador' : 'Descargar'}
               </button>
             </div>

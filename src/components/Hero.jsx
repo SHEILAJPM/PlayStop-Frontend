@@ -138,6 +138,26 @@ const Hero = () => {
             50% { transform: scale(1.1); opacity: 0.7; }
             100% { transform: scale(1); opacity: 1; }
           }
+          @keyframes heroFadeUp {
+            from { opacity: 0; transform: translateY(28px); }
+            to   { opacity: 1; transform: translateY(0); }
+          }
+          .hero-fade-up { opacity: 0; animation: heroFadeUp .8s cubic-bezier(.16,1,.3,1) forwards; }
+          @keyframes heroFadeIn { from { opacity: 0; } to { opacity: 1; } }
+          @keyframes orbDrift {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50%      { transform: translate(30px, -40px) scale(1.15); }
+          }
+          .hero-orb {
+            position: absolute; border-radius: 50%; filter: blur(90px);
+            pointer-events: none; z-index: 1;
+            animation: orbDrift 12s ease-in-out infinite;
+          }
+          @keyframes ctaGlow {
+            0%, 100% { box-shadow: 0 8px 24px -4px rgba(37,99,235,.45), 0 0 0 0 rgba(59,130,246,.35); }
+            50%      { box-shadow: 0 8px 30px -2px rgba(37,99,235,.6), 0 0 26px 6px rgba(59,130,246,.35); }
+          }
+          .hero-btn-primary { animation: ctaGlow 2.8s ease-in-out infinite; }
           .widget-selector {
             background: rgba(0,0,0,0.25);
             border: 1px solid rgba(255,255,255,0.1);
@@ -151,14 +171,14 @@ const Hero = () => {
             color: #d1d5db;
           }
           .widget-selector:hover {
-            border-color: rgba(0,208,132,0.45);
-            background: rgba(0,208,132,0.06);
-            box-shadow: 0 0 0 3px rgba(0,208,132,0.1);
+            border-color: rgba(37, 99, 235, 0.45);
+            background: rgba(37, 99, 235, 0.06);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
           }
           .widget-selector.active {
-            border-color: rgba(0,208,132,0.6);
-            background: rgba(0,208,132,0.08);
-            box-shadow: 0 0 0 3px rgba(0,208,132,0.12);
+            border-color: rgba(37, 99, 235, 0.6);
+            background: rgba(37, 99, 235, 0.08);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
           }
           .widget-selector.selected { color: #ffffff; }
           .widget-selector.disabled {
@@ -188,11 +208,11 @@ const Hero = () => {
             transition: background 0.15s ease;
             font-size: 0.95rem;
           }
-          .widget-option:hover { background: rgba(0,208,132,0.1); color: #00d084; }
+          .widget-option:hover { background: rgba(37, 99, 235, 0.1); color: #2563eb; }
           .widget-option + .widget-option { border-top: 1px solid rgba(255,255,255,0.05); }
           .widget-search-btn {
             margin-top: 10px;
-            background: linear-gradient(135deg, #00d084 0%, #00b875 100%);
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
             color: #fff;
             border: none;
             padding: 16px;
@@ -200,16 +220,16 @@ const Hero = () => {
             font-weight: 800;
             font-size: 1.05rem;
             cursor: pointer;
-            box-shadow: 0 8px 24px -4px rgba(0,208,132,0.45);
+            box-shadow: 0 8px 24px -4px rgba(37, 99, 235, 0.45);
             transition: all 0.25s ease;
             width: 100%;
           }
           .widget-search-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 14px 30px -4px rgba(0,208,132,0.55);
+            box-shadow: 0 14px 30px -4px rgba(37, 99, 235, 0.55);
           }
           .hero-btn-primary {
-            background: linear-gradient(135deg, #00d084 0%, #00b875 100%);
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
             color: #fff;
             border: none;
             padding: 16px 36px;
@@ -217,7 +237,7 @@ const Hero = () => {
             border-radius: 12px;
             cursor: pointer;
             font-weight: 700;
-            box-shadow: 0 8px 24px -4px rgba(0,208,132,0.45);
+            box-shadow: 0 8px 24px -4px rgba(37, 99, 235, 0.45);
             transition: all 0.25s ease;
             position: relative;
             overflow: hidden;
@@ -232,7 +252,7 @@ const Hero = () => {
           }
           .hero-btn-primary:hover {
             transform: translateY(-3px);
-            box-shadow: 0 16px 36px -4px rgba(0,208,132,0.55);
+            box-shadow: 0 16px 36px -4px rgba(37, 99, 235, 0.55);
           }
           .hero-btn-primary:hover::after { opacity: 1; }
           .hero-btn-secondary {
@@ -250,7 +270,7 @@ const Hero = () => {
           .hero-btn-secondary:hover {
             transform: translateY(-3px);
             background: rgba(255,255,255,0.14);
-            border-color: rgba(0,208,132,0.45);
+            border-color: rgba(37, 99, 235, 0.45);
             box-shadow: 0 12px 28px rgba(0,0,0,0.3);
           }
           @media (max-width: 768px) {
@@ -289,26 +309,30 @@ const Hero = () => {
 
       {/* Capa oscura con gradiente para mejorar lectura y lucir la imagen */}
       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'linear-gradient(90deg, rgba(17,24,39,0.95) 0%, rgba(17,24,39,0.8) 40%, rgba(17,24,39,0.3) 100%)', zIndex: 1 }}></div>
-      
+
+      {/* Orbes decorativos de ambiente */}
+      <div className="hero-orb" style={{ top: '-8%', left: '20%', width: '380px', height: '380px', background: 'radial-gradient(circle, rgba(37,99,235,0.35), transparent 70%)' }} />
+      <div className="hero-orb" style={{ bottom: '-15%', right: '8%', width: '440px', height: '440px', background: 'radial-gradient(circle, rgba(56,189,248,0.25), transparent 70%)', animationDelay: '-6s' }} />
+
       <div className="hero-text-container" style={{ flex: '1', maxWidth: '650px', zIndex: 10, position: 'relative' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-          <div style={{ width: '36px', height: '3px', borderRadius: '2px', background: 'linear-gradient(90deg, #00d084, transparent)' }} />
-          <span style={{ color: '#00d084', fontWeight: '700', fontSize: '0.8rem', letterSpacing: '2.5px', textTransform: 'uppercase' }}>El ecosistema deportivo definitivo</span>
+        <div className="hero-fade-up" style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+          <div style={{ width: '36px', height: '3px', borderRadius: '2px', background: 'linear-gradient(90deg, #2563eb, transparent)' }} />
+          <span style={{ color: '#2563eb', fontWeight: '700', fontSize: '0.8rem', letterSpacing: '2.5px', textTransform: 'uppercase' }}>El ecosistema deportivo definitivo</span>
         </div>
-        <h2 className="hero-title" style={{ fontSize: '4.2rem', margin: '0 0 24px 0', color: '#ffffff', fontWeight: '900', lineHeight: '1.05', letterSpacing: '-2px' }}>
+        <h2 className="hero-title hero-fade-up font-display" style={{ fontSize: '4.2rem', margin: '0 0 24px 0', color: '#ffffff', fontWeight: '800', lineHeight: '1.05', letterSpacing: '-2px', animationDelay: '.1s' }}>
           Digitaliza tu pasión, <br/><span style={{
-            background: 'linear-gradient(90deg, #00d084 0%, #34d399 55%, #a7f3d0 100%)',
+            background: 'linear-gradient(90deg, #2563eb 0%, #3b82f6 55%, #93c5fd 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
-            filter: 'drop-shadow(0 0 24px rgba(0,208,132,0.45))'
+            filter: 'drop-shadow(0 0 24px rgba(37, 99, 235, 0.45))'
           }}>erradica la informalidad</span>
         </h2>
-        <p className="hero-subtitle" style={{ fontSize: '1.25rem', margin: '0 0 40px 0', color: '#d1d5db', lineHeight: '1.6' }}>
+        <p className="hero-subtitle hero-fade-up" style={{ fontSize: '1.25rem', margin: '0 0 40px 0', color: '#d1d5db', lineHeight: '1.6', animationDelay: '.2s' }}>
           La plataforma más robusta para buscar, comparar y reservar infraestructuras deportivas. Toma el control de tu club y mejora la experiencia de tus jugadores.
         </p>
-        
-        <div className="hero-buttons" style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+
+        <div className="hero-buttons hero-fade-up" style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', animationDelay: '.3s' }}>
           <button className="hero-btn-primary" onClick={() => document.getElementById('canchas-destacadas').scrollIntoView()}>
             Reservar una cancha
           </button>
@@ -318,7 +342,7 @@ const Hero = () => {
         </div>
       </div>
 
-        <div className="hero-floating-anim" style={{ flex: '1', display: 'flex', justifyContent: 'flex-end', zIndex: 10, position: 'relative', animation: 'float 6s ease-in-out infinite' }}>
+        <div className="hero-floating-anim" style={{ flex: '1', display: 'flex', justifyContent: 'flex-end', zIndex: 10, position: 'relative', opacity: 0, animation: 'float 6s ease-in-out infinite, heroFadeIn .8s ease .4s forwards' }}>
         
         {/* Widget de Búsqueda Rápida (Glassmorphism) */}
         <div className="hero-widget" style={{ width: '100%', maxWidth: '420px', backgroundColor: 'rgba(255, 255, 255, 0.08)', backdropFilter: 'blur(16px)', borderRadius: '24px', padding: '35px', border: '1px solid rgba(255, 255, 255, 0.2)', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}>
@@ -330,7 +354,7 @@ const Hero = () => {
               <div
                 className={`widget-selector${openDropdown === 'sport' ? ' active' : ''}${!selectedSport.text.includes('¿') ? ' selected' : ''}`}
                 onClick={() => setOpenDropdown(openDropdown === 'sport' ? null : 'sport')}>
-                <i className={`bi ${selectedSport.icon}`} style={{ fontSize: '1.15rem', color: '#00d084' }} />
+                <i className={`bi ${selectedSport.icon}`} style={{ fontSize: '1.15rem', color: '#2563eb' }} />
                 <span style={{ fontWeight: '500', flex: 1 }}>{selectedSport.text}</span>
                 <span style={{ fontSize: '0.75rem', opacity: 0.5, transform: openDropdown === 'sport' ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }}>▼</span>
               </div>
@@ -338,7 +362,7 @@ const Hero = () => {
                 <div className="widget-dropdown">
                   {sports.map((item, i) => (
                     <div key={i} className="widget-option" onClick={() => { setSelectedSport(item); setOpenDropdown(null); }}>
-                      <i className={`bi ${item.icon}`} style={{ color: '#00d084' }} /> <span>{item.text}</span>
+                      <i className={`bi ${item.icon}`} style={{ color: '#2563eb' }} /> <span>{item.text}</span>
                     </div>
                   ))}
                 </div>
@@ -350,13 +374,13 @@ const Hero = () => {
               <div
                 className={`widget-selector${openDropdown === 'location' ? ' active' : ''}${!selectedLocation.text.includes('¿') ? ' selected' : ''}`}
                 onClick={() => setOpenDropdown(openDropdown === 'location' ? null : 'location')}>
-                <i className={`bi ${selectedLocation.icon}`} style={{ fontSize: '1.15rem', color: '#00d084' }} />
+                <i className={`bi ${selectedLocation.icon}`} style={{ fontSize: '1.15rem', color: '#2563eb' }} />
                 <span style={{ fontWeight: '500', flex: 1 }}>{selectedLocation.text}</span>
                 <span style={{ fontSize: '0.75rem', opacity: 0.5, transform: openDropdown === 'location' ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }}>▼</span>
               </div>
               {openDropdown === 'location' && (
                 <div className="widget-dropdown">
-                  <div className="widget-option" style={{ color: '#00d084', fontWeight: '700', background: 'rgba(0,208,132,0.07)' }}
+                  <div className="widget-option" style={{ color: '#2563eb', fontWeight: '700', background: 'rgba(37, 99, 235, 0.07)' }}
                     onClick={(e) => { e.stopPropagation(); handleDetectLocation(); }}>
                     <i className={`bi ${locatingStatus !== '' ? 'bi-hourglass-split' : 'bi-crosshair2'}`}
                       style={{ animation: locatingStatus !== '' ? 'pulseLocation 1s infinite' : 'none' }} />
@@ -376,7 +400,7 @@ const Hero = () => {
               <div
                 className={`widget-selector${openDropdown === 'district' ? ' active' : ''}${!selectedDistrict.text.includes('¿') ? ' selected' : ''}${selectedLocation.text.includes('¿') ? ' disabled' : ''}`}
                 onClick={() => !selectedLocation.text.includes('¿') && setOpenDropdown(openDropdown === 'district' ? null : 'district')}>
-                <i className={`bi ${selectedDistrict.icon}`} style={{ fontSize: '1.15rem', color: '#00d084' }} />
+                <i className={`bi ${selectedDistrict.icon}`} style={{ fontSize: '1.15rem', color: '#2563eb' }} />
                 <span style={{ fontWeight: '500', flex: 1 }}>{selectedDistrict.text}</span>
                 <span style={{ fontSize: '0.75rem', opacity: 0.5 }}>▼</span>
               </div>
@@ -396,7 +420,7 @@ const Hero = () => {
               <div
                 className={`widget-selector${openDropdown === 'date' ? ' active' : ''}${selectedDate.text !== 'Fecha y hora' ? ' selected' : ''}`}
                 onClick={() => setOpenDropdown(openDropdown === 'date' ? null : 'date')}>
-                <i className={`bi ${selectedDate.icon}`} style={{ fontSize: '1.15rem', color: '#00d084' }} />
+                <i className={`bi ${selectedDate.icon}`} style={{ fontSize: '1.15rem', color: '#2563eb' }} />
                 <span style={{ fontWeight: '500', flex: 1 }}>{selectedDate.text}</span>
                 <span style={{ fontSize: '0.75rem', opacity: 0.5, transform: openDropdown === 'date' ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }}>▼</span>
               </div>
@@ -420,11 +444,11 @@ const Hero = () => {
           {/* Estadísticas Rápidas */}
           <div className="widget-stats" style={{ marginTop: '25px', paddingTop: '20px', borderTop: '1px solid rgba(255, 255, 255, 0.1)', display: 'flex', justifyContent: 'space-around', color: 'white', textAlign: 'center' }}>
             <div>
-              <div style={{ fontWeight: '900', fontSize: '1.4rem', color: '#00d084' }}>+500</div>
+              <div style={{ fontWeight: '900', fontSize: '1.4rem', color: '#2563eb' }}>+500</div>
               <div style={{ fontSize: '0.85rem', color: '#9ca3af', fontWeight: '500' }}>Canchas</div>
             </div>
             <div>
-              <div style={{ fontWeight: '900', fontSize: '1.4rem', color: '#00d084' }}>10k</div>
+              <div style={{ fontWeight: '900', fontSize: '1.4rem', color: '#2563eb' }}>10k</div>
               <div style={{ fontSize: '0.85rem', color: '#9ca3af', fontWeight: '500' }}>Jugadores</div>
             </div>
           </div>

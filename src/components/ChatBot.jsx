@@ -767,8 +767,8 @@ export default function ChatBot({ darkMode = false }) {
     <>
       <style>{`
         .cw{position:fixed;bottom:24px;right:24px;z-index:9000;font-family:inherit}
-        .cfab{width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#00d084,#00b872);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:0 8px 25px rgba(0,208,132,.4);transition:transform .2s,box-shadow .2s;position:relative}
-        .cfab:hover{transform:scale(1.08);box-shadow:0 12px 30px rgba(0,208,132,.5)}
+        .cfab{width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#00b872);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:0 8px 25px rgba(37, 99, 235, .4);transition:transform .2s,box-shadow .2s;position:relative}
+        .cfab:hover{transform:scale(1.08);box-shadow:0 12px 30px rgba(37, 99, 235, .5)}
         .cpanel{position:absolute;bottom:70px;right:0;width:375px;max-height:570px;border-radius:20px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:csu .3s cubic-bezier(.16,1,.3,1)}
         @keyframes csu{from{opacity:0;transform:translateY(18px) scale(.95)}to{opacity:1;transform:none}}
         .cmsgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:9px}
@@ -776,16 +776,16 @@ export default function ChatBot({ darkMode = false }) {
         .cmsgs::-webkit-scrollbar-thumb{background:#334155;border-radius:2px}
         .cbbl{max-width:87%;padding:10px 13px;border-radius:16px;font-size:.86rem;line-height:1.56;word-break:break-word}
         .cbbl.bot{align-self:flex-start;border-bottom-left-radius:4px}
-        .cbbl.user{align-self:flex-end;border-bottom-right-radius:4px;background:linear-gradient(135deg,#00d084,#00b872);color:#fff}
+        .cbbl.user{align-self:flex-end;border-bottom-right-radius:4px;background:linear-gradient(135deg,#2563eb,#00b872);color:#fff}
         .tdot{width:7px;height:7px;border-radius:50%;background:#64748b;animation:tb 1.2s infinite}
         .tdot:nth-child(2){animation-delay:.2s}
         .tdot:nth-child(3){animation-delay:.4s}
         @keyframes tb{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
-        .chip{padding:5px 11px;border-radius:99px;font-size:.74rem;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap;border:1.5px solid #00d084;background:transparent;color:#00d084;display:flex;align-items:center;gap:4px}
-        .chip:hover{background:#00d084;color:#0f172a}
+        .chip{padding:5px 11px;border-radius:99px;font-size:.74rem;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap;border:1.5px solid #2563eb;background:transparent;color:#2563eb;display:flex;align-items:center;gap:4px}
+        .chip:hover{background:#2563eb;color:#0f172a}
         .cinput{flex:1;padding:10px 13px;border-radius:11px;font-size:.88rem;outline:none;font-family:inherit;transition:border-color .2s}
-        .cinput:focus{border-color:#00d084 !important}
-        .csend{width:40px;height:40px;border-radius:11px;border:none;background:linear-gradient(135deg,#00d084,#00b872);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .15s}
+        .cinput:focus{border-color:#2563eb !important}
+        .csend{width:40px;height:40px;border-radius:11px;border:none;background:linear-gradient(135deg,#2563eb,#00b872);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .15s}
         .csend:disabled{opacity:.38;cursor:default}
         @media(max-width:420px){.cpanel{width:calc(100vw - 28px);right:-6px;max-height:490px}}
       `}</style>
@@ -796,13 +796,13 @@ export default function ChatBot({ darkMode = false }) {
             {/* Header */}
             <div style={{ padding:'13px 17px', background:'linear-gradient(135deg,#0f172a,#1e3a5f)', display:'flex', alignItems:'center', justifyContent:'space-between', flexShrink:0 }}>
               <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-                <div style={{ width:36, height:36, borderRadius:'50%', background:'rgba(0,208,132,.2)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.15rem', color:'#00d084' }}>
+                <div style={{ width:36, height:36, borderRadius:'50%', background:'rgba(37, 99, 235, .2)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.15rem', color:'#2563eb' }}>
                   <i className="bi bi-robot" />
                 </div>
                 <div>
                   <div style={{ color:'#fff', fontWeight:800, fontSize:'.93rem', lineHeight:1 }}>Asistente PlayStop</div>
-                  <div style={{ color:'#00d084', fontSize:'.69rem', fontWeight:700, marginTop:3, display:'flex', alignItems:'center', gap:4 }}>
-                    <span style={{ width:5, height:5, borderRadius:'50%', background:'#00d084', display:'inline-block', animation:'pulse 2s infinite' }} />
+                  <div style={{ color:'#2563eb', fontSize:'.69rem', fontWeight:700, marginTop:3, display:'flex', alignItems:'center', gap:4 }}>
+                    <span style={{ width:5, height:5, borderRadius:'50%', background:'#2563eb', display:'inline-block', animation:'pulse 2s infinite' }} />
                     En línea · Respuesta inmediata
                   </div>
                 </div>
@@ -817,7 +817,7 @@ export default function ChatBot({ darkMode = false }) {
                   <div className={`cbbl ${m.from}`} style={m.from==='bot'?{ background:bg, border:`1px solid ${border}`, color:txtMain }:{}}>
                     {renderText(m.text)}
                     {m.searchResult && (
-                      <a href={m.searchResult.url} style={{ display:'flex', alignItems:'center', gap:7, marginTop:9, padding:'8px 12px', background:'linear-gradient(135deg,#00d084,#00b875)', borderRadius:9, textDecoration:'none', fontWeight:800, fontSize:'.81rem', color:'#0f172a', boxShadow:'0 4px 12px rgba(0,208,132,.3)' }}>
+                      <a href={m.searchResult.url} style={{ display:'flex', alignItems:'center', gap:7, marginTop:9, padding:'8px 12px', background:'linear-gradient(135deg,#2563eb,#1d4ed8)', borderRadius:9, textDecoration:'none', fontWeight:800, fontSize:'.81rem', color: '#ffffff', boxShadow:'0 4px 12px rgba(37, 99, 235, .3)' }}>
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                         Ver canchas en el mapa →
                       </a>

@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { useLocalReminders } from '../hooks/useLocalReminders.js';
 
 /* ── Confetti ── */
-const CONF_COLORS = ['#00d084','#3b82f6','#f59e0b','#8b5cf6','#ef4444','#06b6d4'];
+const CONF_COLORS = ['#2563eb','#3b82f6','#f59e0b','#8b5cf6','#ef4444','#06b6d4'];
 function Confetti() {
   const pieces = Array.from({ length: 60 }, (_, i) => ({
     id: i, color: CONF_COLORS[i % CONF_COLORS.length],
@@ -196,7 +196,7 @@ function ReviewsSection({ courtId, user }) {
 
           {error && <p style={{ color: '#ef4444', fontSize: '0.8rem', margin: '6px 0 0' }}>{error}</p>}
           <button type="submit" disabled={submitting || rating === 0}
-            style={{ marginTop: 10, padding: '10px 20px', background: rating > 0 ? 'linear-gradient(135deg,#00d084,#00b875)' : '#1e293b', color: rating > 0 ? '#0a1628' : '#475569', border: 'none', borderRadius: 10, fontWeight: 800, fontSize: '0.88rem', cursor: rating > 0 ? 'pointer' : 'not-allowed' }}>
+            style={{ marginTop: 10, padding: '10px 20px', background: rating > 0 ? 'linear-gradient(135deg,#2563eb,#1d4ed8)' : '#1e293b', color: rating > 0 ? '#0a1628' : '#475569', border: 'none', borderRadius: 10, fontWeight: 800, fontSize: '0.88rem', cursor: rating > 0 ? 'pointer' : 'not-allowed' }}>
             {uploading ? 'Subiendo fotos...' : submitting ? 'Enviando...' : 'Publicar reseña'}
           </button>
         </form>
@@ -267,7 +267,7 @@ function CourtDetail({ court, onNext, user }) {
         {/* Tags */}
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 20 }}>
           {tags.map(t => (
-            <span key={t} style={{ background: 'rgba(0,208,132,0.12)', border: '1px solid rgba(0,208,132,0.25)', color: '#00d084', borderRadius: 20, padding: '4px 12px', fontSize: '0.78rem', fontWeight: 700 }}>{t}</span>
+            <span key={t} style={{ background: 'rgba(37, 99, 235, 0.12)', border: '1px solid rgba(37, 99, 235, 0.25)', color: '#2563eb', borderRadius: 20, padding: '4px 12px', fontSize: '0.78rem', fontWeight: 700 }}>{t}</span>
           ))}
         </div>
 
@@ -302,7 +302,7 @@ function CourtDetail({ court, onNext, user }) {
               {fmtPrice(court.pricePerHour)}<span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 500 }}>/hora</span>
             </p>
           </div>
-          <button onClick={onNext} style={{ background: 'linear-gradient(135deg,#00d084,#00b875)', color: '#0a1628', border: 'none', borderRadius: 12, padding: '14px 22px', fontWeight: 800, fontSize: '0.95rem', cursor: 'pointer', boxShadow: '0 8px 20px rgba(0,208,132,0.35)', transition: 'transform 0.15s' }}
+          <button onClick={onNext} style={{ background: 'linear-gradient(135deg,#2563eb,#1d4ed8)', color: '#ffffff', border: 'none', borderRadius: 12, padding: '14px 22px', fontWeight: 800, fontSize: '0.95rem', cursor: 'pointer', boxShadow: '0 8px 20px rgba(37, 99, 235, 0.35)', transition: 'transform 0.15s' }}
             onMouseOver={e => e.currentTarget.style.transform = 'translateY(-1px)'}
             onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>
             Ver horarios →
@@ -394,9 +394,9 @@ function DateTimePicker({ courtId, onNext, onBack: _onBack }) {
           return (
             <button key={iso} onClick={() => !isPast && handleSelectDate(d)}
               disabled={isPast}
-              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, minWidth: 44, padding: '10px 6px', borderRadius: 12, border: isSelected ? '2px solid #00d084' : '1px solid #1e293b', background: isSelected ? 'rgba(0,208,132,0.15)' : '#0f172a', cursor: isPast ? 'not-allowed' : 'pointer', opacity: isPast ? 0.4 : 1, transition: 'all 0.15s' }}>
-              <span style={{ color: isSelected ? '#00d084' : '#64748b', fontSize: '0.7rem', fontWeight: 700 }}>{DAYS_SHORT[d.getDay()]}</span>
-              <span style={{ color: isSelected ? '#00d084' : '#f1f5f9', fontWeight: 900, fontSize: '1rem' }}>{d.getDate()}</span>
+              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, minWidth: 44, padding: '10px 6px', borderRadius: 12, border: isSelected ? '2px solid #2563eb' : '1px solid #1e293b', background: isSelected ? 'rgba(37, 99, 235, 0.15)' : '#0f172a', cursor: isPast ? 'not-allowed' : 'pointer', opacity: isPast ? 0.4 : 1, transition: 'all 0.15s' }}>
+              <span style={{ color: isSelected ? '#2563eb' : '#64748b', fontSize: '0.7rem', fontWeight: 700 }}>{DAYS_SHORT[d.getDay()]}</span>
+              <span style={{ color: isSelected ? '#2563eb' : '#f1f5f9', fontWeight: 900, fontSize: '1rem' }}>{d.getDate()}</span>
             </button>
           );
         })}
@@ -427,7 +427,7 @@ function DateTimePicker({ courtId, onNext, onBack: _onBack }) {
                     const isTaken = status === 'taken';
                     const isDisabled = status === 'disabled' || isTaken;
                     // Color coding: green=many available, yellow=last 1-2, red=taken
-                    const slotColor = isTaken ? '#ef4444' : availCount <= 2 ? '#f59e0b' : '#00d084';
+                    const slotColor = isTaken ? '#ef4444' : availCount <= 2 ? '#f59e0b' : '#2563eb';
                     return (
                       <button key={h} onClick={() => !isDisabled && setSelectedSlot(h)}
                         disabled={isDisabled}
@@ -463,7 +463,7 @@ function DateTimePicker({ courtId, onNext, onBack: _onBack }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16, flexWrap: 'wrap', gap: 8 }}>
           <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
             {[
-              { color: '#00d084', label: 'Disponible' },
+              { color: '#2563eb', label: 'Disponible' },
               { color: '#f59e0b', label: 'Últimos horarios' },
               { color: '#ef4444', label: 'No disponible' },
             ].map(l => (
@@ -485,7 +485,7 @@ function DateTimePicker({ courtId, onNext, onBack: _onBack }) {
       <div style={{ padding: '24px 20px 0' }}>
         <button onClick={() => selectedDate && selectedSlot && onNext({ date: selectedDate, slot: selectedSlot })}
           disabled={!selectedDate || !selectedSlot}
-          style={{ width: '100%', padding: 16, background: selectedDate && selectedSlot ? 'linear-gradient(135deg,#00d084,#00b875)' : '#1e293b', color: selectedDate && selectedSlot ? '#0a1628' : '#475569', border: 'none', borderRadius: 14, fontWeight: 800, fontSize: '1rem', cursor: selectedDate && selectedSlot ? 'pointer' : 'not-allowed', transition: 'all 0.2s', boxShadow: selectedDate && selectedSlot ? '0 8px 20px rgba(0,208,132,0.3)' : 'none' }}>
+          style={{ width: '100%', padding: 16, background: selectedDate && selectedSlot ? 'linear-gradient(135deg,#2563eb,#1d4ed8)' : '#1e293b', color: selectedDate && selectedSlot ? '#0a1628' : '#475569', border: 'none', borderRadius: 14, fontWeight: 800, fontSize: '1rem', cursor: selectedDate && selectedSlot ? 'pointer' : 'not-allowed', transition: 'all 0.2s', boxShadow: selectedDate && selectedSlot ? '0 8px 20px rgba(37, 99, 235, 0.3)' : 'none' }}>
           Continuar →
         </button>
       </div>
@@ -528,8 +528,8 @@ function BookingSummary({ court, booking, onNext, onBack: _onBack }) {
           'Atención rápida y segura',
         ].map(r => (
           <div key={r} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-            <div style={{ width: 20, height: 20, borderRadius: '50%', background: 'rgba(0,208,132,0.15)', border: '1px solid rgba(0,208,132,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#00d084" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <div style={{ width: 20, height: 20, borderRadius: '50%', background: 'rgba(37, 99, 235, 0.15)', border: '1px solid rgba(37, 99, 235, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             </div>
             <span style={{ color: '#94a3b8', fontSize: '0.85rem' }}>{r}</span>
           </div>
@@ -543,10 +543,10 @@ function BookingSummary({ court, booking, onNext, onBack: _onBack }) {
       </div>
 
       {/* Cancellation policy */}
-      <div style={{ background: 'rgba(0,208,132,0.06)', border: '1px solid rgba(0,208,132,0.2)', borderRadius: 14, padding: 14, marginBottom: 20 }}>
+      <div style={{ background: 'rgba(37, 99, 235, 0.06)', border: '1px solid rgba(37, 99, 235, 0.2)', borderRadius: 14, padding: 14, marginBottom: 20 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-          <i className="bi bi-shield-check-fill" style={{ color: '#00d084', fontSize: '0.85rem' }} />
-          <span style={{ color: '#00d084', fontWeight: 800, fontSize: '0.85rem' }}>Política de cancelación</span>
+          <i className="bi bi-shield-check-fill" style={{ color: '#2563eb', fontSize: '0.85rem' }} />
+          <span style={{ color: '#2563eb', fontWeight: 800, fontSize: '0.85rem' }}>Política de cancelación</span>
         </div>
         <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.8rem', lineHeight: 1.6 }}>
           ✓ <strong style={{ color: '#f1f5f9' }}>Gratis</strong> si cancelas {court.freeCancelHours ?? 24}h o más antes del partido.<br />
@@ -554,7 +554,7 @@ function BookingSummary({ court, booking, onNext, onBack: _onBack }) {
         </p>
       </div>
 
-      <button onClick={onNext} style={{ width: '100%', padding: 16, background: 'linear-gradient(135deg,#00d084,#00b875)', color: '#0a1628', border: 'none', borderRadius: 14, fontWeight: 800, fontSize: '1rem', cursor: 'pointer', boxShadow: '0 8px 20px rgba(0,208,132,0.3)' }}>
+      <button onClick={onNext} style={{ width: '100%', padding: 16, background: 'linear-gradient(135deg,#2563eb,#1d4ed8)', color: '#ffffff', border: 'none', borderRadius: 14, fontWeight: 800, fontSize: '1rem', cursor: 'pointer', boxShadow: '0 8px 20px rgba(37, 99, 235, 0.3)' }}>
         Continuar →
       </button>
     </div>
@@ -633,9 +633,9 @@ function PaymentView({ court, booking, onPay, processing, payError }) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 24 }}>
         {methods.map(m => (
           <button key={m.id} onClick={() => setMethod(m.id)}
-            style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px', background: method === m.id ? 'rgba(0,208,132,0.1)' : '#0f172a', border: `1.5px solid ${method === m.id ? '#00d084' : '#1e293b'}`, borderRadius: 14, cursor: 'pointer', textAlign: 'left', transition: 'all 0.15s' }}>
+            style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px', background: method === m.id ? 'rgba(37, 99, 235, 0.1)' : '#0f172a', border: `1.5px solid ${method === m.id ? '#2563eb' : '#1e293b'}`, borderRadius: 14, cursor: 'pointer', textAlign: 'left', transition: 'all 0.15s' }}>
             {/* Radio circle */}
-            <div style={{ width: 20, height: 20, borderRadius: '50%', border: `2px solid ${method === m.id ? '#00d084' : '#334155'}`, background: method === m.id ? '#00d084' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <div style={{ width: 20, height: 20, borderRadius: '50%', border: `2px solid ${method === m.id ? '#2563eb' : '#334155'}`, background: method === m.id ? '#2563eb' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               {method === m.id && <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#0a1628' }} />}
             </div>
             <div style={{ flex: 1 }}>
@@ -668,9 +668,9 @@ function PaymentView({ court, booking, onPay, processing, payError }) {
       )}
 
       {/* Security note */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(0,208,132,0.06)', border: '1px solid rgba(0,208,132,0.15)', borderRadius: 10, padding: '10px 14px', marginBottom: 24 }}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00d084" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        <span style={{ color: '#00d084', fontSize: '0.82rem', fontWeight: 600 }}>Transacción 100% segura y encriptada</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(37, 99, 235, 0.06)', border: '1px solid rgba(37, 99, 235, 0.15)', borderRadius: 10, padding: '10px 14px', marginBottom: 24 }}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span style={{ color: '#2563eb', fontSize: '0.82rem', fontWeight: 600 }}>Transacción 100% segura y encriptada</span>
       </div>
 
       {payError && (
@@ -679,7 +679,7 @@ function PaymentView({ court, booking, onPay, processing, payError }) {
         </div>
       )}
       <button onClick={handlePay} disabled={processing}
-        style={{ width: '100%', padding: 16, background: processing ? '#1e293b' : 'linear-gradient(135deg,#00d084,#00b875)', color: processing ? '#475569' : '#0a1628', border: 'none', borderRadius: 14, fontWeight: 800, fontSize: '1rem', cursor: processing ? 'not-allowed' : 'pointer', boxShadow: processing ? 'none' : '0 8px 20px rgba(0,208,132,0.3)', transition: 'all 0.2s' }}>
+        style={{ width: '100%', padding: 16, background: processing ? '#1e293b' : 'linear-gradient(135deg,#2563eb,#1d4ed8)', color: processing ? '#475569' : '#0a1628', border: 'none', borderRadius: 14, fontWeight: 800, fontSize: '1rem', cursor: processing ? 'not-allowed' : 'pointer', boxShadow: processing ? 'none' : '0 8px 20px rgba(37, 99, 235, 0.3)', transition: 'all 0.2s' }}>
         {processing ? 'Procesando...' : `Pagar y reservar ${fmtPrice(total)}`}
       </button>
     </div>
@@ -731,8 +731,8 @@ function BookingSuccess({ court, booking, reservationId, userEmail, onDone }) {
   return (
     <div style={{ padding: '40px 20px', textAlign: 'center' }}>
       {showConf && <Confetti />}
-      <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'rgba(0,208,132,0.15)', border: '2px solid #00d084', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', boxShadow: '0 0 40px rgba(0,208,132,0.3)' }}>
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#00d084" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'rgba(37, 99, 235, 0.15)', border: '2px solid #2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', boxShadow: '0 0 40px rgba(37, 99, 235, 0.3)' }}>
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
       <h2 style={{ color: '#f1f5f9', fontSize: '1.5rem', fontWeight: 900, margin: '0 0 8px 0' }}>¡Reserva confirmada!</h2>
       <p style={{ color: '#64748b', fontSize: '0.95rem', margin: '0 0 32px 0', lineHeight: 1.6 }}>
@@ -776,18 +776,18 @@ function BookingSuccess({ court, booking, reservationId, userEmail, onDone }) {
             QR enviado a <strong>{userEmail || 'tu correo'}</strong>
           </span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(0,208,132,0.06)', border: '1px solid rgba(0,208,132,0.15)', borderRadius: 10, padding: '10px 14px' }}>
-          <i className="bi bi-bell-fill" style={{ color: '#00d084', fontSize: '0.95rem', flexShrink: 0 }} />
-          <span style={{ color: '#6ee7b7', fontSize: '0.8rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(37, 99, 235, 0.06)', border: '1px solid rgba(37, 99, 235, 0.15)', borderRadius: 10, padding: '10px 14px' }}>
+          <i className="bi bi-bell-fill" style={{ color: '#2563eb', fontSize: '0.95rem', flexShrink: 0 }} />
+          <span style={{ color: '#93c5fd', fontSize: '0.8rem' }}>
             El propietario ha sido notificado de tu reserva
           </span>
         </div>
 
         {/* Recordatorio push */}
         {reminderState === 'set' ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(0,208,132,0.1)', border: '1px solid rgba(0,208,132,0.3)', borderRadius: 10, padding: '10px 14px' }}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#00d084" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polyline points="20 6 9 17 4 12"/></svg>
-            <span style={{ color: '#6ee7b7', fontSize: '0.8rem', fontWeight: 600 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(37, 99, 235, 0.1)', border: '1px solid rgba(37, 99, 235, 0.3)', borderRadius: 10, padding: '10px 14px' }}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polyline points="20 6 9 17 4 12"/></svg>
+            <span style={{ color: '#93c5fd', fontSize: '0.8rem', fontWeight: 600 }}>
               Recordatorio activo — te avisamos 1 hora antes del partido
             </span>
           </div>
@@ -809,7 +809,7 @@ function BookingSuccess({ court, booking, reservationId, userEmail, onDone }) {
         )}
       </div>
 
-      <button onClick={onDone} style={{ width: '100%', padding: 16, background: 'linear-gradient(135deg,#00d084,#00b875)', color: '#0a1628', border: 'none', borderRadius: 14, fontWeight: 800, fontSize: '1rem', cursor: 'pointer', boxShadow: '0 8px 20px rgba(0,208,132,0.3)' }}>
+      <button onClick={onDone} style={{ width: '100%', padding: 16, background: 'linear-gradient(135deg,#2563eb,#1d4ed8)', color: '#ffffff', border: 'none', borderRadius: 14, fontWeight: 800, fontSize: '1rem', cursor: 'pointer', boxShadow: '0 8px 20px rgba(37, 99, 235, 0.3)' }}>
         Ir a mis reservas
       </button>
     </div>
@@ -889,7 +889,7 @@ export default function BookingFlow({ darkMode: _darkMode = true }) {
         {/* Progress bar */}
         {step < 5 && (
           <div style={{ height: 3, background: '#0f172a' }}>
-            <div style={{ height: '100%', background: 'linear-gradient(90deg,#00d084,#00b875)', width: `${(step / 4) * 100}%`, transition: 'width 0.4s ease', borderRadius: 2 }} />
+            <div style={{ height: '100%', background: 'linear-gradient(90deg,#2563eb,#1d4ed8)', width: `${(step / 4) * 100}%`, transition: 'width 0.4s ease', borderRadius: 2 }} />
           </div>
         )}
 
@@ -920,7 +920,7 @@ export default function BookingFlow({ darkMode: _darkMode = true }) {
         {/* Content */}
         {!user?.bannedFromReservations && (loading ? (
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 16 }}>
-            <div style={{ width: 44, height: 44, borderRadius: '50%', border: '3px solid #1e293b', borderTop: '3px solid #00d084', animation: 'spin 0.8s linear infinite' }} />
+            <div style={{ width: 44, height: 44, borderRadius: '50%', border: '3px solid #1e293b', borderTop: '3px solid #2563eb', animation: 'spin 0.8s linear infinite' }} />
             <p style={{ color: '#64748b', fontWeight: 600 }}>Cargando cancha...</p>
             <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
           </div>

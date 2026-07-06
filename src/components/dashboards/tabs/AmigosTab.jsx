@@ -12,7 +12,7 @@ const AMIGOS_DEFAULT = [
 const NIVEL_COLORS = {
   'Principiante': { color: '#f59e0b', bg: '#fef3c7' },
   'Intermedio':   { color: '#3b82f6', bg: '#eff6ff' },
-  'Avanzado':     { color: '#00d084', bg: '#d1fae5' },
+  'Avanzado':     { color: '#2563eb', bg: '#d1fae5' },
 };
 
 const AmigosTab = ({ darkMode, C }) => {

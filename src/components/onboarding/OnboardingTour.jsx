@@ -92,7 +92,7 @@ const OnboardingTour = ({ steps, onComplete, onSkip, onHighlight, isDark }) => {
           <motion.div
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.35, ease: 'easeOut' }}
-            style={{ height: '100%', background: 'linear-gradient(90deg,#00d084,#3b82f6)', borderRadius: 99 }}
+            style={{ height: '100%', background: 'linear-gradient(90deg,#2563eb,#3b82f6)', borderRadius: 99 }}
           />
         </div>
 
@@ -102,8 +102,8 @@ const OnboardingTour = ({ steps, onComplete, onSkip, onHighlight, isDark }) => {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 }}>
             <span style={{
               padding: '4px 12px', borderRadius: 99,
-              background: isDark ? 'rgba(0,208,132,0.1)' : 'rgba(0,208,132,0.08)',
-              color: '#00d084', fontSize: '.75rem', fontWeight: 800, letterSpacing: '.4px',
+              background: isDark ? 'rgba(37, 99, 235, 0.1)' : 'rgba(37, 99, 235, 0.08)',
+              color: '#2563eb', fontSize: '.75rem', fontWeight: 800, letterSpacing: '.4px',
             }}>
               {current + 1} / {steps.length}
             </span>
@@ -141,7 +141,7 @@ const OnboardingTour = ({ steps, onComplete, onSkip, onHighlight, isDark }) => {
                 background: step.gradient,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: '2.2rem', marginBottom: 22,
-                boxShadow: `0 12px 32px ${step.shadowColor || 'rgba(0,208,132,0.3)'}`,
+                boxShadow: `0 12px 32px ${step.shadowColor || 'rgba(37, 99, 235, 0.3)'}`,
               }}>
                 <i className={`bi ${step.icon}`} style={{ fontSize: '2.2rem', color: '#fff' }} />
               </div>
@@ -166,13 +166,13 @@ const OnboardingTour = ({ steps, onComplete, onSkip, onHighlight, isDark }) => {
               {step.tip && (
                 <div style={{
                   marginTop: 18, padding: '12px 16px',
-                  background: isDark ? 'rgba(0,208,132,0.08)' : 'rgba(0,208,132,0.06)',
-                  border: `1px solid ${isDark ? 'rgba(0,208,132,0.2)' : 'rgba(0,208,132,0.25)'}`,
+                  background: isDark ? 'rgba(37, 99, 235, 0.08)' : 'rgba(37, 99, 235, 0.06)',
+                  border: `1px solid ${isDark ? 'rgba(37, 99, 235, 0.2)' : 'rgba(37, 99, 235, 0.25)'}`,
                   borderRadius: 12,
-                  fontSize: '.84rem', color: '#00d084', fontWeight: 600,
+                  fontSize: '.84rem', color: '#2563eb', fontWeight: 600,
                   display: 'flex', gap: 8, alignItems: 'flex-start',
                 }}>
-                  <i className="bi bi-lightbulb-fill" style={{ flexShrink: 0, color: '#00d084' }} />
+                  <i className="bi bi-lightbulb-fill" style={{ flexShrink: 0, color: '#2563eb' }} />
                   {step.tip}
                 </div>
               )}
@@ -186,7 +186,7 @@ const OnboardingTour = ({ steps, onComplete, onSkip, onHighlight, isDark }) => {
                 key={i}
                 animate={{
                   width: i === current ? 20 : 7,
-                  background: i === current ? '#00d084' : dotInactC,
+                  background: i === current ? '#2563eb' : dotInactC,
                 }}
                 transition={{ duration: 0.25 }}
                 style={{ height: 7, borderRadius: 99, cursor: 'pointer' }}
@@ -219,14 +219,14 @@ const OnboardingTour = ({ steps, onComplete, onSkip, onHighlight, isDark }) => {
                 flex: 2, padding: '13px 0', borderRadius: 13, cursor: 'pointer',
                 border: 'none',
                 background: isLast
-                  ? 'linear-gradient(135deg,#00d084,#00b875)'
-                  : 'linear-gradient(135deg,#00d084,#3b82f6)',
+                  ? 'linear-gradient(135deg,#2563eb,#1d4ed8)'
+                  : 'linear-gradient(135deg,#2563eb,#3b82f6)',
                 color: '#fff', fontWeight: 800, fontSize: '.95rem',
-                boxShadow: '0 4px 18px rgba(0,208,132,0.32)',
+                boxShadow: '0 4px 18px rgba(37, 99, 235, 0.32)',
                 transition: 'all .2s', fontFamily: 'inherit',
               }}
-              onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(0,208,132,0.45)'; }}
-              onMouseOut={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 4px 18px rgba(0,208,132,0.32)'; }}
+              onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(37, 99, 235, 0.45)'; }}
+              onMouseOut={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 4px 18px rgba(37, 99, 235, 0.32)'; }}
             >
               {isLast ? '¡Empezar ahora!' : 'Siguiente →'}
             </button>

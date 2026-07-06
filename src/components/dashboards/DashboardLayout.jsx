@@ -78,7 +78,7 @@ const ChatbotWidget = ({ isDark }) => {
         @keyframes chatDot { 0%,80%,100%{transform:scale(0);opacity:.4;}40%{transform:scale(1);opacity:1;} }
         .chat-send-btn:hover:not(:disabled){filter:brightness(1.15);transform:scale(1.06);}
         .chat-quick-btn{padding:6px 13px;border-radius:20px;border:1.5px solid ${isDark?'rgba(255,255,255,0.1)':'#e2e8f0'};background:${isDark?'rgba(255,255,255,0.06)':'#fff'};color:${isDark?'#94a3b8':'#475569'};font-size:.77rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .18s;font-family:inherit;}
-        .chat-quick-btn:hover{border-color:#00d084;color:#00d084;background:${isDark?'rgba(0,208,132,.08)':'rgba(0,208,132,.05)'};}
+        .chat-quick-btn:hover{border-color:#2563eb;color:#2563eb;background:${isDark?'rgba(37, 99, 235, .08)':'rgba(37, 99, 235, .05)'};}
       `}</style>
 
       <button
@@ -86,10 +86,10 @@ const ChatbotWidget = ({ isDark }) => {
         style={{
           position:'fixed', bottom:24, right:24, zIndex:9990,
           width:56, height:56, borderRadius:'50%',
-          background: isOpen ? '#ef4444' : 'linear-gradient(135deg,#00d084,#00b875)',
+          background: isOpen ? '#ef4444' : 'linear-gradient(135deg,#2563eb,#1d4ed8)',
           border:'none', cursor:'pointer',
           display:'flex', alignItems:'center', justifyContent:'center',
-          boxShadow: isOpen ? '0 4px 20px rgba(239,68,68,0.4)' : '0 4px 24px rgba(0,208,132,0.45)',
+          boxShadow: isOpen ? '0 4px 20px rgba(239,68,68,0.4)' : '0 4px 24px rgba(37, 99, 235, 0.45)',
           transition:'all .3s cubic-bezier(.16,1,.3,1)',
           fontSize:'1.4rem', animation:'chatPop 0.5s cubic-bezier(.34,1.56,.64,1)',
         }}
@@ -111,11 +111,11 @@ const ChatbotWidget = ({ isDark }) => {
           backdropFilter:'blur(20px)',
         }}>
           <div style={{ background:'linear-gradient(135deg,rgba(0,0,0,0.9),rgba(0,40,30,0.95))', padding:'16px 20px', display:'flex', alignItems:'center', gap:12, flexShrink:0, borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
-            <div style={{ width:40, height:40, borderRadius:'50%', background:'rgba(0,208,132,.15)', border:'1px solid rgba(0,208,132,0.2)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.2rem', flexShrink:0, color:'#00d084' }}><i className="bi bi-robot" /></div>
+            <div style={{ width:40, height:40, borderRadius:'50%', background:'rgba(37, 99, 235, .15)', border:'1px solid rgba(37, 99, 235, 0.2)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.2rem', flexShrink:0, color:'#2563eb' }}><i className="bi bi-robot" /></div>
             <div style={{ flex:1 }}>
               <p style={{ margin:0, color:'#fff', fontWeight:800, fontSize:'.95rem', letterSpacing:'-.2px' }}>Asistente PlaySpot</p>
               <p style={{ margin:0, color:'rgba(255,255,255,.5)', fontSize:'.73rem', display:'flex', alignItems:'center', gap:5 }}>
-                <span style={{ width:7, height:7, borderRadius:'50%', background:'#00d084', display:'inline-block', boxShadow:'0 0 6px rgba(0,208,132,0.8)' }} /> En línea ahora
+                <span style={{ width:7, height:7, borderRadius:'50%', background:'#2563eb', display:'inline-block', boxShadow:'0 0 6px rgba(37, 99, 235, 0.8)' }} /> En línea ahora
               </p>
             </div>
             <button onClick={() => setMessages([{ from:'bot', text:'¡Hola! ¿En qué te puedo ayudar?', id:nextId.current++ }]) || setShowQuick(true)}
@@ -128,15 +128,15 @@ const ChatbotWidget = ({ isDark }) => {
             {messages.map(msg => (
               <div key={msg.id} style={{ display:'flex', justifyContent:msg.from==='user'?'flex-end':'flex-start', gap:8, alignItems:'flex-end' }}>
                 {msg.from === 'bot' && (
-                  <div style={{ width:28, height:28, borderRadius:'50%', background:'rgba(0,208,132,.12)', border:'1px solid rgba(0,208,132,0.2)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'.85rem', flexShrink:0, color:'#00d084' }}><i className="bi bi-robot" /></div>
+                  <div style={{ width:28, height:28, borderRadius:'50%', background:'rgba(37, 99, 235, .12)', border:'1px solid rgba(37, 99, 235, 0.2)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'.85rem', flexShrink:0, color:'#2563eb' }}><i className="bi bi-robot" /></div>
                 )}
                 <div style={{
                   maxWidth:'78%', padding:'10px 14px',
                   borderRadius: msg.from==='user' ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
-                  background: msg.from==='user' ? 'linear-gradient(135deg,#00d084,#00b875)' : botBubbleBg,
+                  background: msg.from==='user' ? 'linear-gradient(135deg,#2563eb,#1d4ed8)' : botBubbleBg,
                   color: msg.from==='user' ? '#0f172a' : botBubbleColor,
                   fontSize:'.88rem', fontWeight:500, lineHeight:1.55,
-                  boxShadow: msg.from==='user' ? '0 4px 12px rgba(0,208,132,0.25)' : '0 2px 8px rgba(0,0,0,.07)',
+                  boxShadow: msg.from==='user' ? '0 4px 12px rgba(37, 99, 235, 0.25)' : '0 2px 8px rgba(0,0,0,.07)',
                 }}>
                   {msg.text}
                 </div>
@@ -145,7 +145,7 @@ const ChatbotWidget = ({ isDark }) => {
 
             {typing && (
               <div style={{ display:'flex', alignItems:'flex-end', gap:8 }}>
-                <div style={{ width:28, height:28, borderRadius:'50%', background:'rgba(0,208,132,.12)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'.85rem', flexShrink:0, color:'#00d084' }}><i className="bi bi-robot" /></div>
+                <div style={{ width:28, height:28, borderRadius:'50%', background:'rgba(37, 99, 235, .12)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'.85rem', flexShrink:0, color:'#2563eb' }}><i className="bi bi-robot" /></div>
                 <div style={{ padding:'12px 16px', background:botBubbleBg, borderRadius:'18px 18px 18px 4px', display:'flex', gap:4, alignItems:'center' }}>
                   {[0,1,2].map(i => (
                     <div key={i} style={{ width:7, height:7, borderRadius:'50%', background:'#94a3b8', animation:`chatDot 1.4s ease infinite`, animationDelay:`${i*0.16}s` }} />
@@ -171,7 +171,7 @@ const ChatbotWidget = ({ isDark }) => {
               onKeyDown={e => e.key === 'Enter' && sendMessage(input)}
               placeholder="Escribe tu mensaje..."
               style={{ flex:1, padding:'9px 14px', borderRadius:12, border:`1.5px solid ${inputBorder}`, background:inputBg, color:inputColor, fontSize:'.87rem', outline:'none', fontFamily:'inherit', transition:'border-color .2s' }}
-              onFocus={e => e.target.style.borderColor='#00d084'}
+              onFocus={e => e.target.style.borderColor='#2563eb'}
               onBlur={e => e.target.style.borderColor=inputBorder}
             />
             <button
@@ -180,12 +180,12 @@ const ChatbotWidget = ({ isDark }) => {
               className="chat-send-btn"
               style={{
                 width:38, height:38, borderRadius:'50%', border:'none',
-                background: input.trim() ? 'linear-gradient(135deg,#00d084,#00b875)' : (isDark?'rgba(255,255,255,.06)':'#e2e8f0'),
+                background: input.trim() ? 'linear-gradient(135deg,#2563eb,#1d4ed8)' : (isDark?'rgba(255,255,255,.06)':'#e2e8f0'),
                 color: input.trim() ? '#0f172a' : '#94a3b8',
                 cursor: input.trim() ? 'pointer' : 'default',
                 display:'flex', alignItems:'center', justifyContent:'center',
                 flexShrink:0, transition:'all .18s', fontSize:'1rem',
-                boxShadow: input.trim() ? '0 4px 12px rgba(0,208,132,0.3)' : 'none',
+                boxShadow: input.trim() ? '0 4px 12px rgba(37, 99, 235, 0.3)' : 'none',
               }}
             ><i className="bi bi-send-fill" style={{ fontSize:'.85rem' }} /></button>
           </div>
@@ -197,7 +197,7 @@ const ChatbotWidget = ({ isDark }) => {
 
 /* ─── Toast Notifications ───────────────────────────────── */
 const TOAST_COLORS = {
-  success: { bg: 'rgba(0,208,132,0.12)', border: 'rgba(0,208,132,0.3)', color: '#00d084' },
+  success: { bg: 'rgba(37, 99, 235, 0.12)', border: 'rgba(37, 99, 235, 0.3)', color: '#2563eb' },
   warning: { bg: 'rgba(245,158,11,0.12)', border: 'rgba(245,158,11,0.3)', color: '#f59e0b' },
   info:    { bg: 'rgba(59,130,246,0.12)',  border: 'rgba(59,130,246,0.3)',  color: '#3b82f6' },
   error:   { bg: 'rgba(239,68,68,0.12)',   border: 'rgba(239,68,68,0.3)',   color: '#ef4444' },
@@ -239,7 +239,7 @@ const ToastStack = ({ toasts, onDismiss, onOpenChat }) => (
               {isChat && onOpenChat && t.reservationId && (
                 <button
                   onClick={() => { onOpenChat({ reservationId: t.reservationId, courtName: t.courtName }); onDismiss(t.id); }}
-                  style={{ marginTop:7, padding:'4px 11px', borderRadius:7, border:'none', background:'linear-gradient(135deg,#00d084,#00b875)', color:'#0f172a', fontSize:'.74rem', fontWeight:800, cursor:'pointer', display:'flex', alignItems:'center', gap:4 }}>
+                  style={{ marginTop:7, padding:'4px 11px', borderRadius:7, border:'none', background:'linear-gradient(135deg,#2563eb,#1d4ed8)', color: '#ffffff', fontSize:'.74rem', fontWeight:800, cursor:'pointer', display:'flex', alignItems:'center', gap:4 }}>
                   <i className="bi bi-chat-dots-fill" /> Ver chat
                 </button>
               )}
@@ -291,7 +291,7 @@ const NotificationPanel = ({ notifications, unreadCount, onMarkAllRead, onClearA
         </div>
         <div style={{ display:'flex', gap:8 }}>
           {unreadCount > 0 && (
-            <button onClick={onMarkAllRead} style={{ background:'none', border:'none', color:'#00d084', fontSize:'.75rem', fontWeight:700, cursor:'pointer', padding:'4px 8px', borderRadius:6 }}>
+            <button onClick={onMarkAllRead} style={{ background:'none', border:'none', color:'#2563eb', fontSize:'.75rem', fontWeight:700, cursor:'pointer', padding:'4px 8px', borderRadius:6 }}>
               Marcar todo
             </button>
           )}
@@ -341,7 +341,7 @@ const NotificationPanel = ({ notifications, unreadCount, onMarkAllRead, onClearA
 const UserAvatar = ({ name, size = 44, src }) => {
   const gradients = [
     'linear-gradient(135deg,#667eea,#764ba2)',
-    'linear-gradient(135deg,#00d084,#00b875)',
+    'linear-gradient(135deg,#2563eb,#1d4ed8)',
     'linear-gradient(135deg,#f093fb,#f5576c)',
     'linear-gradient(135deg,#4facfe,#00f2fe)',
     'linear-gradient(135deg,#f59e0b,#ef4444)',
@@ -420,7 +420,7 @@ export const DashboardLayout = ({
     tableBg:          isDark ? 'rgba(0,0,0,0.15)'             : '#fff',
     tableHeaderBg:    isDark ? 'rgba(0,0,0,0.25)'             : '#fafbfc',
     tableHeaderColor: isDark ? '#64748b'                      : '#94a3b8',
-    tableRowHover:    isDark ? 'rgba(0,208,132,0.04)'         : '#fafbff',
+    tableRowHover:    isDark ? 'rgba(37, 99, 235, 0.04)'         : '#fafbff',
     tableBorderColor: isDark ? 'rgba(255,255,255,0.05)'       : '#f8fafc',
     inputBg:          isDark ? 'rgba(0,0,0,0.35)'             : '#f8fafc',
     inputBorder:      isDark ? 'rgba(255,255,255,0.1)'        : '#e2e8f0',
@@ -432,7 +432,7 @@ export const DashboardLayout = ({
       display: 'flex', height: '100vh', width: '100vw',
       background: colors.bg,
       backgroundImage: isDark
-        ? `radial-gradient(ellipse 110% 55% at 50% -5%, rgba(0,208,132,0.08) 0%, transparent 60%),
+        ? `radial-gradient(ellipse 110% 55% at 50% -5%, rgba(37, 99, 235, 0.08) 0%, transparent 60%),
            radial-gradient(rgba(255,255,255,0.025) 1px, transparent 0)`
         : `radial-gradient(#cbd5e1 1px, transparent 0)`,
       backgroundSize: isDark ? 'auto, 28px 28px' : '28px 28px',
@@ -443,10 +443,10 @@ export const DashboardLayout = ({
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
         @keyframes spin { to{transform:rotate(360deg)} }
-        @keyframes neonPulse { 0%,100%{box-shadow:inset 3px 0 0 #00d084,0 0 16px rgba(0,208,132,.06)} 50%{box-shadow:inset 3px 0 0 #00d084,0 0 24px rgba(0,208,132,.12)} }
-        @keyframes tourPulse { 0%,100%{box-shadow:0 0 0 0 rgba(0,208,132,0);background:rgba(0,208,132,.13);} 50%{box-shadow:0 0 0 4px rgba(0,208,132,.18);background:rgba(0,208,132,.2);} }
+        @keyframes neonPulse { 0%,100%{box-shadow:inset 3px 0 0 #2563eb,0 0 16px rgba(37, 99, 235, .06)} 50%{box-shadow:inset 3px 0 0 #2563eb,0 0 24px rgba(37, 99, 235, .12)} }
+        @keyframes tourPulse { 0%,100%{box-shadow:0 0 0 0 rgba(37, 99, 235, 0);background:rgba(37, 99, 235, .13);} 50%{box-shadow:0 0 0 4px rgba(37, 99, 235, .18);background:rgba(37, 99, 235, .2);} }
         @keyframes bellRing { 0%,100%{transform:rotate(0);} 20%{transform:rotate(-15deg);} 40%{transform:rotate(15deg);} 60%{transform:rotate(-8deg);} 80%{transform:rotate(8deg);} }
-        .nav-item-ps.tour-highlight { animation:tourPulse 1.5s ease infinite!important; color:#00d084!important; font-weight:700!important; border:1px solid rgba(0,208,132,.3)!important; }
+        .nav-item-ps.tour-highlight { animation:tourPulse 1.5s ease infinite!important; color:#2563eb!important; font-weight:700!important; border:1px solid rgba(37, 99, 235, .3)!important; }
         .nav-item-ps {
           display:flex; align-items:center; gap:10px;
           padding:11px 14px; color:#64748b;
@@ -456,8 +456,8 @@ export const DashboardLayout = ({
         }
         .nav-item-ps:hover { background:rgba(255,255,255,.05); color:#e2e8f0; }
         .nav-item-ps.active {
-          background:linear-gradient(135deg,rgba(0,208,132,.13),rgba(0,208,132,.04));
-          color:#00d084; font-weight:700;
+          background:linear-gradient(135deg,rgba(37, 99, 235, .13),rgba(37, 99, 235, .04));
+          color:#2563eb; font-weight:700;
           animation:neonPulse 3s ease infinite;
         }
         .nav-item-ps:hover .nav-icon { transform:scale(1.1); }
@@ -523,14 +523,14 @@ export const DashboardLayout = ({
           font-size:1rem; transition:all .2s; box-sizing:border-box;
           font-family:inherit;
         }
-        .modal-ps-input:focus { border-color:#00d084!important; box-shadow:0 0 0 3px rgba(0,208,132,.12)!important; outline:none; }
+        .modal-ps-input:focus { border-color:#2563eb!important; box-shadow:0 0 0 3px rgba(37, 99, 235, .12)!important; outline:none; }
         .modal-ps-input::placeholder { color:${isDark ? '#475569' : '#94a3b8'}; }
         .btn-edit-ps { background:${isDark ? 'rgba(56,189,248,.1)' : '#eff6ff'}; color:${isDark ? '#38bdf8' : '#3b82f6'}; border:none; padding:6px 14px; border-radius:8px; font-weight:700; font-size:.85rem; cursor:pointer; transition:all .18s; }
         .btn-edit-ps:hover { background:${isDark ? 'rgba(56,189,248,.18)' : '#dbeafe'}; }
         .btn-delete-ps { background:${isDark ? 'rgba(239,68,68,.1)' : '#fee2e2'}; color:${isDark ? '#f87171' : '#ef4444'}; border:none; padding:6px 14px; border-radius:8px; font-weight:700; font-size:.85rem; cursor:pointer; transition:all .18s; }
         .btn-delete-ps:hover { background:${isDark ? 'rgba(239,68,68,.18)' : '#fecaca'}; }
-        .btn-primary-ps { background:linear-gradient(135deg,#00d084,#00b875); color:#0f172a; border:none; padding:10px 20px; border-radius:10px; font-weight:700; cursor:pointer; transition:all .2s; box-shadow:0 4px 16px rgba(0,208,132,.2); }
-        .btn-primary-ps:hover { transform:translateY(-1px); box-shadow:0 8px 28px rgba(0,208,132,.4); }
+        .btn-primary-ps { background:linear-gradient(135deg,#2563eb,#1d4ed8); color:#0f172a; border:none; padding:10px 20px; border-radius:10px; font-weight:700; cursor:pointer; transition:all .2s; box-shadow:0 4px 16px rgba(37, 99, 235, .2); }
+        .btn-primary-ps:hover { transform:translateY(-1px); box-shadow:0 8px 28px rgba(37, 99, 235, .4); }
         .btn-dark-ps { background:${isDark ? '#f8fafc' : '#0f172a'}; color:${isDark ? '#0f172a' : '#fff'}; border:none; padding:10px 20px; border-radius:10px; font-weight:700; cursor:pointer; transition:all .2s; }
         .btn-dark-ps:hover { opacity:.88; transform:translateY(-1px); }
         .btn-secondary-ps { background:${isDark ? 'rgba(255,255,255,.06)' : '#f8fafc'}; color:${isDark ? '#e2e8f0' : '#475569'}; border:1px solid ${colors.cardBorder}; padding:8px 16px; border-radius:10px; font-weight:600; font-size:.88rem; cursor:pointer; transition:all .18s; }
@@ -544,7 +544,7 @@ export const DashboardLayout = ({
           box-shadow:${isDark ? '0 1px 3px rgba(0,0,0,.25), 0 4px 20px rgba(0,0,0,.15)' : '0 1px 3px rgba(0,0,0,.05), 0 4px 12px rgba(0,0,0,.04)'};
           transition:box-shadow .3s ease, transform .3s ease, border-color .3s ease;
         }
-        ${isDark ? `.dashboard-card-ps:hover { border-color:rgba(0,208,132,0.18)!important; box-shadow:0 8px 32px rgba(0,0,0,.3),0 0 0 1px rgba(0,208,132,0.07)!important; }` : `.dashboard-card-ps:hover { box-shadow:0 8px 24px rgba(0,0,0,.1)!important; }`}
+        ${isDark ? `.dashboard-card-ps:hover { border-color:rgba(37, 99, 235, 0.18)!important; box-shadow:0 8px 32px rgba(0,0,0,.3),0 0 0 1px rgba(37, 99, 235, 0.07)!important; }` : `.dashboard-card-ps:hover { box-shadow:0 8px 24px rgba(0,0,0,.1)!important; }`}
         .ps-text-primary { color:${colors.textPrimary}!important; }
         .ps-text-secondary { color:${colors.textSecondary}!important; }
         .ps-text-muted { color:${isDark ? '#64748b' : '#94a3b8'}!important; }
@@ -585,11 +585,11 @@ export const DashboardLayout = ({
         .modal-btn-cancel-ps:hover { background:${isDark ? 'rgba(255,255,255,.09)' : '#e2e8f0'}; color:${colors.textPrimary}; }
         .modal-btn-submit-ps {
           flex:1; padding:14px; border-radius:12px;
-          border:none; background:linear-gradient(135deg,#00d084,#00b875); color:#fff;
+          border:none; background:linear-gradient(135deg,#2563eb,#1d4ed8); color:#fff;
           font-weight:800; font-size:1rem; cursor:pointer; transition:all .2s;
-          box-shadow:0 4px 16px rgba(0,208,132,.2);
+          box-shadow:0 4px 16px rgba(37, 99, 235, .2);
         }
-        .modal-btn-submit-ps:hover { transform:translateY(-2px); box-shadow:0 10px 28px rgba(0,208,132,.38); }
+        .modal-btn-submit-ps:hover { transform:translateY(-2px); box-shadow:0 10px 28px rgba(37, 99, 235, .38); }
         .modal-btn-submit-ps:disabled { opacity:.55; cursor:not-allowed; transform:none; box-shadow:none; }
         .modal-btn-danger-ps {
           flex:1; padding:14px; border-radius:12px;
@@ -625,9 +625,9 @@ export const DashboardLayout = ({
         transition: 'transform .3s cubic-bezier(.16,1,.3,1)',
       }}>
         {/* Brand */}
-        <div style={{ padding:'22px 20px', display:'flex', alignItems:'center', gap:12, borderBottom:`1px solid rgba(255,255,255,0.06)`, background:'linear-gradient(180deg,rgba(0,208,132,0.07) 0%,transparent 100%)' }}>
-          <div style={{ width:36, height:36, borderRadius:10, background:'linear-gradient(135deg,#00d084,#00b875)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.1rem', fontWeight:900, color:'#0f172a', boxShadow:'0 4px 18px rgba(0,208,132,.5)', flexShrink:0 }}>P</div>
-          <h2 style={{ color:'#fff', margin:0, fontSize:'1.3rem', fontWeight:900, letterSpacing:'-.5px' }}>Play<span style={{ color:'#00d084' }}>Stop</span></h2>
+        <div style={{ padding:'22px 20px', display:'flex', alignItems:'center', gap:12, borderBottom:`1px solid rgba(255,255,255,0.06)`, background:'linear-gradient(180deg,rgba(37, 99, 235, 0.07) 0%,transparent 100%)' }}>
+          <div style={{ width:36, height:36, borderRadius:10, background:'linear-gradient(135deg,#2563eb,#1d4ed8)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.1rem', fontWeight:900, color: '#ffffff', boxShadow:'0 4px 18px rgba(37, 99, 235, .5)', flexShrink:0 }}>P</div>
+          <h2 style={{ color:'#fff', margin:0, fontSize:'1.3rem', fontWeight:900, letterSpacing:'-.5px' }}>Play<span style={{ color:'#2563eb' }}>Stop</span></h2>
         </div>
 
         {/* Nav */}
@@ -693,13 +693,13 @@ export const DashboardLayout = ({
                 style={{
                   width:38, height:38, borderRadius:10,
                   border:`1px solid ${colors.cardBorder}`,
-                  background:isDark?'rgba(0,208,132,0.08)':'rgba(0,208,132,0.06)',
+                  background:isDark?'rgba(37, 99, 235, 0.08)':'rgba(37, 99, 235, 0.06)',
                   display:'flex', alignItems:'center', justifyContent:'center',
-                  cursor:'pointer', transition:'all .18s', color:'#00d084',
+                  cursor:'pointer', transition:'all .18s', color:'#2563eb',
                   fontSize:'.85rem', fontWeight:800,
                 }}
-                onMouseOver={e => { e.currentTarget.style.background = 'rgba(0,208,132,0.15)'; e.currentTarget.style.transform = 'scale(1.06)'; }}
-                onMouseOut={e => { e.currentTarget.style.background = isDark?'rgba(0,208,132,0.08)':'rgba(0,208,132,0.06)'; e.currentTarget.style.transform = ''; }}
+                onMouseOver={e => { e.currentTarget.style.background = 'rgba(37, 99, 235, 0.15)'; e.currentTarget.style.transform = 'scale(1.06)'; }}
+                onMouseOut={e => { e.currentTarget.style.background = isDark?'rgba(37, 99, 235, 0.08)':'rgba(37, 99, 235, 0.06)'; e.currentTarget.style.transform = ''; }}
               >
                 ?
               </button>

@@ -1,6 +1,6 @@
 const MONTHS_ES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 
-function MiniBar({ value, max, color = '#00d084', label, sublabel }) {
+function MiniBar({ value, max, color = '#2563eb', label, sublabel }) {
   const pct = max > 0 ? (value / max) * 100 : 0;
   return (
     <div style={{ display:'flex', alignItems:'center', gap:10 }}>
@@ -63,7 +63,7 @@ export default function EstadisticasTab({ reservas = [], gamification, loadingRe
   attended.forEach(r => { courtMap[r.court] = (courtMap[r.court] || 0) + 1; });
   const favCourt = Object.entries(courtMap).sort((a, b) => b[1] - a[1])[0]?.[0] || '—';
 
-  const barColor = '#00d084';
+  const barColor = '#2563eb';
   const textColor  = darkMode ? '#f8fafc' : '#0f172a';
   const mutedColor = darkMode ? '#64748b' : '#94a3b8';
   const cardBg     = darkMode ? '#0f172a' : '#fff';
@@ -86,7 +86,7 @@ export default function EstadisticasTab({ reservas = [], gamification, loadingRe
       {/* KPIs */}
       <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))', gap:16 }}>
         {[
-          { label:'Horas jugadas',      value: horasJugadas,                       icon:'bi-clock-fill',     color:'#00d084' },
+          { label:'Horas jugadas',      value: horasJugadas,                       icon:'bi-clock-fill',     color:'#2563eb' },
           { label:'Partidos totales',   value: total,                              icon:'bi-calendar3',      color:'#3b82f6' },
           { label:'Nivel actual',       value: gamification?.level ?? '—',         icon:'bi-trophy-fill',    color:'#f59e0b' },
           { label:'Puntos PlayStop',    value: `${gamification?.totalPoints ?? 0}`, icon:'bi-star-fill',     color:'#8b5cf6' },
@@ -117,8 +117,8 @@ export default function EstadisticasTab({ reservas = [], gamification, loadingRe
         </div>
 
         <div style={{ background:cardBg, border:`1px solid ${cardBorder}`, borderRadius:16, padding:'20px 22px', display:'flex', alignItems:'center', gap:16 }}>
-          <div style={{ width:46, height:46, borderRadius:12, background:'rgba(0,208,132,0.12)', border:'1px solid rgba(0,208,132,0.25)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.3rem', flexShrink:0 }}>
-            <i className="bi bi-building-fill" style={{ color:'#00d084' }} />
+          <div style={{ width:46, height:46, borderRadius:12, background:'rgba(37, 99, 235, 0.12)', border:'1px solid rgba(37, 99, 235, 0.25)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.3rem', flexShrink:0 }}>
+            <i className="bi bi-building-fill" style={{ color:'#2563eb' }} />
           </div>
           <div style={{ flex:1, minWidth:0 }}>
             <div style={{ fontSize:'0.72rem', fontWeight:700, color:mutedColor, textTransform:'uppercase', letterSpacing:'0.3px', marginBottom:3 }}>Cancha favorita</div>
@@ -133,7 +133,7 @@ export default function EstadisticasTab({ reservas = [], gamification, loadingRe
           <div style={{ position:'relative', width:56, height:56, flexShrink:0 }}>
             <svg viewBox="0 0 36 36" style={{ width:'100%', height:'100%', transform:'rotate(-90deg)' }}>
               <circle cx="18" cy="18" r="15.9" fill="none" stroke={darkMode ? '#1e293b' : '#e2e8f0'} strokeWidth="3.2" />
-              <circle cx="18" cy="18" r="15.9" fill="none" stroke="#00d084" strokeWidth="3.2"
+              <circle cx="18" cy="18" r="15.9" fill="none" stroke="#2563eb" strokeWidth="3.2"
                 strokeDasharray={`${winRate} ${100 - winRate}`} strokeLinecap="round"
                 style={{ transition:'stroke-dasharray 0.7s ease' }} />
             </svg>
@@ -186,7 +186,7 @@ export default function EstadisticasTab({ reservas = [], gamification, loadingRe
                 label={sport}
                 value={count}
                 max={maxSport}
-                color={['#00d084','#3b82f6','#f59e0b','#8b5cf6','#ef4444'][i % 5]}
+                color={['#2563eb','#3b82f6','#f59e0b','#8b5cf6','#ef4444'][i % 5]}
               />
             ))}
           </div>

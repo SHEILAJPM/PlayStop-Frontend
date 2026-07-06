@@ -33,9 +33,9 @@ function WriteReviewForm({ courtId, user, onSubmit }) {
   const [error, setError] = useState('');
 
   if (done) return (
-    <div style={{ background: 'rgba(0,208,132,0.08)', border: '1px solid rgba(0,208,132,0.25)', borderRadius: 14, padding: '20px 18px', display: 'flex', alignItems: 'center', gap: 10 }}>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00d084" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-      <span style={{ color: '#6ee7b7', fontWeight: 700, fontSize: '0.9rem' }}>¡Gracias! Tu reseña fue publicada.</span>
+    <div style={{ background: 'rgba(37, 99, 235, 0.08)', border: '1px solid rgba(37, 99, 235, 0.25)', borderRadius: 14, padding: '20px 18px', display: 'flex', alignItems: 'center', gap: 10 }}>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      <span style={{ color: '#93c5fd', fontWeight: 700, fontSize: '0.9rem' }}>¡Gracias! Tu reseña fue publicada.</span>
     </div>
   );
 
@@ -76,7 +76,7 @@ function WriteReviewForm({ courtId, user, onSubmit }) {
       <button
         onClick={handleSubmit}
         disabled={submitting || rating === 0}
-        style={{ marginTop: 12, padding: '10px 24px', background: submitting || rating === 0 ? '#1e293b' : 'linear-gradient(135deg,#00d084,#00b875)', color: submitting || rating === 0 ? '#475569' : '#0a1628', border: 'none', borderRadius: 10, fontWeight: 800, fontSize: '0.88rem', cursor: submitting || rating === 0 ? 'not-allowed' : 'pointer', boxShadow: rating > 0 ? '0 4px 12px rgba(0,208,132,0.25)' : 'none', transition: 'all 0.2s' }}>
+        style={{ marginTop: 12, padding: '10px 24px', background: submitting || rating === 0 ? '#1e293b' : 'linear-gradient(135deg,#2563eb,#1d4ed8)', color: submitting || rating === 0 ? '#475569' : '#0a1628', border: 'none', borderRadius: 10, fontWeight: 800, fontSize: '0.88rem', cursor: submitting || rating === 0 ? 'not-allowed' : 'pointer', boxShadow: rating > 0 ? '0 4px 12px rgba(37, 99, 235, 0.25)' : 'none', transition: 'all 0.2s' }}>
         {submitting ? 'Publicando...' : 'Publicar reseña'}
       </button>
     </div>
@@ -130,7 +130,7 @@ export default function CourtPublicPage() {
   if (loading) return (
     <div style={{ minHeight: '100vh', background: '#030712', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ textAlign: 'center' }}>
-        <div style={{ width: 48, height: 48, border: '3px solid #1e293b', borderTop: '3px solid #00d084', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 16px' }} />
+        <div style={{ width: 48, height: 48, border: '3px solid #1e293b', borderTop: '3px solid #2563eb', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 16px' }} />
         <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
         <p style={{ color: '#64748b' }}>Cargando cancha...</p>
       </div>
@@ -140,7 +140,7 @@ export default function CourtPublicPage() {
   if (error || !court) return (
     <div style={{ minHeight: '100vh', background: '#030712', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
       <p style={{ color: '#ef4444', fontSize: '1.2rem', fontWeight: 700 }}>Cancha no encontrada</p>
-      <Link to="/" style={{ color: '#00d084', fontWeight: 600 }}>← Volver al inicio</Link>
+      <Link to="/" style={{ color: '#2563eb', fontWeight: 600 }}>← Volver al inicio</Link>
     </div>
   );
 
@@ -199,7 +199,7 @@ export default function CourtPublicPage() {
       <div style={{ minHeight: '100vh', background: '#030712', color: '#f1f5f9' }}>
         {/* Navbar strip */}
         <nav style={{ background: '#0a1628', borderBottom: '1px solid #1e293b', padding: '14px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Link to="/" style={{ color: '#00d084', fontWeight: 900, fontSize: '1.2rem', textDecoration: 'none' }}>
+          <Link to="/" style={{ color: '#2563eb', fontWeight: 900, fontSize: '1.2rem', textDecoration: 'none' }}>
             PlayStop
           </Link>
           <Link to="/" style={{ color: '#94a3b8', fontSize: '0.88rem', textDecoration: 'none' }}>← Inicio</Link>
@@ -213,7 +213,7 @@ export default function CourtPublicPage() {
               style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(3,7,18,0.95) 0%, transparent 55%)' }} />
             <div style={{ position: 'absolute', bottom: 24, left: 24, right: 24 }}>
-              <span style={{ background: 'rgba(0,208,132,0.18)', border: '1px solid rgba(0,208,132,0.4)', color: '#00d084', borderRadius: 20, padding: '4px 14px', fontSize: '0.8rem', fontWeight: 700 }}>
+              <span style={{ background: 'rgba(37, 99, 235, 0.18)', border: '1px solid rgba(37, 99, 235, 0.4)', color: '#2563eb', borderRadius: 20, padding: '4px 14px', fontSize: '0.8rem', fontWeight: 700 }}>
                 {court.sportType}
               </span>
               <h1 style={{ margin: '10px 0 6px', fontSize: '2rem', fontWeight: 900, letterSpacing: '-1px', lineHeight: 1.1 }}>{court.name}</h1>
@@ -240,18 +240,18 @@ export default function CourtPublicPage() {
                 </p>
               </div>
               <button onClick={handleBook}
-                style={{ background: 'linear-gradient(135deg,#00d084,#00b875)', color: '#0a1628', border: 'none', borderRadius: 14, padding: '16px 32px', fontWeight: 800, fontSize: '1rem', cursor: 'pointer', boxShadow: '0 8px 24px rgba(0,208,132,0.35)', transition: 'transform 0.15s, box-shadow 0.15s', whiteSpace: 'nowrap' }}
-                onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,208,132,0.45)'; }}
-                onMouseOut={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,208,132,0.35)'; }}>
+                style={{ background: 'linear-gradient(135deg,#2563eb,#1d4ed8)', color: '#ffffff', border: 'none', borderRadius: 14, padding: '16px 32px', fontWeight: 800, fontSize: '1rem', cursor: 'pointer', boxShadow: '0 8px 24px rgba(37, 99, 235, 0.35)', transition: 'transform 0.15s, box-shadow 0.15s', whiteSpace: 'nowrap' }}
+                onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(37, 99, 235, 0.45)'; }}
+                onMouseOut={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(37, 99, 235, 0.35)'; }}>
                 Reservar ahora →
               </button>
             </div>
             {/* Cancellation policy badge */}
             {(court.freeCancelHours != null || court.refundPercent != null) && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(0,208,132,0.08)', border: '1px solid rgba(0,208,132,0.2)', borderRadius: 10, padding: '9px 14px', marginBottom: 10 }}>
-                <i className="bi bi-shield-check-fill" style={{ color: '#00d084', fontSize: '0.9rem' }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(37, 99, 235, 0.08)', border: '1px solid rgba(37, 99, 235, 0.2)', borderRadius: 10, padding: '9px 14px', marginBottom: 10 }}>
+                <i className="bi bi-shield-check-fill" style={{ color: '#2563eb', fontSize: '0.9rem' }} />
                 <span style={{ color: '#94a3b8', fontSize: '0.8rem' }}>
-                  <strong style={{ color: '#00d084' }}>Cancelación gratis</strong> hasta {court.freeCancelHours ?? 24}h antes · {court.refundPercent ?? 50}% de reembolso después
+                  <strong style={{ color: '#2563eb' }}>Cancelación gratis</strong> hasta {court.freeCancelHours ?? 24}h antes · {court.refundPercent ?? 50}% de reembolso después
                 </span>
               </div>
             )}
@@ -266,7 +266,7 @@ export default function CourtPublicPage() {
               ].map(({ icon, label, value }) => (
                 <div key={label} style={{ background: '#0a1628', border: '1px solid #1e293b', borderRadius: 14, padding: '16px 18px' }}>
                   <p style={{ margin: '0 0 6px', color: '#64748b', fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <i className={`bi ${icon}`} style={{ color: '#00d084' }} /> {label}
+                    <i className={`bi ${icon}`} style={{ color: '#2563eb' }} /> {label}
                   </p>
                   <p style={{ margin: 0, color: '#f1f5f9', fontWeight: 700, fontSize: '0.9rem' }}>{value}</p>
                 </div>
@@ -281,12 +281,12 @@ export default function CourtPublicPage() {
                   target="_blank" rel="noopener noreferrer"
                   style={{ display: 'block', background: '#0a1628', border: '1px solid #1e293b', borderRadius: 14, overflow: 'hidden', textDecoration: 'none' }}>
                   <div style={{ padding: '18px', display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <div style={{ width: 42, height: 42, borderRadius: '50%', background: 'rgba(0,208,132,0.15)', border: '1px solid rgba(0,208,132,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <i className="bi bi-map-fill" style={{ color: '#00d084', fontSize: '1.1rem' }} />
+                    <div style={{ width: 42, height: 42, borderRadius: '50%', background: 'rgba(37, 99, 235, 0.15)', border: '1px solid rgba(37, 99, 235, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <i className="bi bi-map-fill" style={{ color: '#2563eb', fontSize: '1.1rem' }} />
                     </div>
                     <div>
                       <p style={{ margin: 0, color: '#f1f5f9', fontWeight: 700, fontSize: '0.9rem' }}>{court.address}</p>
-                      <p style={{ margin: '2px 0 0', color: '#00d084', fontSize: '0.8rem' }}>Ver en Google Maps →</p>
+                      <p style={{ margin: '2px 0 0', color: '#2563eb', fontSize: '0.8rem' }}>Ver en Google Maps →</p>
                     </div>
                   </div>
                 </a>
@@ -352,7 +352,7 @@ export default function CourtPublicPage() {
 
               <div style={{ marginTop: 28, textAlign: 'center' }}>
                 <button onClick={handleBook}
-                  style={{ background: 'linear-gradient(135deg,#00d084,#00b875)', color: '#0a1628', border: 'none', borderRadius: 14, padding: '14px 36px', fontWeight: 800, fontSize: '0.95rem', cursor: 'pointer', boxShadow: '0 6px 18px rgba(0,208,132,0.3)' }}>
+                  style={{ background: 'linear-gradient(135deg,#2563eb,#1d4ed8)', color: '#ffffff', border: 'none', borderRadius: 14, padding: '14px 36px', fontWeight: 800, fontSize: '0.95rem', cursor: 'pointer', boxShadow: '0 6px 18px rgba(37, 99, 235, 0.3)' }}>
                   Reservar {court.name} →
                 </button>
               </div>
