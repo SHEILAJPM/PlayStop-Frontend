@@ -88,6 +88,12 @@ const CalendarioCancha = ({ reservas = [] }) => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <style>{`
+        @media (max-width: 480px) {
+          .cal-day-cell { min-height: 48px !important; padding: 6px 3px !important; }
+          .cal-rsv-label { display: none !important; }
+        }
+      `}</style>
 
       {/* ── Métricas del mes ── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '16px' }}>
@@ -139,6 +145,7 @@ const CalendarioCancha = ({ reservas = [] }) => {
             return (
               <div
                 key={cell.dateStr}
+                className="cal-day-cell"
                 onClick={() => setSelectedDay(isSelected ? null : cell.dateStr)}
                 style={{
                   minHeight: '64px',
@@ -173,7 +180,7 @@ const CalendarioCancha = ({ reservas = [] }) => {
                       backgroundColor: isSelected ? '#fff' : dot,
                       flexShrink: 0,
                     }} />
-                    <span style={{
+                    <span className="cal-rsv-label" style={{
                       fontSize: '0.7rem', fontWeight: '800',
                       color: isSelected ? 'rgba(255,255,255,0.85)' : '#475569',
                     }}>

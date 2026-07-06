@@ -51,7 +51,7 @@ const ReferidosTab = ({ user }) => {
             <p style={{ margin: 0, color: '#64748b', fontSize: '0.88rem' }}>Invita amigos y gana S/ 10 en créditos por cada uno que reserve</p>
           </div>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(85px, 1fr))', gap: 12 }}>
           {[
             { icon: 'bi-person-plus-fill', value: loading ? '...' : info?.totalReferrals ?? 0,       label: 'Amigos invitados' },
             { icon: 'bi-cash-stack',        value: loading ? '...' : `S/ ${info?.creditsEarned ?? 0}`, label: 'Créditos ganados' },

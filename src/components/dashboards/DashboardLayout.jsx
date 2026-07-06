@@ -275,7 +275,7 @@ const NotificationPanel = ({ notifications, unreadCount, onMarkAllRead, onClearA
       transition={{ duration:.22, ease:[.16,1,.3,1] }}
       style={{
         position:'fixed', top:78, right:16, zIndex:99999,
-        width:340, maxHeight:480,
+        width:340, maxWidth:'calc(100vw - 32px)', maxHeight:480,
         background:bg,
         borderRadius:18, border:`1px solid ${border}`,
         boxShadow:'0 20px 60px rgba(0,0,0,.55)',
@@ -485,6 +485,11 @@ export const DashboardLayout = ({
           .sidebar-ps { position:fixed!important; height:calc(100vh - 24px)!important; top:12px!important; left:12px!important; transform:translateX(calc(-100% - 24px))!important; }
           .sidebar-ps.open { transform:translateX(0)!important; }
           .menu-btn-ps { display:flex; align-items:center; }
+          .dash-header { padding:0 14px!important; }
+          .dash-header-right { gap:6px!important; }
+        }
+        @media(max-width:420px) {
+          .dash-header-right button, .dash-header-right > div > button { width:34px!important; height:34px!important; }
         }
         ::-webkit-scrollbar { width:4px; height:4px; }
         ::-webkit-scrollbar-track { background:transparent; }
@@ -670,7 +675,7 @@ export const DashboardLayout = ({
       <main style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden', minWidth:0 }}>
 
         {/* Header */}
-        <header style={{
+        <header className="dash-header" style={{
           height:68, minHeight:68,
           background: colors.headerBg,
           backdropFilter:'blur(20px) saturate(180%)',
@@ -685,13 +690,13 @@ export const DashboardLayout = ({
           marginBottom:20,
           position:'relative',
         }}>
-          <div style={{ display:'flex', alignItems:'center' }}>
-            <button className="menu-btn-ps" onClick={() => setIsSidebarOpen(true)} style={{ color: colors.titleColor }}>
+          <div style={{ display:'flex', alignItems:'center', minWidth:0, flex:1, overflow:'hidden', marginRight:12 }}>
+            <button className="menu-btn-ps" onClick={() => setIsSidebarOpen(true)} style={{ color: colors.titleColor, flexShrink:0 }}>
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
             </button>
-            <h1 style={{ margin:0, color:colors.titleColor, fontSize:'1.2rem', fontWeight:800, letterSpacing:'-.3px' }}>{title}</h1>
+            <h1 style={{ margin:0, color:colors.titleColor, fontSize:'1.2rem', fontWeight:800, letterSpacing:'-.3px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', minWidth:0 }}>{title}</h1>
           </div>
-          <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+          <div className="dash-header-right" style={{ display:'flex', alignItems:'center', gap:10, flexShrink:0 }}>
             {onRestartTour && (
               <button
                 onClick={onRestartTour}

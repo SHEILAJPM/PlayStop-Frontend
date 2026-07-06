@@ -58,13 +58,13 @@ const ReservasTab = ({ reservas, loadingReservas, openModal, openReview, reviewe
         <div style={{ padding: '20px 24px', borderBottom: `1px solid ${C.cardBorder}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
           <h3 style={{ margin: 0, color: C.textPrimary, fontSize: '1.15rem', fontWeight: '800' }}>Historial de Reservas</h3>
           <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-            <div style={{ position: 'relative' }}>
+            <div style={{ position: 'relative', flex: '1 1 140px', minWidth: 140 }}>
               <i className="bi bi-search" style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', color: C.textMuted, fontSize: '0.85rem', pointerEvents: 'none' }} />
               <input
                 type="text" value={reservaSearch}
                 onChange={e => setReservaSearch(e.target.value)}
                 placeholder="Buscar reserva..."
-                style={{ paddingLeft: 32, paddingRight: 12, paddingTop: 8, paddingBottom: 8, borderRadius: 10, border: `1.5px solid ${C.cardBorder}`, background: C.inputBg, color: C.textPrimary, fontSize: '0.88rem', outline: 'none', width: 200 }}
+                style={{ paddingLeft: 32, paddingRight: 12, paddingTop: 8, paddingBottom: 8, borderRadius: 10, border: `1.5px solid ${C.cardBorder}`, background: C.inputBg, color: C.textPrimary, fontSize: '0.88rem', outline: 'none', width: '100%', maxWidth: 200, boxSizing: 'border-box' }}
               />
             </div>
             <button onClick={() => setActiveTab('Buscar Canchas')} className="btn-primary-ps" style={{ padding: '8px 16px', fontSize: '0.85rem' }}>

@@ -95,6 +95,20 @@ export default function MapaCanchas() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#030712' }}>
+      <style>{`
+        .court-sidebar {
+          width: 300px; background: #0a1628; border-left: 1px solid #1e293b;
+          overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px;
+        }
+        @media (max-width: 768px) {
+          .court-sidebar {
+            position: fixed; left: 0; right: 0; bottom: 0; width: auto; max-height: 65vh;
+            border-left: none; border-top: 1px solid #1e293b; border-radius: 20px 20px 0 0;
+            box-shadow: 0 -8px 24px rgba(0,0,0,0.4); z-index: 1000;
+          }
+        }
+      `}</style>
+
       {/* Top bar */}
       <div style={{ background: '#0a1628', borderBottom: '1px solid #1e293b', padding: '12px 20px', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', zIndex: 1000 }}>
         <Link to="/" style={{ color: '#2563eb', fontWeight: 900, fontSize: '1.1rem', textDecoration: 'none', marginRight: 8 }}>PlayStop</Link>
@@ -211,7 +225,7 @@ export default function MapaCanchas() {
 
         {/* Selected court sidebar */}
         {selected && (
-          <div style={{ width: 300, background: '#0a1628', borderLeft: '1px solid #1e293b', overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div className="court-sidebar">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Cancha seleccionada</p>
               <button onClick={() => setSelected(null)}

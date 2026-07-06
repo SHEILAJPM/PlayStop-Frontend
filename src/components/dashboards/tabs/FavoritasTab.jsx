@@ -31,13 +31,13 @@ const FavoritasTab = ({ canchasFavoritas, loadingCanchas, toggleFavorito, setAct
           <h3 style={{ margin: '0 0 4px', color: C.textPrimary, fontSize: '1.3rem', fontWeight: '800' }}>Canchas Favoritas</h3>
           <p style={{ margin: 0, color: C.textSecondary, fontSize: '0.9rem' }}>Toca el corazón en cualquier cancha para agregarla aquí.</p>
         </div>
-        <div style={{ position: 'relative' }}>
+        <div style={{ position: 'relative', width: '100%', maxWidth: 200 }}>
           <i className="bi bi-search" style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', color: C.textMuted, fontSize: '0.85rem', pointerEvents: 'none' }} />
           <input
             type="text" value={favSearch}
             onChange={e => setFavSearch(e.target.value)}
             placeholder="Buscar favorita..."
-            style={{ paddingLeft: 32, paddingRight: 12, paddingTop: 9, paddingBottom: 9, borderRadius: 10, border: `1.5px solid ${C.cardBorder}`, background: C.inputBg, color: C.textPrimary, fontSize: '0.88rem', outline: 'none', width: 200 }}
+            style={{ paddingLeft: 32, paddingRight: 12, paddingTop: 9, paddingBottom: 9, borderRadius: 10, border: `1.5px solid ${C.cardBorder}`, background: C.inputBg, color: C.textPrimary, fontSize: '0.88rem', outline: 'none', width: '100%', boxSizing: 'border-box' }}
           />
         </div>
       </div>

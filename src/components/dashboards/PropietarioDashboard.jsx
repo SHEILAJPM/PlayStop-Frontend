@@ -529,9 +529,9 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
           </div>
 
           <div className="dashboard-card-ps">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', gap: 12, flexWrap: 'wrap' }}>
               <h3 style={{ margin: 0, color: C.textPrimary, fontSize: '1.2rem', fontWeight: '800' }}>Últimas Reservas</h3>
-              <div style={{ display: 'flex', gap: 8 }}>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 <button onClick={() => { setLoadingReservas(true); loadData(); }} className="btn-secondary-ps">
                   <i className="bi bi-arrow-clockwise" /> Actualizar
                 </button>
@@ -602,7 +602,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
       {/* ─── Mis Canchas ──────────────────────────────── */}
       {activeTab === 'Mis Canchas' && (
         <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', gap: 12, flexWrap: 'wrap' }}>
             <h3 style={{ margin: '0', color: C.textPrimary, fontSize: '1.3rem', fontWeight: '800' }}>Gestión de Infraestructura</h3>
             <button onClick={() => openModal('AGREGAR_CANCHA')} className="btn-dark-ps">
               + Nueva Cancha

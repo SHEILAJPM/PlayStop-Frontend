@@ -484,6 +484,10 @@ const SuperAdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
             .modal-btn-cancel:hover { background-color: #e2e8f0 !important; color: #0f172a !important; }
             .modal-btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3); background-color: #1d4ed8 !important; }
             .modal-close:hover { background-color: #f1f5f9; color: #ef4444 !important; }
+            .modal-two-col { flex-wrap: wrap; }
+            @media (max-width: 480px) {
+              .dashboard-modal { padding: 24px !important; }
+            }
           `}
         </style>
         <div className="dashboard-modal" style={{ backgroundColor: '#ffffff', padding: '40px', borderRadius: '28px', width: '90%', maxWidth: '500px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1)', animation: 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)' }}>
@@ -514,12 +518,12 @@ const SuperAdminDashboard = ({ user, onLogout, darkMode, toggleTheme }) => {
                   <label style={{ fontSize: '0.9rem', fontWeight: '800', color: '#334155', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Nombre del Tier</label>
                   <input type="text" defaultValue={modal.payload?.name} className="modal-input" required placeholder="Ej. Pro Plus" style={{ width: '100%', padding: '14px 18px', borderRadius: '12px', border: '2px solid #e2e8f0', backgroundColor: '#f8fafc', fontSize: '1.05rem' }} />
                 </div>
-                <div style={{ display: 'flex', gap: '16px' }}>
-                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div className="modal-two-col" style={{ display: 'flex', gap: '16px' }}>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px', minWidth: '140px' }}>
                     <label style={{ fontSize: '0.9rem', fontWeight: '800', color: '#334155', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Precio Mensual</label>
                     <input type="text" defaultValue={modal.payload?.price} className="modal-input" required placeholder="S/ 0.00" style={{ width: '100%', padding: '14px 18px', borderRadius: '12px', border: '2px solid #e2e8f0', backgroundColor: '#f8fafc', fontSize: '1.05rem' }} />
                   </div>
-                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px', minWidth: '140px' }}>
                     <label style={{ fontSize: '0.9rem', fontWeight: '800', color: '#334155', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Comisión (%)</label>
                     <input type="text" defaultValue={modal.payload?.fee} className="modal-input" required placeholder="Ej. 2.5%" style={{ width: '100%', padding: '14px 18px', borderRadius: '12px', border: '2px solid #e2e8f0', backgroundColor: '#f8fafc', fontSize: '1.05rem' }} />
                   </div>

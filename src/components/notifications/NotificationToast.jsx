@@ -70,6 +70,8 @@ const ToastItem = ({ toast, onDismiss, onOpenChat, bg, border, text, muted, dark
         borderRadius: 16,
         padding: '14px 16px',
         width: 320,
+        maxWidth: 'calc(100vw - 40px)',
+        boxSizing: 'border-box',
         boxShadow: darkMode
           ? '0 8px 32px rgba(0,0,0,0.5)'
           : '0 8px 32px rgba(0,0,0,0.12)',

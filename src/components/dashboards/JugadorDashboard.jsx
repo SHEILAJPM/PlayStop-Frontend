@@ -372,7 +372,7 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
       {/* ── QR Modal ─────────────────────────────────────────────────────────── */}
       {qrModal.show && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.92)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(16px)', animation: 'fadeIn 0.3s ease' }}>
-          <div style={{ background: C.cardBg, borderRadius: '28px', padding: '36px', width: '90%', maxWidth: '420px', boxShadow: '0 30px 60px rgba(0,0,0,0.5)', animation: 'slideUp 0.4s cubic-bezier(0.16,1,0.3,1)', textAlign: 'center' }}>
+          <div style={{ background: C.cardBg, borderRadius: '28px', padding: 'clamp(20px, 6vw, 36px)', width: '90%', maxWidth: '420px', boxSizing: 'border-box', boxShadow: '0 30px 60px rgba(0,0,0,0.5)', animation: 'slideUp 0.4s cubic-bezier(0.16,1,0.3,1)', textAlign: 'center' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
               <div style={{ textAlign: 'left' }}>
                 <h2 style={{ margin: '0 0 4px', color: C.textPrimary, fontSize: '1.5rem', fontWeight: '900' }}>Tu Código QR</h2>
@@ -393,11 +393,11 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
                 </div>
               ))}
             </div>
-            <div style={{ display: 'inline-block', padding: '16px', background: '#fff', borderRadius: '20px', border: `2px solid ${C.cardBorder}`, boxShadow: '0 8px 24px rgba(0,0,0,0.08)', marginBottom: '20px' }}>
+            <div style={{ maxWidth: '252px', margin: '0 auto 20px', padding: '16px', boxSizing: 'border-box', background: '#fff', borderRadius: '20px', border: `2px solid ${C.cardBorder}`, boxShadow: '0 8px 24px rgba(0,0,0,0.08)' }}>
               <img src={`${api.getReservationQrUrl(qrModal.reservationId)}?t=${qrModal.timestamp}`} alt="QR de reserva"
-                style={{ width: '220px', height: '220px', display: 'block', borderRadius: '8px' }}
+                style={{ width: '100%', maxWidth: '220px', height: 'auto', aspectRatio: '1 / 1', display: 'block', margin: '0 auto', borderRadius: '8px' }}
                 onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
-              <div style={{ display: 'none', width: '220px', height: '220px', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '8px', color: '#94a3b8' }}>
+              <div style={{ display: 'none', width: '100%', maxWidth: '220px', aspectRatio: '1 / 1', margin: '0 auto', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '8px', color: '#94a3b8' }}>
                 <i className="bi bi-exclamation-triangle-fill" style={{ fontSize: '2rem' }} />
                 <span style={{ fontSize: '0.8rem', fontWeight: '600' }}>No se pudo cargar el QR</span>
               </div>
