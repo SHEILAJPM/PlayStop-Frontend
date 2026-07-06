@@ -1,13 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import EmptyState from '../shared/EmptyState.jsx';
 import { api } from '../../../services/api.js';
-
-const AMIGOS_DEFAULT = [
-  { id: 1, name: 'Martín Fernández', email: 'martin@gmail.com', img: 'https://randomuser.me/api/portraits/men/44.jpg',   level: 'Intermedio',   lastMatch: 'Ayer' },
-  { id: 2, name: 'Lucía Gómez',      email: 'lucia@gmail.com',  img: 'https://randomuser.me/api/portraits/women/68.jpg', level: 'Avanzado',     lastMatch: 'Hace 3 días' },
-  { id: 3, name: 'Carlos Ramírez',   email: 'carlos@gmail.com', img: 'https://randomuser.me/api/portraits/men/32.jpg',   level: 'Principiante', lastMatch: 'Hace 1 semana' },
-  { id: 4, name: 'Valeria Castro',   email: 'vale@gmail.com',   img: 'https://randomuser.me/api/portraits/women/44.jpg', level: 'Intermedio',   lastMatch: 'Hace 2 semanas' },
-];
 
 const NIVEL_COLORS = {
   'Principiante': { color: '#f59e0b', bg: '#fef3c7' },
@@ -15,11 +8,28 @@ const NIVEL_COLORS = {
   'Avanzado':     { color: '#2563eb', bg: '#d1fae5' },
 };
 
+const toAmigo = (u) => ({
+  id: u.id,
+  name: u.name || u.email?.split('@')[0] || 'Jugador',
+  email: u.email,
+  img: u.profileImageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name || u.email)}&background=0f172a&color=fff&size=100`,
+  level: u.level || 'Principiante',
+  lastMatch: u.lastMatch || 'Nuevo',
+});
+
 const AmigosTab = ({ darkMode, C }) => {
-  const [amigos, setAmigos] = useState(AMIGOS_DEFAULT);
+  const [amigos, setAmigos] = useState([]);
+  const [loadingAmigos, setLoadingAmigos] = useState(true);
   const [emailBusqueda, setEmailBusqueda] = useState('');
   const [resultadoBusqueda, setResultadoBusqueda] = useState(null);
   const [buscandoAmigo, setBuscandoAmigo] = useState(false);
+
+  useEffect(() => {
+    api.getFriends()
+      .then(data => setAmigos(Array.isArray(data) ? data.map(toAmigo) : []))
+      .catch(() => setAmigos([]))
+      .finally(() => setLoadingAmigos(false));
+  }, []);
 
   const buscarAmigoPorEmail = async () => {
     const email = emailBusqueda.trim().toLowerCase();
@@ -31,14 +41,7 @@ const AmigosTab = ({ darkMode, C }) => {
       if (yaEsAmigo) { setResultadoBusqueda({ type: 'already', ...yaEsAmigo }); return; }
       const user = await api.searchUserByEmail(email);
       if (user?.id) {
-        setResultadoBusqueda({
-          type: 'found', id: user.id,
-          name: user.name || user.fullName || email.split('@')[0],
-          email: user.email,
-          img: user.profileImageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || email)}&background=0f172a&color=fff&size=100`,
-          level: user.level || 'Principiante',
-          lastMatch: 'Nuevo',
-        });
+        setResultadoBusqueda({ type: 'found', ...toAmigo(user) });
       } else {
         setResultadoBusqueda({ type: 'not_found' });
       }
@@ -56,6 +59,13 @@ const AmigosTab = ({ darkMode, C }) => {
     } catch { /* continúa aunque falle, el backend puede manejar duplicados */ }
     setAmigos(prev => [{ ...resultadoBusqueda }, ...prev]);
     setResultadoBusqueda({ type: 'sent', name: resultadoBusqueda.name });
+  };
+
+  const eliminarAmigo = async (id) => {
+    setAmigos(prev => prev.filter(a => a.id !== id));
+    try {
+      await api.removeFriend(id);
+    } catch { /* la lista ya se actualizó localmente; se resincroniza en el próximo fetch */ }
   };
 
   return (
@@ -118,7 +128,9 @@ const AmigosTab = ({ darkMode, C }) => {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
           <h3 style={{ margin: 0, color: C.textPrimary, fontSize: '1.2rem', fontWeight: '800' }}>Mis Amigos ({amigos.length})</h3>
         </div>
-        {amigos.length === 0 ? (
+        {loadingAmigos ? (
+          <p style={{ color: C.textSecondary, fontSize: '0.9rem', margin: 0 }}>Cargando amigos...</p>
+        ) : amigos.length === 0 ? (
           <EmptyState icon="bi-people-fill" title="Sin amigos aún" message="Busca jugadores por correo para agregarlos a tu lista." darkMode={darkMode} />
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px' }}>
@@ -135,7 +147,7 @@ const AmigosTab = ({ darkMode, C }) => {
                     </div>
                   </div>
                   <button
-                    onClick={() => setAmigos(prev => prev.filter(a => a.id !== amigo.id))}
+                    onClick={() => eliminarAmigo(amigo.id)}
                     aria-label="Eliminar amigo"
                     style={{ background: 'transparent', border: 'none', color: '#cbd5e1', cursor: 'pointer', fontSize: '1.1rem', padding: '4px', borderRadius: '8px', transition: 'color 0.2s', flexShrink: 0 }}
                     onMouseOver={e => e.currentTarget.style.color = '#ef4444'}

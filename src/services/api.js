@@ -351,6 +351,13 @@ export const api = {
     return handleResponse(await fetch(`${BASE_URL}/api/friends`, { headers: jsonHeaders() }));
   },
 
+  async removeFriend(friendId) {
+    return handleResponse(await fetch(`${BASE_URL}/api/friends/${friendId}`, {
+      method: 'DELETE',
+      headers: jsonHeaders(),
+    }));
+  },
+
   // ── Chat por reserva ──────────────────────────────────────────────────────
 
   async getChatMessages(reservationId) {
