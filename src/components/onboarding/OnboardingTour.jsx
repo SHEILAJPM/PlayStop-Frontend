@@ -63,7 +63,17 @@ const OnboardingTour = ({ steps, onComplete, onSkip, onHighlight, isDark }) => {
         }}
       />
 
-      {/* Card */}
+      {/* Card wrapper — centers via flexbox instead of transform, since Framer
+          Motion owns the `transform` property for the animated scale/y below
+          and would silently clobber a manual translate(-50%,-50%) offset. */}
+      <div
+        onClick={handleSkip}
+        style={{
+          position: 'fixed', inset: 0, zIndex: 9975,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: 16,
+        }}
+      >
       <motion.div
         initial={{ opacity: 0, scale: 0.88, y: 28 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -71,12 +81,9 @@ const OnboardingTour = ({ steps, onComplete, onSkip, onHighlight, isDark }) => {
         transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
         onClick={e => e.stopPropagation()}
         style={{
-          position: 'fixed',
-          top: '50%', left: '50%',
-          transform: 'translate(-50%, -50%)',
-          zIndex: 9975,
           width: '100%', maxWidth: 440,
-          margin: '0 16px',
+          maxHeight: '90vh',
+          display: 'flex', flexDirection: 'column',
           background: bg,
           borderRadius: 28,
           border: `1px solid ${border}`,
@@ -88,7 +95,7 @@ const OnboardingTour = ({ steps, onComplete, onSkip, onHighlight, isDark }) => {
         }}
       >
         {/* Progress bar */}
-        <div style={{ height: 3, background: trackC }}>
+        <div style={{ height: 3, background: trackC, flexShrink: 0 }}>
           <motion.div
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.35, ease: 'easeOut' }}
@@ -96,7 +103,7 @@ const OnboardingTour = ({ steps, onComplete, onSkip, onHighlight, isDark }) => {
           />
         </div>
 
-        <div style={{ padding: '32px 32px 28px' }}>
+        <div style={{ padding: 'clamp(20px, 5vw, 32px) clamp(20px, 5vw, 32px) clamp(16px, 4vw, 28px)', overflowY: 'auto', minHeight: 0 }}>
 
           {/* Step counter top-right */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 }}>
@@ -233,6 +240,7 @@ const OnboardingTour = ({ steps, onComplete, onSkip, onHighlight, isDark }) => {
           </div>
         </div>
       </motion.div>
+      </div>
     </>
   );
 };
