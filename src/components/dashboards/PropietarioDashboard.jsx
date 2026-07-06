@@ -606,7 +606,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
             <p style={{ margin: 0, fontWeight: '600' }}>Cargando calendario...</p>
           </div>
         ) : (
-          <CalendarioCancha reservas={reservas} />
+          <CalendarioCancha reservas={reservas} darkMode={darkMode} />
         )
       )}
 
