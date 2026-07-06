@@ -325,6 +325,7 @@ function DateTimePicker({ courtId, onNext, onBack: _onBack }) {
   const [slots, setSlots] = useState([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState(null);
+  const [duration, setDuration] = useState(1);
   const [lastRefresh, setLastRefresh] = useState(null);
 
   const today = new Date(); today.setHours(0, 0, 0, 0);
@@ -372,6 +373,21 @@ function DateTimePicker({ courtId, onNext, onBack: _onBack }) {
     return match.available ? 'available' : 'taken';
   };
 
+  // ¿Están libres todas las horas seguidas que ocuparía esta reserva?
+  const isRangeAvailable = (startHour, hours) => {
+    for (let i = 0; i < hours; i++) {
+      const h = startHour + i;
+      if (!allHours.includes(`${h.toString().padStart(2,'0')}:00`)) return false; // se sale del horario del local
+      if (getSlotStatus(`${h}:00`) !== 'available') return false;
+    }
+    return true;
+  };
+
+  const handleSelectDuration = (d) => {
+    setDuration(d);
+    if (selectedSlot && !isRangeAvailable(parseInt(selectedSlot), d)) setSelectedSlot(null);
+  };
+
   return (
     <div style={{ padding: '0 0 20px' }}>
       {/* Month nav */}
@@ -402,10 +418,28 @@ function DateTimePicker({ courtId, onNext, onBack: _onBack }) {
         })}
       </div>
 
+      {/* Duración */}
+      <div style={{ padding: '0 20px', marginBottom: 20 }}>
+        <p style={{ margin: '0 0 10px 0', color: '#94a3b8', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+          ¿Cuántas horas?
+        </p>
+        <div style={{ display: 'flex', gap: 8 }}>
+          {[1, 2, 3, 4].map(d => (
+            <button key={d} onClick={() => handleSelectDuration(d)}
+              style={{ flex: 1, padding: '10px 0', borderRadius: 10, cursor: 'pointer', fontWeight: 800, fontSize: '0.9rem', transition: 'all 0.15s',
+                border: duration === d ? '2px solid #2563eb' : '1px solid #1e293b',
+                background: duration === d ? 'rgba(37, 99, 235, 0.15)' : '#0f172a',
+                color: duration === d ? '#2563eb' : '#94a3b8' }}>
+              {d}h
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Slots */}
       <div style={{ padding: '0 20px' }}>
         <p style={{ margin: '0 0 12px 0', color: '#94a3b8', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-          {selectedDate ? 'Horarios disponibles' : 'Selecciona una fecha primero'}
+          {selectedDate ? 'Hora de inicio' : 'Selecciona una fecha primero'}
         </p>
 
         {loadingSlots ? (
@@ -425,23 +459,29 @@ function DateTimePicker({ courtId, onNext, onBack: _onBack }) {
                     const status = getSlotStatus(h);
                     const isSelected = selectedSlot === h;
                     const isTaken = status === 'taken';
-                    const isDisabled = status === 'disabled' || isTaken;
-                    // Color coding: green=many available, yellow=last 1-2, red=taken
+                    const fitsRange = isRangeAvailable(parseInt(h), duration);
+                    const blockedByRange = !isTaken && !fitsRange;
+                    const isDisabled = status === 'disabled' || isTaken || !fitsRange;
+                    // Color coding: green=many available, yellow=last 1-2, red=taken, gray=no alcanza la duración
                     const slotColor = isTaken ? '#ef4444' : availCount <= 2 ? '#f59e0b' : '#2563eb';
                     return (
                       <button key={h} onClick={() => !isDisabled && setSelectedSlot(h)}
                         disabled={isDisabled}
-                        title={isTaken ? 'No disponible' : availCount <= 2 ? 'Últimos horarios' : 'Disponible'}
+                        title={isTaken ? 'No disponible' : blockedByRange ? `No hay ${duration}h seguidas disponibles desde aquí` : availCount <= 2 ? 'Últimos horarios' : 'Disponible'}
                         style={{
                           padding: '12px 0',
                           borderRadius: 10,
-                          border: isSelected ? `2px solid ${slotColor}` : `1px solid ${isTaken ? 'rgba(239,68,68,0.2)' : availCount <= 2 ? 'rgba(245,158,11,0.25)' : '#1e293b'}`,
-                          background: isSelected ? slotColor : isTaken ? 'rgba(239,68,68,0.08)' : availCount <= 2 && !isDisabled ? 'rgba(245,158,11,0.08)' : '#0f172a',
-                          color: isSelected ? '#0a1628' : isTaken ? '#ef4444' : availCount <= 2 && !isDisabled ? '#f59e0b' : '#f1f5f9',
+                          border: isSelected
+                            ? `2px solid ${slotColor}`
+                            : blockedByRange
+                              ? '1px dashed #1e293b'
+                              : `1px solid ${isTaken ? 'rgba(239,68,68,0.2)' : availCount <= 2 ? 'rgba(245,158,11,0.25)' : '#1e293b'}`,
+                          background: isSelected ? slotColor : isTaken ? 'rgba(239,68,68,0.08)' : blockedByRange ? 'rgba(148,163,184,0.05)' : availCount <= 2 && !isDisabled ? 'rgba(245,158,11,0.08)' : '#0f172a',
+                          color: isSelected ? '#0a1628' : isTaken ? '#ef4444' : blockedByRange ? '#475569' : availCount <= 2 && !isDisabled ? '#f59e0b' : '#f1f5f9',
                           fontWeight: isSelected ? 800 : 600,
                           fontSize: '0.85rem',
                           cursor: isDisabled ? 'not-allowed' : 'pointer',
-                          opacity: !selectedDate ? 0.4 : 1,
+                          opacity: !selectedDate ? 0.4 : blockedByRange ? 0.5 : 1,
                           transition: 'all 0.15s',
                           textDecoration: isTaken ? 'line-through' : 'none',
                           position: 'relative',
@@ -483,7 +523,7 @@ function DateTimePicker({ courtId, onNext, onBack: _onBack }) {
 
       {/* CTA */}
       <div style={{ padding: '24px 20px 0' }}>
-        <button onClick={() => selectedDate && selectedSlot && onNext({ date: selectedDate, slot: selectedSlot })}
+        <button onClick={() => selectedDate && selectedSlot && onNext({ date: selectedDate, slot: selectedSlot, hours: duration })}
           disabled={!selectedDate || !selectedSlot}
           style={{ width: '100%', padding: 16, background: selectedDate && selectedSlot ? 'linear-gradient(135deg,#2563eb,#1d4ed8)' : '#1e293b', color: selectedDate && selectedSlot ? '#0a1628' : '#475569', border: 'none', borderRadius: 14, fontWeight: 800, fontSize: '1rem', cursor: selectedDate && selectedSlot ? 'pointer' : 'not-allowed', transition: 'all 0.2s', boxShadow: selectedDate && selectedSlot ? '0 8px 20px rgba(37, 99, 235, 0.3)' : 'none' }}>
           Continuar →
@@ -495,7 +535,10 @@ function DateTimePicker({ courtId, onNext, onBack: _onBack }) {
 
 /* ── Step 3: Summary ── */
 function BookingSummary({ court, booking, onNext, onBack: _onBack }) {
-  const { date, slot } = booking;
+  const { date, slot, hours = 1 } = booking;
+  const endHour = String(parseInt(slot) + hours).padStart(2, '0');
+  const location = [court.district, court.city].filter(Boolean).join(', ');
+  const total = parseFloat(court.pricePerHour || 0) * hours;
   return (
     <div style={{ padding: '20px' }}>
       {/* Court card */}
@@ -507,9 +550,9 @@ function BookingSummary({ court, booking, onNext, onBack: _onBack }) {
           <h3 style={{ margin: '0 0 10px 0', color: '#f1f5f9', fontSize: '0.95rem', fontWeight: 800, lineHeight: 1.2 }}>{court.name}</h3>
           {[
             { icon: 'bi-calendar3',        text: fmtDateLabel(date) },
-            { icon: 'bi-clock',            text: `${slot} — ${String(parseInt(slot) + 1).padStart(2,'0')}:00 (1 hora)` },
-            { icon: 'bi-building',         text: `Cancha 1 • ${court.sportType || 'Fútbol'}` },
-            { icon: 'bi-cash-coin',        text: fmtPrice(court.pricePerHour) + '/hora' },
+            { icon: 'bi-clock',            text: `${slot} — ${endHour}:00 (${hours} ${hours > 1 ? 'horas' : 'hora'})` },
+            ...(location ? [{ icon: 'bi-geo-alt',   text: location }] : []),
+            { icon: 'bi-cash-coin',        text: `${fmtPrice(total)} total (${fmtPrice(court.pricePerHour)}/hora × ${hours})` },
           ].map(({ icon, text }) => (
             <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
               <i className={`bi ${icon}`} style={{ fontSize: '0.8rem', color: '#64748b' }} />
@@ -563,7 +606,9 @@ function BookingSummary({ court, booking, onNext, onBack: _onBack }) {
 
 /* ── Step 4: Payment ── */
 function PaymentView({ court, booking, onPay, processing, payError }) {
-  const total = parseFloat(court?.pricePerHour || 0);
+  const hours = booking.hours || 1;
+  const total = parseFloat(court?.pricePerHour || 0) * hours;
+  const endHour = String(parseInt(booking.slot) + hours).padStart(2, '0');
 
   const handlePay = () => onPay('card');
 
@@ -579,7 +624,7 @@ function PaymentView({ court, booking, onPay, processing, payError }) {
       <div style={{ background: '#0f172a', borderRadius: 16, padding: 20, marginBottom: 20, border: '1px solid #1e293b' }}>
         <p style={{ margin: '0 0 8px 0', color: '#64748b', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total a pagar</p>
         <p style={{ margin: 0, color: '#f1f5f9', fontSize: '2rem', fontWeight: 900 }}>{fmtPrice(total)}</p>
-        <p style={{ margin: '4px 0 0 0', color: '#475569', fontSize: '0.8rem' }}>1 hora • {booking.slot} – {String(parseInt(booking.slot) + 1).padStart(2,'0')}:00</p>
+        <p style={{ margin: '4px 0 0 0', color: '#475569', fontSize: '0.8rem' }}>{hours} {hours > 1 ? 'horas' : 'hora'} • {booking.slot} – {endHour}:00</p>
       </div>
 
       {/* Security note */}
@@ -764,6 +809,7 @@ export default function BookingFlow({ darkMode: _darkMode = true }) {
         courtId: court.id,
         date: booking.date,
         slotHour: parseInt(booking.slot),
+        durationHours: booking.hours || 1,
       });
       const { url } = await api.createCheckoutSession(reservation.id);
       window.location.href = url;

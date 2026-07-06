@@ -151,6 +151,7 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedSlot, setSelectedSlot] = useState(null);
+  const [duration, setDuration] = useState(1);
 
   // ── Data fetching ─────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -203,6 +204,7 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
     setAcceptedTerms(false);
     setSelectedDate('');
     setSelectedSlot(null);
+    setDuration(1);
     setSlots([]);
     setPaymentStage('form');
   };
@@ -236,6 +238,7 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
     const date = e.target.value;
     setSelectedDate(date);
     setSelectedSlot(null);
+    setDuration(1);
     setSlots([]);
     if (date && modal.payload?.id) {
       setLoadingSlots(true);
@@ -247,12 +250,28 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
     }
   };
 
+  // ¿Están libres todas las horas seguidas que ocuparía esta reserva?
+  const isRangeAvailable = (startHour, hours) => {
+    for (let i = 0; i < hours; i++) {
+      const match = slots.find(s => s.hour === startHour + i);
+      if (!match || !match.available) return false;
+    }
+    return true;
+  };
+
+  const handleSelectDuration = (d) => {
+    setDuration(d);
+    if (selectedSlot !== null && !isRangeAvailable(selectedSlot, d)) setSelectedSlot(null);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (submitting) return;
     if (modal.action === 'RESERVAR_CANCHA') {
       if (!selectedDate || selectedSlot === null) { alert('Por favor selecciona fecha y horario.'); return; }
-      setModal({ show: true, action: 'PAGO_CULQI', payload: { ...modal.payload, selectedDate, selectedSlot, slotLabel: slots.find(s => s.hour === selectedSlot)?.label || `${selectedSlot}:00` } });
+      const endHour = selectedSlot + duration;
+      const slotLabel = `${String(selectedSlot).padStart(2,'0')}:00 - ${String(endHour).padStart(2,'0')}:00`;
+      setModal({ show: true, action: 'PAGO_CULQI', payload: { ...modal.payload, selectedDate, selectedSlot, duration, slotLabel } });
       return;
     }
     setSubmitting(true);
@@ -263,7 +282,10 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
         closeModal();
       } else if (modal.action === 'PAGO_CULQI') {
         setPaymentStage('processing');
-        const newRes = await api.createReservation({ courtId: modal.payload.id, date: modal.payload.selectedDate, slotHour: modal.payload.selectedSlot });
+        const newRes = await api.createReservation({
+          courtId: modal.payload.id, date: modal.payload.selectedDate,
+          slotHour: modal.payload.selectedSlot, durationHours: modal.payload.duration || 1,
+        });
         const { url } = await api.createCheckoutSession(newRes.id);
         window.location.href = url;
       }
@@ -530,8 +552,24 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
                     <input type="date" name="date" className="modal-ps-input" required value={selectedDate} onChange={handleDateChange} min={new Date().toISOString().split('T')[0]} />
                   </div>
                   {selectedDate && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <label style={{ fontSize: '0.9rem', fontWeight: '800', color: C.textSecondary, textTransform: 'uppercase', letterSpacing: '0.5px' }}>¿Cuántas horas?</label>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        {[1, 2, 3, 4].map(d => (
+                          <button key={d} type="button" onClick={() => handleSelectDuration(d)}
+                            style={{ flex: 1, padding: '9px 0', borderRadius: '10px', cursor: 'pointer', fontWeight: '800', fontSize: '0.85rem', transition: 'all 0.15s',
+                              border: duration === d ? '2px solid #2563eb' : '2px solid transparent',
+                              background: duration === d ? 'linear-gradient(135deg,#0f172a,#1e3a5f)' : '#f1f5f9',
+                              color: duration === d ? '#2563eb' : '#334155' }}>
+                            {d}h
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {selectedDate && (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                      <label style={{ fontSize: '0.9rem', fontWeight: '800', color: C.textSecondary, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Horario</label>
+                      <label style={{ fontSize: '0.9rem', fontWeight: '800', color: C.textSecondary, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Hora de inicio</label>
                       {loadingSlots ? (
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '8px' }}>
                           {Array.from({ length: 12 }).map((_, i) => <div key={i} style={{ height: '44px', borderRadius: '10px', background: 'linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.2s infinite' }} />)}
@@ -542,9 +580,12 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '8px', maxHeight: '220px', overflowY: 'auto', padding: '4px' }}>
                           {slots.map(s => {
                             const isSelected = selectedSlot === s.hour;
+                            const fitsRange = isRangeAvailable(s.hour, duration);
+                            const disabled = !s.available || !fitsRange;
                             return (
-                              <button key={s.hour} type="button" disabled={!s.available} onClick={() => s.available && setSelectedSlot(s.hour)}
-                                style={{ padding: '10px 6px', borderRadius: '10px', border: isSelected ? '2px solid #2563eb' : '2px solid transparent', background: isSelected ? 'linear-gradient(135deg,#0f172a,#1e3a5f)' : s.available ? '#f1f5f9' : '#f8fafc', color: isSelected ? '#2563eb' : s.available ? '#334155' : '#cbd5e1', fontWeight: isSelected ? '800' : '700', fontSize: '0.82rem', cursor: s.available ? 'pointer' : 'not-allowed', transition: 'all 0.15s', textDecoration: !s.available ? 'line-through' : 'none', boxShadow: isSelected ? '0 4px 12px rgba(37, 99, 235, 0.25)' : 'none' }}>
+                              <button key={s.hour} type="button" disabled={disabled} onClick={() => !disabled && setSelectedSlot(s.hour)}
+                                title={!s.available ? 'No disponible' : !fitsRange ? `No hay ${duration}h seguidas disponibles desde aquí` : 'Disponible'}
+                                style={{ padding: '10px 6px', borderRadius: '10px', border: isSelected ? '2px solid #2563eb' : '2px solid transparent', background: isSelected ? 'linear-gradient(135deg,#0f172a,#1e3a5f)' : !disabled ? '#f1f5f9' : '#f8fafc', color: isSelected ? '#2563eb' : !disabled ? '#334155' : '#cbd5e1', fontWeight: isSelected ? '800' : '700', fontSize: '0.82rem', cursor: disabled ? 'not-allowed' : 'pointer', transition: 'all 0.15s', textDecoration: !s.available ? 'line-through' : 'none', boxShadow: isSelected ? '0 4px 12px rgba(37, 99, 235, 0.25)' : 'none' }}>
                                 {`${String(s.hour).padStart(2,'0')}:00`}
                               </button>
                             );
@@ -554,8 +595,10 @@ const JugadorDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => 
                     </div>
                   )}
                   <div style={{ padding: '16px', backgroundColor: C.infoBg, borderRadius: '16px', border: `1px dashed ${C.infoBorder}`, display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ fontWeight: '600', color: C.textSecondary }}>Total a pagar:</span>
-                    <span style={{ fontWeight: '900', color: C.textPrimary, fontSize: '1.1rem' }}>{modal.payload?.price}/hora</span>
+                    <span style={{ fontWeight: '600', color: C.textSecondary }}>Total a pagar ({duration}h):</span>
+                    <span style={{ fontWeight: '900', color: C.textPrimary, fontSize: '1.1rem' }}>
+                      S/ {((modal.payload?.priceNum || 0) * duration).toFixed(2)}
+                    </span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <input type="checkbox" id="terms" checked={acceptedTerms} onChange={(e) => setAcceptedTerms(e.target.checked)} style={{ width: '20px', height: '20px', cursor: 'pointer', accentColor: '#2563eb' }} />
