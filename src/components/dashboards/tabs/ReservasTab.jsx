@@ -24,8 +24,18 @@ const ReservasTab = ({ reservas, loadingReservas, openModal, openReview, reviewe
   return (
     <div>
       <style>{`
+        .reserva-actions { flex-wrap: wrap; }
         @media (max-width: 640px) {
-          .reserva-actions { flex-basis: 100%; }
+          .reserva-actions {
+            flex-basis: 100%;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding-bottom: 2px;
+          }
+          .reserva-actions::-webkit-scrollbar { display: none; }
+          .reserva-actions > * { flex-shrink: 0; }
         }
       `}</style>
 
@@ -125,7 +135,7 @@ const ReservasTab = ({ reservas, loadingReservas, openModal, openReview, reviewe
                 </span>
 
                 {/* Acciones */}
-                <div className="reserva-actions" style={{ display: 'flex', gap: '8px', flexShrink: 0, flexWrap: 'wrap' }}>
+                <div className="reserva-actions" style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
                   {/* Mapa */}
                   <button
                     onClick={() => setMapModal({ show: true, cancha: { name: row.court, location: row.courtAddress, lat: row.courtLat, lng: row.courtLng, district: '', city: '' } })}
