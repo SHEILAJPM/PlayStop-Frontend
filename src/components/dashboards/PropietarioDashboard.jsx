@@ -254,6 +254,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
   const [tiendaSearch, setTiendaSearch] = useState('');
 
   const [modal, setModal] = useState({ show: false, action: null, payload: null });
+  const [planLimitModal, setPlanLimitModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   // QR Scanner state
@@ -543,7 +544,12 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
       }
       closeModal();
     } catch (err) {
-      alert(err.message || 'Ocurrió un error. Intenta de nuevo.');
+      if (modal.action === 'AGREGAR_CANCHA' && err.message?.includes('Plan Básico permite hasta')) {
+        closeModal();
+        setPlanLimitModal(true);
+      } else {
+        alert(err.message || 'Ocurrió un error. Intenta de nuevo.');
+      }
     } finally {
       setSubmitting(false);
     }
@@ -1664,6 +1670,41 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
               </button>
             </div>
           </form>
+        </div>
+      </div>
+    )}
+
+    {/* ─── LÍMITE DE PLAN BÁSICO ALCANZADO ─────────────── */}
+    {planLimitModal && (
+      <div className="modal-overlay-ps">
+        <div className="modal-box-ps" style={{ maxWidth: 460 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
+            <div>
+              <h2 className="modal-title-ps">Llegaste al límite del Plan Básico</h2>
+              <p className="modal-sub-ps">El Plan Básico permite hasta 2 canchas. Mejora tu plan para agregar más.</p>
+            </div>
+            <button onClick={() => setPlanLimitModal(false)} className="modal-close-ps">&times;</button>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <button
+              onClick={() => { setPlanLimitModal(false); handleUpgradePlan('PRO'); }}
+              disabled={upgradingPlan === 'PRO'}
+              className="btn-primary-ps"
+              style={{ width: '100%', textAlign: 'left' }}>
+              {upgradingPlan === 'PRO' ? 'Redirigiendo...' : 'Mejorar a Plan Pro — Canchas ilimitadas, S/ 99/mes'}
+            </button>
+            <button
+              onClick={() => { setPlanLimitModal(false); handleUpgradePlan('ENTERPRISE'); }}
+              disabled={upgradingPlan === 'ENTERPRISE'}
+              style={{ width: '100%', textAlign: 'left', padding: '10px 20px', borderRadius: 10, fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer',
+                border: `1px solid ${C.cardBorder}`, background: 'transparent', color: C.textPrimary }}>
+              {upgradingPlan === 'ENTERPRISE' ? 'Redirigiendo...' : 'Mejorar a Plan Enterprise — Canchas y sucursales ilimitadas, S/ 199/mes'}
+            </button>
+            <button onClick={() => setPlanLimitModal(false)} className="modal-btn-cancel-ps" style={{ marginTop: 4 }}>
+              Ahora no
+            </button>
+          </div>
         </div>
       </div>
     )}
