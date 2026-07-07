@@ -126,7 +126,10 @@ const PerfilTab = ({ user, avatarUrl, setAvatarUrl, darkMode, C }) => {
             e.preventDefault();
             setPwdSaving(true); setPwdMsg(null);
             try {
-              await api.changePassword(pwdData);
+              const res = await api.changePassword(pwdData);
+              // El backend invalida el token anterior al cambiar la contraseña;
+              // guardamos el nuevo para no quedar deslogueados en esta misma sesión.
+              if (res?.token) localStorage.setItem('token', res.token);
               setPwdMsg({ type: 'success', text: 'Contraseña actualizada correctamente' });
               setPwdData({ contrasenaActual: '', nuevaContrasena: '', confirmarContrasena: '' });
             } catch (err) {
