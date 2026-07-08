@@ -143,11 +143,11 @@ const ReservationChat = ({ reservationId, reservationInfo, currentUser, onClose,
   // Conectar WebSocket STOMP
   useEffect(() => {
     if (!reservationId) return;
-    const token = localStorage.getItem('token') || '';
 
+    // El handshake se autentica con la cookie httpOnly (SockJS la adjunta
+    // sola en sus peticiones XHR), no hace falta ningún header.
     const client = new Client({
       webSocketFactory: () => new SockJS(`${BASE_URL}/ws`),
-      connectHeaders: { Authorization: `Bearer ${token}` },
       reconnectDelay: 5000,
       onConnect: () => {
         setConnected(true);

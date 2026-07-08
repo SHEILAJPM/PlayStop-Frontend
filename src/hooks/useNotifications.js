@@ -26,12 +26,11 @@ export function useNotifications(userId = null) {
     // Activar con VITE_SSE_ENABLED=true en .env cuando esté listo.
     if (import.meta.env.VITE_SSE_ENABLED !== 'true') return;
 
-    const token = localStorage.getItem('token');
-    if (!token) return;
-
     let es;
     try {
-      es = new EventSource(`/api/notifications/stream?token=${encodeURIComponent(token)}`);
+      // La sesión viaja por cookie httpOnly; withCredentials hace que el
+      // navegador la adjunte también en la conexión SSE.
+      es = new EventSource('/api/notifications/stream', { withCredentials: true });
       esRef.current = es;
 
       const handle = (type, icon, title) => (e) => {
@@ -57,8 +56,7 @@ export function useNotifications(userId = null) {
 
   // FCM: push notifications (foreground)
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) return;
+    if (!userId) return;
 
     // Solicitar permiso y registrar FCM token en el backend
     requestFCMToken().then((fcmToken) => {
@@ -67,7 +65,8 @@ export function useNotifications(userId = null) {
       if (saved === fcmToken) return;
       fetch(`${BASE_URL}/api/notifications/fcm-token`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ token: fcmToken }),
       }).then(() => localStorage.setItem('fcm_token', fcmToken)).catch(() => {});
     });
@@ -86,16 +85,16 @@ export function useNotifications(userId = null) {
     });
 
     return () => unsub();
-  }, [addNotification]);
+  }, [addNotification, userId]);
 
   // WebSocket: notificaciones de chat en tiempo real
   useEffect(() => {
     if (!userId) return;
-    const token = localStorage.getItem('token') || '';
 
+    // El handshake se autentica con la cookie httpOnly (SockJS la adjunta
+    // sola en sus peticiones XHR), no hace falta ningún header.
     const client = new Client({
       webSocketFactory: () => new SockJS(`${BASE_URL}/ws`),
-      connectHeaders: { Authorization: `Bearer ${token}` },
       reconnectDelay: 8000,
       onConnect: () => {
         client.subscribe(`/topic/notifications/${userId}`, frame => {

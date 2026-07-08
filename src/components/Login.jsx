@@ -31,11 +31,11 @@ const Login = ({ type, onLogin, darkMode = true }) => {
       const res = await fetch(`${API_URL}/api/auth/google`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ idToken: response.credential }),
       });
       const data = await res.json();
       if (res.ok) {
-        if (data.token) localStorage.setItem('token', data.token);
         if (onLogin) onLogin(data);
         const role = data.role?.toUpperCase();
         if (role === 'ADMIN') navigate('/super-admin-dashboard');
@@ -88,11 +88,11 @@ const Login = ({ type, onLogin, darkMode = true }) => {
         const res  = await fetch(`${API_URL}/api/auth/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
           body: JSON.stringify({ email, password }),
         });
         const data = await res.json();
         if (res.ok) {
-          if (data.token) localStorage.setItem('token', data.token);
           if (onLogin) onLogin(data);
           const role = data.role?.toUpperCase();
           if (role === 'ADMIN')                         navigate('/super-admin-dashboard');

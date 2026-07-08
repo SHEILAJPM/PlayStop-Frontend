@@ -23,7 +23,6 @@ export const ESTADOS_RESERVA = {
   COMPLETADA: 'COMPLETED',
 };
 
-export const TOKEN_KEY = 'token';
 export const USER_KEY = 'playspot-user';
 export const THEME_KEY = 'playspot-theme';
 
