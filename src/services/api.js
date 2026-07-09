@@ -193,6 +193,35 @@ export const api = {
     })));
   },
 
+  // ── Tienda (productos) ───────────────────────────────────────────────────
+
+  async getMyProducts() {
+    return handleResponse(await apiFetch(`${BASE_URL}/api/products/my`, { headers: await jsonHeaders() }));
+  },
+
+  async createProduct(data) {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/products`, {
+      method: 'POST',
+      headers: await jsonHeaders(),
+      body: JSON.stringify(data),
+    })));
+  },
+
+  async updateProduct(id, data) {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/products/${id}`, {
+      method: 'PUT',
+      headers: await jsonHeaders(),
+      body: JSON.stringify(data),
+    })));
+  },
+
+  async deleteProduct(id) {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/products/${id}`, {
+      method: 'DELETE',
+      headers: await jsonHeaders(),
+    })));
+  },
+
   // ── Reservas ─────────────────────────────────────────────────────────────
 
   async getMyReservations() {

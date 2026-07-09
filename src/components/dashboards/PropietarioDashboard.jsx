@@ -175,14 +175,27 @@ const ICON_MAP = {
   Abarrotes:  ['bi-droplet-fill', 'bi-cup-straw', 'bi-box-seam', 'bi-apple', 'bi-cup', 'bi-candy', 'bi-bag', 'bi-basket2'],
 };
 
-const TIENDA_DEFAULT = [
-  { id: 1, name: 'Pelota de Fútbol', category: 'Deportivos', price: 45.00, stock: 10, icon: 'bi-dribbble', imageUrl: null },
-  { id: 2, name: 'Guantes de Arquero', category: 'Deportivos', price: 65.00, stock: 5,  icon: 'bi-shield-fill', imageUrl: null },
-  { id: 3, name: 'Rodilleras Profesionales', category: 'Deportivos', price: 35.00, stock: 8, icon: 'bi-person-running', imageUrl: null },
-  { id: 4, name: 'Agua Mineral 600ml', category: 'Abarrotes', price: 2.50, stock: 80, icon: 'bi-droplet-fill', imageUrl: null },
-  { id: 5, name: 'Gatorade 500ml', category: 'Abarrotes', price: 5.00, stock: 40, icon: 'bi-cup-straw', imageUrl: null },
-  { id: 6, name: 'Barra Energética', category: 'Abarrotes', price: 3.50, stock: 30, icon: 'bi-box-seam', imageUrl: null },
-];
+// El backend no guarda un ícono por producto: se deriva del id (estable
+// entre recargas, a diferencia de Math.random()) para variar el ícono
+// dentro de cada categoría.
+const pickProductIcon = (category, id) => {
+  const icons = ICON_MAP[category] || ['bi-bag-fill'];
+  let hash = 0;
+  for (let i = 0; i < (id || '').length; i++) hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
+  return icons[hash % icons.length];
+};
+
+const mapOwnerProduct = (p) => ({
+  id: p.id,
+  name: p.name,
+  category: p.category,
+  price: p.price,
+  stock: p.stock,
+  icon: pickProductIcon(p.category, p.id),
+  imageUrl: p.imageUrl,
+  branchId: p.branchId || '',
+  branchName: p.branchName || '',
+});
 
 const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme }) => {
   const C = {
@@ -264,9 +277,19 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
       .catch((err) => { alert(err.message || 'No se pudo iniciar la suscripción'); setUpgradingPlan(null); });
   };
 
-  const [tiendaItems, setTiendaItems] = useState(TIENDA_DEFAULT);
+  const [tiendaItems, setTiendaItems] = useState([]);
+  const [loadingTienda, setLoadingTienda] = useState(true);
   const [tiendaFiltro, setTiendaFiltro] = useState('Todos');
   const [tiendaSearch, setTiendaSearch] = useState('');
+
+  const loadProductos = () => {
+    setLoadingTienda(true);
+    api.getMyProducts()
+      .then(data => setTiendaItems(Array.isArray(data) ? data.map(mapOwnerProduct) : []))
+      .catch(() => setTiendaItems([]))
+      .finally(() => setLoadingTienda(false));
+  };
+  useEffect(() => { loadProductos(); }, []);
 
   const [modal, setModal] = useState({ show: false, action: null, payload: null });
   const [planLimitModal, setPlanLimitModal] = useState(false);
@@ -511,8 +534,6 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
           break;
 
         case 'AGREGAR_PRODUCTO': {
-          const cat = fd.get('category');
-          const iconList = ICON_MAP[cat] || ['bi-bag-fill'];
           let productImgUrl = null;
           if (productImageFile) {
             setUploadingProductImage(true);
@@ -522,15 +543,15 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
             } catch { productImgUrl = null; }
             setUploadingProductImage(false);
           }
-          setTiendaItems(prev => [...prev, {
-            id: Date.now(),
+          const createdProduct = await api.createProduct({
             name: fd.get('productName'),
-            category: cat,
+            category: fd.get('category'),
             price: parseFloat(fd.get('price')),
             stock: parseInt(fd.get('stock'), 10),
-            icon: iconList[Math.floor(Math.random() * iconList.length)],
             imageUrl: productImgUrl,
-          }]);
+            branchId: fd.get('branchId') || null,
+          });
+          setTiendaItems(prev => [...prev, mapOwnerProduct(createdProduct)]);
           break;
         }
         case 'EDITAR_PRODUCTO': {
@@ -543,17 +564,19 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
             } catch { editProductImgUrl = modal.payload?.imageUrl || null; }
             setUploadingProductImage(false);
           }
-          setTiendaItems(prev => prev.map(p => p.id === modal.payload.id ? {
-            ...p,
-            name: fd.get('productName') || p.name,
-            category: fd.get('category') || p.category,
-            price: parseFloat(fd.get('price')) || p.price,
-            stock: parseInt(fd.get('stock'), 10) >= 0 ? parseInt(fd.get('stock'), 10) : p.stock,
+          const updatedProduct = await api.updateProduct(modal.payload.id, {
+            name: fd.get('productName') || modal.payload.name,
+            category: fd.get('category') || modal.payload.category,
+            price: parseFloat(fd.get('price')) || modal.payload.price,
+            stock: parseInt(fd.get('stock'), 10) >= 0 ? parseInt(fd.get('stock'), 10) : modal.payload.stock,
             imageUrl: editProductImgUrl,
-          } : p));
+            branchId: fd.get('branchId') || modal.payload.branchId || null,
+          });
+          setTiendaItems(prev => prev.map(p => p.id === modal.payload.id ? mapOwnerProduct(updatedProduct) : p));
           break;
         }
         case 'ELIMINAR_PRODUCTO':
+          await api.deleteProduct(modal.payload.id);
           setTiendaItems(prev => prev.filter(p => p.id !== modal.payload.id));
           break;
 
@@ -817,7 +840,9 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
             </div>
 
             {/* Grid de productos */}
-            {filteredTienda.length === 0 ? (
+            {loadingTienda ? (
+              <div style={{ textAlign: 'center', padding: '48px', color: C.textMuted }}>Cargando productos...</div>
+            ) : filteredTienda.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '48px 24px', color: C.textMuted }}>
                 <div style={{ fontSize: '2.5rem', marginBottom: 10 }}><i className="bi bi-cart3" /></div>
                 <h3 style={{ margin: '0 0 6px', color: C.textPrimary, fontWeight: 800 }}>Sin productos</h3>
@@ -1697,6 +1722,15 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
                     <option value="Abarrotes">Abarrotes</option>
                   </select>
                 </div>
+                {myBranches.length > 0 && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <label style={{ fontSize: '0.85rem', fontWeight: '700', color: C.textSecondary, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Sucursal</label>
+                    <select name="branchId" className="modal-ps-input" defaultValue={modal.payload?.branchId || ''}>
+                      <option value="">Sin sucursal</option>
+                      {myBranches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                    </select>
+                  </div>
+                )}
                 <div style={{ display: 'flex', gap: '14px' }}>
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
                     <label style={{ fontSize: '0.85rem', fontWeight: '700', color: C.textSecondary, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Precio (S/)</label>
