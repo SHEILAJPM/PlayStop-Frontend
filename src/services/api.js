@@ -97,14 +97,34 @@ async function apiFetch(url, options = {}) {
 
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Reintenta una vez con un token CSRF recién pedido si la primera respuesta
+// fue 403: el token cacheado por getCsrfToken() puede desincronizarse de la
+// cookie XSRF-TOKEN actual (p.ej. tras un login o una recarga), y ese 403 no
+// significa que la sesión haya expirado, solo que ese envío puntual llevaba
+// un token viejo. `doFetch` debe recalcular los headers en cada llamada para
+// que el reintento use el token nuevo.
+async function withCsrfRetry(doFetch) {
+  let res = await doFetch();
+  if (res.status === 403) {
+    csrfTokenPromise = null;
+    res = await doFetch();
+  }
+  return res;
+}
+
 async function handleResponse(res) {
   if (res.status === 204) return null;
-  if ((res.status === 401 || res.status === 403) && !sessionExpired) {
+  // Solo un 401 significa "no autenticado": ahí sí forzamos logout. Un 403
+  // puede ser un rol insuficiente o un token CSRF inválido/desincronizado, y
+  // en ninguno de los dos casos la sesión realmente expiró, así que no tiene
+  // sentido tirar al usuario al login.
+  if (res.status === 401 && !sessionExpired) {
     sessionExpired = true;
     localStorage.removeItem('playspot-user');
     window.location.href = '/login';
     throw new Error('Sesión expirada. Por favor inicia sesión nuevamente.');
   }
+  if (res.status === 403) csrfTokenPromise = null;
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.message || `Error ${res.status}`);
   return data;
@@ -141,36 +161,36 @@ export const api = {
   },
 
   async createCourt(data) {
-    return handleResponse(await fetchWithTimeout(`${BASE_URL}/api/courts`, {
+    return handleResponse(await withCsrfRetry(async () => fetchWithTimeout(`${BASE_URL}/api/courts`, {
       method: 'POST',
       headers: await jsonHeaders(),
       body: JSON.stringify(data),
-    }));
+    })));
   },
 
   async updateCourt(id, data) {
-    return handleResponse(await fetchWithTimeout(`${BASE_URL}/api/courts/${id}`, {
+    return handleResponse(await withCsrfRetry(async () => fetchWithTimeout(`${BASE_URL}/api/courts/${id}`, {
       method: 'PUT',
       headers: await jsonHeaders(),
       body: JSON.stringify(data),
-    }));
+    })));
   },
 
   async deleteCourt(id) {
-    return handleResponse(await fetchWithTimeout(`${BASE_URL}/api/courts/${id}`, {
+    return handleResponse(await withCsrfRetry(async () => fetchWithTimeout(`${BASE_URL}/api/courts/${id}`, {
       method: 'DELETE',
       headers: await jsonHeaders(),
-    }));
+    })));
   },
 
   async uploadImage(file) {
     const formData = new FormData();
     formData.append('file', file);
-    return handleResponse(await fetchWithTimeout(`${BASE_URL}/api/upload`, {
+    return handleResponse(await withCsrfRetry(async () => fetchWithTimeout(`${BASE_URL}/api/upload`, {
       method: 'POST',
       headers: await csrfHeader(),
       body: formData,
-    }));
+    })));
   },
 
   // ── Reservas ─────────────────────────────────────────────────────────────
@@ -184,11 +204,11 @@ export const api = {
   },
 
   async createReservation(data) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/reservations`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/reservations`, {
       method: 'POST',
       headers: await jsonHeaders(),
       body: JSON.stringify(data),
-    }));
+    })));
   },
 
   async getReservationById(id) {
@@ -196,10 +216,10 @@ export const api = {
   },
 
   async createCheckoutSession(reservationId) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/payments/checkout/${reservationId}`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/payments/checkout/${reservationId}`, {
       method: 'POST',
       headers: await jsonHeaders(),
-    }));
+    })));
   },
 
   // ── Retiros (propietario) ───────────────────────────────────────────────
@@ -213,11 +233,11 @@ export const api = {
   },
 
   async createPayoutRequest(data) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/payouts`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/payouts`, {
       method: 'POST',
       headers: await jsonHeaders(),
       body: JSON.stringify(data),
-    }));
+    })));
   },
 
   // ── Retiros (admin) ──────────────────────────────────────────────────────
@@ -228,18 +248,18 @@ export const api = {
   },
 
   async markPayoutAsPaid(id) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/admin/payouts/${id}/pay`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/admin/payouts/${id}/pay`, {
       method: 'PATCH',
       headers: await jsonHeaders(),
-    }));
+    })));
   },
 
   async rejectPayout(id, reason) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/admin/payouts/${id}/reject`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/admin/payouts/${id}/reject`, {
       method: 'PATCH',
       headers: await jsonHeaders(),
       body: JSON.stringify({ reason }),
-    }));
+    })));
   },
 
   // ── Suscripción (propietario) ────────────────────────────────────────────
@@ -249,25 +269,25 @@ export const api = {
   },
 
   async createSubscriptionCheckout(plan) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/subscriptions/checkout`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/subscriptions/checkout`, {
       method: 'POST',
       headers: await jsonHeaders(),
       body: JSON.stringify({ plan }),
-    }));
+    })));
   },
 
   async cancelReservation(id) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/reservations/${id}/cancel`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/reservations/${id}/cancel`, {
       method: 'PATCH',
       headers: await jsonHeaders(),
-    }));
+    })));
   },
 
   async cancelReservationByOwner(id) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/reservations/${id}/cancel-by-owner`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/reservations/${id}/cancel-by-owner`, {
       method: 'PATCH',
       headers: await jsonHeaders(),
-    }));
+    })));
   },
 
   getReservationQrUrl(id) {
@@ -279,10 +299,10 @@ export const api = {
   },
 
   async confirmAttendance(id) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/reservations/${id}/confirm-attendance`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/reservations/${id}/confirm-attendance`, {
       method: 'PATCH',
       headers: await jsonHeaders(),
-    }));
+    })));
   },
 
   // ── Admin ─────────────────────────────────────────────────────────────────
@@ -316,24 +336,24 @@ export const api = {
   },
 
   async toggleUserStatus(id) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/admin/users/${id}/toggle-status`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/admin/users/${id}/toggle-status`, {
       method: 'PATCH',
       headers: await jsonHeaders(),
-    }));
+    })));
   },
 
   async deleteAdminUser(id) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/admin/users/${id}`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/admin/users/${id}`, {
       method: 'DELETE',
       headers: await jsonHeaders(),
-    }));
+    })));
   },
 
   async toggleCourtStatus(id) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/admin/courts/${id}/toggle-status`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/admin/courts/${id}/toggle-status`, {
       method: 'PATCH',
       headers: await jsonHeaders(),
-    }));
+    })));
   },
 
   async getAdminChatModeration() {
@@ -341,10 +361,10 @@ export const api = {
   },
 
   async liftChatBan(id) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/admin/users/${id}/lift-chat-ban`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/admin/users/${id}/lift-chat-ban`, {
       method: 'PATCH',
       headers: await jsonHeaders(),
-    }));
+    })));
   },
 
   // ── Reseñas ───────────────────────────────────────────────────────────────
@@ -358,18 +378,18 @@ export const api = {
   },
 
   async createReview(data) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/reviews`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/reviews`, {
       method: 'POST',
       headers: await jsonHeaders(),
       body: JSON.stringify(data),
-    }));
+    })));
   },
 
   async deleteReview(id) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/reviews/${id}`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/reviews/${id}`, {
       method: 'DELETE',
       headers: await jsonHeaders(),
-    }));
+    })));
   },
 
   // ── Perfil de usuario ─────────────────────────────────────────────────────
@@ -379,27 +399,27 @@ export const api = {
   },
 
   async updateMe(data) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/users/me`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/users/me`, {
       method: 'PATCH',
       headers: await jsonHeaders(),
       body: JSON.stringify(data),
-    }));
+    })));
   },
 
   async updateAvatar(profileImageUrl) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/users/me/avatar`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/users/me/avatar`, {
       method: 'PATCH',
       headers: await jsonHeaders(),
       body: JSON.stringify({ profileImageUrl }),
-    }));
+    })));
   },
 
   async changePassword(data) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/users/me/password`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/users/me/password`, {
       method: 'PATCH',
       headers: await jsonHeaders(),
       body: JSON.stringify(data),
-    }));
+    })));
   },
 
   // ── Gamificación ──────────────────────────────────────────────────────────
@@ -421,25 +441,25 @@ export const api = {
   },
 
   async createMatch(data) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/match`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/match`, {
       method: 'POST',
       headers: await jsonHeaders(),
       body: JSON.stringify(data),
-    }));
+    })));
   },
 
   async joinMatch(id) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/match/${id}/join`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/match/${id}/join`, {
       method: 'POST',
       headers: await jsonHeaders(),
-    }));
+    })));
   },
 
   async cancelMatch(id) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/match/${id}`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/match/${id}`, {
       method: 'DELETE',
       headers: await jsonHeaders(),
-    }));
+    })));
   },
 
   // ── Amigos / búsqueda de usuarios ────────────────────────────────────────
@@ -449,11 +469,11 @@ export const api = {
   },
 
   async sendFriendRequest(targetUserId) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/friends/request`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/friends/request`, {
       method: 'POST',
       headers: await jsonHeaders(),
       body: JSON.stringify({ targetUserId }),
-    }));
+    })));
   },
 
   async getFriends() {
@@ -461,10 +481,10 @@ export const api = {
   },
 
   async removeFriend(friendId) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/friends/${friendId}`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/friends/${friendId}`, {
       method: 'DELETE',
       headers: await jsonHeaders(),
-    }));
+    })));
   },
 
   // ── Chat por reserva ──────────────────────────────────────────────────────
@@ -480,11 +500,11 @@ export const api = {
   },
 
   async sendMatchChatMessage(matchId, content) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/match/${matchId}/messages`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/match/${matchId}/messages`, {
       method: 'POST',
       headers: await jsonHeaders(),
       body: JSON.stringify({ content }),
-    }));
+    })));
   },
 
   // ── Auth social ──────────────────────────────────────────────────────────
@@ -510,26 +530,26 @@ export const api = {
   },
 
   async createTournament(data) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/tournaments`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/tournaments`, {
       method: 'POST',
       headers: await jsonHeaders(),
       body: JSON.stringify(data),
-    }));
+    })));
   },
 
   async joinTournament(id, teamName) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/tournaments/${id}/join`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/tournaments/${id}/join`, {
       method: 'POST',
       headers: await jsonHeaders(),
       body: JSON.stringify({ teamName }),
-    }));
+    })));
   },
 
   async cancelTournament(id) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/tournaments/${id}`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/tournaments/${id}`, {
       method: 'DELETE',
       headers: await jsonHeaders(),
-    }));
+    })));
   },
 
   // ── Analytics propietario ─────────────────────────────────────────────────
@@ -545,11 +565,11 @@ export const api = {
   },
 
   async applyReferralCode(code) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/referrals/apply`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/referrals/apply`, {
       method: 'POST',
       headers: await jsonHeaders(),
       body: JSON.stringify({ code }),
-    }));
+    })));
   },
 
   // ── Sucursales y empleados (Plan Enterprise) ──────────────────────────────
@@ -559,26 +579,26 @@ export const api = {
   },
 
   async createBranch(data) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/branches`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/branches`, {
       method: 'POST',
       headers: await jsonHeaders(),
       body: JSON.stringify(data),
-    }));
+    })));
   },
 
   async updateBranch(id, data) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/branches/${id}`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/branches/${id}`, {
       method: 'PUT',
       headers: await jsonHeaders(),
       body: JSON.stringify(data),
-    }));
+    })));
   },
 
   async deleteBranch(id) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/branches/${id}`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/branches/${id}`, {
       method: 'DELETE',
       headers: await jsonHeaders(),
-    }));
+    })));
   },
 
   async getBranchEmployees(branchId) {
@@ -586,18 +606,18 @@ export const api = {
   },
 
   async inviteEmployee(branchId, email) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/branches/${branchId}/employees`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/branches/${branchId}/employees`, {
       method: 'POST',
       headers: await jsonHeaders(),
       body: JSON.stringify({ email }),
-    }));
+    })));
   },
 
   async removeEmployee(branchId, employeeId) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/branches/${branchId}/employees/${employeeId}`, {
+    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/branches/${branchId}/employees/${employeeId}`, {
       method: 'DELETE',
       headers: await jsonHeaders(),
-    }));
+    })));
   },
 
   async getInvitationInfo(token) {
