@@ -5,8 +5,28 @@ const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 // localStorage. `credentials: 'include'` es lo que hace que el navegador
 // adjunte esa cookie en cada petición, incluso siendo backend/frontend
 // orígenes distintos (onrender.com en subdominios separados).
+
+// Token de doble envío para CSRF: el backend expone la cookie XSRF-TOKEN
+// (legible por JS, a diferencia de la del JWT) en cuanto llega cualquier
+// request (ver CsrfCookieFilter). Aquí la leemos y la reenviamos como header
+// en cada petición; el backend la exige en POST/PUT/PATCH/DELETE, no en GET.
+function getCsrfToken() {
+  const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]+)/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
+function csrfHeader() {
+  const token = getCsrfToken();
+  return token ? { 'X-XSRF-TOKEN': token } : {};
+}
+
+// Exportado para los pocos lugares (AuthContext, páginas de login/registro)
+// que llaman a fetch() directamente en vez de pasar por este módulo.
+export const getCsrfHeader = csrfHeader;
+
 const jsonHeaders = () => ({
   'Content-Type': 'application/json',
+  ...csrfHeader(),
 });
 
 let sessionExpired = false;
@@ -130,6 +150,7 @@ export const api = {
     formData.append('file', file);
     return handleResponse(await fetchWithTimeout(`${BASE_URL}/api/upload`, {
       method: 'POST',
+      headers: csrfHeader(),
       body: formData,
     }));
   },
@@ -453,7 +474,7 @@ export const api = {
   async loginWithGoogle(idToken) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/auth/google`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...csrfHeader() },
       body: JSON.stringify({ idToken }),
     }));
   },
@@ -510,6 +531,66 @@ export const api = {
       method: 'POST',
       headers: jsonHeaders(),
       body: JSON.stringify({ code }),
+    }));
+  },
+
+  // ── Sucursales y empleados (Plan Enterprise) ──────────────────────────────
+
+  async getMyBranches() {
+    return handleResponse(await apiFetch(`${BASE_URL}/api/branches/my`, { headers: jsonHeaders() }));
+  },
+
+  async createBranch(data) {
+    return handleResponse(await apiFetch(`${BASE_URL}/api/branches`, {
+      method: 'POST',
+      headers: jsonHeaders(),
+      body: JSON.stringify(data),
+    }));
+  },
+
+  async updateBranch(id, data) {
+    return handleResponse(await apiFetch(`${BASE_URL}/api/branches/${id}`, {
+      method: 'PUT',
+      headers: jsonHeaders(),
+      body: JSON.stringify(data),
+    }));
+  },
+
+  async deleteBranch(id) {
+    return handleResponse(await apiFetch(`${BASE_URL}/api/branches/${id}`, {
+      method: 'DELETE',
+      headers: jsonHeaders(),
+    }));
+  },
+
+  async getBranchEmployees(branchId) {
+    return handleResponse(await apiFetch(`${BASE_URL}/api/branches/${branchId}/employees`, { headers: jsonHeaders() }));
+  },
+
+  async inviteEmployee(branchId, email) {
+    return handleResponse(await apiFetch(`${BASE_URL}/api/branches/${branchId}/employees`, {
+      method: 'POST',
+      headers: jsonHeaders(),
+      body: JSON.stringify({ email }),
+    }));
+  },
+
+  async removeEmployee(branchId, employeeId) {
+    return handleResponse(await apiFetch(`${BASE_URL}/api/branches/${branchId}/employees/${employeeId}`, {
+      method: 'DELETE',
+      headers: jsonHeaders(),
+    }));
+  },
+
+  async getInvitationInfo(token) {
+    return handleResponse(await apiFetch(`${BASE_URL}/api/auth/invitations/${token}`));
+  },
+
+  async registerEmployee(data) {
+    return handleResponse(await apiFetch(`${BASE_URL}/api/auth/register/employee`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...csrfHeader() },
+      body: JSON.stringify(data),
     }));
   },
 };

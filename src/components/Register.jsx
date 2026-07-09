@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getCsrfHeader } from '../services/api.js';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
@@ -45,7 +46,8 @@ const Register = () => {
     const body = { name, email, password, phone };
     const options = {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...getCsrfHeader() },
+      credentials: 'include',
       body: JSON.stringify(body),
     };
 

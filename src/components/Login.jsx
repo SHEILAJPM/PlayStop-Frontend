@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Capacitor } from '@capacitor/core';
+import { getCsrfHeader } from '../services/api.js';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
@@ -30,7 +31,7 @@ const Login = ({ type, onLogin, darkMode = true }) => {
     try {
       const res = await fetch(`${API_URL}/api/auth/google`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...getCsrfHeader() },
         credentials: 'include',
         body: JSON.stringify({ idToken: response.credential }),
       });
@@ -39,7 +40,7 @@ const Login = ({ type, onLogin, darkMode = true }) => {
         if (onLogin) onLogin(data);
         const role = data.role?.toUpperCase();
         if (role === 'ADMIN') navigate('/super-admin-dashboard');
-        else if (role === 'OWNER' || role === 'PROPIETARIO') navigate('/propietario-dashboard');
+        else if (role === 'OWNER' || role === 'PROPIETARIO' || role === 'EMPLOYEE') navigate('/propietario-dashboard');
         else navigate('/jugador-dashboard');
       } else {
         setError(data.message || 'Error al iniciar sesión con Google.');
@@ -79,7 +80,8 @@ const Login = ({ type, onLogin, darkMode = true }) => {
         const body     = step === 1 ? { email } : { email, code, newPassword };
         const res = await fetch(`${API_URL}${endpoint}`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', ...getCsrfHeader() },
+          credentials: 'include',
           body: JSON.stringify(body),
         });
         if (res.ok) { step === 1 ? setStep(2) : navigate('/login'); }
@@ -87,7 +89,7 @@ const Login = ({ type, onLogin, darkMode = true }) => {
       } else {
         const res  = await fetch(`${API_URL}/api/auth/login`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', ...getCsrfHeader() },
           credentials: 'include',
           body: JSON.stringify({ email, password }),
         });
@@ -96,7 +98,7 @@ const Login = ({ type, onLogin, darkMode = true }) => {
           if (onLogin) onLogin(data);
           const role = data.role?.toUpperCase();
           if (role === 'ADMIN')                         navigate('/super-admin-dashboard');
-          else if (role === 'OWNER' || role === 'PROPIETARIO') navigate('/propietario-dashboard');
+          else if (role === 'OWNER' || role === 'PROPIETARIO' || role === 'EMPLOYEE') navigate('/propietario-dashboard');
           else                                          navigate('/jugador-dashboard');
         } else {
           setError(data.message || 'Credenciales incorrectas.');

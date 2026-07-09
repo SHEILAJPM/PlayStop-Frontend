@@ -9,6 +9,8 @@ import { useOnboarding } from '../../hooks/useOnboarding.js';
 import OnboardingTour from '../onboarding/OnboardingTour.jsx';
 import ReservationChat from '../chat/ReservationChat.jsx';
 import PerfilTab from './tabs/PerfilTab.jsx';
+import SucursalesTab from './tabs/SucursalesTab.jsx';
+import EmpleadosTab from './tabs/EmpleadosTab.jsx';
 
 const PROPIETARIO_TOUR_STEPS = [
   {
@@ -91,6 +93,8 @@ const mapOwnerCourt = (c) => ({
   district: c.district || '',
   freeCancelHours: c.freeCancelHours ?? 24,
   refundPercent: c.refundPercent ?? 50,
+  branchId: c.branchId || '',
+  branchName: c.branchName || '',
 });
 
 const mapOwnerReservation = (r) => {
@@ -203,6 +207,17 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
     rowHover: darkMode ? '#1a2236' : '#fafbff',
   };
   const [activeTab, setActiveTab] = useState('Dashboard');
+  const isEmployee = (user?.role || '').toUpperCase() === 'EMPLOYEE';
+
+  // Sucursales del owner (o asignadas, si es empleado) — se usan para el
+  // selector de sucursal al crear/editar una cancha. Lista vacía en planes
+  // sin sucursales, así que el selector simplemente no aparece.
+  const [myBranches, setMyBranches] = useState([]);
+  useEffect(() => {
+    api.getMyBranches()
+      .then(data => setMyBranches(Array.isArray(data) ? data : []))
+      .catch(() => setMyBranches([]));
+  }, []);
   const { showTour, finishTour, retakeTour, tourHighlight, setTourHighlight } = useOnboarding('propietario');
 
   const [canchas, setCanchas] = useState([]);
@@ -457,6 +472,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
             imageUrl: finalImageUrl,
             freeCancelHours: parseInt(fd.get('freeCancelHours') || '24', 10),
             refundPercent: parseInt(fd.get('refundPercent') || '50', 10),
+            branchId: fd.get('branchId') || null,
           });
           setCanchas(prev => [...prev, mapOwnerCourt(newCourt)]);
           break;
@@ -472,6 +488,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
             imageUrl: finalImageUrl,
             freeCancelHours: parseInt(fd.get('freeCancelHours') || '24', 10),
             refundPercent: parseInt(fd.get('refundPercent') || '50', 10),
+            branchId: fd.get('branchId') || modal.payload.branchId || null,
           });
           setCanchas(prev => prev.map(c => c.id === modal.payload.id ? mapOwnerCourt(updated) : c));
           break;
@@ -597,10 +614,18 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
         { icon: 'bi-calendar3',           label: 'Calendario de Reservas' },
         { icon: 'bi-geo-alt-fill',        label: 'Mis Canchas' },
         { icon: 'bi-qr-code-scan',        label: 'Escanear QR' },
-        { icon: 'bi-shop',                label: 'Tienda' },
-        { icon: 'bi-cash-stack',          label: 'Finanzas' },
-        { icon: 'bi-bar-chart-fill',      label: 'Analíticas' },
-        { icon: 'bi-trophy-fill',         label: 'Torneos' },
+        // Tienda, Finanzas, Analíticas y Torneos son de gestión del negocio —
+        // fuera de alcance para un empleado, aunque su acceso a canchas y
+        // reservas sea de tipo Owner (ver CourtAccessService en el backend).
+        ...(!isEmployee ? [{ icon: 'bi-shop',           label: 'Tienda' }] : []),
+        ...(!isEmployee ? [{ icon: 'bi-cash-stack',     label: 'Finanzas' }] : []),
+        ...(!isEmployee ? [{ icon: 'bi-bar-chart-fill', label: 'Analíticas' }] : []),
+        ...(!isEmployee ? [{ icon: 'bi-trophy-fill',    label: 'Torneos' }] : []),
+        // Sucursales y Empleados: exclusivo del propietario en Plan Enterprise.
+        ...(!isEmployee && subscription?.plan === 'ENTERPRISE' ? [
+          { icon: 'bi-building',    label: 'Sucursales' },
+          { icon: 'bi-people-fill', label: 'Empleados' },
+        ] : []),
         { icon: 'bi-person-circle',       label: 'Mi Perfil' },
       ]}>
 
@@ -1415,6 +1440,16 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
         );
       })()}
 
+      {/* ─── Sucursales (Owner, Plan Enterprise) ──────── */}
+      {activeTab === 'Sucursales' && !isEmployee && subscription?.plan === 'ENTERPRISE' && (
+        <SucursalesTab darkMode={darkMode} C={C} />
+      )}
+
+      {/* ─── Empleados (Owner, Plan Enterprise) ───────── */}
+      {activeTab === 'Empleados' && !isEmployee && subscription?.plan === 'ENTERPRISE' && (
+        <EmpleadosTab darkMode={darkMode} C={C} />
+      )}
+
       {/* ─── Mi Perfil ────────────────────────────────── */}
       {activeTab === 'Mi Perfil' && (
         <PerfilTab user={user} avatarUrl={avatarUrl} setAvatarUrl={setAvatarUrl} darkMode={darkMode} C={C} />
@@ -1459,6 +1494,16 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
                   <label style={{ fontSize: '0.85rem', fontWeight: '700', color: C.textSecondary, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Dirección</label>
                   <input name="address" className="modal-ps-input" required placeholder="Ej. Av. Javier Prado Este 456" />
                 </div>
+                {myBranches.length > 0 && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <label style={{ fontSize: '0.85rem', fontWeight: '700', color: C.textSecondary, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Sucursal</label>
+                    <select name="branchId" className="modal-ps-input" required={isEmployee} defaultValue="">
+                      {!isEmployee && <option value="">Sin sucursal</option>}
+                      {isEmployee && <option value="" disabled>Selecciona una sucursal</option>}
+                      {myBranches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                    </select>
+                  </div>
+                )}
                 <div style={{ display: 'flex', gap: '12px' }}>
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
                     <label style={{ fontSize: '0.85rem', fontWeight: '700', color: C.textSecondary, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Ciudad</label>
@@ -1517,6 +1562,16 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
                   <label style={{ fontSize: '0.85rem', fontWeight: '700', color: C.textSecondary, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Dirección</label>
                   <input name="address" className="modal-ps-input" required defaultValue={modal.payload?.address} />
                 </div>
+                {myBranches.length > 0 && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <label style={{ fontSize: '0.85rem', fontWeight: '700', color: C.textSecondary, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Sucursal</label>
+                    <select name="branchId" className="modal-ps-input" required={isEmployee} defaultValue={modal.payload?.branchId || ''}>
+                      {!isEmployee && <option value="">Sin sucursal</option>}
+                      {isEmployee && <option value="" disabled>Selecciona una sucursal</option>}
+                      {myBranches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                    </select>
+                  </div>
+                )}
                 <div style={{ display: 'flex', gap: '12px' }}>
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
                     <label style={{ fontSize: '0.85rem', fontWeight: '700', color: C.textSecondary, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Ciudad</label>

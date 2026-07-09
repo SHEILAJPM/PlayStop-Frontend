@@ -1,5 +1,5 @@
 ﻿import { createContext, useContext, useState } from 'react';
-import { resetSessionExpired } from '../services/api.js';
+import { resetSessionExpired, getCsrfHeader } from '../services/api.js';
 
 const AuthContext = createContext(null);
 
@@ -33,6 +33,7 @@ export function AuthProvider({ children }) {
     fetch(`${API_URL}/api/auth/logout`, {
       method: 'POST',
       credentials: 'include',
+      headers: getCsrfHeader(),
     }).catch(() => {});
   };
 

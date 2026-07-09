@@ -35,6 +35,7 @@ const CourtPublicPage     = lazy(() => import('./pages/CourtPublicPage.jsx'));
 const MapaCanchas         = lazy(() => import('./pages/MapaCanchas.jsx'));
 const Matchmaking         = lazy(() => import('./pages/Matchmaking.jsx'));
 const Torneos             = lazy(() => import('./pages/Torneos.jsx'));
+const AceptarInvitacion   = lazy(() => import('./pages/AceptarInvitacion.jsx'));
 
 function PageLoader() {
   return (
@@ -152,7 +153,7 @@ function AppContent() {
           user ? (
             <>
               {(getRole() === 'USER' || getRole() === 'JUGADOR') && <JugadorDashboard user={user} onLogout={handleLogout} darkMode={darkMode} toggleTheme={handleThemeToggle} />}
-              {(getRole() === 'OWNER' || getRole() === 'PROPIETARIO') && <PropietarioDashboard user={user} onLogout={handleLogout} darkMode={darkMode} toggleTheme={handleThemeToggle} />}
+              {(getRole() === 'OWNER' || getRole() === 'PROPIETARIO' || getRole() === 'EMPLOYEE') && <PropietarioDashboard user={user} onLogout={handleLogout} darkMode={darkMode} toggleTheme={handleThemeToggle} />}
               {(getRole() === 'ADMIN' || getRole() === 'ADMINISTRADOR') && <AdminDashboard user={user} onLogout={handleLogout} darkMode={darkMode} toggleTheme={handleThemeToggle} />}
               {(getRole() === 'SUPER ADMIN') && <SuperAdminDashboard user={user} onLogout={handleLogout} darkMode={darkMode} toggleTheme={handleThemeToggle} />}
             </>
@@ -162,7 +163,7 @@ function AppContent() {
         {/* RUTAS DIRECTAS (Para los navigate del Login.jsx) */}
         <Route path="/super-admin-dashboard" element={user && getRole() === 'SUPER ADMIN' ? <SuperAdminDashboard user={user} onLogout={handleLogout} darkMode={darkMode} toggleTheme={handleThemeToggle} /> : <Navigate to="/login" />} />
         <Route path="/admin-dashboard" element={user && (getRole() === 'ADMIN' || getRole() === 'ADMINISTRADOR') ? <AdminDashboard user={user} onLogout={handleLogout} darkMode={darkMode} toggleTheme={handleThemeToggle} /> : <Navigate to="/login" />} />
-        <Route path="/propietario-dashboard" element={user && (getRole() === 'OWNER' || getRole() === 'PROPIETARIO') ? <PropietarioDashboard user={user} onLogout={handleLogout} darkMode={darkMode} toggleTheme={handleThemeToggle} /> : <Navigate to="/login" />} />
+        <Route path="/propietario-dashboard" element={user && (getRole() === 'OWNER' || getRole() === 'PROPIETARIO' || getRole() === 'EMPLOYEE') ? <PropietarioDashboard user={user} onLogout={handleLogout} darkMode={darkMode} toggleTheme={handleThemeToggle} /> : <Navigate to="/login" />} />
         <Route path="/jugador-dashboard" element={user && (getRole() === 'USER' || getRole() === 'JUGADOR') ? <JugadorDashboard user={user} onLogout={handleLogout} darkMode={darkMode} toggleTheme={handleThemeToggle} /> : <Navigate to="/login" />} />
 
         {/* FLUJO DE RESERVA */}
@@ -174,6 +175,7 @@ function AppContent() {
         } />
 
         {/* Paginas Publicas */}
+        <Route path="/invitacion/:token" element={<AceptarInvitacion onLogin={handleLogin} darkMode={darkMode} />} />
         <Route path="/cancha/:slug" element={<CourtPublicPage />} />
         <Route path="/mapa" element={<MapaCanchas />} />
         <Route path="/matchmaking" element={<Matchmaking />} />

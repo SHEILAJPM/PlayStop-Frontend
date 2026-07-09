@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { messaging, requestFCMToken, onMessage } from '../firebase';
+import { getCsrfHeader } from '../services/api.js';
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
@@ -65,7 +66,7 @@ export function useNotifications(userId = null) {
       if (saved === fcmToken) return;
       fetch(`${BASE_URL}/api/notifications/fcm-token`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...getCsrfHeader() },
         credentials: 'include',
         body: JSON.stringify({ token: fcmToken }),
       }).then(() => localStorage.setItem('fcm_token', fcmToken)).catch(() => {});
