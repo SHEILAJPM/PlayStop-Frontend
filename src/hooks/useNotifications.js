@@ -60,13 +60,13 @@ export function useNotifications(userId = null) {
     if (!userId) return;
 
     // Solicitar permiso y registrar FCM token en el backend
-    requestFCMToken().then((fcmToken) => {
+    requestFCMToken().then(async (fcmToken) => {
       if (!fcmToken) return;
       const saved = localStorage.getItem('fcm_token');
       if (saved === fcmToken) return;
       fetch(`${BASE_URL}/api/notifications/fcm-token`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...getCsrfHeader() },
+        headers: { 'Content-Type': 'application/json', ...(await getCsrfHeader()) },
         credentials: 'include',
         body: JSON.stringify({ token: fcmToken }),
       }).then(() => localStorage.setItem('fcm_token', fcmToken)).catch(() => {});

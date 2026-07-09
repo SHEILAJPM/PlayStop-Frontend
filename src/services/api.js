@@ -6,28 +6,46 @@ const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 // adjunte esa cookie en cada petición, incluso siendo backend/frontend
 // orígenes distintos (onrender.com en subdominios separados).
 
-// Token de doble envío para CSRF: el backend expone la cookie XSRF-TOKEN
-// (legible por JS, a diferencia de la del JWT) en cuanto llega cualquier
-// request (ver CsrfCookieFilter). Aquí la leemos y la reenviamos como header
-// en cada petición; el backend la exige en POST/PUT/PATCH/DELETE, no en GET.
-function getCsrfToken() {
-  const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]+)/);
-  return match ? decodeURIComponent(match[1]) : null;
+// Token de doble envío para CSRF: el backend fija la cookie XSRF-TOKEN en
+// cada request (ver CsrfCookieFilter), pero frontend y backend viven en
+// dominios distintos (onrender.com en subdominios separados), así que el JS
+// de aquí NUNCA puede leer esa cookie con document.cookie (pertenece al
+// dominio del backend). Por eso el backend también expone el mismo valor en
+// el cuerpo JSON de GET /api/auth/csrf; lo cacheamos en memoria la primera
+// vez que hace falta y lo reenviamos como header en cada petición que
+// cambia estado.
+let csrfTokenPromise = null;
+
+async function fetchCsrfToken() {
+  const res = await fetch(`${BASE_URL}/api/auth/csrf`, { credentials: 'include' });
+  const data = await res.json();
+  return data.token;
 }
 
-function csrfHeader() {
-  const token = getCsrfToken();
-  return token ? { 'X-XSRF-TOKEN': token } : {};
+function getCsrfToken() {
+  if (!csrfTokenPromise) csrfTokenPromise = fetchCsrfToken().catch(err => { csrfTokenPromise = null; throw err; });
+  return csrfTokenPromise;
+}
+
+async function csrfHeader() {
+  try {
+    const token = await getCsrfToken();
+    return token ? { 'X-XSRF-TOKEN': token } : {};
+  } catch {
+    return {};
+  }
 }
 
 // Exportado para los pocos lugares (AuthContext, páginas de login/registro)
 // que llaman a fetch() directamente en vez de pasar por este módulo.
 export const getCsrfHeader = csrfHeader;
 
-const jsonHeaders = () => ({
-  'Content-Type': 'application/json',
-  ...csrfHeader(),
-});
+async function jsonHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    ...(await csrfHeader()),
+  };
+}
 
 let sessionExpired = false;
 
@@ -114,7 +132,7 @@ export const api = {
   },
 
   async getMyCourts() {
-    return handleResponse(await fetchWithTimeout(`${BASE_URL}/api/courts/my`, { headers: jsonHeaders() }));
+    return handleResponse(await fetchWithTimeout(`${BASE_URL}/api/courts/my`, { headers: await jsonHeaders() }));
   },
 
   async getCourtSlots(courtId, date) {
@@ -125,7 +143,7 @@ export const api = {
   async createCourt(data) {
     return handleResponse(await fetchWithTimeout(`${BASE_URL}/api/courts`, {
       method: 'POST',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
       body: JSON.stringify(data),
     }));
   },
@@ -133,7 +151,7 @@ export const api = {
   async updateCourt(id, data) {
     return handleResponse(await fetchWithTimeout(`${BASE_URL}/api/courts/${id}`, {
       method: 'PUT',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
       body: JSON.stringify(data),
     }));
   },
@@ -141,7 +159,7 @@ export const api = {
   async deleteCourt(id) {
     return handleResponse(await fetchWithTimeout(`${BASE_URL}/api/courts/${id}`, {
       method: 'DELETE',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
     }));
   },
 
@@ -150,7 +168,7 @@ export const api = {
     formData.append('file', file);
     return handleResponse(await fetchWithTimeout(`${BASE_URL}/api/upload`, {
       method: 'POST',
-      headers: csrfHeader(),
+      headers: await csrfHeader(),
       body: formData,
     }));
   },
@@ -158,46 +176,46 @@ export const api = {
   // ── Reservas ─────────────────────────────────────────────────────────────
 
   async getMyReservations() {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/reservations/my`, { headers: jsonHeaders() }));
+    return handleResponse(await apiFetch(`${BASE_URL}/api/reservations/my`, { headers: await jsonHeaders() }));
   },
 
   async getCourtReservations(courtId) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/reservations/court/${courtId}`, { headers: jsonHeaders() }));
+    return handleResponse(await apiFetch(`${BASE_URL}/api/reservations/court/${courtId}`, { headers: await jsonHeaders() }));
   },
 
   async createReservation(data) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/reservations`, {
       method: 'POST',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
       body: JSON.stringify(data),
     }));
   },
 
   async getReservationById(id) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/reservations/${id}`, { headers: jsonHeaders() }));
+    return handleResponse(await apiFetch(`${BASE_URL}/api/reservations/${id}`, { headers: await jsonHeaders() }));
   },
 
   async createCheckoutSession(reservationId) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/payments/checkout/${reservationId}`, {
       method: 'POST',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
     }));
   },
 
   // ── Retiros (propietario) ───────────────────────────────────────────────
 
   async getPayoutBalance() {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/payouts/balance`, { headers: jsonHeaders() }));
+    return handleResponse(await apiFetch(`${BASE_URL}/api/payouts/balance`, { headers: await jsonHeaders() }));
   },
 
   async getMyPayoutRequests() {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/payouts/my`, { headers: jsonHeaders() }));
+    return handleResponse(await apiFetch(`${BASE_URL}/api/payouts/my`, { headers: await jsonHeaders() }));
   },
 
   async createPayoutRequest(data) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/payouts`, {
       method: 'POST',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
       body: JSON.stringify(data),
     }));
   },
@@ -206,20 +224,20 @@ export const api = {
 
   async getAllPayoutRequests(status) {
     const qs = status ? `?status=${status}` : '';
-    return handleResponse(await apiFetch(`${BASE_URL}/api/admin/payouts${qs}`, { headers: jsonHeaders() }));
+    return handleResponse(await apiFetch(`${BASE_URL}/api/admin/payouts${qs}`, { headers: await jsonHeaders() }));
   },
 
   async markPayoutAsPaid(id) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/admin/payouts/${id}/pay`, {
       method: 'PATCH',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
     }));
   },
 
   async rejectPayout(id, reason) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/admin/payouts/${id}/reject`, {
       method: 'PATCH',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
       body: JSON.stringify({ reason }),
     }));
   },
@@ -227,13 +245,13 @@ export const api = {
   // ── Suscripción (propietario) ────────────────────────────────────────────
 
   async getMySubscription() {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/subscriptions/me`, { headers: jsonHeaders() }));
+    return handleResponse(await apiFetch(`${BASE_URL}/api/subscriptions/me`, { headers: await jsonHeaders() }));
   },
 
   async createSubscriptionCheckout(plan) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/subscriptions/checkout`, {
       method: 'POST',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
       body: JSON.stringify({ plan }),
     }));
   },
@@ -241,14 +259,14 @@ export const api = {
   async cancelReservation(id) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/reservations/${id}/cancel`, {
       method: 'PATCH',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
     }));
   },
 
   async cancelReservationByOwner(id) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/reservations/${id}/cancel-by-owner`, {
       method: 'PATCH',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
     }));
   },
 
@@ -257,75 +275,75 @@ export const api = {
   },
 
   async verifyReservation(id) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/reservations/verify/${id}`, { headers: jsonHeaders() }));
+    return handleResponse(await apiFetch(`${BASE_URL}/api/reservations/verify/${id}`, { headers: await jsonHeaders() }));
   },
 
   async confirmAttendance(id) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/reservations/${id}/confirm-attendance`, {
       method: 'PATCH',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
     }));
   },
 
   // ── Admin ─────────────────────────────────────────────────────────────────
 
   async getAdminStats() {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/admin/stats`, { headers: jsonHeaders() }));
+    return handleResponse(await apiFetch(`${BASE_URL}/api/admin/stats`, { headers: await jsonHeaders() }));
   },
 
   async getAdminAnalytics() {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/admin/analytics`, { headers: jsonHeaders() }));
+    return handleResponse(await apiFetch(`${BASE_URL}/api/admin/analytics`, { headers: await jsonHeaders() }));
   },
 
   async getAdminUsers() {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/admin/users`, { headers: jsonHeaders() }));
+    return handleResponse(await apiFetch(`${BASE_URL}/api/admin/users`, { headers: await jsonHeaders() }));
   },
 
   async getAdminOwners() {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/admin/owners`, { headers: jsonHeaders() }));
+    return handleResponse(await apiFetch(`${BASE_URL}/api/admin/owners`, { headers: await jsonHeaders() }));
   },
 
   async getOwnerCourts(ownerId) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/admin/owners/${ownerId}/courts`, { headers: jsonHeaders() }));
+    return handleResponse(await apiFetch(`${BASE_URL}/api/admin/owners/${ownerId}/courts`, { headers: await jsonHeaders() }));
   },
 
   async getAdminAllReservations() {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/admin/all-reservations`, { headers: jsonHeaders() }));
+    return handleResponse(await apiFetch(`${BASE_URL}/api/admin/all-reservations`, { headers: await jsonHeaders() }));
   },
 
   async getAdminCourts() {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/admin/courts`, { headers: jsonHeaders() }));
+    return handleResponse(await apiFetch(`${BASE_URL}/api/admin/courts`, { headers: await jsonHeaders() }));
   },
 
   async toggleUserStatus(id) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/admin/users/${id}/toggle-status`, {
       method: 'PATCH',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
     }));
   },
 
   async deleteAdminUser(id) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/admin/users/${id}`, {
       method: 'DELETE',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
     }));
   },
 
   async toggleCourtStatus(id) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/admin/courts/${id}/toggle-status`, {
       method: 'PATCH',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
     }));
   },
 
   async getAdminChatModeration() {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/admin/chat-moderation`, { headers: jsonHeaders() }));
+    return handleResponse(await apiFetch(`${BASE_URL}/api/admin/chat-moderation`, { headers: await jsonHeaders() }));
   },
 
   async liftChatBan(id) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/admin/users/${id}/lift-chat-ban`, {
       method: 'PATCH',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
     }));
   },
 
@@ -336,13 +354,13 @@ export const api = {
   },
 
   async getMyReviews() {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/reviews/my`, { headers: jsonHeaders() }));
+    return handleResponse(await apiFetch(`${BASE_URL}/api/reviews/my`, { headers: await jsonHeaders() }));
   },
 
   async createReview(data) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/reviews`, {
       method: 'POST',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
       body: JSON.stringify(data),
     }));
   },
@@ -350,20 +368,20 @@ export const api = {
   async deleteReview(id) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/reviews/${id}`, {
       method: 'DELETE',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
     }));
   },
 
   // ── Perfil de usuario ─────────────────────────────────────────────────────
 
   async getMe() {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/users/me`, { headers: jsonHeaders() }));
+    return handleResponse(await apiFetch(`${BASE_URL}/api/users/me`, { headers: await jsonHeaders() }));
   },
 
   async updateMe(data) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/users/me`, {
       method: 'PATCH',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
       body: JSON.stringify(data),
     }));
   },
@@ -371,7 +389,7 @@ export const api = {
   async updateAvatar(profileImageUrl) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/users/me/avatar`, {
       method: 'PATCH',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
       body: JSON.stringify({ profileImageUrl }),
     }));
   },
@@ -379,7 +397,7 @@ export const api = {
   async changePassword(data) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/users/me/password`, {
       method: 'PATCH',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
       body: JSON.stringify(data),
     }));
   },
@@ -387,7 +405,7 @@ export const api = {
   // ── Gamificación ──────────────────────────────────────────────────────────
 
   async getGamificationProfile() {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/gamification/me`, { headers: jsonHeaders() }));
+    return handleResponse(await apiFetch(`${BASE_URL}/api/gamification/me`, { headers: await jsonHeaders() }));
   },
 
   // ── Cancha por slug (página pública) ──────────────────────────────────────
@@ -405,7 +423,7 @@ export const api = {
   async createMatch(data) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/match`, {
       method: 'POST',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
       body: JSON.stringify(data),
     }));
   },
@@ -413,58 +431,58 @@ export const api = {
   async joinMatch(id) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/match/${id}/join`, {
       method: 'POST',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
     }));
   },
 
   async cancelMatch(id) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/match/${id}`, {
       method: 'DELETE',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
     }));
   },
 
   // ── Amigos / búsqueda de usuarios ────────────────────────────────────────
 
   async searchUserByEmail(email) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/users/search?email=${encodeURIComponent(email)}`, { headers: jsonHeaders() }));
+    return handleResponse(await apiFetch(`${BASE_URL}/api/users/search?email=${encodeURIComponent(email)}`, { headers: await jsonHeaders() }));
   },
 
   async sendFriendRequest(targetUserId) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/friends/request`, {
       method: 'POST',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
       body: JSON.stringify({ targetUserId }),
     }));
   },
 
   async getFriends() {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/friends`, { headers: jsonHeaders() }));
+    return handleResponse(await apiFetch(`${BASE_URL}/api/friends`, { headers: await jsonHeaders() }));
   },
 
   async removeFriend(friendId) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/friends/${friendId}`, {
       method: 'DELETE',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
     }));
   },
 
   // ── Chat por reserva ──────────────────────────────────────────────────────
 
   async getChatMessages(reservationId) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/chat/${reservationId}/messages`, { headers: jsonHeaders() }));
+    return handleResponse(await apiFetch(`${BASE_URL}/api/chat/${reservationId}/messages`, { headers: await jsonHeaders() }));
   },
 
   // ── Chat por partido (matchmaking) ────────────────────────────────────────
 
   async getMatchChatMessages(matchId) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/match/${matchId}/messages`, { headers: jsonHeaders() }));
+    return handleResponse(await apiFetch(`${BASE_URL}/api/match/${matchId}/messages`, { headers: await jsonHeaders() }));
   },
 
   async sendMatchChatMessage(matchId, content) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/match/${matchId}/messages`, {
       method: 'POST',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
       body: JSON.stringify({ content }),
     }));
   },
@@ -474,7 +492,7 @@ export const api = {
   async loginWithGoogle(idToken) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/auth/google`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...csrfHeader() },
+      headers: { 'Content-Type': 'application/json', ...(await csrfHeader()) },
       body: JSON.stringify({ idToken }),
     }));
   },
@@ -482,7 +500,7 @@ export const api = {
   // ── Recomendaciones IA ───────────────────────────────────────────────────
 
   async getRecommendations() {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/recommendations`, { headers: jsonHeaders() }));
+    return handleResponse(await apiFetch(`${BASE_URL}/api/recommendations`, { headers: await jsonHeaders() }));
   },
 
   // ── Torneos ───────────────────────────────────────────────────────────────
@@ -494,7 +512,7 @@ export const api = {
   async createTournament(data) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/tournaments`, {
       method: 'POST',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
       body: JSON.stringify(data),
     }));
   },
@@ -502,7 +520,7 @@ export const api = {
   async joinTournament(id, teamName) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/tournaments/${id}/join`, {
       method: 'POST',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
       body: JSON.stringify({ teamName }),
     }));
   },
@@ -510,26 +528,26 @@ export const api = {
   async cancelTournament(id) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/tournaments/${id}`, {
       method: 'DELETE',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
     }));
   },
 
   // ── Analytics propietario ─────────────────────────────────────────────────
 
   async getOwnerAnalytics() {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/analytics/owner`, { headers: jsonHeaders() }));
+    return handleResponse(await apiFetch(`${BASE_URL}/api/analytics/owner`, { headers: await jsonHeaders() }));
   },
 
   // ── Referidos ─────────────────────────────────────────────────────────────
 
   async getReferralInfo() {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/referrals/me`, { headers: jsonHeaders() }));
+    return handleResponse(await apiFetch(`${BASE_URL}/api/referrals/me`, { headers: await jsonHeaders() }));
   },
 
   async applyReferralCode(code) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/referrals/apply`, {
       method: 'POST',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
       body: JSON.stringify({ code }),
     }));
   },
@@ -537,13 +555,13 @@ export const api = {
   // ── Sucursales y empleados (Plan Enterprise) ──────────────────────────────
 
   async getMyBranches() {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/branches/my`, { headers: jsonHeaders() }));
+    return handleResponse(await apiFetch(`${BASE_URL}/api/branches/my`, { headers: await jsonHeaders() }));
   },
 
   async createBranch(data) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/branches`, {
       method: 'POST',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
       body: JSON.stringify(data),
     }));
   },
@@ -551,7 +569,7 @@ export const api = {
   async updateBranch(id, data) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/branches/${id}`, {
       method: 'PUT',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
       body: JSON.stringify(data),
     }));
   },
@@ -559,18 +577,18 @@ export const api = {
   async deleteBranch(id) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/branches/${id}`, {
       method: 'DELETE',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
     }));
   },
 
   async getBranchEmployees(branchId) {
-    return handleResponse(await apiFetch(`${BASE_URL}/api/branches/${branchId}/employees`, { headers: jsonHeaders() }));
+    return handleResponse(await apiFetch(`${BASE_URL}/api/branches/${branchId}/employees`, { headers: await jsonHeaders() }));
   },
 
   async inviteEmployee(branchId, email) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/branches/${branchId}/employees`, {
       method: 'POST',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
       body: JSON.stringify({ email }),
     }));
   },
@@ -578,7 +596,7 @@ export const api = {
   async removeEmployee(branchId, employeeId) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/branches/${branchId}/employees/${employeeId}`, {
       method: 'DELETE',
-      headers: jsonHeaders(),
+      headers: await jsonHeaders(),
     }));
   },
 
@@ -589,7 +607,7 @@ export const api = {
   async registerEmployee(data) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/auth/register/employee`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...csrfHeader() },
+      headers: { 'Content-Type': 'application/json', ...(await csrfHeader()) },
       body: JSON.stringify(data),
     }));
   },

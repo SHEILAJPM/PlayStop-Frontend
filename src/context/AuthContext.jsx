@@ -30,11 +30,11 @@ export function AuthProvider({ children }) {
     // con incluir credenciales; no bloquea el logout visual si falla o no
     // hay red.
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-    fetch(`${API_URL}/api/auth/logout`, {
+    getCsrfHeader().then((headers) => fetch(`${API_URL}/api/auth/logout`, {
       method: 'POST',
       credentials: 'include',
-      headers: getCsrfHeader(),
-    }).catch(() => {});
+      headers,
+    })).catch(() => {});
   };
 
   return (

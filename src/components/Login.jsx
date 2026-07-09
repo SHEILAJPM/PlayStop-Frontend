@@ -31,7 +31,7 @@ const Login = ({ type, onLogin, darkMode = true }) => {
     try {
       const res = await fetch(`${API_URL}/api/auth/google`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...getCsrfHeader() },
+        headers: { 'Content-Type': 'application/json', ...(await getCsrfHeader()) },
         credentials: 'include',
         body: JSON.stringify({ idToken: response.credential }),
       });
@@ -80,7 +80,7 @@ const Login = ({ type, onLogin, darkMode = true }) => {
         const body     = step === 1 ? { email } : { email, code, newPassword };
         const res = await fetch(`${API_URL}${endpoint}`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', ...getCsrfHeader() },
+          headers: { 'Content-Type': 'application/json', ...(await getCsrfHeader()) },
           credentials: 'include',
           body: JSON.stringify(body),
         });
@@ -89,7 +89,7 @@ const Login = ({ type, onLogin, darkMode = true }) => {
       } else {
         const res  = await fetch(`${API_URL}/api/auth/login`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', ...getCsrfHeader() },
+          headers: { 'Content-Type': 'application/json', ...(await getCsrfHeader()) },
           credentials: 'include',
           body: JSON.stringify({ email, password }),
         });

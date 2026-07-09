@@ -46,7 +46,7 @@ const Register = () => {
     const body = { name, email, password, phone };
     const options = {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...getCsrfHeader() },
+      headers: { 'Content-Type': 'application/json', ...(await getCsrfHeader()) },
       credentials: 'include',
       body: JSON.stringify(body),
     };
