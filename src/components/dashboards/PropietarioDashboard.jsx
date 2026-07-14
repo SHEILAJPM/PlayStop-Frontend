@@ -1,10 +1,11 @@
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { DashboardLayout, MetricCard, SkeletonCard, SkeletonTable, SkeletonCourtGrid } from './DashboardLayout.jsx';
 // bootstrap imported globally in main.jsx
 import CalendarioCancha from './CalendarioCancha.jsx';
 import { api } from '../../services/api.js';
+import { cloudinaryResize } from '../../utils/cloudinary.js';
 import { useOnboarding } from '../../hooks/useOnboarding.js';
 import OnboardingTour from '../onboarding/OnboardingTour.jsx';
 import ReservationChat from '../chat/ReservationChat.jsx';
@@ -335,27 +336,15 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
 
   const loadData = async () => {
     try {
-      const data = await api.getMyCourts();
-      const courts = Array.isArray(data) ? data.map(mapOwnerCourt) : [];
-      setCanchas(courts);
+      // Canchas y reservas se piden en paralelo — reservas ya viene
+      // agregada por el backend (1 consulta), en vez de una por cancha.
+      const [courtsData, reservationsData] = await Promise.all([
+        api.getMyCourts(),
+        api.getOwnerReservations(),
+      ]);
+      setCanchas(Array.isArray(courtsData) ? courtsData.map(mapOwnerCourt) : []);
       setLoadingCanchas(false);
-
-      if (courts.length > 0) {
-        const results = await Promise.allSettled(
-          courts.map(c => api.getCourtReservations(c.id))
-        );
-        results.forEach((r, i) => {
-          if (r.status === 'rejected') console.error(`Error reservas cancha[${i}]:`, r.reason);
-          else console.log(`Reservas cancha[${i}] (${courts[i]?.name}):`, r.value);
-        });
-        const all = results
-          .filter(r => r.status === 'fulfilled' && Array.isArray(r.value))
-          .flatMap(r => r.value.map(mapOwnerReservation));
-        console.log('Total reservas mapeadas:', all.length, all);
-        setReservas(all);
-      } else {
-        console.warn('El propietario no tiene canchas registradas.');
-      }
+      setReservas(Array.isArray(reservationsData) ? reservationsData.map(mapOwnerReservation) : []);
     } catch (err) {
       console.error('Error cargando datos del propietario:', err);
       setLoadingCanchas(false);
@@ -595,17 +584,25 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
     }
   };
 
-  const hoy = new Date().toISOString().split('T')[0];
-  const ingresosHoy = reservas
-    .filter(r => (r.status === 'Pagado' || r.status === 'Asistió') && r.date === hoy)
-    .reduce((sum, r) => sum + parseFloat(r.amount.replace('S/ ', '') || 0), 0);
-  const reservasActivas = reservas.filter(r => r.status !== 'Cancelada').length;
-  const ocupacion = canchas.length > 0 ? Math.round((reservasActivas / (canchas.length * 10)) * 100) : 0;
+  // Se recalculan solo cuando cambian reservas/canchas, no en cada render
+  // del componente (ej. al escribir en un formulario de otra pestaña).
+  const { ingresosHoy, totalIngresos, reservasActivas, ocupacion } = useMemo(() => {
+    const hoy = new Date().toISOString().split('T')[0];
+    const pagadasOAsistidas = reservas.filter(r => r.status === 'Pagado' || r.status === 'Asistió');
+    const ingresosHoy = pagadasOAsistidas
+      .filter(r => r.date === hoy)
+      .reduce((sum, r) => sum + parseFloat(r.amount.replace('S/ ', '') || 0), 0);
+    const totalIngresos = pagadasOAsistidas
+      .reduce((sum, r) => sum + parseFloat(r.amount.replace('S/ ', '') || 0), 0);
+    const reservasActivas = reservas.filter(r => r.status !== 'Cancelada').length;
+    const ocupacion = canchas.length > 0 ? Math.round((reservasActivas / (canchas.length * 10)) * 100) : 0;
+    return { ingresosHoy, totalIngresos, reservasActivas, ocupacion };
+  }, [reservas, canchas.length]);
 
-  const filteredTienda = tiendaItems.filter(p =>
+  const filteredTienda = useMemo(() => tiendaItems.filter(p =>
     (tiendaFiltro === 'Todos' || p.category === tiendaFiltro) &&
     p.name.toLowerCase().includes(tiendaSearch.toLowerCase())
-  );
+  ), [tiendaItems, tiendaFiltro, tiendaSearch]);
 
   const modalTitle = {
     AGREGAR_CANCHA: 'Nueva Cancha',
@@ -859,7 +856,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
                     {/* Imagen del producto */}
                     {producto.imageUrl ? (
                       <div style={{ height: '140px', overflow: 'hidden', position: 'relative' }}>
-                        <img src={producto.imageUrl} alt={producto.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <img src={cloudinaryResize(producto.imageUrl, 280)} alt={producto.name} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         <span style={{
                           position: 'absolute', top: 8, left: 8,
                           fontSize: '0.68rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.5px',
@@ -904,7 +901,7 @@ const PropietarioDashboard = ({ user, onLogout, darkMode = false, toggleTheme })
       {activeTab === 'Finanzas' && (
         <div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '24px', marginBottom: '30px' }}>
-            <MetricCard title="Total Ingresos" value={`S/ ${reservas.filter(r => r.status === 'Pagado' || r.status === 'Asistió').reduce((sum, r) => sum + parseFloat(r.amount.replace('S/ ', '') || 0), 0).toFixed(2)}`} subtitle="Reservas confirmadas" color="#2563eb" />
+            <MetricCard title="Total Ingresos" value={`S/ ${totalIngresos.toFixed(2)}`} subtitle="Reservas confirmadas" color="#2563eb" />
             <MetricCard title="Reservas Totales" value={reservas.length} subtitle="Todas las reservas" color="#3b82f6" trend="up" />
             <MetricCard title="Comisiones PlaySpot" value="S/ 0.00" subtitle={loadingSubscription ? 'Cargando plan...' : `Plan ${PLAN_LABELS[subscription?.plan] || 'Básico'} activo`} color="#f59e0b" />
           </div>
