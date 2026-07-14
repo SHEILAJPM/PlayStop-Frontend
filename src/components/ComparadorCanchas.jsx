@@ -1,5 +1,6 @@
 import { useState, createContext, useContext, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { cloudinaryResize } from '../utils/cloudinary.js';
 
 /* ── Context ── */
 const ComparadorContext = createContext(null);
@@ -78,8 +79,8 @@ export function ComparadorBar() {
         <style>{`@keyframes slideUp{from{transform:translateX(-50%) translateY(20px);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}`}</style>
         <div style={{ display: 'flex', gap: 8 }}>
           {selected.map(c => (
-            <img key={c.id} src={c.imageUrl || 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=100&q=60'}
-              alt={c.name} style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', border: '2px solid #3b82f6' }} />
+            <img key={c.id} src={cloudinaryResize(c.imageUrl, 64) || 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=100&q=60'}
+              alt={c.name} loading="lazy" style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', border: '2px solid #3b82f6' }} />
           ))}
         </div>
         <span style={{ color: '#f1f5f9', fontWeight: 700, fontSize: '0.88rem' }}>
@@ -124,8 +125,8 @@ function ComparadorModal({ courts, onClose, onBook }) {
                 {courts.map(c => (
                   <th key={c.id} style={{ padding: '0 12px 16px', textAlign: 'center', verticalAlign: 'top' }}>
                     <div style={{ background: '#030712', borderRadius: 14, overflow: 'hidden', border: '1px solid #1e293b' }}>
-                      <img src={c.imageUrl || 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=300&q=60'}
-                        alt={c.name} style={{ width: '100%', height: 100, objectFit: 'cover' }} />
+                      <img src={cloudinaryResize(c.imageUrl, 220) || 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=300&q=60'}
+                        alt={c.name} loading="lazy" style={{ width: '100%', height: 100, objectFit: 'cover' }} />
                       <div style={{ padding: '10px 12px 14px' }}>
                         <p style={{ margin: '0 0 4px', color: '#f1f5f9', fontWeight: 800, fontSize: '0.9rem', lineHeight: 1.2 }}>{c.name}</p>
                         <button onClick={() => onBook(c.id)}

@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { api } from '../services/api.js';
 import { useAuth } from '../context/AuthContext.jsx';
+import { cloudinaryResize } from '../utils/cloudinary.js';
 
 const DEFAULT_IMG = 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=1200&q=80';
 
@@ -209,7 +210,7 @@ export default function CourtPublicPage() {
 
           {/* Hero image */}
           <div style={{ position: 'relative', height: 320, overflow: 'hidden' }}>
-            <img src={court.imageUrl || DEFAULT_IMG} alt={court.name}
+            <img src={cloudinaryResize(court.imageUrl, 900) || DEFAULT_IMG} alt={court.name}
               style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(3,7,18,0.95) 0%, transparent 55%)' }} />
             <div style={{ position: 'absolute', bottom: 24, left: 24, right: 24 }}>

@@ -4,6 +4,7 @@ import QRCode from 'react-qr-code';
 import { api } from '../services/api.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useLocalReminders } from '../hooks/useLocalReminders.js';
+import { cloudinaryResize } from '../utils/cloudinary.js';
 
 /* ── Confetti ── */
 const CONF_COLORS = ['#2563eb','#3b82f6','#f59e0b','#8b5cf6','#ef4444','#06b6d4'];
@@ -246,7 +247,7 @@ function CourtDetail({ court, onNext, user }) {
     <div>
       {/* Hero image */}
       <div style={{ position: 'relative', height: 240, overflow: 'hidden' }}>
-        <img src={court.imageUrl || DEFAULT_IMG} alt={court.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <img src={cloudinaryResize(court.imageUrl, 700) || DEFAULT_IMG} alt={court.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(3,7,18,0.9) 0%, transparent 50%)' }} />
       </div>
 
@@ -543,7 +544,7 @@ function BookingSummary({ court, booking, onNext, onBack: _onBack }) {
     <div style={{ padding: '20px' }}>
       {/* Court card */}
       <div style={{ display: 'flex', gap: 14, background: '#0f172a', borderRadius: 16, padding: 16, marginBottom: 20, border: '1px solid #1e293b' }}>
-        <img src={court.imageUrl || DEFAULT_IMG} alt={court.name}
+        <img src={cloudinaryResize(court.imageUrl, 160) || DEFAULT_IMG} alt={court.name} loading="lazy"
           style={{ width: 80, height: 80, borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
         <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{ margin: '0 0 4px 0', color: '#64748b', fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase' }}>{court.sportType}</p>

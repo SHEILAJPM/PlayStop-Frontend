@@ -5,6 +5,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { api } from '../services/api.js';
 import { useAuth } from '../context/AuthContext.jsx';
+import { cloudinaryResize } from '../utils/cloudinary.js';
 
 // Fix Leaflet default marker icon missing in Vite
 delete L.Icon.Default.prototype._getIconUrl;
@@ -200,7 +201,7 @@ export default function MapaCanchas() {
                   eventHandlers={{ click: () => setSelected(c) }}>
                   <Popup>
                     <div style={{ minWidth: 180 }}>
-                      {c.imageUrl && <img src={c.imageUrl} alt={c.name} style={{ width: '100%', height: 90, objectFit: 'cover', borderRadius: 6, marginBottom: 8 }} />}
+                      {c.imageUrl && <img src={cloudinaryResize(c.imageUrl, 200)} alt={c.name} loading="lazy" style={{ width: '100%', height: 90, objectFit: 'cover', borderRadius: 6, marginBottom: 8 }} />}
                       <strong>{c.name}</strong><br />
                       <span style={{ color: '#64748b', fontSize: '0.8rem' }}>{c.sportType} · {c.district}</span><br />
                       <span style={{ fontWeight: 700, color: '#2563eb' }}>S/ {parseFloat(c.pricePerHour).toFixed(0)}/hr</span>
@@ -231,8 +232,8 @@ export default function MapaCanchas() {
               <button onClick={() => setSelected(null)}
                 style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: '1.1rem' }}>✕</button>
             </div>
-            <img src={selected.imageUrl || 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=400&q=60'}
-              alt={selected.name} style={{ width: '100%', height: 140, objectFit: 'cover', borderRadius: 12 }} />
+            <img src={cloudinaryResize(selected.imageUrl, 300) || 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=400&q=60'}
+              alt={selected.name} loading="lazy" style={{ width: '100%', height: 140, objectFit: 'cover', borderRadius: 12 }} />
             <div>
               <span style={{ background: 'rgba(37, 99, 235, 0.15)', border: '1px solid rgba(37, 99, 235, 0.3)', color: '#2563eb', borderRadius: 20, padding: '3px 10px', fontSize: '0.72rem', fontWeight: 700 }}>
                 {selected.sportType}

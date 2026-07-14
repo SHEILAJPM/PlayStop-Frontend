@@ -1,3 +1,5 @@
+import { cloudinaryResize } from '../../../utils/cloudinary.js';
+
 const SPORT_COLORS = {
   fútbol: '#2563eb', padel: '#3b82f6', pádel: '#3b82f6',
   tenis: '#f59e0b', vóley: '#8b5cf6', voley: '#8b5cf6',
@@ -58,7 +60,7 @@ const CourtCard = ({ cancha, isFavorito, onToggleFavorito, onReservar, onVerMapa
     }}>
       <div style={{ position: 'relative', height: compact ? 140 : 168 }}>
         <img
-          src={cancha.img}
+          src={cloudinaryResize(cancha.img, 360)}
           alt={cancha.name}
           loading="lazy"
           style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
