@@ -73,6 +73,12 @@ function cacheGet(key) {
   }
 }
 
+// Invalida una entrada cacheada tras una escritura (crear/editar/borrar),
+// para que la siguiente lectura online no sirva el dato pre-mutación.
+function cacheClear(key) {
+  try { localStorage.removeItem(`_cache_${key}`); } catch { /* noop */ }
+}
+
 function isOffline() {
   return typeof navigator !== 'undefined' && !navigator.onLine;
 }
@@ -130,13 +136,17 @@ async function handleResponse(res) {
   return data;
 }
 
-// GET con fallback a cache cuando está offline
+// GET con caché: offline sirve el último dato guardado (si hay), online
+// sirve el dato cacheado mientras siga vigente (CACHE_TTL_MS) para no
+// volver a pedir lo mismo en cada navegación a la misma pantalla.
 async function cachedGet(url, cacheKey, headers = {}) {
   if (isOffline()) {
     const cached = cacheGet(cacheKey);
     if (cached) return cached;
     throw new Error('Sin conexión. Datos no disponibles offline.');
   }
+  const cached = cacheGet(cacheKey);
+  if (cached) return cached;
   const res = await fetchWithTimeout(url, { headers });
   const data = await handleResponse(res);
   cacheSet(cacheKey, data);
@@ -161,26 +171,32 @@ export const api = {
   },
 
   async createCourt(data) {
-    return handleResponse(await withCsrfRetry(async () => fetchWithTimeout(`${BASE_URL}/api/courts`, {
+    const result = await handleResponse(await withCsrfRetry(async () => fetchWithTimeout(`${BASE_URL}/api/courts`, {
       method: 'POST',
       headers: await jsonHeaders(),
       body: JSON.stringify(data),
     })));
+    cacheClear('all_courts');
+    return result;
   },
 
   async updateCourt(id, data) {
-    return handleResponse(await withCsrfRetry(async () => fetchWithTimeout(`${BASE_URL}/api/courts/${id}`, {
+    const result = await handleResponse(await withCsrfRetry(async () => fetchWithTimeout(`${BASE_URL}/api/courts/${id}`, {
       method: 'PUT',
       headers: await jsonHeaders(),
       body: JSON.stringify(data),
     })));
+    cacheClear('all_courts');
+    return result;
   },
 
   async deleteCourt(id) {
-    return handleResponse(await withCsrfRetry(async () => fetchWithTimeout(`${BASE_URL}/api/courts/${id}`, {
+    const result = await handleResponse(await withCsrfRetry(async () => fetchWithTimeout(`${BASE_URL}/api/courts/${id}`, {
       method: 'DELETE',
       headers: await jsonHeaders(),
     })));
+    cacheClear('all_courts');
+    return result;
   },
 
   async uploadImage(file) {
@@ -230,6 +246,10 @@ export const api = {
 
   async getCourtReservations(courtId) {
     return handleResponse(await apiFetch(`${BASE_URL}/api/reservations/court/${courtId}`, { headers: await jsonHeaders() }));
+  },
+
+  async getOwnerReservations() {
+    return handleResponse(await apiFetch(`${BASE_URL}/api/reservations/owner`, { headers: await jsonHeaders() }));
   },
 
   async createReservation(data) {
@@ -379,10 +399,12 @@ export const api = {
   },
 
   async toggleCourtStatus(id) {
-    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/admin/courts/${id}/toggle-status`, {
+    const result = await handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/admin/courts/${id}/toggle-status`, {
       method: 'PATCH',
       headers: await jsonHeaders(),
     })));
+    cacheClear('all_courts');
+    return result;
   },
 
   async getAdminChatModeration() {
@@ -470,25 +492,31 @@ export const api = {
   },
 
   async createMatch(data) {
-    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/match`, {
+    const result = await handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/match`, {
       method: 'POST',
       headers: await jsonHeaders(),
       body: JSON.stringify(data),
     })));
+    cacheClear('open_matches');
+    return result;
   },
 
   async joinMatch(id) {
-    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/match/${id}/join`, {
+    const result = await handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/match/${id}/join`, {
       method: 'POST',
       headers: await jsonHeaders(),
     })));
+    cacheClear('open_matches');
+    return result;
   },
 
   async cancelMatch(id) {
-    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/match/${id}`, {
+    const result = await handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/match/${id}`, {
       method: 'DELETE',
       headers: await jsonHeaders(),
     })));
+    cacheClear('open_matches');
+    return result;
   },
 
   // ── Amigos / búsqueda de usuarios ────────────────────────────────────────
@@ -559,11 +587,13 @@ export const api = {
   },
 
   async createTournament(data) {
-    return handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/tournaments`, {
+    const result = await handleResponse(await withCsrfRetry(async () => apiFetch(`${BASE_URL}/api/tournaments`, {
       method: 'POST',
       headers: await jsonHeaders(),
       body: JSON.stringify(data),
     })));
+    cacheClear('tournaments');
+    return result;
   },
 
   async joinTournament(id, teamName) {
