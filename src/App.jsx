@@ -5,23 +5,27 @@ import { Capacitor } from '@capacitor/core';
 import AppSplash from './components/AppSplash.jsx';
 
 const isApp = Capacitor.isNativePlatform();
-import Navbar from './components/Navbar.jsx';
-import Hero from './components/Hero.jsx';
-import Marcas from './components/Marcas.jsx';
-import CanchasDestacadas from './components/CanchasDestacadas.jsx';
-import Soluciones from './components/Soluciones.jsx';
-import ParaClubes from './components/ParaClubes.jsx';
-import ParaJugadores from './components/ParaJugadores.jsx';
-import Testimonios from './components/Testimonios.jsx';
-import Precios from './components/Precios.jsx';
-import Faq from './components/Faq.jsx';
-import Blog from './components/Blog.jsx';
-import Contacto from './components/Contacto.jsx';
-import Legal from './components/Legal.jsx';
-import Footer from "./components/Footer.jsx";
-import ChatBot from './components/ChatBot.jsx';
 import { ComparadorProvider, ComparadorBar } from './components/ComparadorCanchas.jsx';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, Outlet } from 'react-router-dom';
+
+// Landing page: la ven solo visitantes sin sesión (o la app nativa nunca).
+// Se cargan bajo demanda para no sumarlas al bundle de entrada de usuarios
+// que ya tienen sesión y van directo al dashboard.
+const Navbar              = lazy(() => import('./components/Navbar.jsx'));
+const Hero                = lazy(() => import('./components/Hero.jsx'));
+const Marcas              = lazy(() => import('./components/Marcas.jsx'));
+const CanchasDestacadas   = lazy(() => import('./components/CanchasDestacadas.jsx'));
+const Soluciones          = lazy(() => import('./components/Soluciones.jsx'));
+const ParaClubes          = lazy(() => import('./components/ParaClubes.jsx'));
+const ParaJugadores       = lazy(() => import('./components/ParaJugadores.jsx'));
+const Testimonios         = lazy(() => import('./components/Testimonios.jsx'));
+const Precios             = lazy(() => import('./components/Precios.jsx'));
+const Faq                 = lazy(() => import('./components/Faq.jsx'));
+const Blog                = lazy(() => import('./components/Blog.jsx'));
+const Contacto            = lazy(() => import('./components/Contacto.jsx'));
+const Legal               = lazy(() => import('./components/Legal.jsx'));
+const Footer              = lazy(() => import('./components/Footer.jsx'));
+const ChatBot              = lazy(() => import('./components/ChatBot.jsx'));
 
 const JugadorDashboard    = lazy(() => import('./components/dashboards/JugadorDashboard.jsx'));
 const PropietarioDashboard = lazy(() => import('./components/dashboards/PropietarioDashboard.jsx'));
@@ -130,7 +134,9 @@ function AppContent() {
   return (
     <div className={darkMode ? 'dark-mode' : ''} style={{ minHeight: '100vh' }}>
       {!splashDone && <AppSplash onFinish={handleSplashFinish} />}
-      <ChatBot darkMode={darkMode} />
+      <Suspense fallback={null}>
+        <ChatBot darkMode={darkMode} />
+      </Suspense>
       <ComparadorBar />
       <Suspense fallback={<PageLoader />}>
       <Routes>

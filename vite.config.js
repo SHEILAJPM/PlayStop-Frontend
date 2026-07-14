@@ -34,6 +34,12 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: false,
     target: ['chrome85'],
+    modulePreload: {
+      // 'motion' (framer-motion) solo lo usan los dashboards, ya cargados
+      // de forma perezosa — no tiene sentido precargarlo para visitantes
+      // que solo ven la landing page o el login.
+      resolveDependencies: (filename, deps) => deps.filter(dep => !dep.includes('motion')),
+    },
     rollupOptions: {
       output: {
         manualChunks(id) {
